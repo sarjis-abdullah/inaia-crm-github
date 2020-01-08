@@ -1,0 +1,48 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "Admin panel for Golddinar",
+  "author": "nur",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "apexcharts": "^3.6.5",
+    "chart.js": "^2.8.0",
+    "core-js": "^2.6.5",
+    "material-icons": "^0.3.1",
+    "moment": "^2.24.0",
+    "nuxt": "^2.0.0",
+    "prismjs": "^1.17.1",
+    "vee-validate": "^3.0.8",
+    "vue-apexcharts": "^1.5.0",
+    "vue-form-wizard": "^0.8.4",
+    "vue-fullcalendar": "^1.0.9",
+    "vue-prism-component": "^1.1.1",
+    "vue-world-map": "^0.1.1",
+    "vuebar": "0.0.20",
+    "vuedraggable": "^2.23.2",
+    "vuejs-datepicker": "^1.6.2",
+    "vuesax": "^3.11.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^1.0.1",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "vue-i18n": "^8.6.0",
+    "sass-resources-loader": "^2.0.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.1.2"
+  }
+}
