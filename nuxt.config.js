@@ -1,3 +1,4 @@
+const isDevelopment = process.env.NODE_ENV !== 'production'
 
 export default {
   mode: 'spa',
@@ -53,6 +54,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
   },
   /*
   ** Build configuration
@@ -63,5 +65,10 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  server: {
+    // for check in mbl device
+    port: 3001, // default: 3000
+    host: '0.0.0.0', // default: localhost
   }
 }

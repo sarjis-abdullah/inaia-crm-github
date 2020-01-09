@@ -5,20 +5,12 @@
 </template>
 
 <script>
-// import { async } from 'q'
-const loadMyComponent = (c) => {
-    let section = c.replace(/(\-\w)/g, m => m[1].toUpperCase().replace('-', '')) // camelized
-    section = section[0].toUpperCase() + section.substr(1) // pascalized
-    return import('@/views/forms/form-layouts/' + c + '/' + section)    
-}
+import { loadViewsFormLayout } from '@/helpers/helpers'
 
 export default {
-    // components: {
-    //     MyComponent: () => loadMyComponent()
-    // },
     computed: {
         componentInstance() {
-           return () => loadMyComponent(this.myData) 
+           return () => loadViewsFormLayout(this.myData) 
         }
     },
     async asyncData(context) {

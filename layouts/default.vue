@@ -34,6 +34,7 @@ export default {
         Customizer,
         Breadcrumb
     },
+    middleware: ['notFound', 'landingRoute'],
     data: () => ({
         topbarColor: themeConfig.topbarColor,
         logotitle: themeConfig.logotitle,
