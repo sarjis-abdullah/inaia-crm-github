@@ -1,3 +1,56 @@
+export default [
+    {
+        title: "Customers",
+        i18n: "Customers",
+    },
+    {
+        url: "/customers",
+        name: "Customer List",
+        icon: "mdi mdi-account-circle",
+        i18n: "ContactList",
+        index: 2.3
+    },
+    {
+        url: "/dashboards",
+        name: "Dashboards",
+        icon: "mdi mdi-view-dashboard",
+        i18n: "Dashboards",
+        index: 1,
+        child: [{
+                url: '/dashboards/classic',
+                name: "Classic",
+                icon: "mdi mdi mdi-adjust",
+                i18n: "Classic",
+                index: 1.1,
+            },
+            {
+                url: '/dashboards/analytical',
+                name: "Analytical",
+                icon: "mdi mdi mdi-adjust",
+                i18n: "Analytical",
+                index: 1.2,
+            },
+            {
+                url: '/dashboards/ecommerce',
+                name: "Ecommerce",
+                icon: "mdi mdi mdi-adjust",
+                i18n: "Ecommerce",
+                index: 1.3,
+            },
+            {
+                url: '/dashboards/general',
+                name: "General",
+                icon: "mdi mdi mdi-adjust",
+                i18n: "General",
+                index: 1.4,
+            }
+        ]
+    }
+]
+
+
+
+/*
 export default [{
         url: "/dashboards",
         name: "Dashboards",
@@ -494,3 +547,4 @@ export default [{
         index: 14
     }
 ]
+*/
