@@ -34,7 +34,7 @@ export default {
         Customizer,
         Breadcrumb
     },
-    middleware: ['notFound', 'landingRoute'],
+    middleware: ['auth'],
     data: () => ({
         topbarColor: themeConfig.topbarColor,
         logotitle: themeConfig.logotitle,
@@ -48,8 +48,12 @@ export default {
             if(this.sidebarWidth == "default") {
                 return "main-wrapper-default"
             } 
-            else if(this.sidebarWidth == "mini") {return "main-wrapper-mini"}
-            else if(this.sidebarWidth){ return "main-wrapper-full"}
+            else if(this.sidebarWidth == "mini") {
+                return "main-wrapper-mini"
+            }
+            else if(this.sidebarWidth){
+                return "main-wrapper-full"
+            }
             return "default"	
         }
     },
@@ -61,13 +65,13 @@ export default {
     methods: {
         toggleBodyClass(className) {
             if (className == 'dark') {
-                document.body.classList.add('dark-theme');
+                document.body.classList.add('dark-theme')
             } else {
-                document.body.classList.remove('dark-theme');
+                document.body.classList.remove('dark-theme')
             }
         },
         updateTopbarColor(val) {
-            this.topbarColor = val;
+            this.topbarColor = val
         }
     },
     

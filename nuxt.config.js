@@ -31,7 +31,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/axios',
     '~/plugins/global',
+    '~/plugins/vee-validate',
     '~/plugins/i18n',
     '~/plugins/vuesax'
   ],
@@ -54,7 +56,8 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    // baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
   },
   /*
   ** Build configuration
@@ -70,5 +73,11 @@ export default {
     // for check in mbl device
     port: 3001, // default: 3000
     host: '0.0.0.0', // default: localhost
+  },
+  /**
+   * Environment configurations
+   */
+  env: {
+    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de'
   }
 }
