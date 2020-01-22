@@ -57,8 +57,8 @@
                             </ValidationProvider>
                             <ValidationProvider ref="telProvider" name="Telephone" rules="required" v-slot="{ errors }">
                                 <vs-input
-                                    label="Telephone"
-                                    placeholder="+8801345987654"
+                                    label="Mobile number"
+                                    placeholder="0123456789"
                                     v-model="customer.channels.tel.value"
                                     class="w-100 mt-4"
                                     type="tel"
@@ -97,8 +97,8 @@
                     <hr class="custom-hr" />
                     <vs-row>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <vs-input label="Street" placeholder="street name" v-model="customer.address.street" class="w-100 mt-4" />
-                            <vs-input label="Street Number" placeholder="street number" v-model="customer.address.street_number" class="w-100 mt-4" />
+                            <vs-input label="Address Line 1" placeholder="address line 1" v-model="customer.address.street" class="w-100 mt-4" />
+                            <vs-input label="Address Line 2" placeholder="address line 2" v-model="customer.address.street_number" class="w-100 mt-4" />
                             <vs-input label="Postal Code" placeholder="postal code" v-model="customer.address.postal_code" class="w-100 mt-4" />
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
@@ -339,6 +339,7 @@ export default {
                     // if (data && (data.email || data.phone)) {
                     //     this.success    = true  
                     // }
+                    this.$router.push('/customers')
                 }).catch( err => {
                     this.failed = err.response.data.message
                     this.$refs.setErrors(err.response.data.errors)          

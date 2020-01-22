@@ -13,7 +13,7 @@
 
             </transition>
             <!---Customizer / Settings-->
-            <Customizer @updateTopbarColor="updateTopbarColor" />
+            <!-- <Customizer @updateTopbarColor="updateTopbarColor" /> -->
 		</div>	
 
     </div>
@@ -22,7 +22,7 @@
 <script>
 import Navbar from '@/layouts/full/header/Navbar.vue'
 import SideBar from '@/layouts/full/sidebar/SideBar.vue'
-import Customizer from '@/layouts/full/customizer/Customizer.vue'
+// import Customizer from '@/layouts/full/customizer/Customizer.vue'
 import sidebarLinks from '@/layouts/full/sidebar/sidebarlinks.js'
 import Breadcrumb from '@/layouts/full/breadcrumb/Breadcrumb.vue'
 import themeConfig from '@/themeConfig.js'
@@ -31,7 +31,7 @@ export default {
     components: {
         Navbar,
         SideBar,
-        Customizer,
+        // Customizer,
         Breadcrumb
     },
     middleware: ['auth'],

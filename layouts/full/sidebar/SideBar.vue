@@ -5,8 +5,8 @@
       
       <div class="header-sidebar text-center" slot="header">
         <vs-avatar size="70px" :src="require('@/assets/images/users/1-old.jpg')"/>
-        <h4>Steave Jobs<br/>
-          <small>varun@gmail.com</small>
+        <h4>{{ account && account.username }}<br/>
+          <small>{{ account && account.email }}</small>
         </h4>
       </div>
       
@@ -50,6 +50,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+
 export default {
     name: "SideBar",
     props: {
@@ -74,6 +76,9 @@ export default {
         round: true
     }),
     computed: {
+        ...mapGetters({
+            account: "auth/account",
+        }),
         //This is for mobile trigger
         isSidebarActive: {
             get() {
