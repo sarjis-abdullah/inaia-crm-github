@@ -34,7 +34,7 @@
       <!---
       Craete new dd
       -->
-      <vs-dropdown vs-trigger-click class="cursor-pointer ml-md-4">
+      <!-- <vs-dropdown vs-trigger-click class="cursor-pointer ml-md-4">
         <a class="small-icon text-white-dark" href="#">
           {{getCurrentLanguage.lang}}
           <vs-icon icon="expand_more"></vs-icon>
@@ -45,7 +45,7 @@
           <vs-dropdown-item @click="changeLanguage('ch')">Chinese</vs-dropdown-item>
           <vs-dropdown-item @click="changeLanguage('gr')">German</vs-dropdown-item>
         </vs-dropdown-menu>
-      </vs-dropdown>
+      </vs-dropdown> -->
 
       <vs-spacer></vs-spacer>
       <!---
@@ -122,39 +122,39 @@
           <img src="@/assets/images/users/1-old.jpg" alt="User" />
         </a>
         <vs-dropdown-menu class="user-dd common-dd topbar-dd">
-          <div v-for="user in users" :user="user" :key="user.usertitle">
+          <div>
             <div class="d-flex align-items-center p-3 bg-danger text-white mb-2">
               <div class>
                 <img
-                  :src="require('@/assets/images/users'+ user.img)"
+                  :src="require('@/assets/images/users'+ users[0].img)"
                   alt="user"
                   class="rounded-circle"
                   width="60"
                 />
               </div>
               <div class="ml-2">
-                <h4 class="mb-0 text-white">{{user.name}}</h4>
-                <p class="mb-0">{{user.email}}</p>
+                <h4 class="mb-0 text-white">{{ account && account.username }}</h4>
+                <p class="mb-0">{{ account && account.email }}</p>
               </div>
             </div>
 
             <vs-dropdown-item>
               <vs-icon icon="person_outline" class="mr-1"></vs-icon>
-              {{user.dditem1}}
+              {{users[0].dditem1}}
             </vs-dropdown-item>
             <vs-dropdown-item>
               <vs-icon icon="sentiment_very_satisfied" class="mr-1"></vs-icon>
-              {{user.dditem2}}
+              {{users[0].dditem2}}
             </vs-dropdown-item>
             <vs-dropdown-item>
               <vs-icon icon="mail_outline" class="mr-1"></vs-icon>
-              {{user.dditem3}}
+              {{users[0].dditem3}}
             </vs-dropdown-item>
 
             <hr class="mb-1" />
             <vs-dropdown-item>
               <vs-icon icon="gps_not_fixed" class="mr-1"></vs-icon>
-              {{user.dditem4}}
+              {{users[0].dditem4}}
             </vs-dropdown-item>
             <hr class="mt-1" />
             <vs-button
@@ -171,6 +171,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"
+
 import RecentMessages from "../../../views/widgets/other-widgets/recent-messages/RecentMessages";
 import RecentNotification from "../../../views/widgets/other-widgets/recent-notifications/RecentNotifications";
 
@@ -198,7 +200,7 @@ export default {
     users: [
       {
         img: "/3.jpg",
-        name: "Steave Jobs",
+        name: "Ayaz Hossain",
         email: "varun@gmail.com",
         dditem1: "My Profile",
         dditem2: "My Balance",
@@ -211,17 +213,17 @@ export default {
   methods: {
     //This is for sidebar trigger in mobile
     activeSidebar() {
-      this.$store.commit("store/IS_SIDEBAR_ACTIVE", true);
+      this.$store.commit("vuesax/IS_SIDEBAR_ACTIVE", true);
     },
     //This is for sidebar trigger in Desktop
     reduceSidebar() {
-      this.$store.commit("store/TOGGLE_REDUCE_SIDEBAR", true);
-      this.$store.dispatch("store/updateSidebarWidth", "mini");
+      this.$store.commit("vuesax/TOGGLE_REDUCE_SIDEBAR", true);
+      this.$store.dispatch("vuesax/updateSidebarWidth", "mini");
       this.showToggle = true;
     },
     fullSidebar() {
-      this.$store.commit("store/TOGGLE_REDUCE_SIDEBAR", false);
-      this.$store.dispatch("store/updateSidebarWidth", "default");
+      this.$store.commit("vuesax/TOGGLE_REDUCE_SIDEBAR", false);
+      this.$store.dispatch("vuesax/updateSidebarWidth", "default");
       this.showToggle = false;
     },
     changeLanguage(locale) {
@@ -229,6 +231,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      account: "auth/account",
+    }),
     getCurrentLanguage() {
       const locale = this.$i18n.locale;
       if (locale == "en") return { lang: "English" };

@@ -68,7 +68,7 @@ export const actions = {
     },
     initClientData(context, payload) {
         return this.$axios
-            .get('/contacts?type_id=3&include=account,person_data,address,country' + payload)
+            .get('/contacts?type_id=3&include=account,type,person_data,address,country,channels' + payload)
             .then(response => {
                 const clientData = response.data.data
                 context.commit('initClientData', clientData)

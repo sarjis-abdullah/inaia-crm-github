@@ -1,7 +1,7 @@
 {
-  "name": "admin",
+  "name": "crm-golddinar",
   "version": "1.0.0",
-  "description": "Admin panel for Golddinar",
+  "description": "CRM for Golddinar",
   "author": "nur",
   "private": true,
   "scripts": {
