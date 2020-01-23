@@ -1,7 +1,7 @@
 <template>
 	<div class="main-wrapper" :class="[mainWrapperClass]">
 		<!---Navigation-->
-		<Navbar :topbarColor="topbarColor" :logo="require('@/assets/images/logo/logo-light-icon.png')" :title="logotitle" />
+		<Navbar :topbarColor="topbarColor" :logo="require('@/static/logo_contrast.png')" :title="logotitle" />
 		<!---Sidebar-->
 		<SideBar parent=".main-wrapper" :sidebarLinks="sidebarLinks"/>
 		<!---Page Container-->

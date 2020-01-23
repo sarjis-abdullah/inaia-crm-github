@@ -25,7 +25,7 @@
                     <template slot="thead">
                         <vs-th sort-key="id">Contact ID</vs-th>
                         <vs-th sort-key="name">Name</vs-th>
-                        <vs-th>Account Number</vs-th>
+                        <vs-th sort-key="account_number">Account Number</vs-th>
                         <vs-th>Mobile</vs-th>
                         <vs-th>Gender</vs-th>
                         <vs-th>Action</vs-th>
@@ -159,9 +159,8 @@ export default {
         },
         handleSort(sort, order) {
             // console.error('sort', sort, order)
-            if (!order)     return
-            const mapSort   = {'id': 'contacts.id', 'name': 'contacts.name', 'account_number': 'account_number'}
-            this.sort   = mapSort[sort]
+            if (!order || !sort)    return
+            this.sort   = sort
             this.order  = order
         }
     }
