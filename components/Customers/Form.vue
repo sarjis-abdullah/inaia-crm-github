@@ -140,8 +140,6 @@ export default {
         }
     },
     data: () => ({
-        message: "",
-        date: null,
         // account_number_rule: "required|neq:$",
         // account_username_rule: "required|neq:$",
         // account_email_rule: "required|email",
@@ -163,16 +161,16 @@ export default {
                 tel: {}
             }
         },
-        nominee: {
-            type_id: 4,
-            is_active: 1,
-            person_data: {},
-            address: {
-                type_id: 7,
-                is_primary: 1,
-                is_active: 1
-            }
-        },
+        // nominee: {
+        //     type_id: 4,
+        //     is_active: 1,
+        //     person_data: {},
+        //     address: {
+        //         type_id: 7,
+        //         is_primary: 1,
+        //         is_active: 1
+        //     }
+        // },
         firstName: '',
         lastName: '',
         email: '',
@@ -225,23 +223,23 @@ export default {
                     },
                     channels: this.customer.channels,
                 },
-                nominee: {
-                    contact: {
-                        id: this.nominee.id,
-                        name: this.nominee.name,
-                        type_id: this.nominee.type_id,
-                        is_active: this.nominee.is_active,
-                        relation_type_id: 4
-                    },
-                    person_data: {
-                        ...this.nominee.person_data,
-                        contact_id: this.nominee.id,
-                    },
-                    address: {
-                        ...this.nominee.address,
-                        contact_id: this.nominee.id,
-                    }
-                }
+                // nominee: {
+                //     contact: {
+                //         id: this.nominee.id,
+                //         name: this.nominee.name,
+                //         type_id: this.nominee.type_id,
+                //         is_active: this.nominee.is_active,
+                //         relation_type_id: 4
+                //     },
+                //     person_data: {
+                //         ...this.nominee.person_data,
+                //         contact_id: this.nominee.id,
+                //     },
+                //     address: {
+                //         ...this.nominee.address,
+                //         contact_id: this.nominee.id,
+                //     }
+                // }
             }
             if (!data.customer.account.password) {
                 // if emprty then keep the old passowrd
@@ -268,15 +266,38 @@ export default {
         singleClientData: {
             handler(value) {
                 if (this.singleClientData) {
-                    console.log('data', value)
+                    // console.log('data', value)
                     Object.keys(value).forEach(key => {
+                        console.log(key, value[key])
                         if (this[key] !== undefined) {
+                            // Object.keys(value[key]).forEach(childKey => {
+                            //     console.log(childKey, value[key][childKey])
+                            //     if (value[key][childKey] && !Array.isArray(value[key][childKey])) {
+                            //         this.$set(this[key], childKey, JSON.parse(JSON.stringify(value[key][childKey])))
+                            //     }
+                            // })
                             this.$set(this, key, JSON.parse(JSON.stringify(value[key])))
                         }
                     })
                     
+                    if (!this.customer.account) {
+                        this.customer.account = {
+                            is_active: 0
+                        }
+                    }
+                    if (!this.customer.address) {
+                        this.customer.address = {
+                            type_id: 7,
+                            is_primary: 1,
+                            is_active: 1
+                        }
+                    }
                     this.customer.channels  = this.filterChannels(this.customer.channels)
-                    if (!this.customer.person_data.nationality) {
+                    if (!this.customer.person_data) {
+                        this.customer.person_data = {
+                            nationality: {}
+                        }
+                    } else if (!this.customer.person_data.nationality) {
                         this.customer.person_data.nationality = {}
                     }
                     // console.log('channels2', this.customer)
@@ -362,12 +383,6 @@ export default {
             return {
                 tel: {}
             };  
-        },
-        toggleAlert(alertType = "info", message) {
-            this.isBorder = true
-            this.alertType = alertType
-            this.message = message
-            this.showAlert = true
         }
     }
 }

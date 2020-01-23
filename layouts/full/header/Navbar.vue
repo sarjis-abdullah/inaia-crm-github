@@ -11,8 +11,8 @@
       Template logo
       -->
       <div slot="title" class="themelogo">
-        <img :src="logo" v-if="logo" alt="Dashboard" />
-        <span class="logo-text" v-if="title">{{ title }}</span>
+        <img :src="logo" v-if="logo" alt="Dashboard" width="120" style="margin-right: 10px" />
+        <span class="logo-text" v-if="title" style="margin-top: 5px; font-weight: 500">{{ title }}</span>
       </div>
       <!---
       Mobile toggle
