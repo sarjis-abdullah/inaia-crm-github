@@ -12,10 +12,6 @@ export default function({ route, store, redirect }) {
     const gets = store.getters
     // store.dispatch('auth/logout')
 
-    if (gets['types/loading'] === 0) {
-        store.dispatch('types/fetchTypes')
-    }
-
     if (!route.matched.length) {
         return redirect(404, '/Error404')
     }
@@ -26,7 +22,7 @@ export default function({ route, store, redirect }) {
         hasRedirect = true
         redirect('/dashboards/classic')
     } else if (gets['auth/loading'] === 0 && gets['auth/auth']) {
-        if (!gets['auth/account']) {
+        if (!gets['auth/user']) {
             // in case only cookie exists in localhost
             store.dispatch('auth/fetchLoggedIn')
                 .then( () => {
@@ -34,6 +30,8 @@ export default function({ route, store, redirect }) {
                     if (!gets['auth/authorized']) {
                         // console.log('no account')
                         store.dispatch('auth/logout')
+                    } else if (gets['types/loading'] === 0) {
+                        store.dispatch('types/fetchTypes')
                     }
                 }).catch( err => {
                     console.log('err', err)

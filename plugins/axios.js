@@ -9,7 +9,8 @@ export default function({ store, $axios }) {
     $axios.interceptors.response.use(
         response => response,
         error => {
-            if (error.response.status === 401) {
+            console.error('axios-error', error)
+            if (error.response && error.response.status === 401) {
                 store.dispatch('auth/logout')
                 return
             }

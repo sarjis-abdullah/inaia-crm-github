@@ -133,8 +133,8 @@
                 />
               </div>
               <div class="ml-2">
-                <h4 class="mb-0 text-white">{{ account && account.username }}</h4>
-                <p class="mb-0">{{ account && account.email }}</p>
+                <h4 class="mb-0 text-white">{{ loggedin && loggedin.account && loggedin.account.username }}</h4>
+                <p class="mb-0">{{ loggedin && loggedin.channels && getChannelInfo(loggedin.channels, 'email') }}</p>
               </div>
             </div>
 
@@ -230,13 +230,20 @@ export default {
     changeLanguage(locale) {
       this.$i18n.locale = locale;
     },
+    getChannelInfo(channels, type) {
+        let channel = channels && channels.length && channels.find( c => c.type.value == type )
+        if (channel) {
+            return channel.value
+        }
+        return null
+    },
     logout() {
         this.$store.dispatch('auth/logout')
     }
   },
   computed: {
     ...mapGetters({
-      account: "auth/account",
+      loggedin: "auth/user",
     }),
     getCurrentLanguage() {
       const locale = this.$i18n.locale;
