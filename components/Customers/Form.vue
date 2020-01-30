@@ -12,7 +12,7 @@
                     <div v-if="failed && invalid" style="color: red">{{ failed }}</div>
                     <vs-row>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="firstNameProvider" name="First Name" rules="required" v-slot="{ errors }">
+                            <ValidationProvider ref="firstNameProvider" vid="customer.name" name="First Name" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="First Name"
                                     placeholder="First Name"
@@ -23,7 +23,7 @@
                                     val-icon-danger="clear"
                                 />
                             </ValidationProvider>
-                            <ValidationProvider ref="lastNameProvider" name="Last Name" rules="required" v-slot="{ errors }">
+                            <ValidationProvider ref="lastNameProvider" vid="customer.person_data.surname" name="Last Name" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="Last Name"
                                     placeholder="Last Name"
@@ -45,7 +45,7 @@
                             </vs-select>
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="nationalityProvider" name="Telephone" rules="required">
+                            <ValidationProvider ref="nationalityProvider"  vid="customer.person_data.nationality.id" name="Nationality" rules="required">
                                 <vs-select class="w-100 mt-4" label="Nationality" v-model="customer.person_data.nationality.id">
                                 <vs-select-item
                                     :key="index"
@@ -55,23 +55,11 @@
                                 />
                                 </vs-select>
                             </ValidationProvider>
-                            <ValidationProvider ref="telProvider" name="Telephone" rules="required" v-slot="{ errors }">
-                                <vs-input
-                                    label="Mobile number"
-                                    placeholder="0123456789"
-                                    v-model="customer.channels.tel.value"
-                                    class="w-100 mt-4"
-                                    type="tel"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert valid telephone"
-                                    val-icon-danger="clear"
-                                />
-                            </ValidationProvider>
-                            <ValidationProvider ref="emailProvider" name="Email" rules="required|email" v-slot="{ errors }">
+                            <ValidationProvider ref="emailProvider" vid="customer.channels.email.value" name="Email" rules="required|email" v-slot="{ errors }">
                                 <vs-input
                                     label="Email"
                                     placeholder="example@email.com"
-                                    v-model="customer.account.email"
+                                    v-model="customer.channels.email.value"
                                     class="w-100 mt-4"
                                     type="email"
                                     :danger="errors && !!errors.length"
@@ -79,7 +67,19 @@
                                     val-icon-danger="clear"
                                 />
                             </ValidationProvider>
-                            <ValidationProvider ref="passwordProvider" name="Password" v-slot="{ errors }">
+                            <ValidationProvider ref="telProvider" vid="customer.channels.mobile.value" name="Mobile Number" rules="required" v-slot="{ errors }">
+                                <vs-input
+                                    label="Mobile number"
+                                    placeholder="0123456789"
+                                    v-model="customer.channels.mobile.value"
+                                    class="w-100 mt-4"
+                                    type="tel"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please insert valid Mobile Number"
+                                    val-icon-danger="clear"
+                                />
+                            </ValidationProvider>
+                            <ValidationProvider ref="passwordProvider" vid="customer.account.password" name="Password" v-slot="{ errors }">
                                 <vs-input
                                     label="Password"
                                     placeholder="*******"
@@ -97,8 +97,8 @@
                     <hr class="custom-hr" />
                     <vs-row>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <vs-input label="Address Line 1" placeholder="address line 1" v-model="customer.address.street" class="w-100 mt-4" />
-                            <vs-input label="Address Line 2" placeholder="address line 2" v-model="customer.address.street_number" class="w-100 mt-4" />
+                            <vs-input label="Address Line 1" placeholder="address line 1" v-model="customer.address.line1" class="w-100 mt-4" />
+                            <vs-input label="Address Line 2" placeholder="address line 2" v-model="customer.address.line2" class="w-100 mt-4" />
                             <vs-input label="Postal Code" placeholder="postal code" v-model="customer.address.postal_code" class="w-100 mt-4" />
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
@@ -140,57 +140,55 @@ export default {
         }
     },
     data: () => ({
-        // account_number_rule: "required|neq:$",
-        // account_username_rule: "required|neq:$",
-        // account_email_rule: "required|email",
         customer: {
-            type_id: 3,
+            type_id: 0,
             is_active: 1,
             account: {
+                type_id: 0,
                 is_active: 0,
             },
             person_data: {
                 nationality: {}
             },
             address: {
-                type_id: 7,
+                type_id: 0,
                 is_primary: 1,
                 is_active: 1,
             },
             channels: {
-                tel: {}
+                email: {},
+                mobile: {}
             }
         },
-        // nominee: {
-        //     type_id: 4,
-        //     is_active: 1,
-        //     person_data: {},
-        //     address: {
-        //         type_id: 7,
-        //         is_primary: 1,
-        //         is_active: 1
-        //     }
-        // },
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        dob: '',
-        gender: '',
-        tel: '',
-        nationality: '',
-        street: '',
-        streetNumber: '',
-        postalCode: '',
-        city: '',
-        region: '',
-        country: '',
+        // customerXname: '',
+        // customerXtype_id: 18,
+        // customerXis_active: 1,
+        // customerXperson_dataXsurname: '',
+        // customerXperson_dataXbirthdate: '',
+        // customerXperson_dataXgender: '',
+        // customerXperson_dataXnationalityXid: '',
+        // customerXchannelsXemailXid: '',
+        // customerXchannelsXemailXvalue: '',
+        // customerXchannelsXmobileXid: '',
+        // customerXchannelsXmobileXvalue: '',
+        // customerXaccountXpassword: '',
+        // customerXaccountXtype_id: 3,
+        // customerXaccountXis_active: 0,
+        // customerXaddressXline1: '',
+        // customerXaddressXline2: '',
+        // customerXaddressXpostal_code: '',
+        // customerXaddressXcity: '',
+        // customerXaddressXregion: '',
+        // customerXaddressXcountry_id: '',
+        // customerXaddressXtype_id: 7,
+        // customerXaddressXis_primary: 1,
+        // customerXaddressXis_active: 1,
         countryOptions: [],
         nationalityOptions: [],
         genderOptions: [
             { text: 'Select Gender', value: '' },
-            { text: 'Male', value: 'male' },
-            { text: 'Female', value: 'female' }
+            { text: 'Male', value: 'Male' },
+            { text: 'Female', value: 'Female' }
         ],
         failed: '',
         isRequesting: false
@@ -198,6 +196,8 @@ export default {
     computed: {
         ...mapGetters({
             countryList: "clients/countryList",
+            countryListLoaded: "clients/countryListLoaded",
+            types: "types/types"
         }),
         savedClientData() {
             const data  = {
@@ -223,33 +223,16 @@ export default {
                     },
                     channels: this.customer.channels,
                 },
-                // nominee: {
-                //     contact: {
-                //         id: this.nominee.id,
-                //         name: this.nominee.name,
-                //         type_id: this.nominee.type_id,
-                //         is_active: this.nominee.is_active,
-                //         relation_type_id: 4
-                //     },
-                //     person_data: {
-                //         ...this.nominee.person_data,
-                //         contact_id: this.nominee.id,
-                //     },
-                //     address: {
-                //         ...this.nominee.address,
-                //         contact_id: this.nominee.id,
-                //     }
-                // }
             }
             if (!data.customer.account.password) {
-                // if emprty then keep the old passowrd
+                // if empty then keep the old passowrd
                 delete data.customer.account['password']
             }
             return data
         }
     },
     mounted() {
-        if (this.countryList.length < 200) {
+        if (!this.countryListLoaded || this.countryList.length < 200) {
             this.initCountryList();
         } else {
             this.constructCountryOptions(this.countryList);
@@ -267,27 +250,28 @@ export default {
             handler(value) {
                 if (this.singleClientData) {
                     // console.log('data', value)
+                    // if (this.singleClientData && typeof this.singleClientData === 'object' && Object.keys(this.singleClientData).length !== 0) {
+                    //     this.iterate(this.singleClientData)
+                    // }
                     Object.keys(value).forEach(key => {
-                        console.log(key, value[key])
+                        // console.log(key, typeof value[key] == 'object' ? {...value[key]} : value[key])
                         if (this[key] !== undefined) {
-                            // Object.keys(value[key]).forEach(childKey => {
-                            //     console.log(childKey, value[key][childKey])
-                            //     if (value[key][childKey] && !Array.isArray(value[key][childKey])) {
-                            //         this.$set(this[key], childKey, JSON.parse(JSON.stringify(value[key][childKey])))
-                            //     }
-                            // })
                             this.$set(this, key, JSON.parse(JSON.stringify(value[key])))
                         }
                     })
                     
+                    if (!this.customer.type_id) {
+                        this.customer.type_id   = this.types && this.types.person ? this.types.person : 0
+                    }
                     if (!this.customer.account) {
                         this.customer.account = {
+                            type_id: this.types && this.types.customer ? this.types.customer : 0,
                             is_active: 0
                         }
                     }
                     if (!this.customer.address) {
                         this.customer.address = {
-                            type_id: 7,
+                            type_id: this.types && this.types.main_address ? this.types.main_address : 0,
                             is_primary: 1,
                             is_active: 1
                         }
@@ -302,6 +286,7 @@ export default {
                     }
                     // console.log('channels2', this.customer)
                 }
+                // console.log('customer', {...this.customer})
             },
             immediate: true
         },
@@ -351,11 +336,9 @@ export default {
             }
         },
         submitClient() {
-            // console.log(this.savedClientData)
             this.$store
                 .dispatch("clients/submitClient", this.savedClientData)
                 .then(response => {
-                    console.log('clients', response.data)
                     // let data    = response.data.data
                     // if (data && (data.email || data.phone)) {
                     //     this.success    = true  
@@ -363,7 +346,7 @@ export default {
                     this.$router.push('/customers')
                 }).catch( err => {
                     this.failed = err.response.data.message
-                    this.$refs.setErrors(err.response.data.errors)          
+                    this.$refs.observer.setErrors(err.response.data.errors)          
                 }).finally(() => {
                     this.isRequesting   = false
                 })
@@ -373,17 +356,44 @@ export default {
                 let channels  = {}
                 obj.forEach(channel => {
                     channels[channel.type.value]  = channel
-                });
+                    // let key = 'customerXchannelsX' + channel.type.value
+                    // if (this[key + 'Xid'] !== undefined) {
+                    //     this[key + 'Xid']   = channel.id
+                    // }
+                    // if (this[key + 'Xvalue'] !== undefined) {
+                    //     this[key + 'Xvalue']   = channel.value
+                    // }
+                })
                 // console.log('channels', channels);
                 return {
-                    tel: {},
+                    email:{},
+                    mobile: {},
                     ...channels
                 }
             }
             return {
-                tel: {}
-            };  
+                email:{},
+                mobile: {}
+            }
+        // },
+        // iterate(obj, parentKey='') {
+        //     Object.keys(obj).forEach(key => {
+        //         let actualParentKey = parentKey ? parentKey + '.' + key : key
+        //         console.log('key', actualParentKey, 'isObject', typeof obj[key])
+        //         if (key === 'channels') {
+        //             this.filterChannels(obj[key])
+        //         } else if (obj[key] && typeof obj[key] === 'object' && Object.keys(obj[key]).length !== 0) {
+        //             this.iterate(obj[key], actualParentKey)
+        //         } else {
+        //             let newKey  = actualParentKey.replace(/\./g, 'X')
+        //             if (this[newKey] !== undefined) {
+        //                 console.log('key', newKey, 'value', obj[key])
+        //                 this.$set(this, newKey, JSON.parse(JSON.stringify(obj[key])))
+        //             }
+        //         }
+        //     })
         }
     }
 }
 </script>
+

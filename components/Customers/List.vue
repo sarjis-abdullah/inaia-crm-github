@@ -45,18 +45,18 @@
                                     />
                                 </div>
                                 <div class>
-                                    <h5 class="mb-0 font-16">{{ tr.name + ' ' + (tr.person_data ? tr.person_data.surname : 'n/a') }}</h5>
-                                    <span class="text-muted">{{ tr.account ? tr.account.email : 'N/A' }}</span>
+                                    <h5 class="mb-0 font-16">{{ tr.name + (tr.person_data ? ' ' + tr.person_data.surname : '') }}</h5>
+                                    <span class="text-muted">{{ getChannelInfo(tr.channels, 'email') }}</span>
                                 </div>
                                 </div>
                             </vs-td>
                             <vs-td :data="tr.account ? tr.account.account_number : 'n/a'">
                                 <span class="badge badge-light badge-pill border border-muted">{{ tr.account ? tr.account.account_number : 'N/A' }}</span>
                             </vs-td>
-                            <vs-td :data="getMobileNo(tr.channels) || 'n/a'">
+                            <vs-td :data="getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'n/a'">
                                 <div class="d-flex align-items-center">
                                 <i class="mdi mdi-phone-classic mr-2 display-8"></i>
-                                <span class="text-muted">{{getMobileNo(tr.channels) || 'N/A'}}</span>
+                                <span class="text-muted">{{getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'N/A'}}</span>
                                 </div>
                             </vs-td>
                             <vs-td :data="tr.person_data ? tr.person_data.gender : 'n/a'">
@@ -64,7 +64,9 @@
                                     {{ tr.person_data && tr.person_data.gender ? tr.person_data.gender : 'N/A' }}
                                 </span>
                             </vs-td>
-                            <vs-td><nuxt-link :to="'/customers/edit/'+tr.id">Edit</nuxt-link></vs-td>
+                            <vs-td>
+                                <vs-button @click.native="() => $router.push('/customers/edit/'+tr.id)" color="primary" type="border">Edit</vs-button>
+                            </vs-td>
                         </vs-tr>
                     </template>
 
@@ -95,6 +97,7 @@ export default {
             name: '',
             gender: '',
             initiated: false,
+            debouced: null,
             perPage: 5,
             page: 1,
             totalTableData: 0,
@@ -102,12 +105,16 @@ export default {
         }
     },
     computed: {
+        ...mapGetters({
+            types: "types/types"
+        }),
         searchQuery() {
             return (
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
-                `&per_page=${this.perPage || 5}`
+                `&per_page=${this.perPage || 5}` +
+                `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
             )
         },
         totalPages() {
@@ -119,21 +126,19 @@ export default {
             handler() {
                 this.fetchClientData(this.searchQuery)
             },
-            immediate: true
+            immediate: true,
         }
     },
     mounted() {
-        this.fetchClientData(this.searchQuery)
     },
     methods: {
         fetchClientData(pageQuery) {
-            if (!this.initiated) {
+            if (!this.initiated && this.types && this.types.person) {
                 this.initiated  = true
                 this.$store
                     .dispatch("clients/initClientData", pageQuery)
                     .then(response => {
                         this.data = response.data.data
-                        console.log('data', this.data)
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false
@@ -143,22 +148,26 @@ export default {
         newCustomer() {
             this.$router.push('/customers/add')
         },
-        getMobileNo(channels) {
-            if (channels && channels.length && channels[0].type && channels[0].type.value == 'tel') {
-                return channels[0].value
+        getChannelInfo(channels, type) {
+            let channel = channels && channels.length && channels.find( c => c.type.value == type )
+            if (channel) {
+                return channel.value
             }
             return null
         },
         handleSearch(search) {
-            // console.error('search-key', search)
-            if (search.length > 1) {
-                this.search = search
-            } else if (this.search) {
-                this.search = ''
+            if (this.debouced) {
+                clearTimeout(this.debouced)
             }
+            this.debouced   = setTimeout(() => {
+                if (search.length > 1) {
+                    this.search = search
+                } else if (this.search) {
+                    this.search = ''
+                }
+            }, 400)
         },
         handleSort(sort, order) {
-            // console.error('sort', sort, order)
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order

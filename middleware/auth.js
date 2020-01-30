@@ -12,6 +12,10 @@ export default function({ route, store, redirect }) {
     const gets = store.getters
     // store.dispatch('auth/logout')
 
+    if (gets['types/loading'] === 0) {
+        store.dispatch('types/fetchTypes')
+    }
+
     if (!route.matched.length) {
         return redirect(404, '/Error404')
     }

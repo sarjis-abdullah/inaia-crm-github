@@ -162,6 +162,7 @@
               type="filled"
               size="small"
               class="rounded-button ml-3 mb-3"
+              @click="logout"
             >Logout</vs-button>
           </div>
         </vs-dropdown-menu>
@@ -228,6 +229,9 @@ export default {
     },
     changeLanguage(locale) {
       this.$i18n.locale = locale;
+    },
+    logout() {
+        this.$store.dispatch('auth/logout')
     }
   },
   computed: {
