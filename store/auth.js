@@ -4,14 +4,14 @@ const Cookie = process.client ? require('js-cookie') : undefined
 
 export const state = () => ({
     auth: Cookie ? (Cookie.get(authToken) ? Cookie.get(authToken) : null) : null,
-    account: JSON.parse(localStorage.getItem(userToken)) || null,
+    user: JSON.parse(localStorage.getItem(userToken)) || null,
     authorized: false,
     loading: 0
 })
 
 export const getters = {
-	account(state) {
-		return state.account
+	user(state) {
+		return state.user
     },
     
 	auth(state) {
@@ -33,16 +33,16 @@ export const mutations = {
 		Cookie.set(authToken, auth) // saving token in cookie for server rendering
 	},
 
-	setAccount(state, account) {
-		state.account = account;
-		localStorage.setItem(userToken, JSON.stringify(account))
+	user(state, user) {
+		state.user  = user;
+		localStorage.setItem(userToken, JSON.stringify(user))
 	},
 
     purgeAuth(state) {
 		localStorage.removeItem(userToken)
 		Cookie.remove(authToken)
 		state.auth          = null
-		state.account       = null
+		state.user          = null
 		state.authorized    = false
     },
 
@@ -60,10 +60,10 @@ export const actions = {
         context.commit('loading', 1)
     
         return this.$axios
-            .get('/me')
+            .get('/me?include=account,type,person_data,address,country,channels')
             .then(response => {
-                context.commit('setAccount', response.data)
-                context.commit('authorize', response.data.id ? true : false)
+                context.commit('user', response.data.data)
+                context.commit('authorize', response.data.data.id ? true : false)
                 return response
             })
             .catch(error => {

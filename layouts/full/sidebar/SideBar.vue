@@ -5,8 +5,8 @@
       
       <div class="header-sidebar text-center" slot="header">
         <vs-avatar size="70px" :src="require('@/assets/images/users/1-old.jpg')"/>
-        <h4>{{ account && account.username }}<br/>
-          <small>{{ account && account.email }}</small>
+        <h4>{{ loggedin && loggedin.account && loggedin.account.username }}<br/>
+          <small>{{ loggedin && loggedin.channels && getChannelInfo(loggedin.channels, 'email') }}</small>
         </h4>
       </div>
       
@@ -77,7 +77,7 @@ export default {
     }),
     computed: {
         ...mapGetters({
-            account: "auth/account",
+            loggedin: "auth/user",
         }),
         //This is for mobile trigger
         isSidebarActive: {
@@ -126,8 +126,15 @@ export default {
     },
     methods: {
         handleWindowResize(event) {
-        this.windowWidth = event.currentTarget.innerWidth
-        this.setSidebarWidth()
+            this.windowWidth = event.currentTarget.innerWidth
+            this.setSidebarWidth()
+        },
+        getChannelInfo(channels, type) {
+            let channel = channels && channels.length && channels.find( c => c.type.value == type )
+            if (channel) {
+                return channel.value
+            }
+            return null
         },
         setSidebarWidth() {
             if (this.windowWidth < 1170) {
