@@ -41,8 +41,9 @@ export const mutations = {
     purgeAuth(state) {
 		localStorage.removeItem(userToken)
 		Cookie.remove(authToken)
-		state.auth = null
-		state.account = null
+		state.auth          = null
+		state.account       = null
+		state.authorized    = false
     },
 
     authorize(state, bool) {
