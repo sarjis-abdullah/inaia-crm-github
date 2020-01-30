@@ -34,7 +34,16 @@
                                     val-icon-danger="clear"
                                 />
                             </ValidationProvider>
-                            <vs-input label="Date of Birth" type="date" v-model="customer.person_data.birthdate" class="w-100 mt-4" />
+                            <ValidationProvider ref="birthdateProvider" vid="customer.person_data.birthdate" name="Birth Date" rules="required" v-slot="{ errors }">
+                                <vs-input
+                                    label="Date of Birth"
+                                    type="date"
+                                    v-model="customer.person_data.birthdate"
+                                    class="w-100 mt-4"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please insert your birth date"
+                                />
+                            </ValidationProvider>
                             <vs-select class="w-100 mt-4" label="Gender" v-model="customer.person_data.gender">
                             <vs-select-item
                                 :key="index"
@@ -45,8 +54,15 @@
                             </vs-select>
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="nationalityProvider"  vid="customer.person_data.nationality.id" name="Nationality" rules="required">
-                                <vs-select class="w-100 mt-4" label="Nationality" v-model="customer.person_data.nationality.id">
+                            <ValidationProvider ref="nationalityProvider"  vid="customer.person_data.nationality.id" name="Nationality" rules="required" v-slot="{ errors }">
+                                <vs-select
+                                    class="w-100 mt-4"
+                                    label="Nationality"
+                                    placeholder="Select nationality"
+                                    v-model="customer.person_data.nationality.id"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please select your nationality"
+                                >
                                 <vs-select-item
                                     :key="index"
                                     :value="item.value"
@@ -97,21 +113,57 @@
                     <hr class="custom-hr" />
                     <vs-row>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <vs-input label="Address Line 1" placeholder="address line 1" v-model="customer.address.line1" class="w-100 mt-4" />
+                            <ValidationProvider ref="addLine1Provider" vid="customer.address.line1" name="Address Line 1" v-slot="{ errors }">
+                                <vs-input
+                                    label="Address Line 1"
+                                    placeholder="address line 1"
+                                    v-model="customer.address.line1"
+                                    class="w-100 mt-4"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please enter Line 1 of your address"
+                                />
+                            </ValidationProvider>
                             <vs-input label="Address Line 2" placeholder="address line 2" v-model="customer.address.line2" class="w-100 mt-4" />
-                            <vs-input label="Postal Code" placeholder="postal code" v-model="customer.address.postal_code" class="w-100 mt-4" />
+                            <ValidationProvider ref="postalCodeProvider" vid="customer.address.postal_code" name="Postal Code" v-slot="{ errors }">
+                                <vs-input
+                                    label="Postal Code"
+                                    placeholder="postal code"
+                                    v-model="customer.address.postal_code"
+                                    class="w-100 mt-4"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please enter postal code of your address"
+                                />
+                            </ValidationProvider>
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <vs-input label="City" placeholder="city name" v-model="customer.address.city" class="w-100 mt-4" />
+                            <ValidationProvider ref="cityProvider" vid="customer.address.city" name="City" v-slot="{ errors }">
+                                <vs-input
+                                    label="City"
+                                    placeholder="city name"
+                                    v-model="customer.address.city"
+                                    class="w-100 mt-4"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please enter city of your address"
+                                />
+                            </ValidationProvider>
                             <vs-input label="Region or State" placeholder="region or state" v-model="customer.address.region" class="w-100 mt-4" />
-                            <vs-select class="w-100 mt-4" label="Country" placeholder="select country" v-model="customer.address.country_id">
-                            <vs-select-item
-                                :key="i"
-                                :value="c.value"
-                                :text="c.text"
-                                v-for="(c,i) in countryOptions"
-                            />
-                            </vs-select>
+                            <ValidationProvider ref="cityProvider" vid="customer.address.country_id" name="City" v-slot="{ errors }">
+                                <vs-select
+                                    class="w-100 mt-4"
+                                    label="Country"
+                                    placeholder="Select country"
+                                    v-model="customer.address.country_id"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please select your country"
+                                >
+                                <vs-select-item
+                                    :key="i"
+                                    :value="c.value"
+                                    :text="c.text"
+                                    v-for="(c,i) in countryOptions"
+                                />
+                                </vs-select>
+                            </ValidationProvider>
                         </vs-col>
                     </vs-row>
                     <div class="btn-alignment mt-4">
