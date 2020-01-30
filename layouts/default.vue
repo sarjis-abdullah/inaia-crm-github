@@ -62,6 +62,11 @@ export default {
             this.toggleBodyClass(val)
         }
     },
+    head() {
+        return {
+            title: 'CRM Golddinar'
+        }
+    },
     methods: {
         toggleBodyClass(className) {
             if (className == 'dark') {
