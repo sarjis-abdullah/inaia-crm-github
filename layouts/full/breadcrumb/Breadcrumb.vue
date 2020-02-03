@@ -1,7 +1,7 @@
 <template>
   <vs-row>
     <vs-col vs-lg="6" vs-xs="12">
-      <h3 class="mt-2 mb-3">{{ $route.name }}</h3>
+      <h3 class="mt-2 mb-3">{{ getAltTitle() }}</h3>
     </vs-col>
     <vs-col vs-lg="6" vs-xs="12" class="d-none d-md-block">
       <vs-breadcrumb v-if="$route.meta.breadcrumb" align="right">
@@ -29,6 +29,21 @@
 
 <script>
 export default {
-  name: "Breadcrumb"
-};
+    name: "Breadcrumb",
+    data() {
+        return {
+            altComponentTitles: {
+                'customers': 'Contact List',
+                'customers-add': 'Add Contact',
+                'customers-edit-id': 'Edit Contact',
+            }
+        }
+    },
+    methods: {
+        getAltTitle() {
+            // console.error('route', {...this.$route})
+            return this.altComponentTitles[this.$route.name] || this.$route.name
+        }
+    }
+}
 </script>
