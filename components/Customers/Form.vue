@@ -406,8 +406,8 @@ export default {
                 })
         },
         checkTypes(data) {
-            if (!data.customer.type_id) {
-                data.customer.type_id   = this.types && this.types.person ? this.types.person : 0
+            if (!data.customer.contact.type_id) {
+                data.customer.contact.type_id   = this.types && this.types.person ? this.types.person : 0
             }
             if (data.customer.account && !data.customer.account.type_id) {
                 data.customer.account.type_id   = this.types && this.types.customer ? this.types.customer : 0
