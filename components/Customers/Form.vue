@@ -12,6 +12,23 @@
                     <div v-if="failed && invalid" style="color: red">{{ failed }}</div>
                     <vs-row>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
+                            <ValidationProvider ref="contactTypeProvider"  vid="selectedContactType" name="Contact Type" rules="required" v-slot="{ errors }">
+                                <vs-select
+                                    class="w-100 mt-4"
+                                    label="Contact Type"
+                                    placeholder="Select contact type"
+                                    v-model="selectedContactType"
+                                    :danger="errors && !!errors.length"
+                                    danger-text="Please select contact type"
+                                >
+                                <vs-select-item
+                                    :key="index"
+                                    :value="item.value"
+                                    :text="item.text"
+                                    v-for="(item,index) in contactTypes"
+                                />
+                                </vs-select>
+                            </ValidationProvider>
                             <ValidationProvider ref="firstNameProvider" vid="customer.name" name="First Name" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="First Name"
@@ -23,7 +40,7 @@
                                     val-icon-danger="clear"
                                 />
                             </ValidationProvider>
-                            <ValidationProvider ref="lastNameProvider" vid="customer.person_data.surname" name="Last Name" rules="required" v-slot="{ errors }">
+                            <ValidationProvider v-if="selectedContactType == 'person'" ref="lastNameProvider" vid="customer.person_data.surname" name="Last Name" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="Last Name"
                                     placeholder="Last Name"
@@ -34,7 +51,7 @@
                                     val-icon-danger="clear"
                                 />
                             </ValidationProvider>
-                            <ValidationProvider ref="birthdateProvider" vid="customer.person_data.birthdate" name="Birth Date" rules="required" v-slot="{ errors }">
+                            <ValidationProvider v-if="selectedContactType == 'person'" ref="birthdateProvider" vid="customer.person_data.birthdate" name="Birth Date" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="Date of Birth"
                                     type="date"
@@ -44,7 +61,7 @@
                                     danger-text="Please insert your birth date"
                                 />
                             </ValidationProvider>
-                            <vs-select class="w-100 mt-4" label="Gender" v-model="customer.person_data.gender">
+                            <vs-select v-if="selectedContactType == 'person'" class="w-100 mt-4" label="Gender" v-model="customer.person_data.gender">
                             <vs-select-item
                                 :key="index"
                                 :value="item.value"
@@ -54,7 +71,7 @@
                             </vs-select>
                         </vs-col>
                         <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="nationalityProvider"  vid="customer.person_data.nationality.id" name="Nationality" rules="required" v-slot="{ errors }">
+                            <ValidationProvider v-if="selectedContactType == 'person'" ref="nationalityProvider" vid="customer.person_data.nationality.id" name="Nationality" rules="required" v-slot="{ errors }">
                                 <vs-select
                                     class="w-100 mt-4"
                                     label="Nationality"
@@ -242,6 +259,11 @@ export default {
             { text: 'Male', value: 'Male' },
             { text: 'Female', value: 'Female' }
         ],
+        contactTypes: [
+            { text: 'Person', value: 'person' },
+            { text: 'Company', value: 'company' }
+        ],
+        selectedContactType: 'person',
         failed: '',
         isRequesting: false
     }),
@@ -332,6 +354,9 @@ export default {
                             is_active: 1
                         }
                     }
+                    if (this.customer.type_id && this.types) {
+                        this.selectedContactType    = Object.keys(this.types).find( k => this.types[k] == this.customer.type_id )
+                    }
                     this.customer.channels  = this.filterChannels(this.customer.channels)
                     if (!this.customer.person_data) {
                         this.customer.person_data = {
@@ -407,7 +432,7 @@ export default {
         },
         checkTypes(data) {
             if (!data.customer.contact.type_id) {
-                data.customer.contact.type_id   = this.types && this.types.person ? this.types.person : 0
+                data.customer.contact.type_id   = this.types && this.types[this.selectedContactType] ? this.types[this.selectedContactType] : 0
             }
             if (data.customer.account && !data.customer.account.type_id) {
                 data.customer.account.type_id   = this.types && this.types.customer ? this.types.customer : 0
