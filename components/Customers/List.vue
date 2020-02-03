@@ -132,8 +132,8 @@ export default {
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
-                `&per_page=${this.perPage || 5}` +
-                `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
+                `&per_page=${this.perPage || 5}`
+                // `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
             )
         },
         totalPages() {
