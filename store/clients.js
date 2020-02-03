@@ -39,6 +39,9 @@ export const mutations = {
     initClientData(state, clientData) {
         state.clientData = clientData
     },
+    removeClient(state, clientIndex) {
+        state.clientData = state.clientData.splice(clientIndex, 1)
+    },
     singleClientData(state, singleClientData) {
         state.singleClientData = singleClientData
     },
@@ -80,6 +83,15 @@ export const actions = {
             .then(response => {
                 const clientData = response.data.data
                 context.commit('initClientData', clientData)
+                return response
+            })
+    },
+    removeClient(context, payload) {
+        return this.$axios
+            .delete(`/contacts/${ payload }`)
+            .then(response => {
+                const clientIndex = context.state.clientData.findIndex( c => c.id == payload)
+                context.commit('removeClient', clientIndex)
                 return response
             })
     },

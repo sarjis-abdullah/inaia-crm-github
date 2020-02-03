@@ -3,7 +3,7 @@
         <vs-col vs-lg="12" vs-xs="12" vs-sm="12">
             <vs-card>
                 <div slot="header">
-                    <h3 class="card-title mb-0">Other Sample Form</h3>
+                    <h3 class="card-title mb-0">Contact Form</h3>
                 </div>
 
                 <ValidationObserver ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="validate">
@@ -71,7 +71,7 @@
                                 />
                                 </vs-select>
                             </ValidationProvider>
-                            <ValidationProvider ref="emailProvider" vid="customer.channels.email.value" name="Email" rules="required|email" v-slot="{ errors }">
+                            <ValidationProvider ref="emailProvider" vid="customer.channels.email.value" name="Email" rules="required" v-slot="{ errors }">
                                 <vs-input
                                     label="Email"
                                     placeholder="example@email.com"
@@ -167,7 +167,7 @@
                         </vs-col>
                     </vs-row>
                     <div class="btn-alignment mt-4">
-                        <vs-button button="submit" color="success" type="filled">Save</vs-button>
+                        <vs-button button="submit" color="success" type="filled" :disabled="isRequesting">Save</vs-button>
                         <vs-button color="dark" type="filled" @click="() => $router.push('/customers')">Cancel</vs-button>
                     </div>
                 </ValidationObserver>
@@ -252,7 +252,28 @@ export default {
             types: "types/types"
         }),
         savedClientData() {
-            const data  = {
+            return {
+                customer: {
+                    contact: {
+                        name: this.customer.name,
+                        type_id: this.customer.type_id,
+                        is_active: this.customer.is_active
+                    },
+                    person_data: {
+                        ...this.customer.person_data
+                    },
+                    address: {
+                        ...this.customer.address
+                    },
+                    account: {
+                        ...this.customer.account
+                    },
+                    channels: this.customer.channels
+                }
+            }
+        },
+        updatedClientData() {
+            return {
                 id: this.customer.id,
                 customer: {
                     contact: {
@@ -273,14 +294,9 @@ export default {
                         ...this.customer.account,
                         contact_id: this.customer.id
                     },
-                    channels: this.customer.channels,
-                },
+                    channels: this.customer.channels
+                }
             }
-            if (!data.customer.account.password) {
-                // if empty then keep the old passowrd
-                delete data.customer.account['password']
-            }
-            return data
         }
     },
     mounted() {
@@ -289,13 +305,6 @@ export default {
         } else {
             this.constructCountryOptions(this.countryList);
         }
-        // this.$validator.extend('neq', {
-        //     getMessage: fld => 'The '+ fld +' has already been taken.',
-        //     validate: (newValue, [oldValue]) => {
-        //         // console.log('new-value:', newValue, ', old-value: ', oldValue)
-        //         return newValue != oldValue
-        //     }
-        // })
     },
     watch: {
         singleClientData: {
@@ -312,18 +321,13 @@ export default {
                         }
                     })
                     
-                    if (!this.customer.type_id) {
-                        this.customer.type_id   = this.types && this.types.person ? this.types.person : 0
-                    }
                     if (!this.customer.account) {
                         this.customer.account = {
-                            type_id: this.types && this.types.customer ? this.types.customer : 0,
                             is_active: 0
                         }
                     }
                     if (!this.customer.address) {
                         this.customer.address = {
-                            type_id: this.types && this.types.main_address ? this.types.main_address : 0,
                             is_primary: 1,
                             is_active: 1
                         }
@@ -350,12 +354,6 @@ export default {
             }
         }
     },
-    // provide() {
-    //     return {
-    //     $validator: this.$validator,
-    //     // errors: this.errors
-    //     }
-    // },
     methods: {
         initCountryList() {
             this.$store.dispatch("clients/initCountryList");
@@ -377,24 +375,28 @@ export default {
             this.countryOptions     = countryList;
             this.nationalityOptions = nationalityList;
         },
-        validate() {
-            this.isRequesting   = true
-            const isValid       = this.$refs.observer.validate()
-            if (isValid) {
-                this.submitClient()
+        async validate() {
+            const isValid       = await this.$refs.observer.validate()
+            if (isValid && !this.isRequesting) {
+                this.submitClient(this.customer.id ? this.updatedClientData : this.savedClientData)
             } else {
                 console.log('invalid request')
                 this.isRequesting   = false
             }
         },
-        submitClient() {
+        submitClient(data) {
+            this.isRequesting   = true
+            this.checkTypes(data)
+            if (data.customer.account && !data.customer.account.password) {
+                // if empty then keep the account table intact
+                delete data.customer['account']
+                // if empty then keep the old passowrd
+                // delete data.customer.account['password']
+            }
+
             this.$store
-                .dispatch("clients/submitClient", this.savedClientData)
+                .dispatch("clients/submitClient", data)
                 .then(response => {
-                    // let data    = response.data.data
-                    // if (data && (data.email || data.phone)) {
-                    //     this.success    = true  
-                    // }
                     this.$router.push('/customers')
                 }).catch( err => {
                     this.failed = err.response.data.message
@@ -402,6 +404,17 @@ export default {
                 }).finally(() => {
                     this.isRequesting   = false
                 })
+        },
+        checkTypes(data) {
+            if (!data.customer.type_id) {
+                data.customer.type_id   = this.types && this.types.person ? this.types.person : 0
+            }
+            if (data.customer.account && !data.customer.account.type_id) {
+                data.customer.account.type_id   = this.types && this.types.customer ? this.types.customer : 0
+            }
+            if (data.customer.address && !data.customer.address.type_id) {
+                data.customer.address.type_id   = this.types && this.types.main_address ? this.types.main_address : 0
+            }
         },
         filterChannels(obj) {
             if (obj && Array.isArray(obj) && obj.length) {

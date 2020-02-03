@@ -39,7 +39,7 @@
       </div>
       
       <div class="footer-sidebar" slot="footer">
-        <vs-button icon="reply" color="danger" type="flat" to="/login"><span class="hide-in-minisidebar">log out</span></vs-button>
+        <vs-button icon="reply" color="danger" type="flat" @click="logout"><span class="hide-in-minisidebar">log out</span></vs-button>
       </div>
       
     </vs-sidebar>
@@ -151,7 +151,9 @@ export default {
                 else this.$store.dispatch("vuesax/updateSidebarWidth", "default")
             }
         },
-
+        logout() {
+            this.$store.dispatch('auth/logout')
+        }
     },
     mounted() {
         this.$nextTick(() => {

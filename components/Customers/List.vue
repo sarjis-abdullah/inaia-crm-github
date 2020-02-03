@@ -18,16 +18,15 @@
                     class="text-nowrap"
                 >
                     <template slot="header">
-                        <h3> Customer List </h3>
-                        <!-- <vs-button color="primary" type="gradient" icon="person_add" @click="newCustomer"> add customer </vs-button> -->
+                        <vs-button color="primary" type="gradient" icon="person_add" @click="newCustomer"> Add Contact </vs-button>
                     </template>
 
                     <template slot="thead">
                         <vs-th sort-key="id">Contact ID</vs-th>
                         <vs-th sort-key="name">Name</vs-th>
+                        <vs-th>Contact</vs-th>
                         <vs-th sort-key="account_number">Account Number</vs-th>
-                        <vs-th>Mobile</vs-th>
-                        <vs-th>Gender</vs-th>
+                        <vs-th sort-key="type_id">Contact Type</vs-th>
                         <vs-th>Action</vs-th>
                     </template>
 
@@ -36,36 +35,45 @@
                             <vs-td :data="tr.id"><span class="badge badge-light badge-pill border border-muted">{{ tr.id }}</span></vs-td>
                             <vs-td :data="tr.name">
                                 <div class="d-flex no-block align-items-center">
-                                <div class="mr-2">
-                                    <img
-                                    :src="require('@/assets/images/users/3.jpg')"
-                                    alt="user"
-                                    class="rounded-circle"
-                                    width="45"
-                                    />
+                                    <div class="mr-2">
+                                        <img
+                                        :src="require('@/assets/images/users/1.jpg')"
+                                        alt="user"
+                                        class="rounded-circle"
+                                        width="45"
+                                        />
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0 font-16">{{ tr.name + (tr.person_data ? ' ' + tr.person_data.surname : '') }}</h5>
+                                    </div>
                                 </div>
-                                <div class>
-                                    <h5 class="mb-0 font-16">{{ tr.name + (tr.person_data ? ' ' + tr.person_data.surname : '') }}</h5>
-                                    <span class="text-muted">{{ getChannelInfo(tr.channels, 'email') }}</span>
+                            </vs-td>
+                            <vs-td :data="getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'n/a'">
+                                <div v-if="getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel')">
+                                    <div class="d-flex align-items-center">
+                                        <i class="mdi mr-2 mdi-phone mdi-10"></i>
+                                        <span class="text-muted">{{getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'N/A'}}</span>
+                                    </div>
                                 </div>
+                                <div v-if="getChannelInfo(tr.channels, 'email')">
+                                    <div class="d-flex align-items-center">
+                                        <i class="mdi mr-2 mdi-email mdi-10"></i>
+                                        <span class="text-muted">{{getChannelInfo(tr.channels, 'email')}}</span>
+                                    </div>
                                 </div>
                             </vs-td>
                             <vs-td :data="tr.account ? tr.account.account_number : 'n/a'">
                                 <span class="badge badge-light badge-pill border border-muted">{{ tr.account ? tr.account.account_number : 'N/A' }}</span>
                             </vs-td>
-                            <vs-td :data="getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'n/a'">
-                                <div class="d-flex align-items-center">
-                                <i class="mdi mdi-phone-classic mr-2 display-8"></i>
-                                <span class="text-muted">{{getChannelInfo(tr.channels, 'mobile') || getChannelInfo(tr.channels, 'tel') || 'N/A'}}</span>
-                                </div>
-                            </vs-td>
-                            <vs-td :data="tr.person_data ? tr.person_data.gender : 'n/a'">
-                                <span :class="{'capitalize': true, 'badge': true, 'badge-pill': true, 'text-white': tr.person_data && tr.person_data.gender, 'badge-info': tr.person_data && (tr.person_data.gender == 'male' || tr.person_data.gender == 'M'), 'badge-success': tr.person_data && (tr.person_data.gender != 'male' || tr.person_data.gender != 'M')}">
-                                    {{ tr.person_data && tr.person_data.gender ? tr.person_data.gender : 'N/A' }}
+                            <vs-td :data="getAccountType(tr) || 'n/a'">
+                                <span :class="{'capitalize': true, 'badge': true, 'badge-pill': true, 'badge-primary': getAccountType(tr) === 'customer', 'badge-success': getAccountType(tr) === 'employee', 'badge-info': getAccountType(tr) === 'partner'}">
+                                    {{ getAccountType(tr) || 'N/A' }}
                                 </span>
                             </vs-td>
                             <vs-td>
-                                <vs-button @click.native="() => $router.push('/customers/edit/'+tr.id)" color="primary" type="border">Edit</vs-button>
+                                <vs-button @click.native.stop="() => popupDetails(tr)" class="mr-2" color="warning" type="border">Details</vs-button>
+                                <vs-button @click.native.stop="() => $router.push('/customers/edit/'+tr.id)" class="mr-2" color="primary" type="border">Edit</vs-button>
+                                <vs-button @click.native.stop="() => removeConfirm(tr.id)" color="danger" type="border" v-if="!tr.account">Delete</vs-button>
                             </vs-td>
                         </vs-tr>
                     </template>
@@ -78,11 +86,19 @@
                 </template>
             </vs-card>
         </vs-col>
+        <vs-popup title="Contact Details" :active.sync="showPopup">
+            <Details :contact="selectedContact" v-if="showPopup" />
+        </vs-popup>
     </vs-row>
 </template>
 <script>
 import { mapGetters } from "vuex"
+import Details from '@/components/Customers/Details'
+
 export default {
+    components: {
+        Details
+    },
     data() {
         return {
             title: 'Customer List',
@@ -94,10 +110,13 @@ export default {
             selected: [],
             id: '',
             account_number: '',
+            type_id: '',
             name: '',
             gender: '',
             initiated: false,
             debouced: null,
+            selectedContact: null,
+            showPopup: false,
             perPage: 5,
             page: 1,
             totalTableData: 0,
@@ -132,6 +151,10 @@ export default {
     mounted() {
     },
     methods: {
+        popupDetails(contact) {
+            this.selectedContact= contact
+            this.showPopup      = true
+        },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {
                 this.initiated  = true
@@ -148,10 +171,25 @@ export default {
         newCustomer() {
             this.$router.push('/customers/add')
         },
+        removeConfirm(contactId) {
+            this.$vs.dialog({
+                type:'confirm',
+                color: 'danger',
+                title: `Confirm`,
+                text: 'Are you sure to delete contact with id "'+ contactId +'"?',
+                accept:(() => this.$store.dispatch('clients/removeClient', contactId))
+            })
+        },
         getChannelInfo(channels, type) {
             let channel = channels && channels.length && channels.find( c => c.type.value == type )
             if (channel) {
                 return channel.value
+            }
+            return null
+        },
+        getAccountType(contact) {
+            if (contact.account && contact.account.type) {
+                return contact.account.type.value
             }
             return null
         },
@@ -179,5 +217,9 @@ export default {
 <style scoped>
 .capitalize {
     text-transform: capitalize
+}
+
+.mdi-10 {
+    font-size: 18px;
 }
 </style>

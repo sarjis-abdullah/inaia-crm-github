@@ -39,6 +39,7 @@ export default {
         topbarColor: themeConfig.topbarColor,
         logotitle: themeConfig.logotitle,
         sidebarLinks: sidebarLinks,
+        appTitle: 'CRM Golddinar'
     }),
     computed: {
         sidebarWidth: function() {
@@ -64,7 +65,9 @@ export default {
     },
     head() {
         return {
-            title: 'CRM Golddinar'
+            title: this.$store.state.title
+                ? this.$store.state.title +' - '+ this.appTitle
+                : this.appTitle
         }
     },
     methods: {
@@ -82,6 +85,11 @@ export default {
     
     mounted() {
         this.toggleBodyClass(themeConfig.theme)
+        // document.title  = this.$nuxt.$children[0].title
+        //     ? this.$nuxt.$children[0].title +' - '+ this.appTitle
+        //     : this.$refs.page && this.$refs.page.title
+        //         ? this.$refs.page.title +' - '+ this.appTitle
+        //         : this.appTitle
     },
 }
 </script>
