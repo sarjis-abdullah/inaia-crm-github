@@ -177,7 +177,13 @@ export default {
                 color: 'danger',
                 title: `Confirm`,
                 text: 'Are you sure to delete contact with id "'+ contactId +'"?',
-                accept:(() => this.$store.dispatch('clients/removeClient', contactId))
+                accept:(() => {
+                    this.$store
+                        .dispatch('clients/removeClient', contactId)
+                        .then( () => {
+                            this.fetchClientData(this.searchQuery)
+                        })
+                })
             })
         },
         getChannelInfo(channels, type) {
