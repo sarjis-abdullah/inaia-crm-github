@@ -138,9 +138,10 @@ export default {
         },
         setSidebarWidth() {
             if (this.windowWidth < 1170) {
-                this.$store.commit("vuesax/IS_SIDEBAR_ACTIVE", false)
+                // console.error('error', this.$store)
+                this.$store.commit("vuesax/IS_SIDEBAR_ACTIVE", false);
                 (this.doNotClose = false),
-                this.$store.dispatch("vuesax/updateSidebarWidth", "no-sidebar")
+                this.$store.dispatch("vuesax/updateSidebarWidth", "no-sidebar");
                 
             } else {
                 this.$store.commit("vuesax/IS_SIDEBAR_ACTIVE", true)
@@ -157,13 +158,13 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
-        window.addEventListener("resize", this.handleWindowResize)
+            window.addEventListener("resize", this.handleWindowResize)
         })
         this.setSidebarWidth()
     },
     beforeDestroy() {
-        window.removeEventListener("resize", this.handleWindowResize)
         this.setSidebarWidth()
+        window.removeEventListener("resize", this.handleWindowResize)
     }
 }
 </script>

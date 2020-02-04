@@ -146,6 +146,12 @@ export default {
                 this.fetchClientData(this.searchQuery)
             },
             immediate: true,
+        },
+        types: {
+            handler() {
+                this.fetchClientData(this.searchQuery)
+            },
+            immediate: true
         }
     },
     mounted() {
