@@ -23,7 +23,7 @@ export default function({ route, store, redirect }) {
     if (route.query.token && route.query.token !== gets['auth/auth']) {
         store.commit('auth/setAuth', route.query.token)
         hasRedirect = true
-        redirect('/dashboards/classic')
+        redirect(process.env.dashboardPath)
     } else if (gets['auth/loading'] === 0 && gets['auth/auth']) {
         if (!gets['auth/user']) {
             // in case only cookie exists in localhost
@@ -52,7 +52,7 @@ export default function({ route, store, redirect }) {
 
     // console.log('path', route)
     if (['/', '/dashboards'].includes(route.path)) {
-        redirect('/dashboards/classic')
+        redirect(process.env.dashboardPath)
     }
     hasRedirect = false
 }
