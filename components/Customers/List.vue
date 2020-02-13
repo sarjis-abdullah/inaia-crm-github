@@ -117,7 +117,7 @@ export default {
             debouced: null,
             selectedContact: null,
             showPopup: false,
-            perPage: 5,
+            perPage: 10,
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" }

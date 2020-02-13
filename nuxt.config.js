@@ -78,6 +78,7 @@ export default {
    * Environment configurations
    */
   env: {
-    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de'
+    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
+    dashboardPath: '/dashboards/classic'
   }
 }
