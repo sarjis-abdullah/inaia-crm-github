@@ -4,7 +4,7 @@
     <vs-sidebar default-index="1" :parent="parent"  :hiddenBackground="doNotClose" color="primary" class="left-sidebar" spacer v-model="isSidebarActive" :click-not-close="doNotClose" :reduce="isSidebarReduced">
       
       <div class="header-sidebar text-center" slot="header">
-        <vs-avatar size="70px" :src="require('@/assets/images/users/1-old.jpg')"/>
+        <vs-avatar size="70px" :src="require('@/assets/images/users/1.jpg')"/>
         <h4>{{ loggedin && loggedin.account && loggedin.account.username }}<br/>
           <small>{{ loggedin && loggedin.channels && getChannelInfo(loggedin.channels, 'email') }}</small>
         </h4>
