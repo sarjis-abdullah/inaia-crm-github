@@ -41,8 +41,10 @@
 	name : 'Customizer',
 	data:()=>({
 		themeColors: ['#4e31ef', '#36bea6', '#f62d51', '#ffbc34', '#212529'],
-		topbarColor: '#2962ff',
-		updatedThemeColor: '#2962ff',
+		topbarColor: '#007bff',
+		updatedThemeColor: '#007bff',
+		// topbarColor: '#2962ff',
+		// updatedThemeColor: '#2962ff',
 		active:false
 	}),
 

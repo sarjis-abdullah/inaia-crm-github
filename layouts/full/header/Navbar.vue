@@ -119,14 +119,20 @@
       -->
       <vs-dropdown vs-trigger-click left class="cursor-pointer pr-2 pl-2 ml-1 mr-md-3">
         <a class="text-white-dark user-image" href="#">
-          <img src="@/assets/images/users/1-old.jpg" alt="User" />
+          <img src="@/assets/images/users/1.jpg" alt="User" />
         </a>
         <vs-dropdown-menu class="user-dd common-dd topbar-dd">
           <div>
             <div class="d-flex align-items-center p-3 bg-danger text-white mb-2">
               <div class>
-                <img
+                <!-- <img
                   :src="require('@/assets/images/users'+ users[0].img)"
+                  alt="user"
+                  class="rounded-circle"
+                  width="60"
+                /> -->
+                <img
+                  :src="require('@/assets/images/users/1.jpg')"
                   alt="user"
                   class="rounded-circle"
                   width="60"
@@ -138,7 +144,7 @@
               </div>
             </div>
 
-            <vs-dropdown-item>
+            <vs-dropdown-item @click="editProfile">
               <vs-icon icon="person_outline" class="mr-1"></vs-icon>
               {{users[0].dditem1}}
             </vs-dropdown-item>
@@ -182,7 +188,8 @@ export default {
   props: {
     topbarColor: {
       type: String,
-      default: "#2962ff"
+      default: "#007bff"
+    //   default: "#2962ff"
     },
     title: {
       type: String
@@ -236,6 +243,9 @@ export default {
             return channel.value
         }
         return null
+    },
+    editProfile() {
+        window.location.href    = process.env.universalLogin+'/profile/'+this.loggedin.id
     },
     logout() {
         this.$store.dispatch('auth/logout')

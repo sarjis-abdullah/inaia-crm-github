@@ -18,8 +18,10 @@ const themeConfig = {
     theme: 'light',             // options: dark and light theme
     logotitle: "CRM",
     sidebarCollapsed: false,    // options: true (mini-sidebar), false(default)
-    topbarColor: "#2962ff",     // options: anycolor you can use
-    themeColor:"#2962ff"        // options: anycolor you can use
+    topbarColor: "#007bff",     // options: anycolor you can use
+    themeColor:"#007bff"        // options: anycolor you can use
+    // topbarColor: "#2962ff",     // options: anycolor you can use
+    // themeColor:"#2962ff"        // options: anycolor you can use
 }
 
 export default themeConfig
