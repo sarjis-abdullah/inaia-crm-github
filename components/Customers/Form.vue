@@ -184,7 +184,7 @@
                         </vs-col>
                     </vs-row>
                     <div class="btn-alignment mt-4">
-                        <vs-button button="submit" color="success" type="filled" :disabled="isRequesting">Save</vs-button>
+                        <vs-button button="submit" type="filled" :disabled="isRequesting">Save</vs-button>
                         <vs-button color="dark" type="filled" @click="() => $router.push('/customers')">Cancel</vs-button>
                     </div>
                 </ValidationObserver>
