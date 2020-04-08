@@ -12,6 +12,20 @@
 //   }
 // })
 
+import Vue from 'vue'
+import Vuesax from 'vuesax'
+Vue.use(Vuesax, {
+  theme:{
+    colors:{
+      primary:'#007bff',
+      success:'#36bea6',
+      danger:'#f62d51',
+      warning:'#ffbc34',
+      dark:'#212529'
+    }
+  }
+})
+
 
 // CONFIGS
 const themeConfig = {
