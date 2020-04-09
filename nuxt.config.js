@@ -56,7 +56,8 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    baseURL: isDevelopment ? 'https://auth-staging.inaia.cloud/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
+    // baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
     // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
   },
   /*
@@ -78,7 +79,8 @@ export default {
    * Environment configurations
    */
   env: {
-    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
+    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.cloud',
+    // universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
     dashboardPath: '/dashboards/classic'
   }
 }
