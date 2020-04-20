@@ -1,86 +1,136 @@
+
+/*!
+
+=========================================================
+* Nuxt Argon Dashboard PRO - v1.0.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/nuxt-argon-dashboard-pro
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+
+* Coded by www.creative-tim.com and www.binarcode.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+
+const pkg = require('./package')
+console.log('ENV', process.env.NODE_ENV)
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-export default {
+module.exports = {
   mode: 'spa',
+//   mode: 'universal',
+//   router: {
+//     base: '/',
+//     linkExactActiveClass: 'active'
+//   },
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'CRM Golddinar',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
+      { hid: 'description', name: 'description', content: 'Nuxt Argon Dashboard PRO - Premium Nuxt.js & Bootstrap 4 Dashboard' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'},
+      { rel: 'stylesheet', href: 'https://use.fontawesome.com/releases/v5.6.3/css/all.css', integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", crossorigin: "anonymous"}
     ]
   },
+
   /*
   ** Customize the progress-bar color
   */
   loading: { color: '#fff' },
+
   /*
   ** Global CSS
   */
   css: [
-    // '@/assets/scss/style.scss',
-    'vue-form-wizard/dist/vue-form-wizard.min.css',
+    'assets/css/nucleo/css/nucleo.css',
+    'assets/sass/argon.scss'
   ],
+
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
     '~/plugins/axios',
-    '~/plugins/global',
-    '~/plugins/vee-validate',
-    '~/plugins/i18n',
-    '~/plugins/vuesax'
+    '~/plugins/dashboard/dashboard-plugin',
+    '~/plugins/dashboard/full-calendar',
+    '~/plugins/dashboard/world-map',
+    // {src: '~/plugins/dashboard/full-calendar', ssr: false },
+    // {src: '~/plugins/dashboard/world-map', ssr: false },
   ],
-  /*
-  ** Nuxt.js dev-modules
-  */
-  buildModules: [
-    // Doc: https://github.com/nuxt-community/eslint-module
-    // '@nuxtjs/eslint-module'
-  ],
+
   /*
   ** Nuxt.js modules
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/pwa',
   ],
   /*
   ** Axios module configuration
-  ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: isDevelopment ? 'https://auth-staging.inaia.cloud/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
+    // baseURL: isDevelopment ? 'https://auth-staging.inaia.cloud/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
     // baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
     // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    // See https://github.com/nuxt-community/axios-module#options
   },
-  /*
-  ** Build configuration
-  */
-  build: {
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
-    }
-  },
+
+  /**
+   * settings for port and
+   * access from devices in the same network
+   */
   server: {
     // for check in mbl device
     port: 3001, // default: 3000
     host: '0.0.0.0', // default: localhost
   },
+
   /**
    * Environment configurations
    */
   env: {
     universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.cloud',
     // universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
-    dashboardPath: '/dashboards/classic'
+    dashboardPath: '/dashboard',
+  },
+
+  /*
+  ** Build configuration
+  */
+  build: {
+    transpile: [
+      'vee-validate/dist/rules'
+    ],
+    /*
+    ** You can extend webpack config here
+    */
+    extend(config, ctx) {
+
+    },
+    extractCSS: process.env.NODE_ENV === 'production',
+    babel: {
+      plugins: [
+        [
+          "component",
+          {
+            "libraryName": "element-ui",
+            "styleLibraryName": "theme-chalk"
+          }
+        ]
+      ]
+    }
   }
 }
