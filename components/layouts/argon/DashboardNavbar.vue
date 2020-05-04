@@ -5,7 +5,7 @@
     :class="{'bg-gradient-info navbar-dark': type === 'default'}"
   >
     <!-- Search form -->
-    <!-- <form class="navbar-search form-inline mr-sm-3"
+    <form class="navbar-search form-inline mr-sm-3"
           :class="{'navbar-search-light': type === 'default', 'navbar-search-dark': type === 'light'}"
           id="navbar-search-main">
       <div class="form-group mb-0">
@@ -20,7 +20,7 @@
               aria-label="Close">
         <span aria-hidden="true">×</span>
       </button>
-    </form> -->
+    </form>
     <!-- Navbar links -->
     <ul class="navbar-nav align-items-center ml-md-auto">
       <li class="nav-item d-xl-none">
@@ -162,40 +162,22 @@
         <template>
           <div class="row shortcuts px-4">
             <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-red">
-                      <i class="ni ni-calendar-grid-58"></i>
+                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                      <i class="fas fa-users"></i>
                     </span>
-              <small>Calendar</small>
-            </a>
-            <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-orange">
-                      <i class="ni ni-email-83"></i>
-                    </span>
-              <small>Email</small>
+              <small>CRM</small>
             </a>
             <a href="#!" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-info">
-                      <i class="ni ni-credit-card"></i>
+                      <i class="fas fa-coins"></i>
                     </span>
-              <small>Payments</small>
+              <small>Gold Dinar</small>
             </a>
             <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-green">
-                      <i class="ni ni-books"></i>
+                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                      <i class="fas fa-cog"></i>
                     </span>
-              <small>Reports</small>
-            </a>
-            <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-purple">
-                      <i class="ni ni-pin-3"></i>
-                    </span>
-              <small>Maps</small>
-            </a>
-            <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-yellow">
-                      <i class="ni ni-basket"></i>
-                    </span>
-              <small>Shop</small>
+              <small>Adminpanel</small>
             </a>
           </div>
         </template>

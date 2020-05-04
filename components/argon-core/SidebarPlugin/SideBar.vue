@@ -24,6 +24,8 @@
       </div>
       <slot></slot>
       <div class="navbar-inner">
+        <h6 class="navbar-heading mt-2 p-0 text-muted">CRM</h6>
+
         <ul class="navbar-nav">
           <slot name="links">
             <sidebar-item
