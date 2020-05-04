@@ -1,6 +1,23 @@
 <template>
     <div>
-        <div class="container-fluid">
+
+        <base-header class="pb-6">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{{this.title}}</h6>
+                    <!--
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <route-breadcrumb/>
+                    </nav>
+                    -->
+                </div>
+                <div class="col-lg-6 col-5 text-right">
+                    <base-button size="sm" type="neutral">New</base-button>
+                </div>
+            </div>
+        </base-header>
+
+        <div class="container-fluid mt--6">
             <div class="row">
                 <div class="col">
                     <div class="card">
@@ -11,7 +28,7 @@
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
-                            <el-table-column label="Contact ID"
+                            <el-table-column label="ID"
                                             min-width="110px"
                                             prop="id"
                                             sortable>
@@ -31,7 +48,7 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Account Number"
+                            <el-table-column label="Account No."
                                             min-width="140px">
                                 <template v-slot="{row}">
                                     <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
@@ -131,7 +148,7 @@ export default {
             id: '',
             account_number: '',
             type_id: '',
-            name: '',
+            name: 'Contacts',
             gender: '',
             initiated: false,
             debouced: null,

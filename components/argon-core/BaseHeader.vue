@@ -13,7 +13,7 @@
     props: {
       type: {
         type: String,
-        default: 'success',
+        default: 'gradient-info',
         description: 'Header background type'
       }
     }

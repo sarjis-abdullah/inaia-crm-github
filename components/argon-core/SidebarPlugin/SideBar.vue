@@ -6,8 +6,8 @@
     <div class="scrollbar-inner" ref="sidebarScrollArea">
       <div class="sidenav-header d-flex align-items-center">
         <a class="navbar-brand" href="#">
-          <!-- <img :src="logo" class="navbar-brand-img" alt="Sidebar logo"> -->
-          <span>CRM</span>
+          <img :src="logo" class="navbar-brand-img" alt="Sidebar logo">
+          <!--<span>CRM</span>-->
         </a>
         <div class="ml-auto">
           <!-- Sidenav toggler -->
@@ -51,17 +51,17 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Creative Tim',
+      default: 'INAIA',
       description: 'Sidebar title'
     },
     shortTitle: {
       type: String,
-      default: 'CT',
+      default: 'INAIA',
       description: 'Sidebar short title'
     },
     logo: {
       type: String,
-      default: 'https://demos.creative-tim.com/nuxt-argon-dashboard-pro/img/brand/green.png',
+      default: 'https://images.inaia.de/logo.png',
       description: 'Sidebar app logo'
     },
     backgroundColor: {
