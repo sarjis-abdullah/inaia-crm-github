@@ -177,7 +177,7 @@
                     <span class="shortcut-media avatar rounded-circle bg-gradient-info">
                       <i class="fas fa-cog"></i>
                     </span>
-              <small>Adminpanel</small>
+              <small>Admin Panel</small>
             </a>
           </div>
         </template>

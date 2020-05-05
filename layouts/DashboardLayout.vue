@@ -84,13 +84,13 @@
 
         <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
-            <a href="#" class="nav-link" rel="noopener">
+            <a :href="entry.golddinar+'?token='+token" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Gold Dinar</span>
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" rel="noopener">
+            <a :href="entry.admin+'?token='+token" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Admin Panel</span>
             </a>
@@ -132,6 +132,7 @@
   import DashboardNavbar from '~/components/layouts/argon/DashboardNavbar.vue';
   import ContentFooter from '~/components/layouts/argon/ContentFooter.vue';
   import DashboardContent from '~/components/layouts/argon/Content.vue';
+  import { mapGetters } from "vuex"
 
   export default {
     components: {
@@ -140,6 +141,16 @@
       DashboardContent
     },
     middleware: ['auth'],
+    data() {
+      return {
+        entry: process.env.entryPoints
+      }
+    },
+    computed: {
+      ...mapGetters({
+        token: "auth/auth",
+      })
+    },
     methods: {
       initScrollbar() {
         let isWindows = navigator.platform.startsWith('Win');
