@@ -63,7 +63,7 @@ export default {
     },
     logo: {
       type: String,
-      default: 'https://images.inaia.de/logo.png',
+      default: '/logo.png',
       description: 'Sidebar app logo'
     },
     backgroundColor: {

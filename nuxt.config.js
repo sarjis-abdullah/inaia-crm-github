@@ -105,6 +105,11 @@ module.exports = {
     universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.cloud',
     // universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
     dashboardPath: '/dashboard',
+    entryPoints: {
+      crm: isDevelopment ? 'http://localhost:3001' : 'https://crm-staging.inaia.cloud',
+      admin: isDevelopment ? 'http://localhost:3002' : 'https://admin-staging.inaia.cloud',
+      golddinar: isDevelopment ? 'http://localhost:3003' : 'https://golddinar-admin-staging.inaia.cloud'
+    }
   },
 
   /*
