@@ -12,7 +12,7 @@
                     -->
                 </div>
                 <div class="col-lg-6 col-5 text-right">
-                    <base-button size="sm" type="neutral">New</base-button>
+                    <!-- <base-button size="sm" type="neutral">New</base-button> -->
                 </div>
             </div>
         </base-header>
@@ -28,7 +28,7 @@
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
-                            <el-table-column label="ID"
+                            <!-- <el-table-column label="ID"
                                             min-width="110px"
                                             prop="id"
                                             sortable>
@@ -39,24 +39,32 @@
                                         </div>
                                     </div>
                                 </template>
-                            </el-table-column>
+                            </el-table-column> -->
 
                             <el-table-column label="Name"
-                                            min-width="190px">
+                                            min-width="300px">
                                 <template v-slot="{row}">
-                                    <span class="status">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
+                                    <div class="media align-items-center">
+                                        <a href="#" class="avatar rounded-circle mr-3">
+                                            <img alt="Image placeholder" src="/need/contact/img.png">
+                                        </a>
+                                        <div class="media-body">
+                                            <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
+                                        </div>
+                                    </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Account No."
-                                            min-width="140px">
+                            <!-- <el-table-column label="Account No."
+                                            min-width="190px">
                                 <template v-slot="{row}">
                                     <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
                                 </template>
-                            </el-table-column>
+                            </el-table-column> -->
 
                             <el-table-column label="Contact"
-                                            min-width="190px">
+                                            min-width="210px"
+                                            >
                                 <template v-slot="{row}">
                                     <span>{{getChannelInfo(row.channels, 'mobile') || getChannelInfo(row.channels, 'tel') || 'N/A'}}</span>
                                     <template v-if="getChannelInfo(row.channels, 'email')">
@@ -66,14 +74,27 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Type"
+                            <el-table-column label="Status"
+                                            min-width="170px"
+                                            prop="is_active"
+                                            sortable
+                                            >
+                                <template v-slot="{row}">
+                                    <badge class="badge-dot mr-4" type="">
+                                        <i :class="`bg-${row.is_active ? 'success' : 'danger'}`"></i>
+                                        <span class="status">{{row.is_active ? 'active' : 'inactive'}}</span>
+                                    </badge>
+                                </template>
+                            </el-table-column>
+
+                            <!-- <el-table-column label="Type"
                                             min-width="190px">
                                 <template v-slot="{row}">
                                     <span class="status">{{getAccountType(row)}}</span>
                                 </template>
-                            </el-table-column>
+                            </el-table-column> -->
 
-                            <el-table-column min-width="230px">
+                            <el-table-column min-width="180px">
                                 <template v-slot="{row}">
                                     <el-dropdown trigger="click" class="dropdown">
                                         <span class="btn btn-sm btn-icon-only text-light">
