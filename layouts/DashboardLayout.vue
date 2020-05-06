@@ -25,7 +25,7 @@
         <sidebar-item
                 :link="{
             name: 'Leads',
-            icon: 'fas fa-user-tag text-muted',
+            icon: 'fas fa-user-tag text-primary',
             path: '/leads'
           }"
         >
@@ -34,7 +34,7 @@
         <sidebar-item
                 :link="{
             name: 'Sales Partners',
-            icon: 'fas fa-user-tie text-muted',
+            icon: 'fas fa-user-tie text-primary',
             path: '/sales-partners'
           }"
         >
@@ -42,7 +42,7 @@
 
         <sidebar-item
                 :link="{
-            name: 'Support',
+            name: 'Support (coming soon)',
             icon: 'fas fa-comment-alt text-muted',
             path: '/support'
           }"
@@ -51,7 +51,7 @@
 
         <sidebar-item
                 :link="{
-            name: 'Tasks',
+            name: 'Tasks (coming soon)',
             icon: 'fas fa-tasks text-muted',
             path: '/tasks'
           }"
@@ -60,7 +60,7 @@
 
         <sidebar-item
                 :link="{
-            name: 'Calendar',
+            name: 'Calendar (coming soon)',
             icon: 'fas fa-calendar-alt text-muted',
             path: '/calendar'
           }"
@@ -69,7 +69,7 @@
 
         <sidebar-item
                 :link="{
-            name: 'Reports',
+            name: 'Reports (coming soon)',
             icon: 'fas fa-chart-line text-muted',
             path: '/reports'
           }"
