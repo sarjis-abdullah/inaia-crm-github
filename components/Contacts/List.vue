@@ -46,7 +46,7 @@
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
                                         <a href="#" class="avatar rounded-circle mr-3">
-                                            <img alt="Image placeholder" src="/need/contact/img.png">
+                                            <img alt="Im" src="/need/contact/img.png">
                                         </a>
                                         <div class="media-body">
                                             <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
