@@ -115,7 +115,7 @@
 
                         <modal :show.sync="showPopup">
                             <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Contact details</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Lead details</h5>
                             </template>
                             <div>
                                 <Details :resource="selectedResource" v-if="showPopup" />
@@ -130,7 +130,7 @@
                                 <h5 class="modal-title" id="confirmModal">Confirmation</h5>
                             </template>
                             <div>
-                                Are you sure to delete contact with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                                Are you sure to delete lead with id "{{ selectedResource ? selectedResource.id : '' }}"?
                             </div>
                             <template slot="footer">
                                 <base-button type="secondary" @click="showConfirm = false">Close</base-button>
@@ -146,7 +146,7 @@
 <script>
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
-import Details from '@/components/Contacts/Details'
+import Details from '@/components/Leads/Details'
 
 export default {
     components: {
@@ -159,8 +159,8 @@ export default {
     },
     data() {
         return {
-            pageTitle: 'Customers',
-            tableTitle: 'Customer List',
+            pageTitle: 'Leads',
+            tableTitle: 'Lead List',
             data: [
             ],
             search: '',
@@ -202,13 +202,13 @@ export default {
     watch: {
         searchQuery: {
             handler() {
-                this.fetchClientData(this.searchQuery)
+                this.fetchLeadData(this.searchQuery)
             },
             immediate: true,
         },
         types: {
             handler() {
-                this.fetchClientData(this.searchQuery)
+                this.fetchLeadData(this.searchQuery)
             },
             immediate: true
         }
@@ -218,11 +218,11 @@ export default {
             this.selectedResource= resource
             this.showPopup      = true
         },
-        fetchClientData(pageQuery) {
+        fetchLeadData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {
                 this.initiated  = true
                 this.$store
-                    .dispatch("clients/initClientData", pageQuery)
+                    .dispatch("clients/initLeadData", pageQuery)
                     .then(response => {
                         this.data = response.data.data
                         this.totalTableData = response.data.meta.total
@@ -232,7 +232,7 @@ export default {
             }
         },
         newCustomer() {
-            this.$router.push('/customers/add')
+            this.$router.push('/leads/add')
         },
         removeConfirm(resource) {
             this.selectedResource   = resource
@@ -243,7 +243,7 @@ export default {
             this.$store
                 .dispatch('clients/removeClient', resource.id)
                 .then( () => {
-                    this.fetchClientData(this.searchQuery)
+                    this.fetchLeadData(this.searchQuery)
                 })
         },
         getChannelInfo(channels, type) {

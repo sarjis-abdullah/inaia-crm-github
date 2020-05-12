@@ -115,7 +115,7 @@
 
                         <modal :show.sync="showPopup">
                             <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Contact details</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Sales partner details</h5>
                             </template>
                             <div>
                                 <Details :resource="selectedResource" v-if="showPopup" />
@@ -130,7 +130,7 @@
                                 <h5 class="modal-title" id="confirmModal">Confirmation</h5>
                             </template>
                             <div>
-                                Are you sure to delete contact with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                                Are you sure to delete sales partner with id "{{ selectedResource ? selectedResource.id : '' }}"?
                             </div>
                             <template slot="footer">
                                 <base-button type="secondary" @click="showConfirm = false">Close</base-button>
@@ -146,7 +146,7 @@
 <script>
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
-import Details from '@/components/Contacts/Details'
+import Details from '@/components/SalesPartners/Details'
 
 export default {
     components: {
@@ -159,8 +159,8 @@ export default {
     },
     data() {
         return {
-            pageTitle: 'Customers',
-            tableTitle: 'Customer List',
+            pageTitle: 'Sales Partners',
+            tableTitle: 'Sales Partner List',
             data: [
             ],
             search: '',
@@ -192,7 +192,7 @@ export default {
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
                 `&per_page=${this.perPage || 5}`
-                // `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
+                // `&type_id=${ this.types && this.types.partner ? this.types.partner : 0 }`
             )
         },
         totalPages() {
@@ -222,7 +222,7 @@ export default {
             if (!this.initiated && this.types && this.types.person) {
                 this.initiated  = true
                 this.$store
-                    .dispatch("clients/initClientData", pageQuery)
+                    .dispatch("clients/initSalesPartnerData", pageQuery)
                     .then(response => {
                         this.data = response.data.data
                         this.totalTableData = response.data.meta.total
@@ -232,7 +232,7 @@ export default {
             }
         },
         newCustomer() {
-            this.$router.push('/customers/add')
+            this.$router.push('/contacts/add')
         },
         removeConfirm(resource) {
             this.selectedResource   = resource
