@@ -17,7 +17,7 @@
                 :link="{
             name: 'Customers',
             icon: 'fas fa-user-friends text-primary',
-            path: '/contacts'
+            path: '/customers'
           }"
         >
         </sidebar-item>

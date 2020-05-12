@@ -192,7 +192,7 @@
         <a href="#" class="nav-link pr-0" @click.prevent slot="title-container">
           <div class="media align-items-center">
                   <span class="avatar avatar-sm rounded-circle">
-                    <img alt="Im" src="img/theme/unknown.jpg">
+                    <img alt="Im" :src="avatar">
                   </span>
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm  font-weight-bold">{{ loggedin && loggedin.account && loggedin.account.username }}</span>
@@ -258,6 +258,15 @@
       routeName() {
         const { name } = this.$route;
         return this.capitalizeFirstLetter(name);
+      },
+      avatar() {
+        if (this.loggedin && this.loggedin.person_data) {
+          let gender    = this.loggedin.person_data.gender.toLowerCase()
+          if (gender == 'female' || gender == 'f') {
+            return '/img/theme/avatar_f.png'
+          }
+        }
+        return '/img/theme/avatar_m.png'
       }
     },
     data() {
