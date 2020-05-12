@@ -261,7 +261,7 @@ export default {
         },
         avatar(resource) {
             if (resource && resource.person_data) {
-                let gender    = resource.person_data.gender.toLowerCase()
+                let gender    = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
                 if (gender == 'female' || gender == 'f') {
                     return '/img/theme/avatar_f.png'
                 }
