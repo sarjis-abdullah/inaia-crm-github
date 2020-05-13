@@ -1,8 +1,5 @@
 <template>
-  <Form
-    :single-client-data="singleClientData"
-    :show-view-page="showViewPage"
-  />
+    <Form :single-client-data="singleClientData" />
 </template>
 
 <script>
@@ -10,6 +7,7 @@ import { mapGetters } from "vuex"
 import Form from "@/components/Contacts/Form"
 
 export default {
+    layout: 'DashboardLayout',
     props: {
         showViewPage: {
             type: Boolean

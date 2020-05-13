@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Form from '@/components/Contacts/Form'
+import Form from '@/components/Leads/Form'
 
 export default {
     layout: 'DashboardLayout',

@@ -1,9 +1,347 @@
 <template>
-    <vs-row>
+    <div>
+
+        <base-header class="pb-6">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{{ $route.params.id ? 'Edit' : 'New' }} Customer</h6>
+                    <!--
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <route-breadcrumb/>
+                    </nav>
+                    -->
+                </div>
+            </div>
+        </base-header>
+
+        <div class="container-fluid mt--6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <validation-observer ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="validate">
+                        <div class="row text-danger" v-if="failed && invalid">
+                            <div class="col-sm-2"></div>
+                            <div class="col-md-6">
+                                {{ failed }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input label="Customer Type" name="Customer Type" placeholder="Select contact type">
+                                    <select class="form-control" v-model="selectedContactType">
+                                        <option v-for="(i, idx) in contactTypes" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5" v-if="selectedContactType == 'person'">
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationslity" ref="nationalityProvider" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.nationality.id">
+                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="First Name"
+                                    name="First Name"
+                                    v-model="customer.name"
+                                    placeholder="First Name"
+                                    rules="required"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Last Name"
+                                    name="Last Name"
+                                    v-model="customer.person_data.surname"
+                                    placeholder="Last Name"
+                                    :rules="{required: selectedContactType == 'person'}"
+                                />
+                            </div>
+                        </div>
+                        <div class="row" v-if="selectedContactType == 'person'">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Birth Date"
+                                    name="Birth Date"
+                                    v-model="customer.person_data.birthdate"
+                                    placeholder="Birth Date"
+                                    rules="required"
+                                    type="date"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input label="Gender" name="Gender" placeholder="Select gender" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.gender">
+                                        <option v-for="(i, idx) in genderOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Email Address"
+                                    name="Email Address"
+                                    v-model="customer.channels.email.value"
+                                    placeholder="email@address.com"
+                                    rules="required"
+                                    ref="emailProvider"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Mobile No"
+                                    name="Mobile No"
+                                    v-model="customer.channels.mobile.value"
+                                    placeholder="0049 1010101010"
+                                    rules="required"
+                                    ref="telProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Address Line1"
+                                    name="Address Line1"
+                                    v-model="customer.address.line1"
+                                    placeholder="Address Line1"
+                                    rules="required"
+                                    ref="addLine1Provider"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Address Line2"
+                                    v-model="customer.address.line2"
+                                    placeholder="Address Line2"
+                                    ref="addLine2Provider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Postal Code"
+                                    name="Postal Code"
+                                    v-model="customer.address.postal_code"
+                                    placeholder="postal code"
+                                    ref="postalProvider"
+                                    rules="required"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="City"
+                                    v-model="customer.address.city"
+                                    placeholder="City"
+                                    ref="cityProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Region or State"
+                                    v-model="customer.address.region"
+                                    placeholder="Region"
+                                    ref="regionProvider"
+                                />
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required">
+                                    <select class="form-control" v-model="customer.address.country_id">
+                                        <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <base-input
+                                    label="Password"
+                                    type="password"
+                                    v-model="customer.account.password"
+                                    placeholder="*******"
+                                />
+                            </div>
+                        </div>
+
+
+                        <!-- <div class="row">
+                            <div class="col-md-6">
+                                <base-input label="Customer Type" name="Customer Type" placeholder="Select contact type">
+                                    <select class="form-control" v-model="selectedContactType">
+                                        <option v-for="(i, idx) in contactTypes" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="First Name"
+                                    name="First Name"
+                                    v-model="customer.name"
+                                    placeholder="First Name"
+                                    rules="required"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Last Name"
+                                    name="Last Name"
+                                    v-model="customer.person_data.surname"
+                                    placeholder="Last Name"
+                                    rules="required"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Birth Date"
+                                    name="Birth Date"
+                                    v-model="customer.person_data.birthdate"
+                                    placeholder="Birth Date"
+                                    rules="required"
+                                />
+                            </div>
+                        </div>
+                        <div class="row" v-if="selectedContactType == 'person'">
+                            <div class="col-md-6">
+                                <base-input label="Gender" name="Gender" placeholder="Select gender" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.gender">
+                                        <option v-for="(i, idx) in genderOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row" v-if="selectedContactType == 'person'">
+                            <div class="col-md-6">
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationslity" ref="nationalityProvider" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.nationality.id">
+                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Email Address"
+                                    name="Email Address"
+                                    v-model="customer.channels.email.value"
+                                    placeholder="email@address.com"
+                                    rules="required"
+                                    ref="emailProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Mobile No"
+                                    name="Mobile No"
+                                    v-model="customer.channels.mobile.value"
+                                    placeholder="0049 1010101010"
+                                    rules="required"
+                                    ref="telProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Address Line1"
+                                    name="Address Line1"
+                                    v-model="customer.address.line1"
+                                    placeholder="Address Line1"
+                                    rules="required"
+                                    ref="addLine1Provider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Address Line2"
+                                    v-model="customer.address.line2"
+                                    placeholder="Address Line2"
+                                    ref="addLine2Provider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="City"
+                                    v-model="customer.address.city"
+                                    placeholder="City"
+                                    ref="cityProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input
+                                    label="Region or State"
+                                    v-model="customer.address.region"
+                                    placeholder="Region"
+                                    ref="regionProvider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required">
+                                    <select class="form-control" v-model="customer.address.country_id">
+                                        <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div> -->
+
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-button type="primary" native-type="submit">Submit</base-button>
+                                <base-button type="secondary" native-type="button" @click="() => $router.push('/customers')">Cancel</base-button>
+                            </div>
+                        </div>
+                    </validation-observer>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <vs-row>
         <vs-col vs-lg="12" vs-xs="12" vs-sm="12">
             <vs-card>
                 <div slot="header">
-                    <h3 class="card-title mb-0">Contact Form</h3>
+                    <h3 class="card-title mb-0">Customer Form</h3>
                 </div>
 
                 <ValidationObserver ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="validate">
@@ -190,7 +528,7 @@
                 </ValidationObserver>
             </vs-card>
         </vs-col>
-    </vs-row>
+    </vs-row> -->
 </template>
 
 <script>
@@ -229,29 +567,6 @@ export default {
                 mobile: {}
             }
         },
-        // customerXname: '',
-        // customerXtype_id: 18,
-        // customerXis_active: 1,
-        // customerXperson_dataXsurname: '',
-        // customerXperson_dataXbirthdate: '',
-        // customerXperson_dataXgender: '',
-        // customerXperson_dataXnationalityXid: '',
-        // customerXchannelsXemailXid: '',
-        // customerXchannelsXemailXvalue: '',
-        // customerXchannelsXmobileXid: '',
-        // customerXchannelsXmobileXvalue: '',
-        // customerXaccountXpassword: '',
-        // customerXaccountXtype_id: 3,
-        // customerXaccountXis_active: 0,
-        // customerXaddressXline1: '',
-        // customerXaddressXline2: '',
-        // customerXaddressXpostal_code: '',
-        // customerXaddressXcity: '',
-        // customerXaddressXregion: '',
-        // customerXaddressXcountry_id: '',
-        // customerXaddressXtype_id: 7,
-        // customerXaddressXis_primary: 1,
-        // customerXaddressXis_active: 1,
         countryOptions: [],
         nationalityOptions: [],
         genderOptions: [
@@ -278,7 +593,7 @@ export default {
                 customer: {
                     contact: {
                         name: this.customer.name,
-                        type_id: this.customer.type_id,
+                        type_id: this.types[this.selectedContactType] || 0,
                         is_active: this.customer.is_active
                     },
                     person_data: {
@@ -301,7 +616,7 @@ export default {
                     contact: {
                         id: this.customer.id,
                         name: this.customer.name,
-                        type_id: this.customer.type_id,
+                        type_id: this.types[this.selectedContactType] || 0,
                         is_active: this.customer.is_active
                     },
                     person_data: {
@@ -423,6 +738,7 @@ export default {
                 .dispatch("clients/submitClient", data)
                 .then(response => {
                     this.$router.push('/customers')
+                    this.$notify({type: 'success', timeout: 10000, message: 'Customer information saved successfully!'})
                 }).catch( err => {
                     this.failed = err.response.data.message
                     this.$refs.observer.setErrors(err.response.data.errors)          
