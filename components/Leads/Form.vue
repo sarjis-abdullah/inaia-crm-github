@@ -1,196 +1,190 @@
 <template>
-    <vs-row>
-        <vs-col vs-lg="12" vs-xs="12" vs-sm="12">
-            <vs-card>
-                <div slot="header">
-                    <h3 class="card-title mb-0">Contact Form</h3>
-                </div>
+    <div>
 
-                <ValidationObserver ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="validate">
-                    <h4 class>Personal Info</h4>
-                    <hr class="custom-hr" />
-                    <div v-if="failed && invalid" style="color: red">{{ failed }}</div>
-                    <vs-row>
-                        <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="contactTypeProvider"  vid="selectedContactType" name="Contact Type" rules="required" v-slot="{ errors }">
-                                <vs-select
-                                    class="w-100 mt-4"
-                                    label="Contact Type"
-                                    placeholder="Select contact type"
-                                    v-model="selectedContactType"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please select contact type"
-                                >
-                                <vs-select-item
-                                    :key="index"
-                                    :value="item.value"
-                                    :text="item.text"
-                                    v-for="(item,index) in contactTypes"
-                                />
-                                </vs-select>
-                            </ValidationProvider>
-                            <ValidationProvider ref="firstNameProvider" vid="customer.name" name="First Name" rules="required" v-slot="{ errors }">
-                                <vs-input
+        <base-header class="pb-6">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-6 col-7">
+                    <h6 class="h2 text-white d-inline-block mb-0">{{ $route.params.id ? 'Edit' : 'New' }} Lead</h6>
+                    <!--
+                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                        <route-breadcrumb/>
+                    </nav>
+                    -->
+                </div>
+            </div>
+        </base-header>
+
+        <div class="container-fluid mt--6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <validation-observer ref="observer" v-slot="{ invalid }" tag="form" @submit.prevent="validate">
+                        <div class="row text-danger" v-if="failed && invalid">
+                            <div class="col-sm-2"></div>
+                            <div class="col-md-6">
+                                {{ failed }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input label="Lead Type" name="Lead Type" placeholder="Select lead type">
+                                    <select class="form-control" v-model="selectedContactType">
+                                        <option v-for="(i, idx) in contactTypes" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5" v-if="selectedContactType == 'person'">
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationslity" ref="nationalityProvider" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.nationality.id">
+                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
                                     label="First Name"
-                                    placeholder="First Name"
+                                    name="First Name"
                                     v-model="customer.name"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert First Name"
-                                    val-icon-danger="clear"
+                                    placeholder="First Name"
+                                    rules="required"
                                 />
-                            </ValidationProvider>
-                            <ValidationProvider v-if="selectedContactType == 'person'" ref="lastNameProvider" vid="customer.person_data.surname" name="Last Name" rules="required" v-slot="{ errors }">
-                                <vs-input
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
                                     label="Last Name"
-                                    placeholder="Last Name"
+                                    name="Last Name"
                                     v-model="customer.person_data.surname"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert Last Name"
-                                    val-icon-danger="clear"
+                                    placeholder="Last Name"
+                                    :rules="{required: selectedContactType == 'person'}"
                                 />
-                            </ValidationProvider>
-                            <ValidationProvider v-if="selectedContactType == 'person'" ref="birthdateProvider" vid="customer.person_data.birthdate" name="Birth Date" rules="required" v-slot="{ errors }">
-                                <vs-input
-                                    label="Date of Birth"
-                                    type="date"
+                            </div>
+                        </div>
+                        <div class="row" v-if="selectedContactType == 'person'">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Birth Date"
+                                    name="Birth Date"
                                     v-model="customer.person_data.birthdate"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert your birth date"
+                                    placeholder="Birth Date"
+                                    rules="required"
+                                    type="date"
                                 />
-                            </ValidationProvider>
-                            <vs-select v-if="selectedContactType == 'person'" class="w-100 mt-4" label="Gender" v-model="customer.person_data.gender">
-                            <vs-select-item
-                                :key="index"
-                                :value="item.value"
-                                :text="item.text"
-                                v-for="(item,index) in genderOptions"
-                            />
-                            </vs-select>
-                        </vs-col>
-                        <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider v-if="selectedContactType == 'person'" ref="nationalityProvider" vid="customer.person_data.nationality.id" name="Nationality" rules="required" v-slot="{ errors }">
-                                <vs-select
-                                    class="w-100 mt-4"
-                                    label="Nationality"
-                                    placeholder="Select nationality"
-                                    v-model="customer.person_data.nationality.id"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please select your nationality"
-                                >
-                                <vs-select-item
-                                    :key="index"
-                                    :value="item.value"
-                                    :text="item.text"
-                                    v-for="(item,index) in nationalityOptions"
-                                />
-                                </vs-select>
-                            </ValidationProvider>
-                            <ValidationProvider ref="emailProvider" vid="customer.channels.email.value" name="Email" rules="required" v-slot="{ errors }">
-                                <vs-input
-                                    label="Email"
-                                    placeholder="example@email.com"
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input label="Gender" name="Gender" placeholder="Select gender" rules="required">
+                                    <select class="form-control" v-model="customer.person_data.gender">
+                                        <option v-for="(i, idx) in genderOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Email Address"
+                                    name="Email Address"
                                     v-model="customer.channels.email.value"
-                                    class="w-100 mt-4"
-                                    type="email"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert valid email address"
-                                    val-icon-danger="clear"
+                                    placeholder="email@address.com"
+                                    rules="required"
+                                    ref="emailProvider"
                                 />
-                            </ValidationProvider>
-                            <ValidationProvider ref="telProvider" vid="customer.channels.mobile.value" name="Mobile Number" rules="required" v-slot="{ errors }">
-                                <vs-input
-                                    label="Mobile number"
-                                    placeholder="0123456789"
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Mobile No"
+                                    name="Mobile No"
                                     v-model="customer.channels.mobile.value"
-                                    class="w-100 mt-4"
-                                    type="tel"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert valid Mobile Number"
-                                    val-icon-danger="clear"
+                                    placeholder="0049 1010101010"
+                                    rules="required"
+                                    ref="telProvider"
                                 />
-                            </ValidationProvider>
-                            <ValidationProvider ref="passwordProvider" vid="customer.account.password" name="Password" v-slot="{ errors }">
-                                <vs-input
-                                    label="Password"
-                                    placeholder="*******"
-                                    v-model="customer.account.password"
-                                    class="w-100 mt-4"
-                                    type="password"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please insert password"
-                                    val-icon-danger="clear"
-                                />
-                            </ValidationProvider>
-                        </vs-col>
-                    </vs-row>
-                    <h4 class="mt-5 mb-4">Address</h4>
-                    <hr class="custom-hr" />
-                    <vs-row>
-                        <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="addLine1Provider" vid="customer.address.line1" name="Address Line 1" v-slot="{ errors }">
-                                <vs-input
-                                    label="Address Line 1"
-                                    placeholder="address line 1"
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Address Line1"
+                                    name="Address Line1"
                                     v-model="customer.address.line1"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please enter Line 1 of your address"
+                                    placeholder="Address Line1"
+                                    rules="required"
+                                    ref="addLine1Provider"
                                 />
-                            </ValidationProvider>
-                            <vs-input label="Address Line 2" placeholder="address line 2" v-model="customer.address.line2" class="w-100 mt-4" />
-                            <ValidationProvider ref="postalCodeProvider" vid="customer.address.postal_code" name="Postal Code" v-slot="{ errors }">
-                                <vs-input
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Address Line2"
+                                    v-model="customer.address.line2"
+                                    placeholder="Address Line2"
+                                    ref="addLine2Provider"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
                                     label="Postal Code"
-                                    placeholder="postal code"
+                                    name="Postal Code"
                                     v-model="customer.address.postal_code"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please enter postal code of your address"
+                                    placeholder="postal code"
+                                    ref="postalProvider"
+                                    rules="required"
                                 />
-                            </ValidationProvider>
-                        </vs-col>
-                        <vs-col vs-lg="6" vs-xs="12" vs-sm="6">
-                            <ValidationProvider ref="cityProvider" vid="customer.address.city" name="City" v-slot="{ errors }">
-                                <vs-input
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input
                                     label="City"
-                                    placeholder="city name"
                                     v-model="customer.address.city"
-                                    class="w-100 mt-4"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please enter city of your address"
+                                    placeholder="City"
+                                    ref="cityProvider"
                                 />
-                            </ValidationProvider>
-                            <vs-input label="Region or State" placeholder="region or state" v-model="customer.address.region" class="w-100 mt-4" />
-                            <ValidationProvider ref="cityProvider" vid="customer.address.country_id" name="City" v-slot="{ errors }">
-                                <vs-select
-                                    class="w-100 mt-4"
-                                    label="Country"
-                                    placeholder="Select country"
-                                    v-model="customer.address.country_id"
-                                    :danger="errors && !!errors.length"
-                                    danger-text="Please select your country"
-                                >
-                                <vs-select-item
-                                    :key="i"
-                                    :value="c.value"
-                                    :text="c.text"
-                                    v-for="(c,i) in countryOptions"
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <base-input
+                                    label="Region or State"
+                                    v-model="customer.address.region"
+                                    placeholder="Region"
+                                    ref="regionProvider"
                                 />
-                                </vs-select>
-                            </ValidationProvider>
-                        </vs-col>
-                    </vs-row>
-                    <div class="btn-alignment mt-4">
-                        <vs-button button="submit" type="filled" :disabled="isRequesting">Save</vs-button>
-                        <vs-button color="dark" type="filled" @click="() => $router.push('/customers')">Cancel</vs-button>
-                    </div>
-                </ValidationObserver>
-            </vs-card>
-        </vs-col>
-    </vs-row>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
+                                <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required">
+                                    <select class="form-control" v-model="customer.address.country_id">
+                                        <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                    </select>
+                                </base-input>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <base-button type="primary" native-type="submit">Submit</base-button>
+                                <base-button type="secondary" native-type="button" @click="() => $router.push('/leads')">Cancel</base-button>
+                            </div>
+                        </div>
+                    </validation-observer>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -229,29 +223,6 @@ export default {
                 mobile: {}
             }
         },
-        // customerXname: '',
-        // customerXtype_id: 18,
-        // customerXis_active: 1,
-        // customerXperson_dataXsurname: '',
-        // customerXperson_dataXbirthdate: '',
-        // customerXperson_dataXgender: '',
-        // customerXperson_dataXnationalityXid: '',
-        // customerXchannelsXemailXid: '',
-        // customerXchannelsXemailXvalue: '',
-        // customerXchannelsXmobileXid: '',
-        // customerXchannelsXmobileXvalue: '',
-        // customerXaccountXpassword: '',
-        // customerXaccountXtype_id: 3,
-        // customerXaccountXis_active: 0,
-        // customerXaddressXline1: '',
-        // customerXaddressXline2: '',
-        // customerXaddressXpostal_code: '',
-        // customerXaddressXcity: '',
-        // customerXaddressXregion: '',
-        // customerXaddressXcountry_id: '',
-        // customerXaddressXtype_id: 7,
-        // customerXaddressXis_primary: 1,
-        // customerXaddressXis_active: 1,
         countryOptions: [],
         nationalityOptions: [],
         genderOptions: [
@@ -278,7 +249,7 @@ export default {
                 customer: {
                     contact: {
                         name: this.customer.name,
-                        type_id: this.customer.type_id,
+                        type_id: this.types[this.selectedContactType] || 0,
                         is_active: this.customer.is_active
                     },
                     person_data: {
@@ -301,7 +272,7 @@ export default {
                     contact: {
                         id: this.customer.id,
                         name: this.customer.name,
-                        type_id: this.customer.type_id,
+                        type_id: this.types[this.selectedContactType] || 0,
                         is_active: this.customer.is_active
                     },
                     person_data: {
@@ -422,7 +393,8 @@ export default {
             this.$store
                 .dispatch("clients/submitClient", data)
                 .then(response => {
-                    this.$router.push('/customers')
+                    this.$router.push('/leads')
+                    this.$notify({type: 'success', timeout: 10000, message: 'Lead information saved successfully!'})
                 }).catch( err => {
                     this.failed = err.response.data.message
                     this.$refs.observer.setErrors(err.response.data.errors)          

@@ -12,7 +12,7 @@
                     -->
                 </div>
                 <div class="col-lg-6 col-5 text-right">
-                    <!-- <base-button size="sm" type="neutral">New</base-button> -->
+                    <base-button size="sm" type="neutral" @click="newSalesPartner">New Sales Partner</base-button>
                 </div>
             </div>
         </base-header>
@@ -28,18 +28,6 @@
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
-                            <!-- <el-table-column label="ID"
-                                            min-width="110px"
-                                            prop="id"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column> -->
 
                             <el-table-column label="Name"
                                             min-width="300px">
@@ -54,13 +42,6 @@
                                     </div>
                                 </template>
                             </el-table-column>
-
-                            <!-- <el-table-column label="Account No."
-                                            min-width="190px">
-                                <template v-slot="{row}">
-                                    <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
-                                </template>
-                            </el-table-column> -->
 
                             <el-table-column label="Contact"
                                             min-width="210px"
@@ -87,13 +68,6 @@
                                 </template>
                             </el-table-column>
 
-                            <!-- <el-table-column label="Type"
-                                            min-width="190px">
-                                <template v-slot="{row}">
-                                    <span class="status">{{getAccountType(row)}}</span>
-                                </template>
-                            </el-table-column> -->
-
                             <el-table-column min-width="180px">
                                 <template v-slot="{row}">
                                     <el-dropdown trigger="click" class="dropdown">
@@ -102,6 +76,7 @@
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
                                             <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/sales-partners/edit/'+row.id)" href="#">Edit</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
                                         </el-dropdown-menu>
                                     </el-dropdown>
@@ -231,8 +206,8 @@ export default {
                     })
             }
         },
-        newCustomer() {
-            this.$router.push('/contacts/add')
+        newSalesPartner() {
+            this.$router.push('/sales-partners/add')
         },
         removeConfirm(resource) {
             this.selectedResource   = resource

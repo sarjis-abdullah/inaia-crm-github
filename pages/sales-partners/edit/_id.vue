@@ -7,9 +7,10 @@
 
 <script>
 import { mapGetters } from "vuex"
-import Form from "@/components/Contacts/Form"
+import Form from "@/components/SalesPartners/Form"
 
 export default {
+    layout: 'DashboardLayout',
     props: {
         showViewPage: {
             type: Boolean
@@ -17,7 +18,7 @@ export default {
     },
     data() {
         return {
-            customerId: this.$route.params.id
+            salesPartnerId: this.$route.params.id
         }
     },
     components: {
@@ -29,9 +30,9 @@ export default {
         })
     },
     watch: {
-        customerId: {
+        salesPartnerId: {
             handler() {
-                if (this.customerId) {
+                if (this.salesPartnerId) {
                     this.initClientData()
                 }
             },
@@ -40,7 +41,7 @@ export default {
     },
     methods: {
         initClientData() {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId)
+            this.$store.dispatch("clients/clientDetailsData", this.salesPartnerId)
         },
     }
 }

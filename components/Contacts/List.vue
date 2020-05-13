@@ -12,7 +12,7 @@
                     -->
                 </div>
                 <div class="col-lg-6 col-5 text-right">
-                    <!-- <base-button size="sm" type="neutral">New</base-button> -->
+                    <base-button size="sm" type="neutral" @click="newCustomer">New Customer</base-button>
                 </div>
             </div>
         </base-header>
@@ -102,6 +102,7 @@
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
                                             <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">Edit</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
                                         </el-dropdown-menu>
                                     </el-dropdown>
