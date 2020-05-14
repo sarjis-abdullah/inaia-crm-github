@@ -93,7 +93,7 @@
                                     name="Email Address"
                                     v-model="customer.channels.email.value"
                                     placeholder="email@address.com"
-                                    rules="required"
+                                    rules="required|email"
                                     ref="emailProvider"
                                 />
                             </div>
