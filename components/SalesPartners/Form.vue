@@ -93,7 +93,7 @@
                                     name="Email Address"
                                     v-model="customer.channels.email.value"
                                     placeholder="email@address.com"
-                                    rules="required"
+                                    rules="required|email"
                                     ref="emailProvider"
                                 />
                             </div>
@@ -271,7 +271,12 @@ export default {
                         ...this.customer.address
                     },
                     account: {
-                        ...this.customer.account
+                        ...this.customer.account,
+                        type_id: this.types.partner
+                            ? this.types.partner
+                            : this.customer.account && this.customer.account.type_id
+                                ? this.customer.account.type_id
+                                : 0
                     },
                     channels: this.customer.channels
                 }
@@ -297,7 +302,12 @@ export default {
                     },
                     account: {
                         ...this.customer.account,
-                        contact_id: this.customer.id
+                        contact_id: this.customer.id,
+                        type_id: this.customer.account && this.customer.account.type_id
+                            ? this.customer.account.type_id
+                            : this.types.partner
+                                ? this.types.partner
+                                : 0
                     },
                     channels: this.customer.channels
                 }
