@@ -1,5 +1,6 @@
 <template>
   <div :class="layoutClass" class="auth-layout">
+    <notifications></notifications>
     <base-nav
       v-model="showMenu"
       type="light"
@@ -10,7 +11,7 @@
     >
       <div slot="brand" class="navbar-wrapper">
         <nuxt-link class="navbar-brand" to="/">
-          <img src="img/brand/white.png" alt="Logo white">
+          <img src="/logo_contrast.png" alt="Logo white">
         </nuxt-link>
       </div>
 
@@ -19,7 +20,7 @@
          <div class="row">
            <div class="col-6 collapse-brand">
              <nuxt-link to="/">
-               <img src="img/brand/green.png" alt="Logo green">
+               <img src="/logo_contrast.png" alt="Logo green">
              </nuxt-link>
            </div>
            <div class="col-6 collapse-close">
@@ -31,7 +32,7 @@
          </div>
        </div>
 
-       <ul class="navbar-nav mr-auto">
+       <!-- <ul class="navbar-nav mr-auto">
          <li class="nav-item">
            <nuxt-link to="/dashboard" class="nav-link">
              <span class="nav-link-inner--text">Dashboard</span>
@@ -93,7 +94,7 @@
              <span class="nav-link-inner--text">Purchase now</span>
            </a>
          </li>
-       </ul>
+       </ul> -->
      </template>
     </base-nav>
 
@@ -106,23 +107,16 @@
         <div class="row align-items-center justify-content-xl-between">
           <div class="col-xl-6">
             <div class="copyright text-center text-lg-left text-muted">
-              © {{year}} <a href="https://www.creative-tim.com" class="font-weight-bold ml-1" target="_blank" rel="noopener">Creative Tim</a> &
-              <a href="https://www.binarcode.com?ref=creative-tim" class="font-weight-bold ml-1" target="_blank" rel="noopener">Binar Code</a>
+              © {{year}} INAIA GmbH
             </div>
           </div>
           <div class="col-xl-6">
             <ul class="nav nav-footer justify-content-center justify-content-xl-end">
               <li class="nav-item">
-                <a href="https://www.creative-tim.com" class="nav-link" target="_blank" rel="noopener">Creative Tim</a>
+                <a href="" class="nav-link" target="_blank" rel="noopener">Privacy Policy</a>
               </li>
               <li class="nav-item">
-                <a href="https://www.creative-tim.com/presentation" class="nav-link" target="_blank" rel="noopener">About Us</a>
-              </li>
-              <li class="nav-item">
-                <a href="http://blog.creative-tim.com" class="nav-link" target="_blank" rel="noopener">Blog</a>
-              </li>
-              <li class="nav-item">
-                <a href="https://www.creative-tim.com/license" class="nav-link" target="_blank" rel="noopener">License</a>
+                <a href="" class="nav-link" target="_blank" rel="noopener">Imprint</a>
               </li>
             </ul>
           </div>

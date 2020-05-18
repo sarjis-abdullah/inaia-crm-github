@@ -13,7 +13,8 @@ export default function({ route, store, redirect }) {
     // store.dispatch('auth/logout')
 
     if (!route.matched.length) {
-        return redirect(404, '/Error404')
+        // return redirect(404, '/Error404')
+        return
     }
     // console.log('token', gets['auth/auth'])
     if (gets['auth/auth'] && gets['types/loading'] === 0) {
