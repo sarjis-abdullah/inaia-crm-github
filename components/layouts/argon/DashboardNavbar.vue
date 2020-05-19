@@ -286,7 +286,7 @@
         return null
       },
       editProfile() {
-        window.location.href    = process.env.universalLogin+'/profile/'+this.loggedin.id
+        window.location.href    = process.env.universalLogin+'/profile'
       },
       logout() {
         this.$store.dispatch('auth/logout')
