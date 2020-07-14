@@ -81,9 +81,9 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    // baseURL: isDevelopment ? 'https://auth-staging.inaia.cloud/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
-    // baseURL: isDevelopment ? 'https://auth-staging.inaia.de/api/v1' : 'https://auth-staging.inaia.de/api/v1'
-    baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
+    baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+    // baseURL: 'https://auth-staging.inaia.de/api/v1'
+    // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
     // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
     // See https://github.com/nuxt-community/axios-module#options
   },
