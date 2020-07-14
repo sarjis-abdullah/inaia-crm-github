@@ -635,6 +635,7 @@ export default {
                     account: {
                         ...this.customer.account,
                         contact_id: this.customer.id,
+                        // if customer has invalid account-type then ensure valid account-type
                         type_id: this.customer.account && this.customer.account.type_id
                             ? this.customer.account.type_id
                             : this.types.customer

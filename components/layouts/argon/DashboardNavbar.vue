@@ -260,10 +260,14 @@
         return this.capitalizeFirstLetter(name);
       },
       avatar() {
-        if (this.loggedin && this.loggedin.person_data) {
-          let gender    = this.loggedin.person_data.gender.toLowerCase()
-          if (gender == 'female' || gender == 'f') {
-            return '/img/theme/avatar_f.png'
+        if (this.loggedin) {
+          if (!this.loggedin.avatar && this.loggedin.person_data) {
+            let gender    = this.loggedin.person_data.gender.toLowerCase()
+            if (gender == 'female' || gender == 'f') {
+              return '/img/theme/avatar_f.png'
+            }
+          } else if (this.loggedin.avatar) {
+            return process.env.s3BucketUri + this.loggedin.avatar
           }
         }
         return '/img/theme/avatar_m.png'
