@@ -105,7 +105,8 @@ module.exports = {
     universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.cloud',
     // universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
     dashboardPath: '/dashboard',
-    s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
+    // s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
+    s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
     entryPoints: {
       crm: isDevelopment ? 'http://localhost:3001' : 'https://crm-staging.inaia.cloud',
       admin: isDevelopment ? 'http://localhost:3002' : 'https://admin-staging.inaia.cloud',
