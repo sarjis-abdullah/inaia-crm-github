@@ -33,8 +33,8 @@
 
           <div class="text-center border-0 pt-7 pt-lg-4 pb-0 pb-md-4">
             <div class="d-flex justify-content-center justify-content-lg-end">
-              <nuxt-link to="/profile/edit" class="btn btn-sm btn-primary mr-4 ">Edit Data</nuxt-link>
-              <nuxt-link to="/profile/reset-password" class="btn btn-sm btn-primary float-right">Change Password</nuxt-link>
+              <!-- <nuxt-link to="/profile/edit" class="btn btn-sm btn-primary mr-4 ">Edit Data</nuxt-link>
+              <nuxt-link to="/profile/reset-password" class="btn btn-sm btn-primary float-right">Change Password</nuxt-link> -->
             </div>
           </div>
 
@@ -132,7 +132,7 @@ export default {
         avatar() {
             if (this.info) {
                 if (!this.info.avatar && this.info.person_data) {
-                    let gender    = this.info.person_data.gender.toLowerCase()
+                    let gender    = this.info.person_data.gender && this.info.person_data.gender.toLowerCase()
                     if (gender == 'female' || gender == 'f') {
                         return '/img/theme/avatar_f.png'
                     }
