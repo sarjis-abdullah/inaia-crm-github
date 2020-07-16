@@ -102,7 +102,7 @@
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
                                             <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/'+row.id)" href="#">Details</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">Details</a>
                                             <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">Edit</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
                                         </el-dropdown-menu>
