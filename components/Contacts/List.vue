@@ -101,7 +101,8 @@
                                             <i class="fas fa-ellipsis-v mt-2"></i>
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                            <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/'+row.id)" href="#">Details</a>
                                             <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">Edit</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
                                         </el-dropdown-menu>
@@ -244,7 +245,11 @@ export default {
             this.$store
                 .dispatch('clients/removeClient', resource.id)
                 .then( () => {
-                    this.fetchClientData(this.searchQuery)
+                    if (!this.data.length && this.page > 1) {
+                        this.page = this.page - 1;
+                    } else {
+                        this.fetchClientData(this.searchQuery)
+                    }
                 })
         },
         getChannelInfo(channels, type) {

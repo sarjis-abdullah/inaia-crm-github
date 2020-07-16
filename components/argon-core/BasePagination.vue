@@ -127,7 +127,7 @@ export default {
       this.$emit("input", 1);
     },
     total() {
-      this.$emit("input", 1);
+    //   this.$emit("input", 1);
     }
   }
 };

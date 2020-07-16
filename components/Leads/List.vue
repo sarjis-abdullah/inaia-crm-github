@@ -218,7 +218,11 @@ export default {
             this.$store
                 .dispatch('clients/removeClient', resource.id)
                 .then( () => {
-                    this.fetchLeadData(this.searchQuery)
+                    if (!this.data.length && this.page > 1) {
+                        this.page = this.page - 1;
+                    } else {
+                        this.fetchLeadData(this.searchQuery)
+                    }
                 })
         },
         getChannelInfo(channels, type) {

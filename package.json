@@ -1,8 +1,8 @@
 {
-  "name": "nuxt-argon-dashboard-pro",
+  "name": "gold-dinar-crm",
   "version": "1.0.0",
-  "description": "Nuxt version of the Vue Argon Dashboard Pro",
-  "author": "Creative Tim",
+  "description": "CRM for Gold Dinar",
+  "author": "INAIA Gmbh",
   "private": true,
   "scripts": {
     "dev": "nuxt",
