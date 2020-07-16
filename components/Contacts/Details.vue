@@ -123,6 +123,7 @@ export default {
             types: "types/types"
         }),
         info() {
+            // console.error('resource', this.resource)
             return this.resource && this.resource.customer
         },
         getName() {
