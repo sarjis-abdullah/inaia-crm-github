@@ -1,21 +1,18 @@
 <template>
   <div>
 
-    <div class="header pb-6 d-flex align-items-center profile-header">
-      <!-- Mask -->
-      <span class="mask bg-gradient-default opacity-8"></span>
-      <!-- Header container -->
-      <div class="container-fluid d-flex align-items-center">
-        <div class="row">
-          <div class="col-lg-8 col-md-10">
-            <h1 class="display-2 text-white">Hello {{ getName }}</h1>
-            <p class="text-white mt-0 mb-5">This is your profile page. You can see the progress you've made with your
-              work and manage your projects or assigned tasks</p>
-            <nuxt-link :to="'/profile/edit/'+info.id" class="btn btn-neutral">Edit Profile</nuxt-link>
-          </div>
+    <base-header class="pb-6">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ">
+              <route-breadcrumb/>
+          </nav>
+        </div>
+        <div class="col-lg-6 col-5 text-right">
+          <base-button size="sm" type="neutral" @click.prevent="() => $router.push('/customers/edit/'+info.id)">Edit Profile</base-button>
         </div>
       </div>
-    </div>
+    </base-header>
 
     <div class="container-fluid mt--4">
       <div class="row">

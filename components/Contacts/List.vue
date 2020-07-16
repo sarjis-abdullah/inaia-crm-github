@@ -44,14 +44,14 @@
                             <el-table-column label="Name"
                                             min-width="300px">
                                 <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <a href="#" class="avatar rounded-circle mr-3">
+                                    <a href="#" @click.prevent="() => $router.push('/customers/details/'+row.id)" class="media align-items-center">
+                                        <span href="#" class="avatar rounded-circle mr-3">
                                             <img alt="Im" :src="avatar(row)">
-                                        </a>
+                                        </span>
                                         <div class="media-body">
                                             <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
                                         </div>
-                                    </div>
+                                    </a>
                                 </template>
                             </el-table-column>
 
@@ -94,15 +94,14 @@
                                 </template>
                             </el-table-column> -->
 
-                            <el-table-column min-width="180px">
+                            <el-table-column min-width="180px" >
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown">
+                                    <el-dropdown trigger="click" class="dropdown ml-2">
                                         <span class="btn btn-sm btn-icon-only text-light">
                                             <i class="fas fa-ellipsis-v mt-2"></i>
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">Details</a>
+                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
                                             <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">Edit</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
                                         </el-dropdown-menu>

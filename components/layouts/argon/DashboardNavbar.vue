@@ -45,7 +45,8 @@
                      title-classes="nav-link"
                      title-tag="a"
                      icon="ni ni-bell-55"
-                     menu-classes="dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden">
+                     menu-classes="dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden"
+                     :hasToggle="false">
         <template>
           <!-- Dropdown header -->
           <div class="px-3 py-3">
@@ -158,7 +159,8 @@
                      tag="li"
                      title-tag="a"
                      title-classes="nav-link"
-                     icon="ni ni-ungroup">
+                     icon="ni ni-ungroup"
+                     :hasToggle="false">
         <template>
           <div class="row shortcuts px-4">
             <a href="#!" class="col-4 shortcut-item">
