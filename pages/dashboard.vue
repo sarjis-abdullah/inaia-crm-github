@@ -207,7 +207,7 @@
 
               <div class="row justify-content-between align-items-center">
                 <div class="col">
-                  <img src="~/static/img/icons/cards/bitcoin.png" alt="Image placeholder">
+                  <img src="/img/icons/cards/bitcoin.png" alt="Image placeholder">
                 </div>
                 <div class="col-auto">
                   <span class="badge badge-lg badge-success">Active</span>
