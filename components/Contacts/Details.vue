@@ -65,7 +65,7 @@
 
             </div>
           </div>
-          <Form :single-client-data="resource" />
+          <!-- <Form :single-client-data="resource" /> -->
         </div>
       </div>
     </div>
