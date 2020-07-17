@@ -41,31 +41,31 @@
         list: [
           {
             name: 'Argon Design System',
-            image: 'img/theme/bootstrap.jpg',
+            image: '/img/theme/bootstrap.jpg',
             color: 'orange',
             progress: 60,
           },
           {
             name: 'Angular Now UI Kit PRO',
-            image: 'img/theme/angular.jpg',
+            image: '/img/theme/angular.jpg',
             color: 'green',
             progress: 100,
           },
           {
             name: 'Black Dashboard',
-            image: 'img/theme/sketch.jpg',
+            image: '/img/theme/sketch.jpg',
             color: 'red',
             progress: 72
           },
           {
             name: 'React Material Dashboard',
-            image: 'img/theme/react.jpg',
+            image: '/img/theme/react.jpg',
             color: 'teal',
             progress: 90
           },
           {
             name: 'Vue Paper UI Kit PRO',
-            image: 'img/theme/vue.jpg',
+            image: '/img/theme/vue.jpg',
             color: 'green',
             progress: 100
           },
