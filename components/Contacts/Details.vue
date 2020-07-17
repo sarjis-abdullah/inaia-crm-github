@@ -18,7 +18,7 @@
       <div class="row">
         <div class="col-xl-4 order-xl-2">
           <user-card :resource="resource"></user-card>
-          <progress-track-list></progress-track-list>
+          <products />
         </div>
         <div class="col-xl-8 order-xl-1">
           <div class="row">
@@ -102,13 +102,13 @@
 import { mapGetters } from "vuex"
 import Form from "@/components/Contacts/Form";
 import UserCard from "@/components/Contacts/UserCard";
-import ProgressTrackList from '@/components/widgets/ProgressTrackList';
+import Products from '@/components/Contacts/Products';
 
 export default {
     components: {
         Form,
         UserCard,
-        ProgressTrackList
+        Products
     },
     props: {
         resource: {
