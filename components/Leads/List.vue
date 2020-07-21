@@ -32,14 +32,14 @@
                             <el-table-column label="Name"
                                             min-width="300px">
                                 <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <a href="#" class="avatar rounded-circle mr-3">
+                                    <a @click.prevent="() => popupDetails(row)" href="#" class="media align-items-center">
+                                        <span class="avatar rounded-circle mr-3">
                                             <img alt="Im" :src="avatar(row)">
-                                        </a>
+                                        </span>
                                         <div class="media-body">
                                             <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
                                         </div>
-                                    </div>
+                                    </a>
                                 </template>
                             </el-table-column>
 
