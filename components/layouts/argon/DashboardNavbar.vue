@@ -197,7 +197,7 @@
                     <img alt="Im" :src="avatar">
                   </span>
             <div class="media-body ml-2 d-none d-lg-block">
-              <span class="mb-0 text-sm  font-weight-bold">{{ loggedin && loggedin.account && loggedin.account.username }}</span>
+              <span class="mb-0 text-sm  font-weight-bold">{{ userName }}</span>
             </div>
           </div>
         </a>
@@ -273,6 +273,19 @@
           }
         }
         return '/img/theme/avatar_m.png'
+      },
+      userName() {
+        if (this.loggedin) {
+          let name = this.loggedin.name;
+        //   if (this.loggedin.person_data && this.loggedin.person_data.middlename) {
+        //     name += ' ' + this.loggedin.person_data.middlename
+        //   }
+          if (this.loggedin.person_data && this.loggedin.person_data.surname) {
+            name += ' ' + this.loggedin.person_data.surname
+          }
+          return name;
+        }
+        return '';
       }
     },
     data() {
