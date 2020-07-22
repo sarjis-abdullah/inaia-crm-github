@@ -1,6 +1,6 @@
 # admin
 
-> Admin panel for Golddinar
+> INAIA Cloud Customer Relationship Management (CRM)
 
 ## Build Setup
 

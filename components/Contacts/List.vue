@@ -45,7 +45,7 @@
                                             min-width="300px">
                                 <template v-slot="{row}">
                                     <a href="#" @click.prevent="() => $router.push('/customers/details/'+row.id)" class="media align-items-center">
-                                        <span href="#" class="avatar rounded-circle mr-3">
+                                        <span class="avatar rounded-circle mr-3">
                                             <img alt="Im" :src="avatar(row)">
                                         </span>
                                         <div class="media-body">
