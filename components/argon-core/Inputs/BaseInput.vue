@@ -1,7 +1,7 @@
 <template>
   <validation-provider :rules="rules" :name="name" v-bind="$attrs" v-slot="{errors, valid, invalid, validated}">
     <div class="form-group" :class="{'is-invalid': validated && invalid}">
-      <slot name="label">
+      <slot name="label" v-bind="{invalid, validated}">
         <label v-if="label" :class="labelClasses">
           {{label}}
         </label>
@@ -20,7 +20,7 @@
           </slot>
         </span>
         </div>
-        <slot v-bind="slotData">
+        <slot v-bind="{...slotData, invalid, validated}">
           <input
             :type="type"
             v-on="listeners"

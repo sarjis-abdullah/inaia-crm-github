@@ -163,19 +163,19 @@
                      :hasToggle="false">
         <template>
           <div class="row shortcuts px-4">
-            <a href="#!" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+            <a href="#!" class="col-4 shortcut-item" @click.prevent.stop="">
+                    <span class="shortcut-media avatar rounded-circle">
                       <i class="fas fa-users"></i>
                     </span>
               <small>CRM</small>
             </a>
-            <a href="#!" class="col-4 shortcut-item">
+            <a :href="entry.golddinar+'?token='+token" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-info">
                       <i class="fas fa-coins"></i>
                     </span>
               <small>Gold Dinar</small>
             </a>
-            <a href="#!" class="col-4 shortcut-item">
+            <a :href="entry.admin+'?token='+token" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-info">
                       <i class="fas fa-cog"></i>
                     </span>
@@ -256,6 +256,7 @@
     computed: {
       ...mapGetters({
         loggedin: "auth/user",
+        token: "auth/auth",
       }),
       routeName() {
         const { name } = this.$route;
@@ -290,6 +291,7 @@
     },
     data() {
       return {
+        entry: process.env.entryPoints,
         activeNotifications: false,
         showMenu: false,
         searchModalVisible: false,
