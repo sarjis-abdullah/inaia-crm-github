@@ -36,7 +36,7 @@
                             <div class="col-md-1">
                             </div>
                             <div class="col-md-5" v-if="selectedContactType == 'person'">
-                                <base-input label="Nationality" name="Nationality" placeholder="Select nationslity" ref="nationalityProvider" rules="required">
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider">
                                     <select class="form-control" v-model="customer.person_data.nationality.id">
                                         <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
                                     </select>
@@ -72,7 +72,6 @@
                                     name="Birth Date"
                                     v-model="customer.person_data.birthdate"
                                     placeholder="Birth Date"
-                                    rules="required"
                                     type="date"
                                 />
                             </div>
@@ -148,9 +147,11 @@
                             <div class="col-md-5">
                                 <base-input
                                     label="City"
+                                    name="City"
                                     v-model="customer.address.city"
                                     placeholder="City"
                                     ref="cityProvider"
+                                    rules="required"
                                 />
                             </div>
                         </div>
@@ -167,9 +168,11 @@
                             </div>
                             <div class="col-md-5">
                                 <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required">
-                                    <select class="form-control" v-model="customer.address.country_id">
-                                        <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                    <template #default="slotProps">
+                                        <select class="form-control" :class="[{'is-invalid': slotProps.invalid && slotProps.validated}]" v-model="customer.address.country_id">
+                                            <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                        </select>
+                                    </template>
                                 </base-input>
                             </div>
                         </div>
