@@ -21,8 +21,12 @@ export default function({ route, store, redirect }) {
         store.dispatch('types/fetchTypes')
     }
 
-    if (route.query.token && route.query.token !== gets['auth/auth']) {
-        store.commit('auth/setAuth', route.query.token)
+    // if (route.query.token && route.query.token !== gets['auth/auth']) {
+    if (route.query.token) {
+        if (route.query.token !== gets['auth/auth']) {
+            store.commit('auth/setAuth', route.query.token)
+        }
+        store.commit('auth/user', null)
         hasRedirect = true
         redirect(process.env.dashboardPath)
     } else if (gets['auth/loading'] === 0 && gets['auth/auth']) {
