@@ -192,7 +192,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-button type="primary" native-type="submit">Submit</base-button>
-                                <base-button type="secondary" native-type="button" @click="() => $router.push('/sales-partners')">Cancel</base-button>
+                                <base-button type="secondary" native-type="button" @click="() => $router.go(-1)">Cancel</base-button>
                             </div>
                         </div>
                     </validation-observer>
