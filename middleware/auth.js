@@ -8,7 +8,7 @@
 
 let hasRedirect = false
 
-export default function({ route, store, redirect }) {
+export default function({ app, route, store, redirect }) {
     const gets = store.getters
     // store.dispatch('auth/logout')
 
@@ -38,6 +38,10 @@ export default function({ route, store, redirect }) {
                     if (!gets['auth/authorized']) {
                         // console.log('no account')
                         store.dispatch('auth/logout')
+                    } else {
+                        if (app.i18n.locale !== gets['auth/locale']) {
+                            app.i18n.locale = gets['auth/locale']
+                        }
                     }
                 }).catch( err => {
                     console.log('err', err)

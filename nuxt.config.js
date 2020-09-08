@@ -62,6 +62,7 @@ module.exports = {
   */
   plugins: [
     '~/plugins/axios',
+    '~/plugins/i18n',
     '~/plugins/dashboard/dashboard-plugin',
     '~/plugins/dashboard/full-calendar',
     '~/plugins/dashboard/world-map',

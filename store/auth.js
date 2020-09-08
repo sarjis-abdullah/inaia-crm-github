@@ -1,8 +1,17 @@
 const userToken = 'inaiaUserToken'
 const authToken = 'inaiaAuthToken'
+const i18nKey = 'i18n_redirected'
+const defaultLocale = 'en'
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export const state = () => ({
+    locale: Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale,
+    locales: [
+        { text: 'Deutsch',  value: 'de' },
+        { text: 'English',  value: 'en' },
+        { text: 'Français', value: 'fr' },
+        { text: 'Español',  value: 'es' },
+    ],
     auth: Cookie ? (Cookie.get(authToken) ? Cookie.get(authToken) : null) : null,
     user: JSON.parse(localStorage.getItem(userToken)) || null,
     authorized: false,
@@ -10,7 +19,15 @@ export const state = () => ({
 })
 
 export const getters = {
-	user(state) {
+    locale(state) {
+        return state.locale
+    },
+
+    locales(state) {
+        return state.locales
+    },
+
+    user(state) {
 		return state.user
     },
     
@@ -28,7 +45,16 @@ export const getters = {
 }
 
 export const mutations = {
-	setAuth(state, auth) {
+    setLocale(state, locale) {
+        if (state.locales.find(l => l.value == locale)) {
+            state.locale = locale
+            if (Cookie) {
+                Cookie.set(i18nKey, locale) // saving token in cookie for server rendering
+            }
+        }
+    },
+
+    setAuth(state, auth) {
 		state.auth  = auth
 		Cookie.set(authToken, auth) // saving token in cookie for server rendering
 	},
@@ -62,8 +88,18 @@ export const actions = {
         return this.$axios
             .get('/me?include=account,type,person_data,address,country,channels')
             .then(response => {
-                context.commit('user', response.data.data)
-                context.commit('authorize', response.data.data.id ? true : false)
+                let dt  = response.data.data,
+                    pd  = dt.person_data,
+                    st  = dt.account.settings,
+                    lc  = st && st.find(s => s.name_translation_key == 'locale')
+
+                context.commit('user', dt)
+                context.commit('authorize', dt.id ? true : false)
+                if (lc && lc.value != context.state.locale) {
+                    context.commit('setLocale', lc.value)
+                } else if (!lc && pd && pd.nationality) {
+                    context.commit('setLocale', pd.nationality.alpha2_code.toLowerCase())
+                }
                 return response
             })
             .catch(error => {
