@@ -89,7 +89,7 @@ export const actions = {
             .get('/me?include=account,type,person_data,address,country,channels')
             .then(response => {
                 let dt  = response.data.data,
-                    pd  = dt.person_data,
+                    ad  = dt.address,
                     st  = dt.account.settings,
                     lc  = st && st.find(s => s.name_translation_key == 'locale')
 
@@ -97,8 +97,8 @@ export const actions = {
                 context.commit('authorize', dt.id ? true : false)
                 if (lc && lc.value != context.state.locale) {
                     context.commit('setLocale', lc.value)
-                } else if (!lc && pd && pd.nationality) {
-                    context.commit('setLocale', pd.nationality.alpha2_code.toLowerCase())
+                } else if (!lc && ad && ad.country) {
+                    context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
                 }
                 return response
             })
