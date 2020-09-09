@@ -1,12 +1,5 @@
 export const state = () => {
     return {
-        locale: 'en',
-        locales: [
-            { text: 'Deutsch',  value: 'de' },
-            { text: 'English',  value: 'en' },
-            { text: 'français', value: 'fr' },
-            { text: 'español',  value: 'es' },
-        ],
         clientData: [],
         singleClientData: {},
         // leadData: [],
@@ -17,12 +10,6 @@ export const state = () => {
 }
 export const getters = {
 
-    locale(state) {
-        return state.locale
-    },
-    locales(state) {
-        return state.locales
-    },
     clientData(state) {
         return state.clientData
     },
@@ -44,9 +31,6 @@ export const getters = {
 }
 export const mutations = {
 
-    setLocale(state, locale) {
-        state.locale = locale
-    },
     initClientData(state, clientData) {
         state.clientData = clientData
     },
@@ -73,9 +57,6 @@ export const mutations = {
     },
 }
 export const actions = {
-    setLocale(context, payload) {
-        context.commit('setLocale', payload)
-    },
     submitClient(context, payload) {
 
         if (!payload.id) {
@@ -184,7 +165,7 @@ export const actions = {
     initCountryList(context) {
         context.commit('countryListLoaded', 1)
         return this.$axios
-            .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.state.locale}})
+            .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
                 const countryList = response.data.data
                 // console.log('country-list loaded')
