@@ -18,6 +18,8 @@ export const state = () => ({
     loading: 0
 })
 
+const initialState  = state()
+
 export const getters = {
     locale(state) {
         return state.locale
@@ -66,7 +68,9 @@ export const mutations = {
 
     purgeAuth(state) {
 		localStorage.removeItem(userToken)
-		Cookie.remove(authToken)
+        if (Cookie) {
+		    Cookie.remove(authToken)
+        }
 		state.auth          = null
 		state.user          = null
 		state.authorized    = false

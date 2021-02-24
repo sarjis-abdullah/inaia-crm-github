@@ -8,6 +8,9 @@ export const state = () => {
         countryListLoaded: 0
     }
 }
+
+const initialState  = state()
+
 export const getters = {
 
     clientData(state) {
@@ -55,6 +58,9 @@ export const mutations = {
     countryListLoaded(state, bool) {
         state.countryListLoaded = bool
     },
+    resetState(state) {
+        Object.assign(state, initialState)
+    }
 }
 export const actions = {
     submitClient(context, payload) {

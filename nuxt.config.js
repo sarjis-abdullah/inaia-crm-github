@@ -82,9 +82,9 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+    // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
     // baseURL: 'https://auth-staging.inaia.de/api/v1'
-    // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
+    baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
     // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
     // See https://github.com/nuxt-community/axios-module#options
   },
@@ -109,6 +109,9 @@ module.exports = {
     s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
     // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
     entryPoints: {
+    //   crm: 'https://crm-staging.inaia.cloud',
+    //   admin: 'https://admin-staging.inaia.cloud',
+    //   golddinar: 'https://golddinar-admin-staging.inaia.cloud'
       crm: isDevelopment ? 'http://localhost:3001' : 'https://crm-staging.inaia.cloud',
       admin: isDevelopment ? 'http://localhost:3002' : 'https://admin-staging.inaia.cloud',
       golddinar: isDevelopment ? 'http://localhost:3003' : 'https://golddinar-admin-staging.inaia.cloud'
