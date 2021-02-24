@@ -3,6 +3,8 @@ export const state = () => ({
     loading: 0
 })
 
+const initialState  = state()
+
 export const getters = {
     types(state) {
         return state.types
@@ -20,6 +22,10 @@ export const mutations = {
   
     loading(state, bool) {
         state.loading = bool
+    },
+
+    resetState(state) {
+        Object.assign(state, initialState)
     }
 }
 
