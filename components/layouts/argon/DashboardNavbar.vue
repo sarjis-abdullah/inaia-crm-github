@@ -310,7 +310,8 @@
         window.location.href    = process.env.universalLogin+'/profile'
       },
       logout() {
-        this.$store.dispatch('auth/logout')
+        // this.$store.dispatch('auth/logout')
+        this.$router.push('/logout')
       },
       capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);

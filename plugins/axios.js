@@ -10,8 +10,12 @@ export default function({ store, $axios }) {
         response => response,
         error => {
             if (error.response && error.response.status === 401) {
-                store.dispatch('auth/logout')
-                return
+                store.dispatch('auth/unauthorize')
+                    .then(res => {
+                    }).catch(err => {
+                    }).finally(() => {
+                        window.location.href    = process.env.universalLogin + '/logout'
+                    })
             }
             return Promise.reject(error)
         }
