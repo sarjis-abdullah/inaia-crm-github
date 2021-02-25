@@ -10,7 +10,7 @@ let hasRedirect = false
 
 export default function({ app, route, store, redirect }) {
     const gets = store.getters
-    // store.dispatch('auth/logout')
+    // logout(store)
 
     if (!route.matched.length) {
         // return redirect(404, '/Error404')
@@ -37,7 +37,7 @@ export default function({ app, route, store, redirect }) {
                     // authorize(store, gets['auth/userData'].roles)
                     if (!gets['auth/authorized']) {
                         // console.log('no account')
-                        store.dispatch('auth/logout')
+                        logout(store)
                     } else {
                         if (app.i18n.locale !== gets['auth/locale']) {
                             app.i18n.locale = gets['auth/locale']
@@ -56,7 +56,7 @@ export default function({ app, route, store, redirect }) {
 
     if (!hasRedirect && gets['auth/loading'] !== 1 && !gets['auth/authorized']) {
         // console.log('loading', gets['auth/loading'])
-        return store.dispatch('auth/logout')
+        return logout(store)
     }
 
     // console.log('path', route)
@@ -64,4 +64,12 @@ export default function({ app, route, store, redirect }) {
         redirect(process.env.dashboardPath)
     }
     hasRedirect = false
+}
+
+function logout(store) {
+    return store.dispatch('auth/logout')
+    .catch(err => {})
+    .finally(() => {
+        window.location.href    = process.env.universalLogin + '/logout'
+    })
 }
