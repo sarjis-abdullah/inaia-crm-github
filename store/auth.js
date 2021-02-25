@@ -18,8 +18,6 @@ export const state = () => ({
     loading: 0
 })
 
-const initialState  = state()
-
 export const getters = {
     locale(state) {
         return state.locale
@@ -115,8 +113,29 @@ export const actions = {
             })
     },
     
+    // logout(context) {
+    //     context.commit('purgeAuth')
+    //     window.location.href = process.env.universalLogin + '/logout'
+    // }
     logout(context) {
-        context.commit('purgeAuth')
-        window.location.href = process.env.universalLogin + '/logout'
+        return this.$axios
+            .get('/logout')
+            .then(response => {
+                return Promise.resolve(response)
+            }).catch(error => {
+                return Promise.reject(error)
+            }).finally(() => {
+                resetState(context.commit)
+            })
+    },
+
+    unauthorize(context) {
+        resetState(context.commit)
     }
+}
+
+function resetState(commit) {
+    commit('purgeAuth')
+    commit('clients/resetState', null, { root: true })
+    commit('types/resetState', null, { root: true })
 }
