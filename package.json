@@ -6,9 +6,12 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
+    "stage-build": "NODE_ENV=staging nuxt build",
+    "stage-start": "NODE_ENV=staging nuxt start",
+    "stage-generate": "NODE_ENV=staging nuxt generate",
+    "build": "NODE_ENV=production nuxt build",
+    "start": "NODE_ENV=production nuxt start",
+    "generate": "NODE_ENV=production nuxt generate"
   },
   "dependencies": {
     "@fullcalendar/core": "^4.0.2",
