@@ -17,8 +17,8 @@
 */
 
 const pkg = require('./package')
-console.log('ENV', process.env.NODE_ENV)
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const appEnv  = process.env.NODE_ENV || 'development'
+import EnvKeys from './config'
 
 module.exports = {
   mode: 'spa',
@@ -82,10 +82,7 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
-    // baseURL: 'https://auth-staging.inaia.de/api/v1'
-    baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.cloud/api/v1'
-    // baseURL: isDevelopment ? 'http://inaia-api-auth/api/v1' : 'https://auth-staging.inaia.de/api/v1'
+    ...EnvKeys[appEnv].axios
     // See https://github.com/nuxt-community/axios-module#options
   },
 
@@ -94,28 +91,14 @@ module.exports = {
    * access from devices in the same network
    */
   server: {
-    // for check in mbl device
-    port: 3001, // default: 3000
-    host: '0.0.0.0', // default: localhost
+    ...EnvKeys[appEnv].server
   },
 
   /**
    * Environment configurations
    */
   env: {
-    universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.cloud',
-    // universalLogin: isDevelopment ? 'http://localhost:3000' : 'https://login-staging.inaia.de',
-    dashboardPath: '/dashboard',
-    s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
-    // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
-    entryPoints: {
-    //   crm: 'https://crm-staging.inaia.cloud',
-    //   admin: 'https://admin-staging.inaia.cloud',
-    //   golddinar: 'https://golddinar-admin-staging.inaia.cloud'
-      crm: isDevelopment ? 'http://localhost:3001' : 'https://crm-staging.inaia.cloud',
-      admin: isDevelopment ? 'http://localhost:3002' : 'https://admin-staging.inaia.cloud',
-      golddinar: isDevelopment ? 'http://localhost:3003' : 'https://golddinar-admin-staging.inaia.cloud'
-    }
+    ...EnvKeys[appEnv].env
   },
 
   /*
@@ -131,7 +114,7 @@ module.exports = {
     extend(config, ctx) {
 
     },
-    extractCSS: process.env.NODE_ENV === 'production',
+    extractCSS: appEnv === 'production',
     babel: {
       plugins: [
         [
