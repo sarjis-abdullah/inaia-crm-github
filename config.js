@@ -1,8 +1,8 @@
 export default {
     development: {
         axios: {
-            // baseURL: 'http://inaia-api-auth/api/v1'
-            baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+            baseURL: 'http://inaia-api-auth/api/v1'
+            // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
         },
         env: {
             universalLogin: 'http://localhost:3000',
@@ -10,8 +10,8 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
-            // productApiUrl: 'http://inaia-api-products/api/v1'
-            productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
+            productApiUrl: 'http://inaia-api-products/api/v1',
+            // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'http://localhost:3001',
@@ -55,7 +55,7 @@ export default {
 
     production: {
         axios: {
-            baseURL: 'https://auth.inaia.cloud/api/v1'
+            baseURL: 'https://auth.api.inaia.cloud/api/v1'
         },
         env: {
             universalLogin: 'https://login.inaia.cloud',
@@ -63,7 +63,7 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/storage.inaia.cloud/',
             // s3BucketUri: 'https://storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'https://products.inaia.cloud/api/v1',
+            productApiUrl: 'https://products.api.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'https://crm.inaia.cloud',
