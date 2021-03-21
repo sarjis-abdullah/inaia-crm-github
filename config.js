@@ -5,6 +5,7 @@ export default {
             // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
         },
         env: {
+            devMode: true,
             universalLogin: 'http://localhost:3000',
             dashboardPath: '/dashboard',
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',

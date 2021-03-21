@@ -10,7 +10,7 @@ export default function({ store, $axios }) {
         response => response,
         error => {
             if (error.response && error.response.status === 401) {
-                store.dispatch('auth/unauthorize')
+                store.dispatch('auth/logout')
                     .then(res => {
                     }).catch(err => {
                     }).finally(() => {
