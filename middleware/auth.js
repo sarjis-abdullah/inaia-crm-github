@@ -44,7 +44,7 @@ export default function({ app, route, store, redirect }) {
                         }
                     }
                 }).catch( err => {
-                    console.log('err', err)
+                    // console.log('err', err)
                 })
         } else if (!gets['auth/authorized']) {
             // in case of page-reloaded

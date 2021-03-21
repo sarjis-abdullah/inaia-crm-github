@@ -113,20 +113,18 @@ export const actions = {
             })
     },
     
-    // logout(context) {
-    //     context.commit('purgeAuth')
-    //     window.location.href = process.env.universalLogin + '/logout'
-    // }
     logout(context) {
-        return this.$axios
-            .get('/logout')
-            .then(response => {
-                return Promise.resolve(response)
-            }).catch(error => {
-                return Promise.reject(error)
-            }).finally(() => {
-                resetState(context.commit)
-            })
+        // return this.$axios
+        //     .get('/logout')
+        //     .then(response => {
+        //         return Promise.resolve(response)
+        //     }).catch(error => {
+        //         return Promise.reject(error)
+        //     }).finally(() => {
+        //         resetState(context.commit)
+        //     })
+        resetState(context.commit)
+        return Promise.resolve()
     },
 
     unauthorize(context) {
@@ -135,7 +133,12 @@ export const actions = {
 }
 
 function resetState(commit) {
-    commit('purgeAuth')
+    if (!process.env.devMode) {
+        // at localhost, cookie and localStorage are not "port" specific
+        // so no need to purge sevice specific. In this case,
+        // universal-login will purge the common cookie and localStorage after logout.
+        commit('purgeAuth')
+    }
     commit('clients/resetState', null, { root: true })
     commit('types/resetState', null, { root: true })
 }
