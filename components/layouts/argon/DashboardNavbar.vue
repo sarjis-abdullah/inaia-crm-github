@@ -270,7 +270,8 @@
               return '/img/theme/avatar_f.png'
             }
           } else if (this.loggedin.avatar) {
-            return process.env.s3BucketUri + this.loggedin.avatar
+            // return process.env.s3BucketUri + this.loggedin.avatar
+            return this.loggedin.avatar
           }
         }
         return '/img/theme/avatar_m.png'
