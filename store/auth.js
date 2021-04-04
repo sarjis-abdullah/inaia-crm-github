@@ -4,16 +4,20 @@ const i18nKey = 'i18n_redirected'
 const defaultLocale = 'en'
 const Cookie = process.client ? require('js-cookie') : undefined
 
+const initLocale    = Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale
+const initAuth      = Cookie ? (Cookie.get(authToken) ? Cookie.get(authToken) : null) : null
+const initUser      = JSON.parse(localStorage.getItem(userToken))
+
 export const state = () => ({
-    locale: Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale,
+    locale: initLocale,
     locales: [
         { text: 'Deutsch',  value: 'de' },
         { text: 'English',  value: 'en' },
         { text: 'Français', value: 'fr' },
         { text: 'Español',  value: 'es' },
     ],
-    auth: Cookie ? (Cookie.get(authToken) ? Cookie.get(authToken) : null) : null,
-    user: JSON.parse(localStorage.getItem(userToken)) || null,
+    auth: initAuth,
+    user: initUser,
     authorized: false,
     loading: 0
 })
@@ -88,7 +92,7 @@ export const actions = {
         context.commit('loading', 1)
     
         return this.$axios
-            .get('/me?include=account,type,person_data,address,country,channels')
+            .get('/me?include=account,type,person_data,address,country,channels,account.roles,role.permissions,apps')
             .then(response => {
                 let dt  = response.data.data,
                     ad  = dt.address,
