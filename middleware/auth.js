@@ -1,14 +1,8 @@
-// const authorize = (store, roles) => {
-//     roles.forEach(role => {
-//         if (process.env.authenticatedRoles.includes(role.role.title)) {
-//             store.commit('auth/authorize', true)
-//         }
-//     })
-// }
+import { hasAppAccess, logout } from '~/helpers/auth'
 
 let hasRedirect = false
 
-export default function({ app, route, store, redirect }) {
+export default async function({ app, route, store, redirect }) {
     const gets = store.getters
     // logout(store)
 
@@ -32,10 +26,10 @@ export default function({ app, route, store, redirect }) {
     } else if (gets['auth/loading'] === 0 && gets['auth/auth']) {
         if (!gets['auth/user']) {
             // in case only cookie exists in localhost
-            store.dispatch('auth/fetchLoggedIn')
+            await store.dispatch('auth/fetchLoggedIn')
                 .then( () => {
                     // authorize(store, gets['auth/userData'].roles)
-                    if (!gets['auth/authorized']) {
+                    if (!gets['auth/authorized'] || !hasAppAccess(gets['auth/user'].account)) {
                         // console.log('no account')
                         logout(store)
                     } else {
@@ -64,12 +58,4 @@ export default function({ app, route, store, redirect }) {
         redirect(process.env.dashboardPath)
     }
     hasRedirect = false
-}
-
-function logout(store) {
-    return store.dispatch('auth/logout')
-    .catch(err => {})
-    .finally(() => {
-        window.location.href    = process.env.universalLogin + '/logout'
-    })
 }
