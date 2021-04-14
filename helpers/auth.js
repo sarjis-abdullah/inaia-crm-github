@@ -68,7 +68,7 @@ export function hasMaxAccess(account) {
 }
 
 export function hasAppAccess(account) {
-    if (account.crm_access) {
+    if (account.crm_access || hasMaxAccess(account)) {
         return true
     }
     return false
