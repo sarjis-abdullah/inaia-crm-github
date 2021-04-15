@@ -23,6 +23,23 @@
 //     return import('@/views/forms/form-layouts/' + c + '/' + s)
 // }
 
+export function mapCountriesNationalities(list) {
+    const countryList       = []
+    const nationalityList   = []
+    list.forEach(item => {
+        if (item.allow) {
+            countryList[countryList.length] = {
+                text: item.name_translation_key,
+                value: item.id
+            }
+        }
+        nationalityList[nationalityList.length] = {
+            text: item.nationality_translation_key,
+            value: item.id
+        }
+    })
+    return {countryList, nationalityList}
+}
 
 export function notifyError(err, notify) {
     let response = err.response
