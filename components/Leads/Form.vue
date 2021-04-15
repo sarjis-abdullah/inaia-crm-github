@@ -27,19 +27,19 @@
 
                         <div class="row">
                             <div class="col-md-5">
-                                <base-input label="Lead Type" name="Lead Type" placeholder="Select lead type">
-                                    <select class="form-control" v-model="selectedContactType">
-                                        <option v-for="(i, idx) in contactTypes" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                <base-input label="Lead Type" name="Lead Type">
+                                    <el-select v-model="selectedContactType" placeholder="Select lead type">
+                                        <el-option v-for="(ct, idx) in contactTypes" :key="idx" :value="ct.value" :label="$t(ct.text)" />
+                                    </el-select>
                                 </base-input>
                             </div>
                             <div class="col-md-1">
                             </div>
                             <div class="col-md-5" v-if="selectedContactType == 'person'">
-                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider">
-                                    <select class="form-control" v-model="customer.person_data.nationality.id">
-                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                <base-input label="Nationality" name="Nationality" ref="nationalityProvider">
+                                    <el-select filterable v-model="customer.person_data.nationality.id" placeholder="Select nationality">
+                                        <el-option v-for="(n, idx) in nationalityOptions" :key="idx" :value="n.value" :label="$t(n.text)" />
+                                    </el-select>
                                 </base-input>
                             </div>
                         </div>
@@ -78,10 +78,10 @@
                             <div class="col-md-1">
                             </div>
                             <div class="col-md-5">
-                                <base-input label="Gender" name="Gender" placeholder="Select gender" rules="required">
-                                    <select class="form-control" v-model="customer.person_data.gender">
-                                        <option v-for="(i, idx) in genderOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                <base-input label="Gender" name="Gender" rules="required" #default="{invalid, validated}">
+                                    <el-select v-model="customer.person_data.gender" placeholder="Select gender" :class="{'el-select-invalidate-height': invalid && validated, 'form-control': invalid && validated, 'is-invalid': invalid && validated}">
+                                        <el-option v-for="(g, idx) in genderOptions" :key="idx" :value="g.value" :label="$t(g.text)" />
+                                    </el-select>
                                 </base-input>
                             </div>
                         </div>
@@ -167,20 +167,18 @@
                             <div class="col-md-1">
                             </div>
                             <div class="col-md-5">
-                                <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required">
-                                    <template #default="slotProps">
-                                        <select class="form-control" :class="[{'is-invalid': slotProps.invalid && slotProps.validated}]" v-model="customer.address.country_id">
-                                            <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                        </select>
-                                    </template>
+                                <base-input label="Country" name="Country" placeholder="Select country" ref="countryProvider" rules="required" #default="{invalid, validated}">
+                                    <el-select v-model="customer.address.country_id" placeholder="Select country" :class="{'el-select-invalidate-height': invalid && validated, 'form-control': invalid && validated, 'is-invalid': invalid && validated}">
+                                        <el-option v-for="(c, idx) in countryOptions" :key="idx" :value="c.value" :label="$t(c.text)" />
+                                    </el-select>
                                 </base-input>
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6">
-                                <base-button type="primary" native-type="submit">Submit</base-button>
-                                <base-button type="secondary" native-type="button" @click="() => $router.go(-1)">Cancel</base-button>
+                                <base-button type="primary" native-type="submit" :disabled="isRequesting">Submit</base-button>
+                                <base-button type="secondary" native-type="button" @click="() => $router.push('/leads')">Cancel</base-button>
                             </div>
                         </div>
                     </validation-observer>
@@ -193,11 +191,15 @@
 <script>
 import { mapGetters } from "vuex"
 import { ValidationObserver, ValidationProvider } from "vee-validate"
+import { Select, Option } from 'element-ui'
+import { mapCountriesNationalities } from '@/helpers/helpers'
 
 export default {
     components: {
         ValidationObserver,
-        ValidationProvider
+        ValidationProvider,
+        [Select.name]: Select,
+        [Option.name]: Option
     },
     props: {
         singleClientData: {
@@ -229,7 +231,6 @@ export default {
         countryOptions: [],
         nationalityOptions: [],
         genderOptions: [
-            { text: 'Select Gender', value: '' },
             { text: 'Male', value: 'Male' },
             { text: 'Female', value: 'Female' }
         ],
@@ -358,21 +359,7 @@ export default {
             this.$store.dispatch("clients/initCountryList");
         },
         constructCountryOptions(countries) {
-            const countryList     = [];
-            const nationalityList = [];
-            countries.forEach(item => {
-                countryList[countryList.length] = {
-                    text: item.name_translation_key,
-                    value: item.id
-                };
-                nationalityList[nationalityList.length] = {
-                    text: item.nationality_translation_key,
-                    value: item.id
-                };
-            });
-
-            this.countryOptions     = countryList;
-            this.nationalityOptions = nationalityList;
+            ( {countryList: this.countryOptions, nationalityList: this.nationalityOptions}  = mapCountriesNationalities(countries) )
         },
         async validate() {
             const isValid       = await this.$refs.observer.validate()
@@ -461,4 +448,11 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.el-select-invalidate-height {
+    padding: 0 !important;
+    height: 3.18em !important;
+}
+</style>
 
