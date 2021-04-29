@@ -163,22 +163,28 @@
                      :hasToggle="false">
         <template>
           <div class="row shortcuts px-4">
+            <a v-if="accountingAccess" :href="accounting" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle">
+                <i class="fas fa-calculator"></i>
+              </span>
+              <small>Accounting</small>
+            </a>
             <a href="#!" class="col-4 shortcut-item" @click.prevent.stop="">
-                    <span class="shortcut-media avatar rounded-circle">
-                      <i class="fas fa-users"></i>
-                    </span>
+              <span class="shortcut-media avatar rounded-circle">
+                <i class="fas fa-users"></i>
+              </span>
               <small>CRM</small>
             </a>
-            <a :href="entry.golddinar+'?token='+token" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
-                      <i class="fas fa-coins"></i>
-                    </span>
+            <a v-if="goldAdminAccess" :href="goldAdmin" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                <i class="fas fa-coins"></i>
+              </span>
               <small>Gold Dinar</small>
             </a>
-            <a :href="entry.admin+'?token='+token" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
-                      <i class="fas fa-cog"></i>
-                    </span>
+            <a v-if="adminAccess" :href="admin" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                <i class="fas fa-cog"></i>
+              </span>
               <small>Admin Panel</small>
             </a>
           </div>
@@ -238,6 +244,7 @@
   import { CollapseTransition } from 'vue2-transitions';
   import BaseNav from '@/components/argon-core/Navbar/BaseNav.vue';
   import Modal from '@/components/argon-core/Modal.vue';
+  import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
 
   export default {
@@ -258,6 +265,30 @@
         loggedin: "auth/user",
         token: "auth/auth",
       }),
+      apps() {
+        return this.loggedin && getAppsAccess(this.loggedin.account)
+      },
+      hasMaxAccess() {
+        return this.loggedin && hasMaxAccess(this.loggedin.account)
+      },
+      accounting() {
+        return process.env.entryPoints.accounting + '?token=' + this.token
+      },
+      accountingAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.accounting_access)
+      },
+      goldAdmin() {
+        return process.env.entryPoints.golddinar + '?token=' + this.token
+      },
+      goldAdminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
+      },
+      admin() {
+        return process.env.entryPoints.admin + '?token=' + this.token
+      },
+      adminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+      },
       routeName() {
         const { name } = this.$route;
         return this.capitalizeFirstLetter(name);
@@ -292,7 +323,6 @@
     },
     data() {
       return {
-        entry: process.env.entryPoints,
         activeNotifications: false,
         showMenu: false,
         searchModalVisible: false,

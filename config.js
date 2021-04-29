@@ -17,7 +17,8 @@ export default {
             entryPoints: {
                 crm: 'http://localhost:3001',
                 admin: 'http://localhost:3002',
-                golddinar: 'http://localhost:3003'
+                golddinar: 'http://localhost:3003',
+                accounting: 'http://localhost:3005'
             }
         },
         server: {
@@ -43,7 +44,8 @@ export default {
             entryPoints: {
                 crm: 'https://crm-staging.inaia.cloud',
                 admin: 'https://admin-staging.inaia.cloud',
-                golddinar: 'https://golddinar-admin-staging.inaia.cloud'
+                golddinar: 'https://golddinar-admin-staging.inaia.cloud',
+                accounting: 'https://accounting-staging.inaia.cloud'
             }
         },
         server: {
@@ -69,7 +71,8 @@ export default {
             entryPoints: {
                 crm: 'https://crm.inaia.cloud',
                 admin: 'https://admin.inaia.cloud',
-                golddinar: 'https://golddinar-admin.inaia.cloud'
+                golddinar: 'https://golddinar-admin.inaia.cloud',
+                accounting: 'https://accounting.inaia.cloud'
             }
         },
         server: {

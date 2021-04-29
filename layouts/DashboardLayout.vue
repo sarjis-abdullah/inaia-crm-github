@@ -83,14 +83,20 @@
         <h6 class="navbar-heading p-0 text-muted">Links</h6>
 
         <ul class="navbar-nav mb-md-3">
-          <li class="nav-item">
-            <a :href="entry.golddinar+'?token='+token" class="nav-link" rel="noopener">
+          <li v-if="accountingAccess" class="nav-item">
+            <a :href="accounting" class="nav-link" rel="noopener">
+              <i class="fas fa-external-link-square-alt"></i>
+              <span class="nav-link-text">Accounting</span>
+            </a>
+          </li>
+          <li v-if="goldAdminAccess" class="nav-item">
+            <a :href="goldAdmin" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Gold Dinar</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a :href="entry.admin+'?token='+token" class="nav-link" rel="noopener">
+          <li v-if="adminAccess" class="nav-item">
+            <a :href="admin" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Admin Panel</span>
             </a>
@@ -132,6 +138,7 @@
   import DashboardNavbar from '~/components/layouts/argon/DashboardNavbar.vue';
   import ContentFooter from '~/components/layouts/argon/ContentFooter.vue';
   import DashboardContent from '~/components/layouts/argon/Content.vue';
+  import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
 
   export default {
@@ -141,15 +148,35 @@
       DashboardContent
     },
     middleware: ['auth'],
-    data() {
-      return {
-        entry: process.env.entryPoints
-      }
-    },
     computed: {
       ...mapGetters({
         token: "auth/auth",
-      })
+        user: "auth/user"
+      }),
+      apps() {
+        return this.user && getAppsAccess(this.user.account)
+      },
+      hasMaxAccess() {
+        return this.user && hasMaxAccess(this.user.account)
+      },
+      accounting() {
+        return process.env.entryPoints.accounting + '?token=' + this.token
+      },
+      accountingAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.accounting_access)
+      },
+      goldAdmin() {
+        return process.env.entryPoints.golddinar + '?token=' + this.token
+      },
+      goldAdminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
+      },
+      admin() {
+        return process.env.entryPoints.admin + '?token=' + this.token
+      },
+      adminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+      }
     },
     methods: {
       initScrollbar() {
