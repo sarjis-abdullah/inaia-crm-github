@@ -31,7 +31,7 @@ export default {
 
     staging: {
         axios: {
-            baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+            baseURL: 'https://core-staging.inaia.cloud/api/v1'
         },
         env: {
             universalLogin: 'https://login-staging.inaia.cloud',
