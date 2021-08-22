@@ -20,6 +20,10 @@ export default {
     recent_transactions: 'Letzte Transaktionen',
     add_new_depot: 'Neues Depot anlegen',
     details: 'Einzelheiten',
+    edit: 'Bearbeiten',
+    complete: 'Abschließen',
+    cancel: 'Abbrechen',
+    delete: 'Löschen',
     type: 'Art',
 
     order_type_purchase: 'Kaufen',

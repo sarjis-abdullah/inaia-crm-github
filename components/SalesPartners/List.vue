@@ -75,9 +75,9 @@
                                             <i class="fas fa-ellipsis-v mt-2"></i>
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/sales-partners/edit/'+row.id)" href="#">Edit</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
+                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/sales-partners/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
+                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
                                         </el-dropdown-menu>
                                     </el-dropdown>
                                 </template>

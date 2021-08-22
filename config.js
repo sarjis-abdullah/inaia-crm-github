@@ -11,7 +11,7 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'http://inaia-api-products/api/v1',
+            productApiUrl: 'http://inaia-api-auth/api/v1',
             // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
 
             entryPoints: {
@@ -39,7 +39,7 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
+            productApiUrl: 'https://core-staging.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'https://crm-staging.inaia.cloud',
@@ -66,7 +66,7 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/storage.inaia.cloud/',
             // s3BucketUri: 'https://storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'https://products.api.inaia.cloud/api/v1',
+            productApiUrl: 'https://auth.api.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'https://crm.inaia.cloud',

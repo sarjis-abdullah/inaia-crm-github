@@ -20,6 +20,10 @@ export default {
     recent_transactions: 'Transactions Récentes',
     add_new_depot: 'Ajouter un nouveau dépôt',
     details: 'Détails',
+    edit: 'Éditer',
+    complete: 'Compléter',
+    cancel: 'Annuler',
+    delete: 'Effacer',
     type: 'Type',
 
     order_type_purchase: 'Purchase',
