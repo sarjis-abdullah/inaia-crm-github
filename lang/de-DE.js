@@ -26,6 +26,10 @@ export default {
     delete: 'Löschen',
     type: 'Art',
 
+    product_name_golddinar: 'Golddinar',
+    product_class_standard: 'Standard',
+    product_class_premium: 'Prämie',
+
     order_type_purchase: 'Kaufen',
     order_type_sell: 'Verkaufen',
     amount: 'Betrag',
