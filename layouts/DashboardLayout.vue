@@ -42,6 +42,15 @@
 
         <sidebar-item
                 :link="{
+            name: 'News Feeds',
+            icon: 'fas fa-user-tie text-primary',
+            path: '/news-feeds'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
             name: 'Support (coming soon)',
             icon: 'fas fa-comment-alt text-muted',
             path: '/support'

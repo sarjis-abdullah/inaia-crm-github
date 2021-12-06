@@ -26,6 +26,10 @@ export default {
     delete: 'Delete',
     type: 'Type',
 
+    product_name_golddinar: 'Golddinar',
+    product_class_standard: 'Standard',
+    product_class_premium: 'Premium',
+
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',
     

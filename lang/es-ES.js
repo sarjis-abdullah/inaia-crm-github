@@ -26,6 +26,10 @@ export default {
     delete: 'Borrar',
     type: 'Tipo',
 
+    product_name_golddinar: 'Golddinar',
+    product_class_standard: 'Standard',
+    product_class_premium: 'Estándar',
+
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',
     amount: 'Cantidad',
