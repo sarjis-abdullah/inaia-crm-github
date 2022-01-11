@@ -159,7 +159,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            types: "types/types"
+            types: "types/pairs"
         }),
         searchQuery() {
             return (

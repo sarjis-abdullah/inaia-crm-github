@@ -117,7 +117,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            types: "types/types"
+            types: "types/pairs"
         }),
         info() {
             // console.error('resource', this.resource)

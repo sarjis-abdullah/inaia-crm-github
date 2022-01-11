@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <notifications></notifications>
-    <side-bar>
+<!-- 
+    <side-bar :title="'CRM'">
       <template slot-scope="props" slot="links">
 
         <sidebar-item
@@ -114,6 +115,101 @@
       </template>
 
     </side-bar>
+ -->
+
+    <side-bar :title="'Admin'">
+      <template slot-scope="props" slot="links">
+
+        <sidebar-item
+          :link="{
+            name: 'Dashboard',
+            path: '/dashboard',
+            icon: 'fas fa-chart-pie text-primary',
+          }"
+        />
+
+        <sidebar-item
+          :link="{
+            name: 'Admin Panel',
+            icon: 'fas fa-chart-pie text-primary',
+            collapsed: false
+          }"
+        >
+          <sidebar-item :link="{ name: 'Users', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', path: '/roles' }"/>
+          <sidebar-item :link="{ name: 'Permissions', path: '/permissions' }"/>
+
+          <sidebar-item :link="{ name: 'Products', collapsed: true }">
+            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
+            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
+            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
+          </sidebar-item>
+        </sidebar-item>
+
+        <sidebar-item
+          :link="{
+            name: 'Golddinar',
+            icon: 'fas fa-chart-pie text-primary',
+            collapsed: false
+          }"
+        >
+          <sidebar-item :link="{ name: 'Depots', path: '/depots' }"/>
+          <sidebar-item :link="{ name: 'Orders', path: '/orders' }"/>
+          <sidebar-item :link="{ name: 'Transactions', path: '/transactions' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+          :link="{
+            name: 'CRM',
+            icon: 'fas fa-chart-pie text-primary',
+            collapsed: false
+          }"
+        >
+          <sidebar-item :link="{ name: 'Customers', path: '/customers' }"/>
+          <sidebar-item :link="{ name: 'Leads', path: '/leads' }"/>
+          <sidebar-item :link="{ name: 'Sales Partners', path: '/sales-partners' }"/>
+          <sidebar-item :link="{ name: 'News Feeds', path: '/news-feeds' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Support (coming soon)',
+            icon: 'fas fa-comment-alt text-muted',
+            path: '/support'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Tasks (coming soon)',
+            icon: 'fas fa-tasks text-muted',
+            path: '/tasks'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Calendar (coming soon)',
+            icon: 'fas fa-calendar-alt text-muted',
+            path: '/calendar'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Reports (coming soon)',
+            icon: 'fas fa-chart-line text-muted',
+            path: '/reports'
+          }"
+        >
+        </sidebar-item>
+      </template>
+
+    </side-bar>
+
     <div class="main-content">
       <dashboard-navbar :type="$route.name === 'alternative' ? 'light': 'default'"></dashboard-navbar>
 
