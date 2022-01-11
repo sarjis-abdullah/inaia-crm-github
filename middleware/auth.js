@@ -11,8 +11,8 @@ export default async function({ app, route, store, redirect }) {
         return
     }
     // console.log('token', gets['auth/auth'])
-    if (gets['auth/auth'] && gets['types/loading'] === 0) {
-        store.dispatch('types/fetchTypes')
+    if (gets['auth/auth'] && gets['types/loading'] === false) {
+        store.dispatch('types/pairs')
     }
 
     // if (route.query.token && route.query.token !== gets['auth/auth']) {

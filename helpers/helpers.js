@@ -50,3 +50,30 @@ export function notifyError(err, notify) {
     }
 }
 
+
+export function paddingFractionTo2(n) {
+    let l = n ? n.toString().length : 0
+    if (!l) {
+        return '00'
+    } else if (l < 2) {
+        return n + '0'
+    } else if (l > 2) {
+        return n.toString().substr(0, 2)
+    }
+    return n;
+}
+
+export function paddingFractionTo3(n) {
+    let l = n ? (n).toString().length : 0
+    if (!l) {
+        return '000'
+    } else if (l < 2) {
+        return n + '00'
+    } else if (l < 3) {
+        return n + '0'
+    } else if (l > 3) {
+        return n.toString().substr(0, 3)
+    }
+    return n;
+}
+

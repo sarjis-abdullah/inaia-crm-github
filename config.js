@@ -13,6 +13,7 @@ export default {
 
             productApiUrl: 'http://inaia-api-auth/api/v1',
             // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
+            golddinarApiUrl: 'http://inaia-api-golddinar/api/v1',
 
             entryPoints: {
                 crm: 'http://localhost:3001',
@@ -40,6 +41,7 @@ export default {
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
             productApiUrl: 'https://core-staging.inaia.cloud/api/v1',
+            golddinarApiUrl: 'https://golddinar-api-staging.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'https://crm-staging.inaia.cloud',
@@ -67,6 +69,7 @@ export default {
             // s3BucketUri: 'https://storage.inaia.cloud.s3.amazonaws.com/',
 
             productApiUrl: 'https://auth.api.inaia.cloud/api/v1',
+            golddinarApiUrl: 'https://golddinar.api.inaia.cloud/api/v1',
 
             entryPoints: {
                 crm: 'https://crm.inaia.cloud',

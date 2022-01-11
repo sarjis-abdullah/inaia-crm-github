@@ -2,6 +2,7 @@
 export const state = () => ({
     list: null,
     details: null,
+    pairs: null,
     productClasses: null,
     loading: false
 })
@@ -15,6 +16,9 @@ export const getters = {
     details(state) {
         return state.details
     },
+    pairs(state) {
+        return state.pairs
+    },
     productClasses(state) {
         return state.productClasses
     }
@@ -26,6 +30,9 @@ export const mutations = {
     },
     details(state, data) {
         state.details   = data
+    },
+    pairs(state, data) {
+        state.pairs   = data
     },
     remove(state, idx) {
         state.list = state.list.splice(idx, 1)
@@ -42,6 +49,18 @@ export const mutations = {
 }
 
 export const actions = {
+    pairs(context) {
+        return this.$axios
+            .get(`${ process.env.productApiUrl }/product-classes?pair`)
+            .then(res => {
+                context.commit('pairs', res.data.data)
+                return res
+            })
+            .catch(err => {
+                // console.log('axios error during fetching role-pairs', err)
+                return Promise.reject(err)
+            })
+    },
     fetchList(context, payload) {
         if (!context.state.loading) {
             return this.$axios.get(`${process.env.productApiUrl}/product-classes?include=product${ payload }`)
