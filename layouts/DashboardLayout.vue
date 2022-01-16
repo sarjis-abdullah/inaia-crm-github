@@ -135,11 +135,11 @@
             collapsed: false
           }"
         >
-          <sidebar-item :link="{ name: 'Users', path: '/users' }"/>
-          <sidebar-item :link="{ name: 'Roles', path: '/roles' }"/>
-          <sidebar-item :link="{ name: 'Permissions', path: '/permissions' }"/>
+          <sidebar-item :link="{ name: 'Users', icon: 'ni ni-circle-08 text-primary', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', icon: 'ni ni-circle-08 text-primary', path: '/roles' }"/>
+          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
 
-          <sidebar-item :link="{ name: 'Products', collapsed: true }">
+          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
             <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
             <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
             <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
@@ -153,9 +153,9 @@
             collapsed: false
           }"
         >
-          <sidebar-item :link="{ name: 'Depots', path: '/depots' }"/>
-          <sidebar-item :link="{ name: 'Orders', path: '/orders' }"/>
-          <sidebar-item :link="{ name: 'Transactions', path: '/transactions' }"/>
+          <sidebar-item :link="{ name: 'Depots', icon: 'ni ni-archive-2 text-primary', path: '/depots' }"/>
+          <sidebar-item :link="{ name: 'Orders', icon: 'ni ni-cart text-primary', path: '/orders' }"/>
+          <sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>
         </sidebar-item>
 
         <sidebar-item
@@ -165,10 +165,10 @@
             collapsed: false
           }"
         >
-          <sidebar-item :link="{ name: 'Customers', path: '/customers' }"/>
-          <sidebar-item :link="{ name: 'Leads', path: '/leads' }"/>
-          <sidebar-item :link="{ name: 'Sales Partners', path: '/sales-partners' }"/>
-          <sidebar-item :link="{ name: 'News Feeds', path: '/news-feeds' }"/>
+          <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
+          <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
+          <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
+          <sidebar-item :link="{ name: 'News Feeds', icon: 'fas fa-user-tie text-primary', path: '/news-feeds' }"/>
         </sidebar-item>
 
         <sidebar-item
