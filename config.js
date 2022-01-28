@@ -1,7 +1,38 @@
 export default {
     development: {
         axios: {
-            //baseURL: 'http://inaia-api-auth/api/v1'
+            baseURL: 'http://inaia-api-auth/api/v1'
+            // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+        },
+        env: {
+            devMode: true,
+            universalLogin: 'http://localhost:3000',
+            dashboardPath: '/dashboard',
+            s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
+            // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
+
+            productApiUrl: 'http://inaia-api-auth/api/v1',
+            // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
+            golddinarApiUrl: 'http://inaia-api-golddinar/api/v1',
+
+            entryPoints: {
+                crm: 'http://localhost:3001',
+                admin: 'http://localhost:3002',
+                golddinar: 'http://localhost:3003',
+                accounting: 'http://localhost:3005'
+            }
+        },
+        server: {
+            // for check in mbl device
+            port: 3001, // default: 3000
+            host: '0.0.0.0', // default: localhost
+        }
+    },
+
+
+    yunus: {
+        axios: {
+            // baseURL: 'http://inaia-api-auth/api/v1'
             baseURL: 'https://auth-staging.inaia.cloud/api/v1'
         },
         env: {
