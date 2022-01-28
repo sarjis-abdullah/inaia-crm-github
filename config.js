@@ -1,8 +1,8 @@
 export default {
     development: {
         axios: {
-            baseURL: 'http://inaia-api-auth/api/v1'
-            // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+            //baseURL: 'http://inaia-api-auth/api/v1'
+            baseURL: 'https://auth-staging.inaia.cloud/api/v1'
         },
         env: {
             devMode: true,

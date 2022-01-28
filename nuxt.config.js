@@ -54,7 +54,10 @@ module.exports = {
   */
   css: [
     'assets/css/nucleo/css/nucleo.css',
-    'assets/sass/argon.scss'
+    'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
+    //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
+    'assets/css/icomoon/style.css',
+    'assets/sass/argon.scss',
   ],
 
   /*

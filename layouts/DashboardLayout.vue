@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <notifications></notifications>
-<!-- 
+<!--
     <side-bar :title="'CRM'">
       <template slot-scope="props" slot="links">
 
@@ -117,7 +117,7 @@
     </side-bar>
  -->
 
-    <side-bar :title="'Admin'">
+    <side-bar :title="''">
       <template slot-scope="props" slot="links">
 
         <sidebar-item
@@ -128,11 +128,13 @@
           }"
         />
 
+        <!--
         <sidebar-item
+          v-if="accountingAccess"
           :link="{
-            name: 'Admin Panel',
-            icon: 'fas fa-chart-pie text-primary',
-            collapsed: false
+            name: 'Accounting',
+            icon: 'fas fa-calculator text-primary',
+            collapsed: true
           }"
         >
           <sidebar-item :link="{ name: 'Users', icon: 'ni ni-circle-08 text-primary', path: '/users' }"/>
@@ -145,32 +147,61 @@
             <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
           </sidebar-item>
         </sidebar-item>
+        -->
+
+        <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
+        <!--
+        <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
+        <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
+        -->
 
         <sidebar-item
+          v-if="goldAdminAccess"
           :link="{
-            name: 'Golddinar',
-            icon: 'fas fa-chart-pie text-primary',
-            collapsed: false
+            name: 'Gold',
+            icon: 'icon-gold text-lg text-primary',
+            collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Depots', icon: 'ni ni-archive-2 text-primary', path: '/depots' }"/>
-          <sidebar-item :link="{ name: 'Orders', icon: 'ni ni-cart text-primary', path: '/orders' }"/>
-          <sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>
+          <sidebar-item :link="{ name: 'Depots', icon: 'icon-safe-mechanical text-lg text-primary',  path: '/depots' }"/>
+          <sidebar-item :link="{ name: 'Orders', icon: 'fa fa-shopping-cart text-primary', path: '/orders' }"/>
+          <!--<sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>-->
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'CRM',
-            icon: 'fas fa-chart-pie text-primary',
-            collapsed: false
+            name: 'Marketing Tools',
+            icon: 'fas fa-bullseye text-primary',
+            collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
-          <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
-          <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
-          <sidebar-item :link="{ name: 'News Feeds', icon: 'fas fa-user-tie text-primary', path: '/news-feeds' }"/>
+          <sidebar-item :link="{ name: 'Newsfeed', icon: 'fa fa-bullhorn text-primary', path: '/news-feeds' }"/>
         </sidebar-item>
 
+        <sidebar-item
+          v-if="adminAccess"
+          :link="{
+            name: 'Admin',
+            icon: 'fas fa-cog text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Users', icon: 'fa fa-users text-primary', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', icon: 'fa fa-user-tag text-primary', path: '/roles' }"/>
+          <!--
+          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
+          -->
+
+          <!--
+          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
+            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
+            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
+            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
+          </sidebar-item>
+          -->
+        </sidebar-item>
+
+        <!--
         <sidebar-item
                 :link="{
             name: 'Support (coming soon)',
@@ -206,9 +237,31 @@
           }"
         >
         </sidebar-item>
+        -->
+
+
+
       </template>
 
+
+      <!--
+      <hr class="my-3">
+      <template slot="links-after">
+        <h6 class="navbar-heading p-0 text-muted">Links</h6>
+
+        <ul class="navbar-nav mb-md-3">
+          <li v-if="accountingAccess" class="nav-item">
+            <a href="" class="nav-link" rel="noopener">
+              <i class="fas fa-external-link-square-alt"></i>
+              <span class="nav-link-text">Link</span>
+            </a>
+          </li>
+        </ul>
+      </template>
+      -->
+
     </side-bar>
+
 
     <div class="main-content">
       <dashboard-navbar :type="$route.name === 'alternative' ? 'light': 'default'"></dashboard-navbar>
@@ -216,7 +269,8 @@
       <div @click="$sidebar.displaySidebar(false)">
         <nuxt></nuxt>
       </div>
-      <content-footer v-if="!$route.meta.hideFooter"></content-footer>
+
+      <!-- <content-footer v-if="!$route.meta.hideFooter"></content-footer> -->
     </div>
   </div>
 </template>

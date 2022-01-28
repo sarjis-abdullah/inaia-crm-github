@@ -11,12 +11,15 @@
           -->
         </div>
         <div class="col-lg-6 col-5 text-right">
+          <!--
           <base-button size="sm" type="neutral">New</base-button>
           <base-button size="sm" type="neutral">Filters</base-button>
+          -->
         </div>
       </div>
 
       <!-- Card stats -->
+      <!--
       <div class="row">
         <div class="col-xl-3 col-md-6">
           <stats-card title="Total traffic"
@@ -68,11 +71,14 @@
           </stats-card>
         </div>
       </div>
+      -->
     </base-header>
 
     <!--Charts-->
     <div class="container-fluid mt--6">
+      <!--
       <div class="row">
+        <div class="col-xl-8">
         <div class="col-xl-8">
           <card type="default" header-classes="bg-transparent">
             <div slot="header" class="row align-items-center">
@@ -132,9 +138,11 @@
           </card>
         </div>
       </div>
+      -->
       <!-- End charts-->
 
       <!--Lists-->
+      <!--
       <div class="row">
         <div class="col-xl-4">
           <card>
@@ -160,9 +168,11 @@
           </card>
         </div>
       </div>
+      -->
       <!--End lists-->
 
       <!--Widgets-->
+      <!--
       <div class="row">
         <div class="col-xl-5">
           <activity-feed></activity-feed>
@@ -230,9 +240,11 @@
           </div>
         </div>
       </div>
+      -->
       <!--End Widgets-->
 
       <!--Tables-->
+      <!--
       <div class="row">
         <div class="col-xl-8">
           <page-visits-table></page-visits-table>
@@ -241,6 +253,7 @@
           <social-traffic-table></social-traffic-table>
         </div>
       </div>
+      -->
       <!--End tables-->
     </div>
 

@@ -42,6 +42,22 @@
             </sidebar-item>
           </slot>
         </ul>
+        <ul class="navbar-nav">
+          <slot name="admin">
+            <sidebar-item
+              v-for="(link, index) in sidebarLinks"
+              :key="link.name + index"
+              :link="link"
+            >
+              <sidebar-item
+                v-for="(subLink, index) in link.children"
+                :key="subLink.name + index"
+                :link="subLink"
+              >
+              </sidebar-item>
+            </sidebar-item>
+          </slot>
+        </ul>
         <slot name="links-after"></slot>
       </div>
     </div>
