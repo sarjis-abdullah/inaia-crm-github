@@ -91,7 +91,8 @@ export default {
 
     production: {
         axios: {
-            baseURL: 'https://auth.api.inaia.cloud/api/v1'
+            // baseURL: 'https://auth.api.inaia.cloud/api/v1'
+            baseURL: 'https://core.api.inaia.cloud/api/v1'
         },
         env: {
             universalLogin: 'https://login.inaia.cloud',
@@ -99,7 +100,8 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/storage.inaia.cloud/',
             // s3BucketUri: 'https://storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'https://auth.api.inaia.cloud/api/v1',
+            // productApiUrl: 'https://auth.api.inaia.cloud/api/v1',
+            productApiUrl: 'https://core.api.inaia.cloud/api/v1',
             golddinarApiUrl: 'https://golddinar.api.inaia.cloud/api/v1',
 
             entryPoints: {
