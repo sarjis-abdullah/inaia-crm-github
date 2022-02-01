@@ -102,9 +102,9 @@
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
                                             <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">Details</a>
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">Edit</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">Delete</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
+                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
                                         </el-dropdown-menu>
                                     </el-dropdown>
                                 </template>
@@ -186,7 +186,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            types: "types/types"
+            types: "types/pairs"
         }),
         searchQuery() {
             return (

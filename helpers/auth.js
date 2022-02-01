@@ -1,5 +1,5 @@
 export function hasAdminLoginAccess(account) {
-    if (hasMaxAccess(account) || account.adminpanel_access || account.goldadmin_access || account.crm_access) {
+    if (hasMaxAccess(account) || account.accounting_access || account.adminpanel_access || account.goldadmin_access || account.crm_access) {
         return true
     }
     return hasAccountAdminLoginAccess(account)
@@ -33,6 +33,7 @@ export function getAppsAccess(account) {
         return null
     }
     return {
+        accounting_access:  account.accounting_access,
         adminpanel_access:  account.adminpanel_access,
         goldadmin_access:   account.goldadmin_access,
         crm_access:         account.crm_access

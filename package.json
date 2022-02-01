@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "yunus": "NODE_ENV=yunus nuxt",
     "stage-build": "NODE_ENV=staging nuxt build",
     "stage-start": "NODE_ENV=staging nuxt start",
     "stage-generate": "NODE_ENV=staging nuxt generate",
@@ -23,6 +24,7 @@
     "@nuxtjs/pwa": "^3.0.0-beta.19",
     "bootstrap": "4.3.1",
     "chart.js": "^2.9.3",
+    "cropperjs": "^1.5.12",
     "d3": "^5.7.0",
     "datamaps": "^0.5.9",
     "date-fns": "^1.30.1",

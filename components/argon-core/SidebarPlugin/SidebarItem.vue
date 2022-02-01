@@ -15,6 +15,7 @@
       @click.prevent="collapseMenu"
     >
       <template v-if="addLink">
+        <i :class="link.icon"></i>
         <span class="nav-link-text">
           {{ link.name }} <b class="caret"></b>
         </span>
@@ -47,6 +48,7 @@
         :href="link.path"
       >
         <template v-if="addLink">
+          <i :class="link.icon"></i>
           <span class="nav-link-text">{{ link.name }}</span>
         </template>
         <template v-else>

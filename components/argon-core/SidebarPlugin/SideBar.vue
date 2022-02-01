@@ -24,10 +24,26 @@
       </div>
       <slot></slot>
       <div class="navbar-inner">
-        <h6 class="navbar-heading mt-2 p-0 text-muted">CRM</h6>
+        <h6 class="navbar-heading mt-2 p-0 text-muted">{{ title }}</h6>
 
         <ul class="navbar-nav">
           <slot name="links">
+            <sidebar-item
+              v-for="(link, index) in sidebarLinks"
+              :key="link.name + index"
+              :link="link"
+            >
+              <sidebar-item
+                v-for="(subLink, index) in link.children"
+                :key="subLink.name + index"
+                :link="subLink"
+              >
+              </sidebar-item>
+            </sidebar-item>
+          </slot>
+        </ul>
+        <ul class="navbar-nav">
+          <slot name="admin">
             <sidebar-item
               v-for="(link, index) in sidebarLinks"
               :key="link.name + index"

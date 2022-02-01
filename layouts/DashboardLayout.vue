@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <notifications></notifications>
-    <side-bar>
+<!--
+    <side-bar :title="'CRM'">
       <template slot-scope="props" slot="links">
 
         <sidebar-item
@@ -36,6 +37,15 @@
             name: 'Sales Partners',
             icon: 'fas fa-user-tie text-primary',
             path: '/sales-partners'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'News Feeds',
+            icon: 'fas fa-user-tie text-primary',
+            path: '/news-feeds'
           }"
         >
         </sidebar-item>
@@ -83,14 +93,20 @@
         <h6 class="navbar-heading p-0 text-muted">Links</h6>
 
         <ul class="navbar-nav mb-md-3">
-          <li class="nav-item">
-            <a :href="entry.golddinar+'?token='+token" class="nav-link" rel="noopener">
+          <li v-if="accountingAccess" class="nav-item">
+            <a :href="accounting" class="nav-link" rel="noopener">
+              <i class="fas fa-external-link-square-alt"></i>
+              <span class="nav-link-text">Accounting</span>
+            </a>
+          </li>
+          <li v-if="goldAdminAccess" class="nav-item">
+            <a :href="goldAdmin" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Gold Dinar</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a :href="entry.admin+'?token='+token" class="nav-link" rel="noopener">
+          <li v-if="adminAccess" class="nav-item">
+            <a :href="admin" class="nav-link" rel="noopener">
               <i class="fas fa-external-link-square-alt"></i>
               <span class="nav-link-text">Admin Panel</span>
             </a>
@@ -99,13 +115,162 @@
       </template>
 
     </side-bar>
+ -->
+
+    <side-bar :title="''">
+      <template slot-scope="props" slot="links">
+
+        <sidebar-item
+          :link="{
+            name: 'Dashboard',
+            path: '/dashboard',
+            icon: 'fas fa-chart-pie text-primary',
+          }"
+        />
+
+        <!--
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'Accounting',
+            icon: 'fas fa-calculator text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Users', icon: 'ni ni-circle-08 text-primary', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', icon: 'ni ni-circle-08 text-primary', path: '/roles' }"/>
+          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
+
+          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
+            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
+            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
+            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
+          </sidebar-item>
+        </sidebar-item>
+        -->
+
+        <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
+        <!--
+        <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
+        <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
+        -->
+
+        <sidebar-item
+          v-if="goldAdminAccess"
+          :link="{
+            name: 'Gold',
+            icon: 'icon-gold text-lg text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Depots', icon: 'icon-safe-mechanical text-lg text-primary',  path: '/depots' }"/>
+          <sidebar-item :link="{ name: 'Orders', icon: 'fa fa-shopping-cart text-primary', path: '/orders' }"/>
+          <!--<sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>-->
+        </sidebar-item>
+
+        <sidebar-item
+          :link="{
+            name: 'Marketing Tools',
+            icon: 'fas fa-bullseye text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Newsfeed', icon: 'fa fa-bullhorn text-primary', path: '/news-feeds' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="adminAccess"
+          :link="{
+            name: 'Admin',
+            icon: 'fas fa-cog text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Users', icon: 'fa fa-users text-primary', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', icon: 'fa fa-user-tag text-primary', path: '/roles' }"/>
+          <!--
+          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
+          -->
+
+          <!--
+          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
+            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
+            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
+            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
+          </sidebar-item>
+          -->
+        </sidebar-item>
+
+        <!--
+        <sidebar-item
+                :link="{
+            name: 'Support (coming soon)',
+            icon: 'fas fa-comment-alt text-muted',
+            path: '/support'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Tasks (coming soon)',
+            icon: 'fas fa-tasks text-muted',
+            path: '/tasks'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Calendar (coming soon)',
+            icon: 'fas fa-calendar-alt text-muted',
+            path: '/calendar'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+                :link="{
+            name: 'Reports (coming soon)',
+            icon: 'fas fa-chart-line text-muted',
+            path: '/reports'
+          }"
+        >
+        </sidebar-item>
+        -->
+
+
+
+      </template>
+
+
+      <!--
+      <hr class="my-3">
+      <template slot="links-after">
+        <h6 class="navbar-heading p-0 text-muted">Links</h6>
+
+        <ul class="navbar-nav mb-md-3">
+          <li v-if="accountingAccess" class="nav-item">
+            <a href="" class="nav-link" rel="noopener">
+              <i class="fas fa-external-link-square-alt"></i>
+              <span class="nav-link-text">Link</span>
+            </a>
+          </li>
+        </ul>
+      </template>
+      -->
+
+    </side-bar>
+
+
     <div class="main-content">
       <dashboard-navbar :type="$route.name === 'alternative' ? 'light': 'default'"></dashboard-navbar>
 
       <div @click="$sidebar.displaySidebar(false)">
         <nuxt></nuxt>
       </div>
-      <content-footer v-if="!$route.meta.hideFooter"></content-footer>
+
+      <!-- <content-footer v-if="!$route.meta.hideFooter"></content-footer> -->
     </div>
   </div>
 </template>
@@ -132,6 +297,7 @@
   import DashboardNavbar from '~/components/layouts/argon/DashboardNavbar.vue';
   import ContentFooter from '~/components/layouts/argon/ContentFooter.vue';
   import DashboardContent from '~/components/layouts/argon/Content.vue';
+  import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
 
   export default {
@@ -141,15 +307,35 @@
       DashboardContent
     },
     middleware: ['auth'],
-    data() {
-      return {
-        entry: process.env.entryPoints
-      }
-    },
     computed: {
       ...mapGetters({
         token: "auth/auth",
-      })
+        user: "auth/user"
+      }),
+      apps() {
+        return this.user && getAppsAccess(this.user.account)
+      },
+      hasMaxAccess() {
+        return this.user && hasMaxAccess(this.user.account)
+      },
+      accounting() {
+        return process.env.entryPoints.accounting + '?token=' + this.token
+      },
+      accountingAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.accounting_access)
+      },
+      goldAdmin() {
+        return process.env.entryPoints.golddinar + '?token=' + this.token
+      },
+      goldAdminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
+      },
+      admin() {
+        return process.env.entryPoints.admin + '?token=' + this.token
+      },
+      adminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+      }
     },
     methods: {
       initScrollbar() {

@@ -20,7 +20,15 @@ export default {
     recent_transactions: 'Transactions Récentes',
     add_new_depot: 'Ajouter un nouveau dépôt',
     details: 'Détails',
+    edit: 'Éditer',
+    complete: 'Compléter',
+    cancel: 'Annuler',
+    delete: 'Effacer',
     type: 'Type',
+
+    product_name_golddinar: 'Golddinar',
+    product_class_standard: 'Standard',
+    product_class_premium: 'Prime',
 
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',

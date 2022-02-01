@@ -20,7 +20,15 @@ export default {
     recent_transactions: 'Recent Transactions',
     add_new_depot: 'Add new depot',
     details: 'Details',
+    edit: 'Edit',
+    complete: 'Complete',
+    cancel: 'Cancel',
+    delete: 'Delete',
     type: 'Type',
+
+    product_name_golddinar: 'Golddinar',
+    product_class_standard: 'Standard',
+    product_class_premium: 'Premium',
 
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',

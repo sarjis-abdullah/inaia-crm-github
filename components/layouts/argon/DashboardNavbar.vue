@@ -4,7 +4,9 @@
     class="navbar-top border-bottom navbar-expand"
     :class="{'bg-gradient-info navbar-dark': type === 'default'}"
   >
+
     <!-- Search form -->
+    <!--
     <form class="navbar-search form-inline mr-sm-3"
           :class="{'navbar-search-light': type === 'default', 'navbar-search-dark': type === 'light'}"
           id="navbar-search-main">
@@ -21,6 +23,9 @@
         <span aria-hidden="true">×</span>
       </button>
     </form>
+    -->
+
+
     <!-- Navbar links -->
     <ul class="navbar-nav align-items-center ml-md-auto">
       <li class="nav-item d-xl-none">
@@ -35,125 +40,17 @@
           </div>
         </div>
       </li>
+
+      <!--
       <li class="nav-item d-sm-none">
         <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
           <i class="ni ni-zoom-split-in"></i>
         </a>
       </li>
-      <base-dropdown class="nav-item"
-                     tag="li"
-                     title-classes="nav-link"
-                     title-tag="a"
-                     icon="ni ni-bell-55"
-                     menu-classes="dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden"
-                     :hasToggle="false">
-        <template>
-          <!-- Dropdown header -->
-          <div class="px-3 py-3">
-            <h6 class="text-sm text-muted m-0">You have <strong class="text-primary">13</strong> notifications.</h6>
-          </div>
-          <!-- List group -->
-          <div class="list-group list-group-flush">
-            <a href="#!" class="list-group-item list-group-item-action">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <!-- Avatar -->
-                  <img alt="Image placeholder" src="/img/theme/team-1.jpg" class="avatar rounded-circle">
-                </div>
-                <div class="col ml--2">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h4 class="mb-0 text-sm">John Snow</h4>
-                    </div>
-                    <div class="text-right text-muted">
-                      <small>2 hrs ago</small>
-                    </div>
-                  </div>
-                  <p class="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
-                </div>
-              </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <!-- Avatar -->
-                  <img alt="Image placeholder" src="img/theme/team-2.jpg" class="avatar rounded-circle">
-                </div>
-                <div class="col ml--2">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h4 class="mb-0 text-sm">John Snow</h4>
-                    </div>
-                    <div class="text-right text-muted">
-                      <small>3 hrs ago</small>
-                    </div>
-                  </div>
-                  <p class="text-sm mb-0">A new issue has been reported for Argon.</p>
-                </div>
-              </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <!-- Avatar -->
-                  <img alt="Image placeholder" src="img/theme/team-3.jpg" class="avatar rounded-circle">
-                </div>
-                <div class="col ml--2">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h4 class="mb-0 text-sm">John Snow</h4>
-                    </div>
-                    <div class="text-right text-muted">
-                      <small>5 hrs ago</small>
-                    </div>
-                  </div>
-                  <p class="text-sm mb-0">Your posts have been liked a lot.</p>
-                </div>
-              </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <!-- Avatar -->
-                  <img alt="Image placeholder" src="img/theme/team-4.jpg" class="avatar rounded-circle">
-                </div>
-                <div class="col ml--2">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h4 class="mb-0 text-sm">John Snow</h4>
-                    </div>
-                    <div class="text-right text-muted">
-                      <small>2 hrs ago</small>
-                    </div>
-                  </div>
-                  <p class="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
-                </div>
-              </div>
-            </a>
-            <a href="#!" class="list-group-item list-group-item-action">
-              <div class="row align-items-center">
-                <div class="col-auto">
-                  <!-- Avatar -->
-                  <img alt="Image placeholder" src="img/theme/team-5.jpg" class="avatar rounded-circle">
-                </div>
-                <div class="col ml--2">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h4 class="mb-0 text-sm">John Snow</h4>
-                    </div>
-                    <div class="text-right text-muted">
-                      <small>3 hrs ago</small>
-                    </div>
-                  </div>
-                  <p class="text-sm mb-0">A new issue has been reported for Argon.</p>
-                </div>
-              </div>
-            </a>
-          </div>
-          <!-- View all -->
-          <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">View all</a>
-        </template>
-      </base-dropdown>
+      -->
+
+
+      <!--
       <base-dropdown menu-classes="dropdown-menu-lg dropdown-menu-dark bg-default dropdown-menu-right"
                      class="nav-item"
                      tag="li"
@@ -163,28 +60,38 @@
                      :hasToggle="false">
         <template>
           <div class="row shortcuts px-4">
+            <a v-if="accountingAccess" :href="accounting" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle">
+                <i class="fas fa-calculator"></i>
+              </span>
+              <small>Accounting</small>
+            </a>
             <a href="#!" class="col-4 shortcut-item" @click.prevent.stop="">
-                    <span class="shortcut-media avatar rounded-circle">
-                      <i class="fas fa-users"></i>
-                    </span>
+              <span class="shortcut-media avatar rounded-circle">
+                <i class="fas fa-users"></i>
+              </span>
               <small>CRM</small>
             </a>
-            <a :href="entry.golddinar+'?token='+token" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
-                      <i class="fas fa-coins"></i>
-                    </span>
+            <a v-if="goldAdminAccess" :href="goldAdmin" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                <i class="fas fa-coins"></i>
+              </span>
               <small>Gold Dinar</small>
             </a>
-            <a :href="entry.admin+'?token='+token" class="col-4 shortcut-item">
-                    <span class="shortcut-media avatar rounded-circle bg-gradient-info">
-                      <i class="fas fa-cog"></i>
-                    </span>
+            <a v-if="adminAccess" :href="admin" class="col-4 shortcut-item">
+              <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                <i class="fas fa-cog"></i>
+              </span>
               <small>Admin Panel</small>
             </a>
           </div>
         </template>
       </base-dropdown>
+      -->
+
     </ul>
+
+
     <ul class="navbar-nav align-items-center ml-auto ml-md-0">
       <base-dropdown menu-on-right
                      class="nav-item"
@@ -211,6 +118,7 @@
             <i class="ni ni-single-02"></i>
             <span>My profile</span>
           </a>
+          <!--
           <a href="#!" class="dropdown-item">
             <i class="ni ni-settings-gear-65"></i>
             <span>Settings</span>
@@ -223,6 +131,7 @@
             <i class="ni ni-support-16"></i>
             <span>Support</span>
           </a>
+          -->
           <div class="dropdown-divider"></div>
           <a href="#!" class="dropdown-item" @click.prevent="logout">
             <i class="ni ni-user-run"></i>
@@ -238,6 +147,7 @@
   import { CollapseTransition } from 'vue2-transitions';
   import BaseNav from '@/components/argon-core/Navbar/BaseNav.vue';
   import Modal from '@/components/argon-core/Modal.vue';
+  import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
 
   export default {
@@ -258,6 +168,30 @@
         loggedin: "auth/user",
         token: "auth/auth",
       }),
+      apps() {
+        return this.loggedin && getAppsAccess(this.loggedin.account)
+      },
+      hasMaxAccess() {
+        return this.loggedin && hasMaxAccess(this.loggedin.account)
+      },
+      accounting() {
+        return process.env.entryPoints.accounting + '?token=' + this.token
+      },
+      accountingAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.accounting_access)
+      },
+      goldAdmin() {
+        return process.env.entryPoints.golddinar + '?token=' + this.token
+      },
+      goldAdminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
+      },
+      admin() {
+        return process.env.entryPoints.admin + '?token=' + this.token
+      },
+      adminAccess() {
+        return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+      },
       routeName() {
         const { name } = this.$route;
         return this.capitalizeFirstLetter(name);
@@ -292,7 +226,6 @@
     },
     data() {
       return {
-        entry: process.env.entryPoints,
         activeNotifications: false,
         showMenu: false,
         searchModalVisible: false,

@@ -590,7 +590,7 @@ export default {
         ...mapGetters({
             countryList: "clients/countryList",
             countryListLoaded: "clients/countryListLoaded",
-            types: "types/types"
+            types: "types/pairs"
         }),
         savedClientData() {
             return {
