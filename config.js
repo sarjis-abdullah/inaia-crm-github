@@ -33,7 +33,8 @@ export default {
     yunus: {
         axios: {
             // baseURL: 'http://inaia-api-auth/api/v1'
-            baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+            // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
+            baseURL: 'https://core-staging.inaia.cloud/api/v1'
         },
         env: {
             devMode: true,
@@ -42,7 +43,8 @@ export default {
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
-            productApiUrl: 'http://inaia-api-auth/api/v1',
+            // productApiUrl: 'http://inaia-api-auth/api/v1',
+            productApiUrl: 'https://core-staging.inaia.cloud/api/v1',
             // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
             golddinarApiUrl: 'http://inaia-api-golddinar/api/v1',
 
