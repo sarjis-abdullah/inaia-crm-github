@@ -62,7 +62,7 @@ export const actions = {
     fetchList(context, payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=order_type,order_status${ payload }`)
+            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=order_depot,order_type,order_status${ payload }`)
                 .then(res => {
                     context.commit('list', res.data.data)
                     return res

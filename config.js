@@ -30,7 +30,7 @@ export default {
     },
 
 
-    yunus: {
+    local: {
         axios: {
             // baseURL: 'http://inaia-api-auth/api/v1'
             // baseURL: 'https://auth-staging.inaia.cloud/api/v1'
