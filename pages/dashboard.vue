@@ -77,8 +77,11 @@
     <!--Charts-->
     <div class="container-fluid mt--6">
       
-      <div class="row mt-5">
-        <div class="col-xl-8">
+      <div class="row">
+
+        <gold-price />
+
+        <!-- <div class="col-xl-8">
           <div class="col-xl-8">
             <card type="default" header-classes="bg-transparent">
               <div slot="header" class="row align-items-center">
@@ -139,7 +142,7 @@
               </bar-chart>
             </card>
           </div>
-        </div>
+        </div> -->
        
         <!-- End charts-->
 
@@ -284,6 +287,8 @@
   import SocialTrafficTable from '@/components/pages/dashboard/SocialTrafficTable.vue';
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
+  import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
+
   export default {
     layout: 'DashboardLayout',
     components: {
@@ -298,7 +303,8 @@
       SocialTrafficTable,
       LightTable,
       UserList,
-      ProgressTrackList
+      ProgressTrackList,
+      GoldPrice
     },
     data() {
       return {

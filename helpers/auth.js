@@ -82,3 +82,31 @@ export async function logout(store) {
             window.location.href    = process.env.universalLogin + '/logout'
         })
 }
+
+export function holdingActivePermissionIds(holdingPermissionIds, availablePermissions) {
+    let holdingActivePermissionIds = []
+    if (Array.isArray(holdingPermissionIds) && Array.isArray(availablePermissions)) {
+        holdingPermissionIds.forEach( pid => {
+            if (availablePermissions.find( p => p.id === pid )) {
+                holdingActivePermissionIds.push(pid)
+            }
+        })
+    }
+    return holdingActivePermissionIds
+}
+
+export function holdingActiveRoleIds(holdingRoleIds, availableRoles) {
+    let holdingActiveRoleIds = []
+    if (Array.isArray(holdingRoleIds) && Array.isArray(availableRoles)) {
+        holdingRoleIds.forEach( rid => {
+            if (availableRoles.find( r => r.id === rid )) {
+                holdingActiveRoleIds.push(rid)
+            }
+        })
+    }
+    return holdingActiveRoleIds
+}
+
+export function getEmployeeTypeId(types) {
+    return types['employee']
+}
