@@ -50,6 +50,9 @@ export function notifyError(err, notify) {
     }
 }
 
+export function parseFixed(num, fractionDigits=2) {
+    return parseFloat(parseFloat(num).toFixed(fractionDigits))
+}
 
 export function paddingFractionTo2(n) {
     let l = n ? n.toString().length : 0

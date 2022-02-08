@@ -1,7 +1,6 @@
 import axios from "axios"
 import { mapGetters } from "vuex"
 import { parseFixed, paddingFractionTo2, paddingFractionTo3 } from '@/helpers/helpers'
-import { depotAvatar } from '@/helpers/user'
 
 const startingDate   = new Date()
 startingDate.setMonth(startingDate.getMonth() - 12)
@@ -17,7 +16,6 @@ export default {
         let vm = this
 
         return {
-            depotBalance: 0,
             goldPrice: 0,
             priceChanged: 0.00,
             priceUp: true,
@@ -25,7 +23,6 @@ export default {
             series: [{
                 data: []
             }],
-            sortedDepotBalanceHistory: [],
             chartOptions: {
                 dataLabels: {
                     enabled: false
@@ -145,12 +142,6 @@ export default {
             // gold price series data are in descending order (latest is the first one)
             let rp  = this.series[0].data[this.series[0].data.length - 1][1]
             return rp
-        },
-        sortedDepotBalanceHistoryLength() {
-            if (this.chartForDepot && this.sortedDepotBalanceHistory && this.sortedDepotBalanceHistory.length) {
-                return this.sortedDepotBalanceHistory.length
-            }
-            return 0
         }
     },
 
@@ -160,8 +151,7 @@ export default {
             handler(newValue, oldValue) {
                 // only for first-time load of gold price
                 if (!oldValue && newValue) {
-                    // "depotBalance" is for depot-chart
-                    this.goldPrice  = (this.depotBalance ? parseFixed(newValue * this.depotBalance / 1000) : newValue)
+                    this.goldPrice  =  newValue
                 }
             }
         }
@@ -171,11 +161,6 @@ export default {
         parseFixed,
         paddingFractionTo2,
         paddingFractionTo3,
-        depotAvatar,
-
-        anonymousDepotAvatar(e) {
-            e.target.src    = this.depotAvatar()
-        },
 
         updateTimeline: function (timeline) {
             this.selection = timeline;
@@ -211,11 +196,6 @@ export default {
             }, 100)
         },
 
-        refreshDepotBalanceHistory(history) {
-            // console.error('sorted-depot-blanace-history', history)
-            this.sortedDepotBalanceHistory = history
-        },
-
         updateTooltip() {
             let op  = 'dd MMM yyyy';
             switch (this.selection) {
@@ -239,9 +219,7 @@ export default {
                 case 'ytd':
                     break;
                 case 'all':
-                    if (!this.chartForDepot) {
-                        op = 'MMM yyyy';
-                    }
+                    op = 'MMM yyyy';
                     break;
                 default:
 
@@ -258,54 +236,12 @@ export default {
                 return
             }
 
-            // "depotBalance" is for depot-chart
-            if (this.sortedDepotBalanceHistoryLength) {
-                if (pointed && i > -1) {
-                    this.depotBalance = this.sortedDepotBalanceHistory[i]
-                } else {
-                    this.depotBalance = this.sortedDepotBalanceHistory[0]
-                }
-            }
-
             let availablePrice  = parseFloat(this.currentGoldPrice || this.series[0].data[0][1])
-            // adjust for depot-chart
-            if (this.currentGoldPrice && this.depotBalance) {
-                availablePrice  *= this.depotBalance / 1000 // convert to gram
-            }
             // gold price series data are in descending order (latest is the first one)
             // ensure to return like 52.10 for number 52.09999994, where single "toFixed" will return 52.1
             this.goldPrice      = parseFixed( pointed && i > -1 ? this.series[0].data[i][1] : availablePrice )
             this.priceChanged   = parseFixed( Math.abs((this.goldPrice - this.refPrice) * 100 / (this.refPrice || 100)) )
             this.priceUp        = this.goldPrice >= parseFixed(this.refPrice)
-            // console.error('point', i, this.depotBalance, this.sortedDepotBalanceHistory)
-        },
-
-        bitCoin() {
-            let qs      = this.getDateRange();
-            const url   = 'https://api.coindesk.com/v1/bpi/historical/close.json'+qs;
-
-            axios.get(url)
-                .then((response) => {
-                    let sortedData    = []
-                    let bitcoinData = response.data
-                    // console.log('fetched data:', bitcoinData)
-                    let count = 0
-                    for (let date in bitcoinData.bpi){
-                        sortedData.push([
-                            new Date(date).getTime(),
-                            bitcoinData.bpi[date]
-                        ])
-                        count++
-                    }
-
-                    // let max = sortedData[0][0],
-                    //     min = sortedData[sortedData.length - 1][0]
-
-                    this.refreshChart(sortedData)
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
         },
 
         getDateRange() {
