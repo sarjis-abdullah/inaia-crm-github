@@ -1,6 +1,6 @@
 <template>
     <a class="actionBtnStyle" href="#" @click.prevent="() => onClick()" >
-        <i :class="returnIconName()"></i>
+        <i :class="returnIconName()" class="text-sm"></i>
     </a>
 </template>
 <script>
@@ -39,7 +39,7 @@ export default {
         {
             if(this.type=='info'|| this.type=='default')
             {
-                return 'fa fa-info'
+                return 'fa fa-eye'
             }
             if(this.type=='delete')
             {
@@ -66,6 +66,6 @@ export default {
     margin-right:3px;
     margin-left:3px;
     font-size:17px;
-    color:'#f6f9fc';
+    color:#f6f9fc;
 }
 </style>

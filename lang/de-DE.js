@@ -29,7 +29,7 @@ export default {
     complete: 'Abschließen',
     cancel: 'Abbrechen',
     delete: 'Löschen',
-    type: 'Art',
+    type: 'Typ',
 
     product_name_golddinar: 'Golddinar',
     product_class_standard: 'Standard',
@@ -51,7 +51,7 @@ export default {
 
     order_status_paid:'Zahlung eingegangen',
     order_status_pending:'Ausstehend',
-    order_status_payment_failed:'Zahlung ausstehend',
+    order_status_payment_failed:'Zahlung offen',
     order_status_canceled:'Storniert',
     order_status_processing:'In Bearbeitung',
     order_status_completed:'Ausgeführt',
