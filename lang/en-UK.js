@@ -5,7 +5,8 @@ export default {
     cards: 'Cards',
     edit_info: 'Edit Info',
     change_password: 'Change Password',
-
+    action:'Action',
+    order_list:'Order list',
     gold_price_per_gram: 'Gold price per gram',
     total_gold_amount: 'Gold amount',
     total_gold_value: 'Gold value',
@@ -14,7 +15,11 @@ export default {
     storage_fee: 'Storage fee',
     gold_purchase: 'Gold purchase',
     gold_sale: 'Gold sale',
+    gold_sell:'Gold sale',
     gold_withdrawal: 'Gold withdrawal',
+    gold_delivery:'Gold delivery',
+    gold_gift:'Gold gift',
+    gold_purchase_interval:'Gold Purchase - Recurring',
     agio: 'Agio',
 
     recent_transactions: 'Recent Transactions',
@@ -44,4 +49,13 @@ export default {
     depot_status_active: 'Active',
     depot_status_pending: 'Pending',
     depot_status_canceled: 'Canceled',
+
+    order_status_paid:'paid',
+    order_status_pending:'pending',
+    order_status_payment_failed:'failed',
+    order_status_canceled:'canceled',
+    order_status_processing:'processing',
+    order_status_completed:'completed',
+    status:'status'
+
 }

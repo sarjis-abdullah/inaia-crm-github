@@ -76,4 +76,7 @@ export function paddingFractionTo3(n) {
     }
     return n;
 }
+export function getOrderTypeTitle(order_type_translation_key) {
+
+}
 
