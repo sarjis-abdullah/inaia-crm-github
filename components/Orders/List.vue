@@ -21,40 +21,34 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
-                        <div class="border-0 card-header">
-                            <h3 class="mb-0">{{$t("order_list")}}</h3>
+                        <div class="card-header">
+                          <div class="row align-items-center">
+                            <div class="col-8">
+                              <h3 class="h3 mb-0">{{$t("order_list")}}</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">Filter</span>
+                              </button>
+                            </div>
+                          </div>
+
                         </div>
-                       
-                        <OrderFilter></OrderFilter>
+
+                        <OrderFilter v-bind:showFilter="showFilter"></OrderFilter>
+
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
                             <el-table-column label="#"
-                                           min-width="110px"
+                                           min-width="100px"
                                             prop="id"
-                                            >
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center align">
-                                        <div class="media-body">
-
-
-                                                <div class="font-weight-300 name text-sm" >{{row.id}}</div>
-
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label=""
-                                            prop="logo"
-                                            width="60px"
                                             >
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
                                         <div class="media-body">
 
-                                                <a href="#!" class="avatar rounded-circle removeImageBorder">
-                                                    <img v-bind:src="row.logo"/>
-                                                </a>
+                                            <div class="font-weight-300 name" >{{row.id}}</div>
 
                                         </div>
                                     </div>
@@ -65,9 +59,14 @@
                                             min-width="180px"
                                             >
                                 <template v-slot="{row}">
-                                    <div class="align">
-                                        <span class="status">{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</span>
-                                        <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
+                                    <div class="d-flex">
+                                        <span href="#!" class="avatar avatar-sm mr-3 removeImageBorder">
+                                          <img v-bind:src="row.logo"/>
+                                        </span>
+                                        <div>
+                                          <span class="status"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
+                                          <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
+                                        </div>
                                     </div>
                                 </template>
                             </el-table-column>
@@ -77,7 +76,7 @@
                                             min-width="180"
                                             >
                                             <template v-slot="{row}">
-                                                <div class="align">
+                                                <div class="_align">
                                                     <span>{{row.depotName}}</span>
                                                     <div class="dateStyle"># {{row.depot.id}}</div>
                                                 </div>
@@ -90,14 +89,14 @@
                                             sortable>
                                 <template v-slot="{row}">
                                     <span class="status" v-if="row.unit === 'gram'">
-                                        <div class="align">
+                                        <div class="">
                                             <i18n-n :value="row.amount/1000">
 
                                             </i18n-n> g
                                         </div>
                                     </span>
                                     <span class="status" v-else>
-                                        <div class="align">
+                                        <div class="">
                                             <i18n-n :value="parseInt(row.amount)/100">
 
                                             </i18n-n> €
@@ -112,7 +111,7 @@
                                             min-width="140px"
                                             >
                                 <template v-slot="{row}">
-                                 <div class="align">
+                                 <div class="">
                                     <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                                     </div>
                                 </template>
@@ -231,7 +230,8 @@ export default {
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
-            isLoading:false
+            isLoading:false,
+            showFilter: false
         }
     },
     computed: {
@@ -341,7 +341,10 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
-        }
+        },
+        toggleFilter: function() {
+          this.showFilter=!this.showFilter;
+        },
     }
 }
 </script>
