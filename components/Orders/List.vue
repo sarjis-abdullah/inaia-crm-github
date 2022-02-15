@@ -21,97 +21,108 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
-                        <div class="border-0 card-header">
-                            <h3 class="mb-0">Order List</h3>
+                        <div class="card-header">
+                          <div class="row align-items-center">
+                            <div class="col-8">
+                              <h3 class="h3 mb-0">{{$t("order_list")}}</h3>
+                            </div>
+                            <div class="col-4 text-right">
+                              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">Filter</span>
+                              </button>
+                            </div>
+                          </div>
+
                         </div>
+
+                        <OrderFilter v-bind:showFilter="showFilter"></OrderFilter>
 
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
-                            <el-table-column label="ID"
-                                            min-width="310px"
+                            <el-table-column label="#"
+                                           min-width="100px"
                                             prop="id"
-                                            sortable>
+                                            >
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
                                         <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
+
+                                            <div class="font-weight-300 name" >{{row.id}}</div>
+
                                         </div>
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="Depot ID"
-                                            prop="depot_id"
-                                            min-width="140px"
-                                            sortable>
-                            </el-table-column>
-
-                            <el-table-column label="Type"
+                            <el-table-column v-bind:label="$t('type')"
                                             prop="order_type_id"
-                                            min-width="140px"
-                                            sortable>
+                                            min-width="180px"
+                                            >
                                 <template v-slot="{row}">
-                                    <span class="status">{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</span>
+                                    <div class="d-flex align">
+                                        <span href="#!" class="avatar avatar-sm mr-3 removeImageBorder">
+                                          <img v-bind:src="row.logo"/>
+                                        </span>
+                                        <div>
+                                          <span class="status"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
+                                          <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
+                                        </div>
+                                    </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Bank Account"
-                                            prop="banking_account_id"
-                                            min-width="140px"
-                                            sortable>
+                            <el-table-column v-bind:label="$t('depot')"
+                                            prop="depotName"
+                                            min-width="180"
+                                            >
+                                            <template v-slot="{row}">
+                                                <div class="align">
+                                                    <span>{{row.depotName}}</span>
+                                                    <div class="dateStyle"># {{row.depot.id}}</div>
+                                                </div>
+                                            </template>
                             </el-table-column>
 
-                            <el-table-column label="Amount"
+                            <el-table-column v-bind:label="$t('amount')"
                                             prop="amount"
-                                            min-width="140px"
+                                            min-width="160px"
                                             sortable>
                                 <template v-slot="{row}">
                                     <span class="status" v-if="row.unit === 'gram'">
-                                        <i18n-n :value="row.amount/1000">
-                                            <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
-                                            <template v-slot:group="slotProps">{{ slotProps.group }}</template>
-                                            <template v-slot:decimal="slotProps">{{ slotProps.decimal }}</template>
-                                            <template v-slot:fraction="slotProps">
-                                                <span class="superscript">{{ paddingFractionTo3(slotProps.fraction) }}</span>
-                                            </template>
-                                        </i18n-n> g
+                                        <div class="align">
+                                            <i18n-n :value="row.amount/1000">
+
+                                            </i18n-n> g
+                                        </div>
                                     </span>
                                     <span class="status" v-else>
-                                        <i18n-n :value="row.amount/100">
-                                            <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
-                                            <template v-slot:group="slotProps">{{ slotProps.group }}</template>
-                                            <template v-slot:decimal="slotProps">{{ slotProps.decimal }}</template>
-                                            <template v-slot:fraction="slotProps">
-                                                <span class="superscript">{{ paddingFractionTo3(slotProps.fraction) }}</span>
-                                            </template>
-                                        </i18n-n> €
+                                        <div class="align">
+                                            <i18n-n :value="parseInt(row.amount)/100">
+
+                                            </i18n-n> €
+                                        </div>
                                     </span>
                                     <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Status"
+                            <el-table-column v-bind:label="$t('status')"
                                             prop="order_status_id"
                                             min-width="140px"
-                                            sortable>
+                                            >
                                 <template v-slot="{row}">
-                                    <span class="status">{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</span>
+                                 <div class="align">
+                                    <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
+                                    </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column min-width="180px">
+                            <el-table-column min-width="180px" v-bind:label="$t('action')">
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => completeOrderConfirm(row)" href="#" v-if="isOrderPending(row) || isOrderPaid(row)">{{ $t('complete') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => cancelOrderConfirm(row)" href="#" v-if="isOrderPending(row) || isOrderPaid(row)">{{ $t('cancel') }}</a>
-                                            <!-- <a class="dropdown-item" @click.prevent="() => removeOrderConfirm(row)" href="#">Delete</a> -->
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+
+                                <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                                <icon-button type="cancel" @click="() => cancelOrderConfirm(row)" v-if="isOrderPending(row) || isOrderPaid(row)"></icon-button>
+                                <icon-button type="confirm" @click="() => completeOrderConfirm(row)" v-if="isOrderPending(row) || isOrderPaid(row)"></icon-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -180,9 +191,12 @@
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import Details from '@/components/Orders/Details'
-import { paddingFractionTo3 } from '~/helpers/helpers'
+import Status from '@/components/Orders/Status';
+import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
 import { isOrderPending, isOrderPaid } from '~/helpers/order'
-
+import {BaseButton} from '@/components/argon-core';
+import IconButton from '@/components/common/Buttons/IconButton';
+import OrderFilter from '@/components/Orders/OrderFilter';
 export default {
     components: {
         [Table.name]: Table,
@@ -190,7 +204,10 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        Status,
+        IconButton,
+        OrderFilter
     },
     data() {
         return {
@@ -212,7 +229,9 @@ export default {
             perPage: 10,
             page: 1,
             totalTableData: 0,
-            sortedBy: { customer: "asc" }
+            sortedBy: { customer: "asc" },
+            isLoading:false,
+            showFilter: false
         }
     },
     computed: {
@@ -238,6 +257,7 @@ export default {
     },
     methods: {
         paddingFractionTo3,
+        paddingFractionTo2,
         isOrderPending,
         isOrderPaid,
         popupDetails(resource) {
@@ -252,6 +272,7 @@ export default {
                     .then(response => {
                         // console.error('data', response.data)
                         this.data = response.data.data
+                       
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false
@@ -320,7 +341,10 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
-        }
+        },
+        toggleFilter: function() {
+          this.showFilter=!this.showFilter;
+        },
     }
 }
 </script>
@@ -335,5 +359,19 @@ export default {
 }
 .superscript {
     position: relative; top: -0.5em; font-size: 60%;
+}
+.dateStyle {
+    color:#b5bacc;
+    font-size:0.85em;
+    margin-top:-0.55em
+}
+.removeImageBorder {
+    background-color: transparent !important
+}
+.actionBtnStyle {
+    color:#8898aa;
+}
+.align {
+    padding: 0 10px
 }
 </style>
