@@ -3,15 +3,16 @@ export const state = () => ({
     list: null,
     details: null,
     pairs: null,
-    loading: false
+    loading: false,
+    orderFilterList:[]
 })
 
 const initialState  = state()
 
 export const getters = {
-    list(state) {
-        state.list
-    },
+    list:state=>state.list,
+    loading:state=>state.loading,
+    orderFilterList:state=>state.orderFilterList,
     details(state) {
         state.details
     },
@@ -38,7 +39,10 @@ export const mutations = {
     },
     resetState(state) {
         Object.assign(state, initialState)
-    }
+    },
+    orderFilterList(state,list){
+        state.orderFilterList = list;
+    },
 }
 
 export const actions = {
@@ -57,7 +61,7 @@ export const actions = {
     fetchList(context, payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${ process.env.golddinarApiUrl }/orderType?include=${ payload }`)
+            return this.$axios.get(`${ process.env.golddinarApiUrl }/order-types`)
                 .then(res => {
                     context.commit('list', res.data.data)
                     return res
@@ -107,5 +111,29 @@ export const actions = {
                 context.commit('remove', idx)
                 return res
             })
+    },
+    fetchOrderFilterList(context){
+        if (!context.state.loading) {
+            context.commit('loading', true)
+            return this.$axios.get(`${ process.env.golddinarApiUrl }/order-types`)
+                .then(res => {
+                    let data = [];
+                   
+                    res.data.data.forEach(element=>{
+                        console.log(element.name_translation_key);
+                        if(element.name_translation_key.startsWith('gold'))
+                        {
+                            data.push(element);
+                        }
+                    })
+                    context.commit('orderFilterList',data)
+                    return res
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                }).finally(() => {
+                    context.commit('loading', false)
+                })
+        }
     }
 }

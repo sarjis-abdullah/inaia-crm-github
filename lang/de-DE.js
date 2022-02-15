@@ -20,6 +20,10 @@ export default {
     gold_delivery:'Auslieferung',
     gold_gift:'Gutschrift',
     gold_purchase_interval:'Goldkauf - Sparplan',
+    gold_transfer_out:'Gold transfert out',
+    gold_transfer_in:'Gold transfert in',
+    gold_deposit:'Gold deposit',
+    gold_delivery_cost:'Gold delivery cost',
     agio: 'Agio',
 
     recent_transactions: 'Letzte Transaktionen',
@@ -55,5 +59,9 @@ export default {
     order_status_canceled:'Storniert',
     order_status_processing:'In Bearbeitung',
     order_status_completed:'Ausgeführt',
+    order_status_refunded:'refunded',
+    order_status_refund:'refund',
+    order_status_rejected:'rejected',
+    order_status_executed:'executed',
     status:'status'
 }

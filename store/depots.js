@@ -3,7 +3,8 @@ export const state = () => ({
     list: null,
     details: null,
     pairs: null,
-    loading: false
+    loading: false,
+    orderFilterList:[]
 })
 
 const initialState  = state()
@@ -17,7 +18,8 @@ export const getters = {
     },
     pairs(state) {
         state.pairs
-    }
+    },
+    orderFilterList:state=>state.orderFilterList
 }
 
 export const mutations = {
@@ -38,6 +40,9 @@ export const mutations = {
     },
     resetState(state) {
         Object.assign(state, initialState)
+    },
+    orderFilterList(state,list){
+        state.orderFilterList = list
     }
 }
 
@@ -107,5 +112,20 @@ export const actions = {
                 context.commit('remove', idx)
                 return res
             })
+    },
+    fetchOrderFilterList(context,payload) {
+        if (!context.state.loading) {
+            context.commit('loading', true)
+            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?include=depot_status${ payload }`)
+                .then(res => {
+                    context.commit('orderFilterList', res.data.data)
+                    return res
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                }).finally(() => {
+                    context.commit('loading', false)
+                })
+        }
     }
 }

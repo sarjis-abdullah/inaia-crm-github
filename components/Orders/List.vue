@@ -59,7 +59,7 @@
                                             min-width="180px"
                                             >
                                 <template v-slot="{row}">
-                                    <div class="d-flex">
+                                    <div class="d-flex align">
                                         <span href="#!" class="avatar avatar-sm mr-3 removeImageBorder">
                                           <img v-bind:src="row.logo"/>
                                         </span>
@@ -76,7 +76,7 @@
                                             min-width="180"
                                             >
                                             <template v-slot="{row}">
-                                                <div class="_align">
+                                                <div class="align">
                                                     <span>{{row.depotName}}</span>
                                                     <div class="dateStyle"># {{row.depot.id}}</div>
                                                 </div>
@@ -89,14 +89,14 @@
                                             sortable>
                                 <template v-slot="{row}">
                                     <span class="status" v-if="row.unit === 'gram'">
-                                        <div class="">
+                                        <div class="align">
                                             <i18n-n :value="row.amount/1000">
 
                                             </i18n-n> g
                                         </div>
                                     </span>
                                     <span class="status" v-else>
-                                        <div class="">
+                                        <div class="align">
                                             <i18n-n :value="parseInt(row.amount)/100">
 
                                             </i18n-n> €
@@ -111,7 +111,7 @@
                                             min-width="140px"
                                             >
                                 <template v-slot="{row}">
-                                 <div class="">
+                                 <div class="align">
                                     <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                                     </div>
                                 </template>
@@ -272,7 +272,7 @@ export default {
                     .then(response => {
                         // console.error('data', response.data)
                         this.data = response.data.data
-                        console.log(this.data);
+                       
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false

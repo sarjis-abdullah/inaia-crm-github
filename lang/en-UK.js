@@ -20,6 +20,10 @@ export default {
     gold_delivery:'Gold delivery',
     gold_gift:'Gold gift',
     gold_purchase_interval:'Gold Purchase - Recurring',
+    gold_transfer_out:'Gold transfert out',
+    gold_transfer_in:'Gold transfert in',
+    gold_deposit:'Gold deposit',
+    gold_delivery_cost:'Gold delivery cost',
     agio: 'Agio',
 
     recent_transactions: 'Recent Transactions',
@@ -56,6 +60,11 @@ export default {
     order_status_canceled:'canceled',
     order_status_processing:'processing',
     order_status_completed:'completed',
+    order_status_refunded:'refunded',
+    order_status_refund:'refund',
+    order_status_rejected:'rejected',
+    order_status_executed:'executed',
+
     status:'status'
 
 }

@@ -2,54 +2,36 @@
   <div>
 
     <div class="card-header border-0 pb-0" v-if="showFilter">
-
+       
         <div class="row">
           <div class="col-md displayFlex flex-column align-content-center">
-            <Select
-              v-model="selectedCustomer"
-              multiple
-              filterable
-              remote
-              reserve-keyword
-              placeholder="Please enter a customer name"
-              :remote-method="loadCustomers"
-              :loading="loadingCustomers"
-              class="filterElement">
-              <Option
-                v-for="item in customers"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </Option>
-            </Select>
-            <Select
-              v-model="selectedDepots"
-              multiple
-              filterable
-              remote
-              reserve-keyword
-              placeholder="Please enter a depot name"
-              :remote-method="loadDepots"
-              :loading="loadingDepots"
-              class="filterElement">
-              <Option
-                v-for="item in depots"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </Option>
-            </Select>
+             <autocomplete 
+          v-model="selectedCustomer"
+          :fetch-suggestions="searchCustomer"
+          class="filterElement"
+          placeholder="Please enter customer name/email"
+          :trigger-on-focus="false">
+         </autocomplete>
+            <autocomplete 
+          v-model="selectedDepots"
+          :fetch-suggestions="searchDepot"
+          class="filterElement"
+          placeholder="Please enter depot name"
+          :trigger-on-focus="false">
+         </autocomplete>
           </div>
           <div class="col-md displayFlex flex-column align-content-center">
             <Select placeholder="Status"
                     v-model="selectedStatus"
                     filterable
                     multiple
-                    class="filterElement">
+                    class="filterElement"
+                    :loading="loadingStatus"
+                    >
               <Option v-for="option in status"
 
-                        :value="option.value"
-                        :label="option.value"
+                        :value="$t(option.name_translation_key)"
+                        :label="$t(option.name_translation_key)"
                         :key="option.id">
               </Option>
             </Select>
@@ -57,12 +39,13 @@
                     v-model="selectedType"
                     filterable
                     multiple
-                    class="filterElement">
+                    class="filterElement"
+                    :loading="loadingTypes">
               <Option v-for="option in types"
 
-                        :value="option.value"
-                        :label="option.value"
-                        :key="option.value">
+                        :value="$t(option.name_translation_key)"
+                        :label="$t(option.name_translation_key)"
+                        :key="option.id">
               </Option>
             </Select>
           </div>
@@ -89,26 +72,33 @@
     </div>
 
     <div class="card-header border-0 border-top" v-if="filterIsActive">
-      <Badge type="secondary" size="md" style="margin-right:10px">from: 01/01/2022 until: 15/02/2022 <a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px">PAID<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px">Gold purchase<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">from: {{$d(startDate)}}  until: {{$d(endDate)}} <a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for="stat in selectedStatus">{{stat}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for="type in selectedType">{{type}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 
   </div>
 </template>
 <script>
 import {Badge} from '@/components/argon-core';
-import {Select,Option,DatePicker} from 'element-ui';
-
+import {Select,Option,DatePicker,Autocomplete,Form,FormItem} from 'element-ui';
+import { mapGetters } from "vuex";
 export default {
   props:{
-    showFilter:Boolean
+    showFilter:{
+      type:Boolean,
+      default:false
+    }
   },
   components:{
     Badge,
     Select,
     Option,
-    DatePicker
+    DatePicker,
+    Autocomplete,
+    Form,
+    FormItem
   },
   data:function(){
     return {
@@ -116,27 +106,59 @@ export default {
       endDate:null,
       selectedType:[],
       selectedStatus:[],
-      selectedCustomer:[],
-      selectedDepots:[],
-      status:[{id:1,value:'Pending'},{id:2,value:'Paid'},{id:3,value:'Complete'}],
-      types:[{value:'Gold purchase'},{value:'Gold sale'},{value:'Gold delivery'}],
+      selectedCustomer:null,
+      selectedDepots:null,
       customers:[{value:'Mahdi Njim'},{value:"Yunus"},{value:'Enamul'}],
-      depots:[{value:'depot1'},{value:"depot2"},{value:'depot3'}],
       loadingCustomers:false,
       loadingDepots:false,
-      showFilter: false,
       filterIsActive: true
     }
 
   },
+  mounted(){
+     this.$store.dispatch("orderStatus/fetchList","");
+     this.$store.dispatch("orderTypes/fetchOrderFilterList","");
+     this.$store.dispatch("depots/fetchOrderFilterList","name").then(data=>console.log(data));
+  },
+  computed :{
+   ...mapGetters('orderStatus',{
+     loadingStatus:'loading',
+      status:"list"
+   }),
+   ...mapGetters('orderTypes',{
+     loadingTypes:'loading',
+      types:"orderFilterList"
+   }),
+   ...mapGetters('depots',{
+     depots:"orderFilterList"
+   })
+  },
   methods:{
-    loadCustomers: function()
+    searchCustomer: function(query,cb)
     {
-
+      let possibleValues = this.customers.filter(element=>element.value.toLowerCase().includes(query));
+      
+      cb(possibleValues)
     },
-    loadDepots: function()
+    searchDepot: function(query,cb)
     {
-
+      let possibleValues = this.depots.filter(element=>
+      {
+        return element.name.includes(query);
+      });
+      console.log(possibleValues);
+      cb(possibleValues.slice(0,2))
+    },
+    loadStatus: function()
+    {
+      //console.log(this)
+      this.$store
+                .dispatch("orderStatus/fetchList","").then(data=>{
+                  console.log(data)
+                  data.data.data.forEach(element => {
+                    console.log(element.name_translation_key);
+                  });
+                })
     }
   }
 }
