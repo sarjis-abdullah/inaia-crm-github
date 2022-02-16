@@ -35,7 +35,7 @@
 
                         </div>
 
-                        <OrderFilter v-bind:showFilter="showFilter"></OrderFilter>
+                        <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></OrderFilter>
 
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
@@ -231,7 +231,8 @@ export default {
             totalTableData: 0,
             sortedBy: { customer: "asc" },
             isLoading:false,
-            showFilter: false
+            showFilter: false,
+            filterQuery:null
         }
     },
     computed: {
@@ -240,7 +241,7 @@ export default {
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
-                `&per_page=${this.perPage}`
+                `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
         totalPages() {
@@ -345,6 +346,10 @@ export default {
         toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
+        applyFilter: function(query)
+        {
+            this.filterQuery = query;
+        }
     }
 }
 </script>

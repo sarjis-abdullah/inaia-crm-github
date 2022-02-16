@@ -5,7 +5,8 @@ export const state = () => {
         // leadData: [],
         // singleLeadData: {},
         countryList: [],
-        countryListLoaded: 0
+        countryListLoaded: 0,
+        orderFilterList:[]
     }
 }
 
@@ -30,7 +31,8 @@ export const getters = {
     },
     countryListLoaded(state) {
         return state.countryListLoaded
-    }
+    },
+    orderFilterList:state=>state.orderFilterList
 }
 export const mutations = {
 
@@ -60,6 +62,9 @@ export const mutations = {
     },
     resetState(state) {
         Object.assign(state, initialState)
+    },
+    orderFilterList(state,list) {
+        state.orderFilterList = list;
     }
 }
 export const actions = {
@@ -102,12 +107,13 @@ export const actions = {
                 return response
             })
     },
-    clientDetailsData(context, payload) {
+    getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&surname=${payload}&type=customer`)
             .then(response => {
-                const singleClientData = response.data.data
-                context.commit('singleClientData', singleClientData)
+                const clientData = response.data.data;
+                console.log(clientData);
+                context.commit('orderFilterList', clientData)
                 return response
             })
     },
@@ -177,6 +183,15 @@ export const actions = {
                 // console.log('country-list loaded')
                 context.commit('initCountryList', countryList)
                 context.commit('countryListLoaded', 2)
+                return response
+            })
+    },
+    clientDetailsData(context, payload) {
+        return this.$axios
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels`)
+            .then(response => {
+                const singleClientData = response.data.data
+                context.commit('singleClientData', singleClientData)
                 return response
             })
     },

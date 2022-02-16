@@ -1,24 +1,44 @@
 <template>
   <div>
 
-    <div class="card-header border-0 pb-0" v-if="showFilter">
+    <form class="card-header border-0 pb-0" v-if="showFilter">
        
         <div class="row">
           <div class="col-md displayFlex flex-column align-content-center">
-             <autocomplete 
-          v-model="selectedCustomer"
-          :fetch-suggestions="searchCustomer"
-          class="filterElement"
-          placeholder="Please enter customer name/email"
-          :trigger-on-focus="false">
-         </autocomplete>
-            <autocomplete 
-          v-model="selectedDepots"
-          :fetch-suggestions="searchDepot"
-          class="filterElement"
-          placeholder="Please enter depot name"
-          :trigger-on-focus="false">
-         </autocomplete>
+            
+             <Select 
+              v-model="selectedCustomer"
+              remote
+              filterable
+               reserve-keyword
+              class="filterElement"
+              placeholder="Please enter customer surname only"
+              :loading="loadingCustomers"
+              :remote-method = "loadCustomers"
+              @change="customerSelected"
+              >
+               <Option v-for="option in customers"
+
+                        :value="option.id"
+                        :label="formatClientLabel(option)"
+                        :key="option.id">
+              </Option>
+             </Select>
+         
+             <Select placeholder="Depots"
+                    v-model="selectedDepots"
+                    filterable
+                    
+                    class="filterElement"
+                    :disabled="selectedCustomer==null"
+                    >
+              <Option v-for="option in depots"
+
+                        :value="option.id"
+                        :label="option.name"
+                        :key="option.id">
+              </Option>
+            </Select>
           </div>
           <div class="col-md displayFlex flex-column align-content-center">
             <Select placeholder="Status"
@@ -26,11 +46,13 @@
                     filterable
                     multiple
                     class="filterElement"
+                    @remove-tag="applyFilter"
                     :loading="loadingStatus"
+                    
                     >
               <Option v-for="option in status"
 
-                        :value="$t(option.name_translation_key)"
+                        :value="option.id"
                         :label="$t(option.name_translation_key)"
                         :key="option.id">
               </Option>
@@ -40,10 +62,11 @@
                     filterable
                     multiple
                     class="filterElement"
+                    @remove-tag="applyFilter"
                     :loading="loadingTypes">
               <Option v-for="option in types"
 
-                        :value="$t(option.name_translation_key)"
+                        :value="option.id"
                         :label="$t(option.name_translation_key)"
                         :key="option.id">
               </Option>
@@ -66,16 +89,18 @@
           </div>
         </div>
         <div class="applyContainer displayFlex flex-row align-content-center justify-content-center">
-          <base-button outline type="primary">Apply filter</base-button>
+          <base-button outline type="primary" @click="applyFilter">Apply filter</base-button>
         </div>
 
-    </div>
+    </form>
 
     <div class="card-header border-0 border-top" v-if="filterIsActive">
       
-      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">from: {{$d(startDate)}}  until: {{$d(endDate)}} <a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for="stat in selectedStatus">{{stat}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for="type in selectedType">{{type}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
+       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">from: {{$d(startDate)}}  until: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 
   </div>
@@ -84,6 +109,8 @@
 import {Badge} from '@/components/argon-core';
 import {Select,Option,DatePicker,Autocomplete,Form,FormItem} from 'element-ui';
 import { mapGetters } from "vuex";
+import {formatDateToApiFormat} from '../../helpers/helpers';
+import moment from 'moment'
 export default {
   props:{
     showFilter:{
@@ -108,17 +135,18 @@ export default {
       selectedStatus:[],
       selectedCustomer:null,
       selectedDepots:null,
-      customers:[{value:'Mahdi Njim'},{value:"Yunus"},{value:'Enamul'}],
       loadingCustomers:false,
       loadingDepots:false,
-      filterIsActive: true
+      filterIsActive: true,
+      lastRequest:null,
+      selectedCustomerInfo:null
     }
 
   },
   mounted(){
      this.$store.dispatch("orderStatus/fetchList","");
      this.$store.dispatch("orderTypes/fetchOrderFilterList","");
-     this.$store.dispatch("depots/fetchOrderFilterList","name").then(data=>console.log(data));
+     
   },
   computed :{
    ...mapGetters('orderStatus',{
@@ -131,14 +159,93 @@ export default {
    }),
    ...mapGetters('depots',{
      depots:"orderFilterList"
+   }),
+   ...mapGetters('clients',{
+     customers:"orderFilterList"
    })
   },
+  watch:{
+    selectedCustomer:{
+      handler() {
+        if(this.selectedCustomer!=null)
+        {
+          this.selectedDepots=null
+          this.$store.dispatch("depots/fetchDepotsByAccount",this.selectedCustomer).then(data=>console.log(data));
+        }
+      },
+      immediate: true,
+    }
+  },
   methods:{
-    searchCustomer: function(query,cb)
+    loadCustomers: function(query)
     {
-      let possibleValues = this.customers.filter(element=>element.value.toLowerCase().includes(query));
+      if(query.length>3)
+      {
+        let update = true;
+        if(this.lastRequest!=null)
+        {
+          let now = moment();
+          if(now.diff(this.lastRequest,'second')<1)
+          {
+            update = false;
+          }
+        }
+        if(update)
+        {
+          this.loadingCustomers = true;
+          this.$store.dispatch("clients/getClientListBySurname",query).then(()=>{
+            this.lastRequest = moment();
+          }).finally(()=>{
+            this.loadingCustomers = false;
+          })
+        }
+      }
+    },
+    customerSelected:function(id)
+    {
       
-      cb(possibleValues)
+      let client = this.customers.find(x=>x.id==id);
+      console.log(client);
+      if(client)
+      {
+        this.selectedCustomerInfo = client;
+      }
+    },
+    formatClientLabel: function(client)
+    {
+      if(client)
+      {
+        let email = null;
+        if(client.contact.channels)
+        {
+          client.contact.channels.forEach(element=>{
+            if(element.type=="email")
+            {
+              email = element.value;
+            }
+          })
+        }
+        let label = client.contact.name + ' '+ client.contact.person_data.surname;
+        if(email)
+        {
+          label += ` (${email})`
+        }
+        return label;
+      }
+      
+    },
+    formatClientTag: function()
+    {
+      return this.selectedCustomerInfo.contact.name + ' '+ this.selectedCustomerInfo.contact.person_data.surname;
+      
+    },
+    formatDepotTag: function()
+    {
+      let depot = this.depots.find(x=>x.id==this.selectedDepots)
+      if(depot)
+      {
+        return depot.name;
+      }
     },
     searchDepot: function(query,cb)
     {
@@ -146,7 +253,6 @@ export default {
       {
         return element.name.includes(query);
       });
-      console.log(possibleValues);
       cb(possibleValues.slice(0,2))
     },
     loadStatus: function()
@@ -154,11 +260,88 @@ export default {
       //console.log(this)
       this.$store
                 .dispatch("orderStatus/fetchList","").then(data=>{
-                  console.log(data)
                   data.data.data.forEach(element => {
                     console.log(element.name_translation_key);
                   });
                 })
+    },
+    quiryBuilder:function()
+    {
+      let query = "";
+      if(this.selectedType.length>0)
+      {
+        query+='&order_status_ids='+this.selectedType.join(',');
+      }
+      if(this.selectedStatus.length>0)
+      {
+        query+='&order_status_ids='+this.selectedStatus.join(',');
+      }
+      if(this.selectedCustomer!=null)
+      {
+        query+='&account_ids='+this.selectedCustomer;
+      }
+      if(this.selectedDepots!=null)
+      {
+        query+='&depot_ids='+this.selectedDepots;
+      }
+      if(this.startDate!=null)
+      {
+        query+='&create_date_start='+formatDateToApiFormat(this.startDate);
+      }
+      if(this.endDate!=null)
+      {
+        query+='&create_date_end='+formatDateToApiFormat(this.startDate);
+      }
+      console.log(query);
+      return query;
+    },
+    applyFilter: function()
+    {
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
+    },
+    getStatusTranslationKey:function(id)
+    {
+      let stat = this.status.find(x=>x.id==id);
+      return stat.name_translation_key;
+    },
+    getTypeTranslationKey:function(id)
+    {
+      let type = this.types.find(x=>x.id==id);
+      return type.name_translation_key;
+    },
+    removeStatus:function(id)
+    {
+      this.selectedStatus = this.selectedStatus.filter(sta=>sta!=id);
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
+    },
+    removeType:function(id)
+    {
+      this.selectedType = this.selectedType.filter(type=>type!=id);
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
+    },
+    removeDate:function(id)
+    {
+      this.startDate = null;
+      this.endDate = null;
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
+    },
+    removeCustomer:function()
+    {
+      this.selectedCustomer = null;
+      this.selectedDepots = null;
+      this.selectedCustomerInfo = null;
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
+    },
+    removeDepot:function()
+    {
+      this.selectedDepots = null;
+      const query = this.quiryBuilder();
+      this.$emit('filter',query)
     }
   }
 }
