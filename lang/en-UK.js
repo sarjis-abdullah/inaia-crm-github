@@ -65,6 +65,12 @@ export default {
     order_status_rejected:'rejected',
     order_status_executed:'executed',
 
-    status:'status'
-
+    status:'Status',
+    customer_filter_placeholder:'Please enter customer surname only',
+    apply_filter:'Apply filter',
+    types:'Types',
+    select_start_date_placeholder:'Select start date',
+    select_end_date_placeholder:'Select end date',
+    from:'from',
+    to:'until'
 }

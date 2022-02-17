@@ -12,10 +12,13 @@
               filterable
                reserve-keyword
               class="filterElement"
-              placeholder="Please enter customer surname only"
+              :placeholder="$t('customer_filter_placeholder')"
               :loading="loadingCustomers"
               :remote-method = "loadCustomers"
               @change="customerSelected"
+              @clear="clearCustomer"
+              
+              clearable
               >
                <Option v-for="option in customers"
 
@@ -25,10 +28,11 @@
               </Option>
              </Select>
          
-             <Select placeholder="Depots"
+             <Select :placeholder="$t('depots')"
                     v-model="selectedDepots"
                     filterable
-                    
+                    clearable
+                    @clear="clearDepot"
                     class="filterElement"
                     :disabled="selectedCustomer==null"
                     >
@@ -41,7 +45,7 @@
             </Select>
           </div>
           <div class="col-md displayFlex flex-column align-content-center">
-            <Select placeholder="Status"
+            <Select :placeholder="$t('status')"
                     v-model="selectedStatus"
                     filterable
                     multiple
@@ -57,7 +61,7 @@
                         :key="option.id">
               </Option>
             </Select>
-             <Select placeholder="Types"
+             <Select :placeholder="$t('types')"
                     v-model="selectedType"
                     filterable
                     multiple
@@ -78,18 +82,18 @@
               class="filterElement"
               v-model="startDate"
               type="date"
-              placeholder="Select start date">
+              :placeholder="$t('select_start_date_placeholder')">
             </date-picker>
           <date-picker
           class="filterElement"
             v-model="endDate"
             type="date"
-            placeholder="Select end date">
+            :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
           </div>
         </div>
         <div class="applyContainer displayFlex flex-row align-content-center justify-content-center">
-          <base-button outline type="primary" @click="applyFilter">Apply filter</base-button>
+          <base-button outline type="primary" @click="applyFilter">{{$t('apply_filter')}}</base-button>
         </div>
 
     </form>
@@ -100,7 +104,7 @@
        <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">from: {{$d(startDate)}}  until: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">{{$t('from')}}: {{$d(startDate)}}  {{$t('until')}}: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 
   </div>
@@ -137,9 +141,9 @@ export default {
       selectedDepots:null,
       loadingCustomers:false,
       loadingDepots:false,
-      filterIsActive: true,
+      filterIsActive: false,
       lastRequest:null,
-      selectedCustomerInfo:null
+      selectedCustomerInfo:null,
     }
 
   },
@@ -177,24 +181,38 @@ export default {
     }
   },
   methods:{
+    clearDepot:function()
+    {
+      this.selectedDepots = null;
+      this.applyFilter();
+    },
+    clearCustomer:function()
+    {
+      this.selectedCustomer = null;
+      this.selectedCustomerInfo = null;
+      this.selectedDepots = null;
+      this.applyFilter();
+    },
     loadCustomers: function(query)
     {
-      if(query.length>3)
+      if(query.length>=3)
       {
         let update = true;
         if(this.lastRequest!=null)
         {
           let now = moment();
-          if(now.diff(this.lastRequest,'second')<1)
+          if(now.diff(this.lastRequest,'second')<2)
           {
             update = false;
+            console.log(update);
           }
         }
         if(update)
         {
           this.loadingCustomers = true;
+          this.lastRequest = moment();
           this.$store.dispatch("clients/getClientListBySurname",query).then(()=>{
-            this.lastRequest = moment();
+            
           }).finally(()=>{
             this.loadingCustomers = false;
           })
@@ -203,9 +221,7 @@ export default {
     },
     customerSelected:function(id)
     {
-      
       let client = this.customers.find(x=>x.id==id);
-      console.log(client);
       if(client)
       {
         this.selectedCustomerInfo = client;
@@ -292,12 +308,18 @@ export default {
       {
         query+='&create_date_end='+formatDateToApiFormat(this.startDate);
       }
-      console.log(query);
+      if(query=="")
+      {
+         this.filterIsActive = false;
+      }
+      else
+        this.filterIsActive = true;
       return query;
     },
     applyFilter: function()
     {
       const query = this.quiryBuilder();
+      
       this.$emit('filter',query)
     },
     getStatusTranslationKey:function(id)
@@ -388,5 +410,8 @@ export default {
     height: 40px !important;
     line-height: 40px !important;
     font-size: 0.875rem;
+}
+.applyContainer {
+  margin-bottom: 15px;
 }
 </style>
