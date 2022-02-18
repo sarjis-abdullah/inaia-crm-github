@@ -4,21 +4,20 @@ let hasRedirect = false
 
 export default async function({ app, route, store, redirect }) {
     const gets = store.getters
-    // logout(store)
 
     if (!route.matched.length) {
         // return redirect(404, '/Error404')
         return
     }
-    // console.log('token', gets['auth/auth'])
+
     if (gets['auth/auth'] && gets['types/loading'] === false) {
         store.dispatch('types/pairs')
     }
 
-    // if (route.query.token && route.query.token !== gets['auth/auth']) {
-    if (route.query.token) {
-        if (route.query.token !== gets['auth/auth']) {
-            store.commit('auth/setAuth', route.query.token)
+    let bearerToken = route.query.token || route.params.token
+    if (bearerToken) {
+        if (bearerToken !== gets['auth/auth']) {
+            store.commit('auth/setAuth', bearerToken)
         }
         store.commit('auth/user', null)
         hasRedirect = true
