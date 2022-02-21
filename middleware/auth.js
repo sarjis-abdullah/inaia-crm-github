@@ -49,7 +49,7 @@ export default async function({ app, route, store, redirect }) {
 
     if (!hasRedirect && gets['auth/loading'] !== 1 && !gets['auth/authorized']) {
         console.log('loading', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
-        return logout(store)
+        // return logout(store)
     }
 
     // console.log('path', route)
