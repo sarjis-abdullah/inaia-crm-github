@@ -33,7 +33,7 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0 text-white">PPS Master Account</h5>
-                  <span class="h2 font-weight-bold mb-0 text-white">150.897,33 €</span>
+                  <span class="h2 font-weight-bold mb-0 text-white">151.897,33 €</span>
                 </div>
                 <div class="col-auto">
                   <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
