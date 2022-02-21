@@ -65,7 +65,7 @@ export const mutations = {
 
 	user(state, user) {
 		state.user  = user;
-		localStorage.setItem(userToken, JSON.stringify(user))
+		localStorage.setItem(userToken, user ? JSON.stringify(user) : null)
 	},
 
     purgeAuth(state) {
