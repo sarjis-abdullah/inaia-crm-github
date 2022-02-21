@@ -1,12 +1,12 @@
 <template>
   <div>
 
-    <form class="card-header border-0 pb-0" v-if="showFilter">
-       
+    <form class="card-header border-0" v-if="showFilter">
+
         <div class="row">
           <div class="col-md displayFlex flex-column align-content-center">
-            
-             <Select 
+
+             <Select
               v-model="selectedCustomer"
               remote
               filterable
@@ -17,7 +17,7 @@
               :remote-method = "loadCustomers"
               @change="customerSelected"
               @clear="clearCustomer"
-              
+
               clearable
               >
                <Option v-for="option in customers"
@@ -27,7 +27,7 @@
                         :key="option.id">
               </Option>
              </Select>
-         
+
              <Select :placeholder="$t('depots')"
                     v-model="selectedDepots"
                     filterable
@@ -49,10 +49,10 @@
                     v-model="selectedStatus"
                     filterable
                     multiple
-                    class="filterElement"
+                    class="mb-3"
                     @remove-tag="applyFilter"
                     :loading="loadingStatus"
-                    
+
                     >
               <Option v-for="option in status"
 
@@ -65,7 +65,7 @@
                     v-model="selectedType"
                     filterable
                     multiple
-                    class="filterElement"
+                    class="mb-3"
                     @remove-tag="applyFilter"
                     :loading="loadingTypes">
               <Option v-for="option in types"
@@ -92,14 +92,14 @@
           </date-picker>
           </div>
         </div>
-        <div class="applyContainer displayFlex flex-row align-content-center justify-content-center">
-          <base-button outline type="primary" @click="applyFilter">{{$t('apply_filter')}}</base-button>
+        <div class="applyContainer displayFlex flex-row align-content-center justify-content-center mb-0">
+          <base-button type="primary" @click="applyFilter">{{$t('apply_filter')}}</base-button>
         </div>
 
     </form>
 
     <div class="card-header border-0 border-top" v-if="filterIsActive">
-      
+
       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
        <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
@@ -150,7 +150,7 @@ export default {
   mounted(){
      this.$store.dispatch("orderStatus/fetchList","");
      this.$store.dispatch("orderTypes/fetchOrderFilterList","");
-     
+
   },
   computed :{
    ...mapGetters('orderStatus',{
@@ -212,7 +212,7 @@ export default {
           this.loadingCustomers = true;
           this.lastRequest = moment();
           this.$store.dispatch("clients/getClientListBySurname",query).then(()=>{
-            
+
           }).finally(()=>{
             this.loadingCustomers = false;
           })
@@ -248,12 +248,12 @@ export default {
         }
         return label;
       }
-      
+
     },
     formatClientTag: function()
     {
       return this.selectedCustomerInfo.contact.name + ' '+ this.selectedCustomerInfo.contact.person_data.surname;
-      
+
     },
     formatDepotTag: function()
     {
@@ -319,7 +319,7 @@ export default {
     applyFilter: function()
     {
       const query = this.quiryBuilder();
-      
+
       this.$emit('filter',query)
     },
     getStatusTranslationKey:function(id)

@@ -1,12 +1,12 @@
 export default {
     date: 'Date',
+    search: 'Search',
 
     trade: 'Trade',
     cards: 'Cards',
     edit_info: 'Edit Info',
     change_password: 'Change Password',
     action:'Action',
-    order_list:'Order list',
     gold_price_per_gram: 'Gold price per gram',
     total_gold_amount: 'Gold amount',
     total_gold_value: 'Gold value',
@@ -41,7 +41,7 @@ export default {
 
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',
-    
+
     amount: 'Amount',
     depot: 'Depot',
     depots: 'Depots',
@@ -61,9 +61,6 @@ export default {
     order_status_processing:'processing',
     order_status_completed:'completed',
     order_status_refunded:'refunded',
-    order_status_refund:'refund',
-    order_status_rejected:'rejected',
-    order_status_executed:'executed',
 
     status:'Status',
     customer_filter_placeholder:'Please enter customer surname only',
