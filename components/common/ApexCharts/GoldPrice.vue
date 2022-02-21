@@ -1,6 +1,6 @@
 <template>
     <card header-classes="bg-transparent _shadow-none border-bottom-0 pb-0">
-        <div slot="header" class="row align-items-center flex-column flex-sm-row">
+        <div slot="header" class="row">
             <div class="col">
                 <h6 class="surtitle">{{ $t('gold_price_per_gram') }}</h6>
                 <h5 class="h1 mb-0 text-nowrap">
@@ -14,7 +14,7 @@
                         </template>
                     </i18n-n> €
                     <span class="h5 font-weight-normal text-nowrap">
-                        <i :class="{'_fas': true, 'icon-up': priceUp, 'icon-down': !priceUp, 'ml-2': true, '_mr-1': true, 'text-success': priceUp, 'text-warning': !priceUp}"></i>
+                        <i :class="{'fas': true, 'fa-arrow-up': priceUp, 'fa-arrow-down': !priceUp, 'ml-2': true, '_mr-1': true, 'text-success': priceUp, 'text-warning': !priceUp}"></i>
                          <!-- {{ $n(priceChanged) }} % -->
                         <i18n-n :value="priceChanged">
                             <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
@@ -40,7 +40,7 @@
 
             <apexchart
                 type=area
-                height=400
+                height=395
                 :options="chartOptions"
                 :series="series"
                 :opacity="0"

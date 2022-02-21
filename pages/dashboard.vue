@@ -18,21 +18,73 @@
         </div>
       </div>
 
-      <!-- Card stats -->
-      <!--
+
+    </base-header>
+
+
+
+    <!-- Card stats -->
+    <div class="container-fluid mt--6">
       <div class="row">
-        <div class="col-xl-3 col-md-6">
-          <stats-card title="Total traffic"
-                      type="gradient-red"
-                      sub-title="350,897"
-                      icon="ni ni-active-40">
+
+        <div class="col-xl-4 col-md-6">
+          <div class="card bg-gradient-primary border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0 text-white">PPS Master Account</h5>
+                  <span class="h2 font-weight-bold mb-0 text-white">150.897,33 €</span>
+                </div>
+                <div class="col-auto">
+                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+                                 menu-on-right
+                                 :has-toggle="false">
+
+                    <template slot="title">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </template>
+
+                    <a class="dropdown-item" href="#">{{$t('make_payment')}}</a>
+                    <a class="dropdown-item" href="#">{{$t('details')}}</a>
+                  </base-dropdown>
+                </div>
+              </div>
+              <p class="mt-3 mb-0 text-sm">
+                <span class="text-nowrap text-white">IBAN BE63 9740 8655 2608</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!--
+        <div class="col-xl-4 col-md-6">
+          <stats-card title="Goldbestand Kunden"
+                      type="gradient-info"
+                      sub-title="1.242.345,456 g"
+                      icon="icon-gold text-xl">
 
             <template slot="footer">
-              <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+              <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 54.8%</span>
               <span class="text-nowrap">Since last month</span>
             </template>
           </stats-card>
         </div>
+
+        <div class="col-xl-4 col-md-6">
+          <stats-card title="Unfulfilled orders"
+                      type="gradient-info"
+                      sub-title="18"
+                      icon="ni ni-chart-bar-32">
+
+            <template slot="footer">
+              Davon <span class="text-nowrap">6</span> nicht bezahlt
+            </template>
+          </stats-card>
+        </div>
+        -->
+
+
+        <!--
         <div class="col-xl-3 col-md-6">
           <stats-card title="Total traffic"
                       type="gradient-orange"
@@ -70,16 +122,40 @@
             </template>
           </stats-card>
         </div>
+        -->
       </div>
-      -->
-    </base-header>
+    </div>
 
     <!--Charts-->
-    <div class="container-fluid mt--6">
-      
+    <div class="container-fluid">
+
       <div class="row">
 
-        <gold-price />
+        <div class="col-lg-8">
+          <gold-price />
+        </div>
+
+        <div class="col-lg-4">
+          <card header-classes="bg-transparent">
+            <div slot="header" class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
+                <h5 class="h3 mb-0">Total orders</h5>
+              </div>
+              <div class="col-auto">
+                <!--<button type="button" class="btn btn-sm btn-primary">{{$t('details')}}</button>-->
+              </div>
+            </div>
+
+            <bar-chart
+              :height="350"
+              ref="barChart"
+              :chart-data="redBarChart.chartData"
+            >
+            </bar-chart>
+          </card>
+        </div>
+
 
         <!-- <div class="col-xl-8">
           <div class="col-xl-8">
@@ -125,25 +201,8 @@
             </card>
           </div>
 
-          <div class="col-xl-4">
-            <card header-classes="bg-transparent">
-              <div slot="header" class="row align-items-center">
-                <div class="col">
-                  <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                  <h5 class="h3 mb-0">Total orders</h5>
-                </div>
-              </div>
-
-              <bar-chart
-                :height="350"
-                ref="barChart"
-                :chart-data="redBarChart.chartData"
-              >
-              </bar-chart>
-            </card>
-          </div>
         </div> -->
-       
+
         <!-- End charts-->
 
         <!--Lists-->
@@ -330,6 +389,7 @@
             labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             datasets: [{
               label: 'Sales',
+              backgroundColor: '#0074d9',
               data: [25, 20, 30, 22, 17, 29]
             }]
           }

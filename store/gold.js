@@ -100,9 +100,9 @@ export const actions = {
                     commit('currentBuyPrice', currentPrice + 0.2)
                     commit('currentSellPrice', currentPrice - 0.2)
                 } else {
-                    commit('currentPrice', 49.52)
-                    commit('currentBuyPrice', 49.78)
-                    commit('currentSellPrice', 49.32)
+                    commit('currentPrice', 0)
+                    commit('currentBuyPrice', 0)
+                    commit('currentSellPrice', 0)
                 }
                 commit('currency', 'euro')
                 commit('timestamp', Math.round(Date.now() / 1000))

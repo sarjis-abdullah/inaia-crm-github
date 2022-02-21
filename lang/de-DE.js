@@ -1,6 +1,12 @@
 export default {
     date: 'Datum',
 
+    day: 'Tag',
+    week: 'Woche',
+    month: 'Monat',
+    year: 'Jahr',
+    max: 'Max',
+
     trade: 'Handeln',
     cards: 'Karten',
     edit_info: 'Daten bearbeiten',
@@ -20,15 +26,14 @@ export default {
     gold_delivery:'Auslieferung',
     gold_gift:'Gutschrift',
     gold_purchase_interval:'Goldkauf - Sparplan',
-    gold_transfer_out:'Gold transfert out',
-    gold_transfer_in:'Gold transfert in',
+    gold_transfer_out:'Goldtransfer',
+    gold_transfer_in:'Goldtransfer',
     gold_deposit:'Gold deposit',
-    gold_delivery_cost:'Gold delivery cost',
     agio: 'Agio',
 
     recent_transactions: 'Letzte Transaktionen',
     add_new_depot: 'Neues Depot anlegen',
-    details: 'Einzelheiten',
+    details: 'Details',
     edit: 'Bearbeiten',
     complete: 'Abschließen',
     cancel: 'Abbrechen',
@@ -63,5 +68,7 @@ export default {
     order_status_refund:'refund',
     order_status_rejected:'rejected',
     order_status_executed:'executed',
-    status:'status'
+    status:'status',
+
+    make_payment: 'Überweisung'
 }

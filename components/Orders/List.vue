@@ -272,7 +272,7 @@ export default {
                     .then(response => {
                         // console.error('data', response.data)
                         this.data = response.data.data
-                       
+
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false

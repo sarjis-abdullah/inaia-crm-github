@@ -24,7 +24,8 @@ export default {
                 data: []
             }],
             chartOptions: {
-                dataLabels: {
+
+              dataLabels: {
                     enabled: false
                 },
 
@@ -92,7 +93,7 @@ export default {
                     width: 2,
                 },
                 chart: {
-                    fontFamily: 'Noah',
+                    fontFamily: 'Noah, Open Sans',
                     toolbar: {
                         show: false,
                     },
@@ -226,7 +227,7 @@ export default {
             }
             return op;
         },
-        
+
         indicatedData(i) {
             let pointed  = i !== undefined && i !== null
             if (!this.series[0].data || !Array.isArray(this.series[0].data) || !this.series[0].data.length) {
