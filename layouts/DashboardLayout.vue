@@ -128,7 +128,6 @@
           }"
         />
 
-        <!--
         <sidebar-item
           v-if="accountingAccess"
           :link="{
@@ -137,40 +136,27 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Users', icon: 'ni ni-circle-08 text-primary', path: '/users' }"/>
-          <sidebar-item :link="{ name: 'Roles', icon: 'ni ni-circle-08 text-primary', path: '/roles' }"/>
-          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
-
-          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
-            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
-            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
-            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
-          </sidebar-item>
+          <sidebar-item :link="{ name: 'Banking', path: '/banking' }"/>
+          <sidebar-item :link="{ name: 'Claims', path: '/claims' }"/>
         </sidebar-item>
-        -->
-
-        <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
-        <!--
-        <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
-        <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
-        -->
 
         <sidebar-item
-          v-if="goldAdminAccess"
+          v-if="accountingAccess"
           :link="{
-            name: 'Gold',
-            icon: 'icon-gold text-lg text-primary',
+            name: 'CRM',
+            icon: 'fas fa-user-friends text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Depots', icon: 'icon-safe-mechanical text-lg text-primary',  path: '/depots' }"/>
-          <sidebar-item :link="{ name: 'Orders', icon: 'fa fa-shopping-cart text-primary', path: '/orders' }"/>
-          <!--<sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>-->
+          <sidebar-item :link="{ name: 'Customers', path: '/customers' }"/>
+          <sidebar-item :link="{ name: 'Depots', path: '/depots' }"/>
+          <sidebar-item :link="{ name: 'Orders', path: '/orders' }"/>
         </sidebar-item>
+
 
         <sidebar-item
           :link="{
-            name: 'Marketing Tools',
+            name: 'Marketing',
             icon: 'fas fa-bullseye text-primary',
             collapsed: true
           }"
