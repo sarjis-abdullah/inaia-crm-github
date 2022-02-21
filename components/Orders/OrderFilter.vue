@@ -112,7 +112,7 @@
 <script>
 import {Badge} from '@/components/argon-core';
 import {Select,Option,DatePicker,Autocomplete,Form,FormItem} from 'element-ui';
-import { mapGetters } from "vuex";
+import { mapGetters,mapMutations } from "vuex";
 import {formatDateToApiFormat} from '../../helpers/helpers';
 import moment from 'moment'
 export default {
@@ -144,6 +144,8 @@ export default {
       filterIsActive: false,
       lastRequest:null,
       selectedCustomerInfo:null,
+      timer:null,
+      customerQuery:''
     }
 
   },
@@ -195,29 +197,45 @@ export default {
     },
     loadCustomers: function(query)
     {
+      if(this.timer)
+      {
+        clearTimeout(this.timer);
+      }
       if(query.length>=3)
       {
         let update = true;
+        this.customerQuery = query;
         if(this.lastRequest!=null)
         {
           let now = moment();
           if(now.diff(this.lastRequest,'second')<2)
           {
             update = false;
-            console.log(update);
           }
         }
         if(update)
         {
+          this._getClients();
+        }
+        else
+        {
+          this.timer = setTimeout(this._getClients,1000);
+        }
+      }
+      else
+      {
+        this.$store.commit("clients/orderFilterList",[]);
+        this.customerQuery = "";
+      }
+    },
+    _getClients()
+    {
           this.loadingCustomers = true;
           this.lastRequest = moment();
-          this.$store.dispatch("clients/getClientListBySurname",query).then(()=>{
-
+          this.$store.dispatch("clients/getClientListBySurname",this.customerQuery).then(()=>{
           }).finally(()=>{
             this.loadingCustomers = false;
           })
-        }
-      }
     },
     customerSelected:function(id)
     {
