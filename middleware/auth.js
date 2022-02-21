@@ -16,7 +16,6 @@ export default async function({ app, route, store, redirect }) {
 
     let bearerToken = route.query.token || route.params.token
     if (bearerToken) {
-        console.log('token found', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
         if (bearerToken !== gets['auth/auth']) {
             store.commit('auth/setAuth', bearerToken)
         }
@@ -24,15 +23,14 @@ export default async function({ app, route, store, redirect }) {
         hasRedirect = true
         redirect(process.env.dashboardPath)
     } else if (gets['auth/loading'] === 0 && gets['auth/auth']) {
-        console.log('token exits', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
         if (!gets['auth/user']) {
             // in case only cookie exists in localhost
             await store.dispatch('auth/fetchLoggedIn')
                 .then( () => {
                     // authorize(store, gets['auth/userData'].roles)
                     if (!gets['auth/authorized'] || !hasAppAccess(gets['auth/user'].account)) {
-                        console.log('no account!', gets['auth/authorized'], '<>', hasAppAccess(gets['auth/user'].account))
-                        // logout(store)
+                        // console.log('no account!', gets['auth/authorized'], '<>', hasAppAccess(gets['auth/user'].account))
+                        logout(store)
                     } else {
                         if (app.i18n.locale !== gets['auth/locale']) {
                             app.i18n.locale = gets['auth/locale']
@@ -47,11 +45,13 @@ export default async function({ app, route, store, redirect }) {
             // authorize(store, gets['auth/userData'].roles)
             store.commit('auth/authorize', true)
         }
+    } else {
+        console.error('No bearer token found!')
     }
 
     if (!hasRedirect && gets['auth/loading'] !== 1 && !gets['auth/authorized']) {
-        console.log('loading', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
-        // return logout(store)
+        // console.log('loading', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
+        return logout(store)
     }
 
     // console.log('path', route)
