@@ -65,7 +65,7 @@ export const mutations = {
 
 	user(state, user) {
 		state.user  = user;
-		localStorage.setItem(userToken, JSON.stringify(user))
+		localStorage.setItem(userToken, user ? JSON.stringify(user) : null)
 	},
 
     purgeAuth(state) {
@@ -137,12 +137,7 @@ export const actions = {
 }
 
 function resetState(commit) {
-    if (!process.env.devMode) {
-        // at localhost, cookie and localStorage are not "port" specific
-        // so no need to purge sevice specific. In this case,
-        // universal-login will purge the common cookie and localStorage after logout.
-        commit('purgeAuth')
-    }
+    commit('purgeAuth')
     commit('clients/resetState', null, { root: true })
     commit('types/resetState', null, { root: true })
 }
