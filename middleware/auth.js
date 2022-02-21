@@ -46,7 +46,7 @@ export default async function({ app, route, store, redirect }) {
             store.commit('auth/authorize', true)
         }
     } else {
-        console.error('No bearer token found!')
+        console.error('No bearer token found!', JSON.stringify(route.params))
     }
 
     if (!hasRedirect && gets['auth/loading'] !== 1 && !gets['auth/authorized']) {
