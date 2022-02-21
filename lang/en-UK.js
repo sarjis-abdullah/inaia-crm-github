@@ -69,5 +69,6 @@ export default {
     select_start_date_placeholder:'Select start date',
     select_end_date_placeholder:'Select end date',
     from:'from',
-    to:'until'
+    to:'until',
+    filter:'Filter'
 }

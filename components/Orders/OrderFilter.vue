@@ -102,8 +102,8 @@
 
       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
        <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus" v-bind:key="stat.id">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType" v-bind:key="type.id">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">{{$t('from')}}: {{$d(startDate)}}  {{$t('until')}}: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 

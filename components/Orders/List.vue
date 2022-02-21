@@ -24,11 +24,11 @@
                         <div class="card-header">
                           <div class="row align-items-center">
                             <div class="col-8">
-                              <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px"></el-input>
+                              <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
                             </div>
                             <div class="col-4 text-right">
                               <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">Filter</span>
+                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                               </button>
                             </div>
                           </div>
@@ -221,7 +221,8 @@ export default {
             sortedBy: { customer: "asc" },
             isLoading:false,
             showFilter: false,
-            filterQuery:null
+            filterQuery:null,
+            orderId:""
         }
     },
     computed: {
@@ -250,6 +251,25 @@ export default {
         paddingFractionTo2,
         isOrderPending,
         isOrderPaid,
+        doSearchById(value) {
+           if(value)
+           {
+               this.$store
+                    .dispatch("orders/fetchList", "&id="+this.orderId)
+                    .then(response => {
+                        this.data = response.data.data
+
+                        this.totalTableData = response.data.meta.total
+                    }).catch(() => {
+                        this.data = [];
+                    })
+           }
+            
+        },
+        clearSearchById() {
+           
+               this.fetchList(this.searchQuery);
+        },
         popupDetails(resource) {
             this.selectedResource   = resource
             this.showPopup          = true
