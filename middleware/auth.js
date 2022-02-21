@@ -29,8 +29,8 @@ export default async function({ app, route, store, redirect }) {
                 .then( () => {
                     // authorize(store, gets['auth/userData'].roles)
                     if (!gets['auth/authorized'] || !hasAppAccess(gets['auth/user'].account)) {
-                        // console.log('no account')
-                        logout(store)
+                        console.log('no account!', gets['auth/authorized'], '<>', hasAppAccess(gets['auth/user'].account))
+                        // logout(store)
                     } else {
                         if (app.i18n.locale !== gets['auth/locale']) {
                             app.i18n.locale = gets['auth/locale']
@@ -48,7 +48,7 @@ export default async function({ app, route, store, redirect }) {
     }
 
     if (!hasRedirect && gets['auth/loading'] !== 1 && !gets['auth/authorized']) {
-        // console.log('loading', gets['auth/loading'])
+        console.log('loading', hasRedirect, '<>', gets['auth/loading'], '<>', gets['auth/authorized'])
         return logout(store)
     }
 
