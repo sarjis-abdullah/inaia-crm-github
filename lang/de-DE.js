@@ -1,5 +1,6 @@
 export default {
     date: 'Datum',
+    search: 'Suche',
 
     day: 'Tag',
     week: 'Woche',
@@ -12,7 +13,6 @@ export default {
     edit_info: 'Daten bearbeiten',
     change_password: 'Passwort ändern',
     action:'Action',
-    order_list:'Order list',
     gold_price_per_gram: 'Goldpreis in Gramm',
     total_gold_amount: 'Goldbestand',
     total_gold_value: 'Goldwert',
@@ -64,11 +64,19 @@ export default {
     order_status_canceled:'Storniert',
     order_status_processing:'In Bearbeitung',
     order_status_completed:'Ausgeführt',
-    order_status_refunded:'refunded',
+    order_status_refunded:'Rückerstattung',
     order_status_refund:'refund',
     order_status_rejected:'rejected',
     order_status_executed:'executed',
-    status:'status',
-
+    status:'Status',
+    customer_filter_placeholder:'Please enter customer surname only',
+    apply_filter:'Filter anwenden',
+    types:'Typen',
+    select_start_date_placeholder:'Select start date',
+    select_end_date_placeholder:'Select end date',
+    from:'from',
+    until:'until',
+    filter:'Filter',
     make_payment: 'Überweisung'
+
 }

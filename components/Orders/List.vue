@@ -24,18 +24,18 @@
                         <div class="card-header">
                           <div class="row align-items-center">
                             <div class="col-8">
-                              <h3 class="h3 mb-0">{{$t("order_list")}}</h3>
+                              <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
                             </div>
                             <div class="col-4 text-right">
                               <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">Filter</span>
+                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                               </button>
                             </div>
                           </div>
 
                         </div>
 
-                        <OrderFilter v-bind:showFilter="showFilter"></OrderFilter>
+                        <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></OrderFilter>
 
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
@@ -59,12 +59,12 @@
                                             min-width="180px"
                                             >
                                 <template v-slot="{row}">
-                                    <div class="d-flex align">
-                                        <span href="#!" class="avatar avatar-sm mr-3 removeImageBorder">
+                                    <div class="d-flex">
+                                        <span href="#!" class="avatar mr-3 removeImageBorder">
                                           <img v-bind:src="row.logo"/>
                                         </span>
                                         <div>
-                                          <span class="status"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
+                                          <span class="orderType"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
                                           <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
                                         </div>
                                     </div>
@@ -76,31 +76,22 @@
                                             min-width="180"
                                             >
                                             <template v-slot="{row}">
-                                                <div class="align">
-                                                    <span>{{row.depotName}}</span>
-                                                    <div class="dateStyle"># {{row.depot.id}}</div>
-                                                </div>
+                                                <span>{{row.depotName}}</span>
+                                                <div class="dateStyle"># {{row.depot.id}}</div>
                                             </template>
                             </el-table-column>
 
                             <el-table-column v-bind:label="$t('amount')"
                                             prop="amount"
-                                            min-width="160px"
+                                            min-width="100px"
+                                            align="right"
                                             sortable>
                                 <template v-slot="{row}">
                                     <span class="status" v-if="row.unit === 'gram'">
-                                        <div class="align">
-                                            <i18n-n :value="row.amount/1000">
-
-                                            </i18n-n> g
-                                        </div>
+                                        <i18n-n :value="row.amount/1000"></i18n-n> g
                                     </span>
                                     <span class="status" v-else>
-                                        <div class="align">
-                                            <i18n-n :value="parseInt(row.amount)/100">
-
-                                            </i18n-n> €
-                                        </div>
+                                        <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
                                     </span>
                                     <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
                                 </template>
@@ -111,9 +102,7 @@
                                             min-width="140px"
                                             >
                                 <template v-slot="{row}">
-                                 <div class="align">
-                                    <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
-                                    </div>
+                                  <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                                 </template>
                             </el-table-column>
 
@@ -231,7 +220,9 @@ export default {
             totalTableData: 0,
             sortedBy: { customer: "asc" },
             isLoading:false,
-            showFilter: false
+            showFilter: false,
+            filterQuery:null,
+            orderId:""
         }
     },
     computed: {
@@ -240,7 +231,7 @@ export default {
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
-                `&per_page=${this.perPage}`
+                `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
         totalPages() {
@@ -260,6 +251,29 @@ export default {
         paddingFractionTo2,
         isOrderPending,
         isOrderPaid,
+        doSearchById(value) {
+           if(value)
+           {
+               this.$store
+                    .dispatch("orders/fetchList", "&id="+this.orderId)
+                    .then(response => {
+                        this.data = response.data.data
+
+                        this.totalTableData = response.data.meta.total
+                    }).catch(() => {
+                        this.data = [];
+                    })
+           }
+           else
+           {
+               this.clearSearchById();
+           }
+            
+        },
+        clearSearchById() {
+           
+               this.fetchList(this.searchQuery);
+        },
         popupDetails(resource) {
             this.selectedResource   = resource
             this.showPopup          = true
@@ -345,6 +359,10 @@ export default {
         toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
+        applyFilter: function(query)
+        {
+            this.filterQuery = query;
+        }
     }
 }
 </script>
@@ -353,25 +371,29 @@ export default {
 .capitalize {
     text-transform: capitalize
 }
-
 .mdi-10 {
     font-size: 18px;
 }
 .superscript {
     position: relative; top: -0.5em; font-size: 60%;
 }
+.orderType {
+  white-space: nowrap;
+}
+.avatar, .avatar img {
+  height: 40px;
+  width: 40px;
+}
 .dateStyle {
-    color:#b5bacc;
-    font-size:0.85em;
-    margin-top:-0.55em
+  color:#b5bacc;
+  font-size:0.85em;
+  margin-top:-0.5em;
+  white-space: nowrap;
 }
 .removeImageBorder {
     background-color: transparent !important
 }
 .actionBtnStyle {
     color:#8898aa;
-}
-.align {
-    padding: 0 10px
 }
 </style>
