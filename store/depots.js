@@ -113,10 +113,10 @@ export const actions = {
                 return res
             })
     },
-    fetchOrderFilterList(context,payload) {
+    fetchDepotsByAccount(context,payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?include=depot_status${ payload }`)
+            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?only=name&account_id=${ payload }`)
                 .then(res => {
                     context.commit('orderFilterList', res.data.data)
                     return res
