@@ -61,12 +61,19 @@
                             </div>
                             <div class="col-md-1">
                             </div>
-                            <div class="col-md-5">
-                                <base-input label="Nationality" name="Nationality" ref="nationalityProvider">
+                            <div class="col-md-5" v-if="customer.id">
+                                <base-input
+                                    label="Old Password"
+                                    type="password"
+                                    v-model="customer.account.old_password"
+                                    placeholder="*******"
+                                    name="Old Password"
+                                />
+                                <!-- <base-input label="Nationality" name="Nationality" ref="nationalityProvider">
                                     <el-select filterable v-model="customer.person_data.nationality.id" placeholder="Select nationality">
                                         <el-option v-for="(n, idx) in nationalityOptions" :key="idx" :value="n.value" :label="$t(n.text)" />
                                     </el-select>
-                                </base-input>
+                                </base-input> -->
                             </div>
                         </div>
                         <div class="row" v-if="selectedAccountType == 'employee'">
@@ -179,6 +186,15 @@
 
                         <div class="row">
                             <div class="col-md-5">
+                                <base-input label="Nationality" name="Nationality" ref="nationalityProvider">
+                                    <el-select filterable v-model="customer.person_data.nationality.id" placeholder="Select nationality">
+                                        <el-option v-for="(n, idx) in nationalityOptions" :key="idx" :value="n.value" :label="$t(n.text)" />
+                                    </el-select>
+                                </base-input>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                            <div class="col-md-5">
                                 <base-input
                                     label="Assign Roles"
                                     name="Assign Roles"
@@ -188,8 +204,8 @@
                                     </el-select>
                                 </base-input>
                             </div>
-                            <div class="col-md-1">
-                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-5 align-self-center">
                                 <base-button type="primary" native-type="submit" :disabled="isRequesting">Submit</base-button>
                                 <base-button type="secondary" native-type="button" @click="() => $router.push('/users')">Cancel</base-button>

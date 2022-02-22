@@ -74,8 +74,8 @@
     <div class="card-header border-0 border-top" v-if="filterIsActive">
       
       <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">from: {{$d(startDate)}}  until: {{$d(endDate)}} <a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for="stat in selectedStatus">{{stat}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for="type in selectedType">{{type}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for="(stat, idx) in selectedStatus" :key="'badg-'+idx">{{stat}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-for="(type, idx) in selectedType" :key="'badg-'+idx">{{type}}<a class="badgeIcon"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 
   </div>
