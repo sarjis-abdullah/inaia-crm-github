@@ -264,6 +264,10 @@ export default {
                         this.data = [];
                     })
            }
+           else
+           {
+               this.clearSearchById();
+           }
             
         },
         clearSearchById() {
