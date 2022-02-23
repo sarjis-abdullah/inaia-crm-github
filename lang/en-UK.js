@@ -29,6 +29,7 @@ export default {
     gold_transfer_out:'Gold transfer out',
     gold_transfer_in:'Gold transfer in',
     gold_deposit:'Gold deposit',
+    gold_refund:'Refund',
     agio: 'Transaction fees (agio)',
 
     recent_transactions: 'Recent Transactions',
@@ -90,5 +91,13 @@ export default {
     reference:'Reference',
     comment:'Comment',
     payout:'Payout',
-    credit:'Credit'
+    credit:'Credit',
+    payments:'Payments',
+    pending:'Pending',
+    completed:'completed',
+    rejected:'rejected',
+    failed:'failed',
+    bank:'Bank',
+    iban:'IBAN',
+    transactions:'Transactions'
 }

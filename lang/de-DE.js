@@ -29,6 +29,7 @@ export default {
     gold_transfer_out:'Goldtransfer',
     gold_transfer_in:'Goldtransfer',
     gold_deposit:'Gold deposit',
+    gold_refund:'Erstattung',
     agio: 'Agio',
 
     recent_transactions: 'Letzte Transaktionen',
@@ -88,5 +89,13 @@ export default {
     reference:'Referenz',
     comment:'Vermerk',
     payout:'Auszahlung',
-    credit:'Gutschrift'
+    credit:'Gutschrift',
+    payments:'Payments',
+    pending:'Pending',
+    completed:'completed',
+    rejected:'rejected',
+    failed:'Failed',
+    bank:'Bank',
+    iban:'IBAN',
+    transactions:'Transactions'
 }
