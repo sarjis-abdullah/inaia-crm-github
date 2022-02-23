@@ -1,10 +1,10 @@
 <template>
     <div class="list-group-item px-0 py-2 d-flex">
-        <div class="col-auto justify-content-center">
+        <div class="col-auto justify-content-center font-weight-bold">
             {{title}}
         </div>
-        <div class="col justify-content-center">
-            <div class="floatRight"><slot name="value"></slot></div>
+        <div class="col text-right justify-content-center">
+            <slot name="value"></slot>
         </div>
     </div>
 </template>
@@ -25,14 +25,4 @@ export default ({
 })
 </script>
 <style scoped>
- .container {
-    display: flex;
-    width: 100%;
-    padding: 10px 5px;
-
- }
- .floatRight {
-     float: right;
-     text-align: right;
- }
 </style>
