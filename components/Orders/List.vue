@@ -120,16 +120,17 @@
                             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                         </div>
 
-                        <modal :show.sync="showPopup">
-                            <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>
+                        <modal :show.sync="showPopup" headerClasses="pb-0" bodyClasses="pt-0" footerClasses="border-top bg-secondary">
+                            <template slot="header" class="pb-0">
+                                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                                <span></span>
                             </template>
                             <div>
                                 <Details :resource="selectedResource" v-if="showPopup" />
                             </div>
                             <template slot="footer">
-                                <base-button type="secondary" @click="showPopup = false">{{$t('close')}}</base-button>
-                                <base-button type="danger" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource))">{{$t('delete')}}</base-button>
+                                <base-button type="neutral" class="ml-auto" @click="showPopup = false">{{$t('close')}}</base-button>
+                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource))">{{$t('delete')}}</base-button>
                             </template>
                         </modal>
 
@@ -269,10 +270,10 @@ export default {
            {
                this.clearSearchById();
            }
-            
+
         },
         clearSearchById() {
-           
+
                this.fetchList(this.searchQuery);
         },
         popupDetails(resource) {

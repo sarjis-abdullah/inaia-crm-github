@@ -50,10 +50,5 @@ export default {
 }
 </script>
 <style scoped>
-.detailsContainer {
-    display: flex;
-    width: 100%;
-    justify-items: center;
-    align-items: center;
-}
+
 </style>

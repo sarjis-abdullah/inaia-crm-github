@@ -1,8 +1,10 @@
 <template>
-    <div class="card">
-        <img :src="resource.logo" class="logo"/>
-        <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
-        <div style="margin-top:40px">
+    <div>
+        <div class="text-center">
+            <img :src="resource.logo" class="logo"/>
+            <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
+        </div>
+        <div class="mt-4 text-sm">
             <GoldSale :order="resource" v-if="resource.order_type.name_translation_key=='gold_sell'"></GoldSale>
             <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key=='gold_purchase' || resource.order_type.name_translation_key=='gold_purchase_interval'"></GoldPurchase>
             <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key=='gold_delivery'"></GoldDelivery>
@@ -42,17 +44,11 @@ export default {
     text-transform: capitalize
 }
 .logo {
-    width: 80px;
-    height: 80px;
-    margin: auto;
-    margin-top:20px
+    width: 90px;
+    height: 90px;
 }
 .title {
-    margin-right:auto;
-    margin-left: auto;
-    margin-top: 10px;
-    margin-bottom: 20px;
 }
-
-
+.detailsContainer {
+}
 </style>

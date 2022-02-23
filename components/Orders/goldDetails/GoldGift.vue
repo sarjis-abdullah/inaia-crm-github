@@ -4,7 +4,7 @@
     <detail-list-item :title="$t('date')"><div slot="value">{{$d(order.applied_date,'short')}}</div></detail-list-item>
     <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
     <detail-list-item :title="$t('gold_amount')" v-if="order.transactions && order.transactions.length>0"><div slot="value"> <i18n-n :value="calculateGoldAmount()"></i18n-n> g</div></detail-list-item>
-    
+
     </div>
 </template>
 <script>
@@ -38,10 +38,5 @@ export default {
 }
 </script>
 <style scoped>
-.detailsContainer {
-    display: flex;
-    width: 100%;
-    justify-items: center;
-    align-items: center;
-}
+
 </style>

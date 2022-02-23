@@ -1,11 +1,11 @@
 <template>
-    <div class="row container">
-    <div class="col-md justify-content-center">
-        {{title}}
-    </div>
-    <div class="col-md justify-content-center">
-        <div class="floatRight"><slot name="value"></slot></div>
-    </div>
+    <div class="list-group-item px-0 py-2 d-flex">
+        <div class="col-auto justify-content-center">
+            {{title}}
+        </div>
+        <div class="col justify-content-center">
+            <div class="floatRight"><slot name="value"></slot></div>
+        </div>
     </div>
 </template>
 <script>
@@ -29,7 +29,7 @@ export default ({
     display: flex;
     width: 100%;
     padding: 10px 5px;
-    
+
  }
  .floatRight {
      float: right;
