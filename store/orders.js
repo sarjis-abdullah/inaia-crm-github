@@ -62,7 +62,7 @@ export const actions = {
     fetchList(context, payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=order_type,order_status,order_depot${ payload }`)
+            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions,orders_updated_at${ payload }`)
                 .then(res => {
                     context.commit('list', res.data.data)
                     return res
@@ -127,5 +127,11 @@ export const actions = {
                 context.commit('update', res.data.data)
                 return res
             })
+    },
+    getPaymentMethod(context,payload) {
+        return this.$axios
+                .get(`${ process.env.paymentsApiUrl }/payment-transactions/${payload}?include=payment_account`).then(res=>{
+                    return res.data.data;
+                })
     }
 }

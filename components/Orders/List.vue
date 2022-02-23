@@ -122,13 +122,14 @@
 
                         <modal :show.sync="showPopup">
                             <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Order details</h5>
+                                <h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>
                             </template>
                             <div>
                                 <Details :resource="selectedResource" v-if="showPopup" />
                             </div>
                             <template slot="footer">
-                                <base-button type="secondary" @click="showPopup = false">Close</base-button>
+                                <base-button type="secondary" @click="showPopup = false">{{$t('close')}}</base-button>
+                                <base-button type="danger" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource))">{{$t('delete')}}</base-button>
                             </template>
                         </modal>
 
@@ -277,6 +278,7 @@ export default {
         popupDetails(resource) {
             this.selectedResource   = resource
             this.showPopup          = true
+            console.log(resource);
         },
         fetchList(pageQuery) {
             if (!this.initiated) {

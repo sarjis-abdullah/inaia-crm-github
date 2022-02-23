@@ -29,7 +29,7 @@ export default {
     gold_transfer_out:'Gold transfer out',
     gold_transfer_in:'Gold transfer in',
     gold_deposit:'Gold deposit',
-    agio: 'Agio',
+    agio: 'Transaction fees (agio)',
 
     recent_transactions: 'Recent Transactions',
     add_new_depot: 'Add new depot',
@@ -79,5 +79,16 @@ export default {
     from:'from',
     to:'until',
     filter:'Filter',
-    make_payment: 'Make payment'
+    make_payment: 'Make payment',
+    order_details:'Order details',
+    close:'Close',
+    course:'Course',
+    gold_amount:'Gold amount',
+    proceeds:'Proceeds',
+    paymentMethods:'Payment methods',
+    loading:'loading',
+    reference:'Reference',
+    comment:'Comment',
+    payout:'Payout',
+    credit:'Credit'
 }

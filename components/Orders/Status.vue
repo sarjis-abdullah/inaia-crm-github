@@ -16,9 +16,6 @@
         },
         props:{status:{
             type: String
-        }},
-        mounted:function(){
-            console.log(this.status)
-        }
+        }}
     }
 </script>

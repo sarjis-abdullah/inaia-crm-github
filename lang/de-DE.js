@@ -77,6 +77,16 @@ export default {
     from:'from',
     until:'until',
     filter:'Filter',
-    make_payment: 'Überweisung'
-
+    make_payment: 'Überweisung',
+    order_details:'Order details',
+    close:'Close',
+    course:'Kurs',
+    gold_amount:'Menge',
+    proceeds:'Erlös',
+    paymentMethods:'Zahlungsmethoden',
+    loading:'loading',
+    reference:'Referenz',
+    comment:'Vermerk',
+    payout:'Auszahlung',
+    credit:'Gutschrift'
 }
