@@ -72,7 +72,7 @@ export default {
     order_status_executed:'executed',
 
     status:'Status',
-    customer_filter_placeholder:'Please enter customer surname only',
+    customer_filter_placeholder:'Please enter customer name',
     apply_filter:'Apply filter',
     types:'Types',
     select_start_date_placeholder:'Select start date',

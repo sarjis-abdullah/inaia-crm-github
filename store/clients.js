@@ -109,7 +109,7 @@ export const actions = {
     },
     getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&surname=${payload}&type=customer`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer`)
             .then(response => {
                 const clientData = response.data.data;
                 console.log(clientData);
