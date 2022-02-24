@@ -48,7 +48,7 @@ export default {
             productApiUrl: 'https://core-staging.inaia.cloud/api/v1',
             // productApiUrl: 'https://products-staging.inaia.cloud/api/v1',
             golddinarApiUrl: 'https://golddinar-api-staging.inaia.cloud/api/v1',
-
+            paymentsApiUrl: 'https://payments-api-staging.inaia.cloud/api/v1',
             entryPoints: {
                 crm: 'http://localhost:3001',
                 admin: 'http://localhost:3002',
