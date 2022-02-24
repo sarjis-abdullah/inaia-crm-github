@@ -14,7 +14,7 @@
 import Status from '@/components/Orders/Status';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
-import Transactions from '@/components/Orders/goldDetails/transactions/TransactionS';
+import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
 export default {
     components:{
         DetailListItem,
