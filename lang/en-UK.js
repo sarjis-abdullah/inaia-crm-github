@@ -93,7 +93,7 @@ export default {
     payout:'Payout',
     credit:'Credit',
     payments:'Payments',
-    pending:'Pending',
+    pending:'pending',
     completed:'completed',
     rejected:'rejected',
     failed:'failed',

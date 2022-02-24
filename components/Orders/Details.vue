@@ -44,8 +44,8 @@ export default {
     text-transform: capitalize
 }
 .logo {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
 }
 .title {
 }

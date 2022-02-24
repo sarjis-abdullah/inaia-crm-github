@@ -90,12 +90,12 @@ export default {
     comment:'Vermerk',
     payout:'Auszahlung',
     credit:'Gutschrift',
-    payments:'Payments',
-    pending:'Pending',
-    completed:'completed',
-    rejected:'rejected',
-    failed:'Failed',
+    payments:'Zahlungen',
+    pending:'ausstehend',
+    completed:'ausgeführt',
+    rejected:'abgelehnt',
+    failed:'fehlgeschlagen',
     bank:'Bank',
     iban:'IBAN',
-    transactions:'Transactions'
+    transactions:'Transaktionen'
 }

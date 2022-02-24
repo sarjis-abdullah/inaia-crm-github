@@ -120,7 +120,7 @@
                             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                         </div>
 
-                        <modal :show.sync="showPopup" headerClasses="pb-0" bodyClasses="pt-0" footerClasses="border-top bg-secondary">
+                        <modal :show.sync="showPopup" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary">
                             <template slot="header" class="pb-0">
                                 <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
                                 <span></span>

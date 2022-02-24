@@ -1,18 +1,22 @@
 <template>
-    <div class="payment">
-        <h4 class="mt-2 ps-2">{{$t('payments')}}</h4>
+    <div class="payments">
+        <h4 class="mt-4 text-center">{{$t('payments')}}</h4>
         <collapse multipleActive>
             <collapse-item v-for="account in paymentAccounts" :key="account.id">
                 <template v-slot:title>
-                    <h5 class="mb-0">{{$n(account.amount/100)}} €</h5>
-                    <div class="d-inline-flex flex-row align-items-center"> 
-                        <div class="me-2 date">{{$d(new Date(account.updated_at))}}</div> 
-                        <Badge type="danger" v-if="account.status.name_translation_key=='failed'" >{{$t(account.status.name_translation_key)}}</Badge>
-                        <Badge type="secondary" v-if="account.status.name_translation_key=='pending'" >{{$t(account.status.name_translation_key)}}</Badge>
-                        <Badge type="warning" v-if="account.status.name_translation_key=='rejected'" >{{$t(account.status.name_translation_key)}}</Badge>
+                    <div class="d-flex align-items-center">
+                        <div class="date mr-4">{{$d(new Date(account.updated_at))}}</div>
+                        <div class="d-flex align-items-center">
+                          <div class="amount mb-0 mr-2">{{$n(account.amount/100)}} €</div>
+                          <div>
+                            <Badge type="danger" v-if="account.status.name_translation_key=='failed'" >{{$t(account.status.name_translation_key)}}</Badge>
+                            <Badge type="secondary" v-if="account.status.name_translation_key=='pending'" >{{$t(account.status.name_translation_key)}}</Badge>
+                            <Badge type="warning" v-if="account.status.name_translation_key=='rejected'" >{{$t(account.status.name_translation_key)}}</Badge>
+                          </div>
+                        </div>
                     </div>
                 </template>
-                <div>
+                <div class="list-group list-group-flush">
                     <PaymentAccountItem :paymentAccount="account.payment_account"/>
                 </div>
             </collapse-item>
@@ -61,13 +65,17 @@ export default {
 </script>
 <style scoped>
 .date {
-    font-size: 12px;
+    width: 65px;
     color: #adb5bd;
 }
-.payment  .card {
+.amount {
+  font-weight: bold;
+  color:#525f7f;
+}
+.payments .card {
     margin-bottom: 5px !important;
 }
-.payment .card-header  {
+.payments .card-header  {
     padding: 0.5rem 0.5rem !important;
 }
 </style>

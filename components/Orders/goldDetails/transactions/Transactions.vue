@@ -1,13 +1,15 @@
 <template>
     <div class="transactions">
-        <h4 class="mt-2 ps-2">{{$t('transactions')}}</h4>
+        <h4 class="mt-4 text-center">{{$t('transactions')}}</h4>
         <collapse multipleActive>
             <collapse-item v-for="transaction in order.transactions" :key="transaction.id">
                 <template v-slot:title>
-                    <h5 class="mb-0">{{$t(transaction.transaction_type.name_translation_key)}}</h5>
-                    <div class="me-2 date">{{$d(new Date(transaction.created_at))}}</div> 
+                  <div class="d-flex align-items-center">
+                    <div class="date mr-4">{{$d(new Date(transaction.created_at))}}</div>
+                    <div class="type mb-0">{{$t(transaction.transaction_type.name_translation_key)}}</div>
+                  </div>
                 </template>
-                <div>
+                <div class="list-group list-group-flush">
                    <TransactionItem :transaction="transaction"/>
                 </div>
             </collapse-item>
@@ -32,20 +34,24 @@ export default {
     data:function()
     {
         return {
-            
+
         }
     }
 }
 </script>
 <style scoped>
 .date {
-    font-size: 12px;
-    color: #adb5bd;
+  width: 65px;
+  color: #adb5bd;
 }
-.transactions  .card {
+.type {
+  font-weight: bold;
+  color:#525f7f;
+}
+.transactions .card {
     margin-bottom: 5px !important;
 }
 .transactions .card-header  {
-    padding: 0.5rem 0.5rem !important;
+    padding: 0.25rem 0.25rem !important;
 }
 </style>

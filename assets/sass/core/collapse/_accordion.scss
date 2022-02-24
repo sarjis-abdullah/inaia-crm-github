@@ -9,12 +9,12 @@
 		cursor: pointer;
 
 		&:after {
-			content: "\ea0f";
+			content: "\f107";
 			position: absolute;
 			right: 1.5rem;
 			top: 50%;
 			transform: translateY(-50%);
-			font: normal normal normal 14px/1 NucleoIcons;
+			font: normal normal normal 18px/1 FontAwesome;
             line-height: 0;
             @include transition($transition-cubic-bezier);
 		}
