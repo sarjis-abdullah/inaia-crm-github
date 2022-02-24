@@ -7,8 +7,8 @@
         <detail-list-item :title="$t('comment')" v-if="order.comment && order.comment!=''"><div slot="value">{{order.comment}}</div></detail-list-item>
         <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="order.amount/100"></i18n-n> €</div></detail-list-item>
     </div>
-    <PaymentAccount :order="order"/>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
+    <PaymentAccount :order="order"/>
   </div>
 </template>
 <script>

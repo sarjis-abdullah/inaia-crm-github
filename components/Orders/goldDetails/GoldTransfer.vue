@@ -1,11 +1,13 @@
 <template>
+  <div>
     <div class="list-group list-group-flush">
         <detail-list-item :title="$t('status')" ><Status slot="value" v-bind:status='order.order_status.name_translation_key'>{{order.order_status ? $t(order.order_status.name_translation_key) : order.order_status_id}}</Status></detail-list-item>
         <detail-list-item :title="$t('date')"><div slot="value">{{$d(new Date(order.created_at),'short')}}</div></detail-list-item>
         <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
         <detail-list-item :title="$t('reference')"><div slot="value">{{order.reason_text}}</div></detail-list-item>
-        <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
     </div>
+    <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
+  </div>
 </template>
 <script>
 
