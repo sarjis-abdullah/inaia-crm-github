@@ -12,6 +12,12 @@
                     {{iban}}
                 </div>
         </detail-list-item>
+        <detail-list-item :title="$t('account_holder')">
+            <div slot="value">
+                
+                    {{accountHolder}}
+                </div>
+        </detail-list-item>
     </div>
 </template>
 <script>
@@ -30,13 +36,15 @@ export default {
     data: function(){
         return {
             iban:"",
-            bank:""
+            bank:"",
+            accountHolder:""
         }
     },
    mounted:function(){
         if(this.paymentAccount.payment_account_specs && this.paymentAccount.payment_account_specs.length>0)
         {
         
+            console.log(this.paymentAccount);
             this.paymentAccount.payment_account_specs.forEach((element)=>{
                 if(element.name == 'bank_name')
                 {
@@ -45,6 +53,10 @@ export default {
                 if(element.name == 'iban')
                 {
                     this.iban = element.value;
+                }
+                if(element.name == 'account_holder')
+                {
+                    this.accountHolder = element.value;
                 }
             })
         }

@@ -99,5 +99,6 @@ export default {
     failed:'failed',
     bank:'Bank',
     iban:'IBAN',
-    transactions:'Transactions'
+    transactions:'Transactions',
+    account_holder:'Account holder'
 }
