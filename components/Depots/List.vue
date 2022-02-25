@@ -22,111 +22,89 @@
                 <div class="col">
                     <div class="card">
                         <div class="border-0 card-header">
-                            <h3 class="mb-0">Depot List</h3>
+                            <h3 class="mb-0">{{$t('depot_list')}}</h3>
                         </div>
 
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
-                            <el-table-column label="ID"
-                                            min-width="110px"
+                            <el-table-column label="#"
+                                            min-width="120px"
                                             prop="id"
-                                            sortable>
+                                            >
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
                                         <!-- <a href="#" class="avatar rounded-circle mr-3">
                                             <img alt="Image placeholder" src="">
                                         </a> -->
                                         <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
+                                            <div class="font-weight-300 name" >{{row.id}}</div>
                                         </div>
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="Account ID"
-                                            prop="account_id"
-                                            min-width="140px"
-                                            sortable>
-                            </el-table-column>
-
-                            <el-table-column label="Gold Amount"
-                                            prop="gold_amount"
-                                            min-width="140px"
-                                            sortable>
-                            </el-table-column>
-
-                            <el-table-column label="Product"
-                                            prop="product_class_id"
-                                            min-width="240px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status">{{getProductClass(row.product_class_id)}}</span>
+                            <el-table-column :label="$t('depot_name')"
+                                            prop="name"
+                                            min-width="300px"
+                                            sortable
+                                            >
+                                 <template v-slot="{row}">
+                                    <div class="d-flex">
+                                        <span href="#!" class="avatar mr-3 removeImageBorder">
+                                          <img v-bind:src="row.avatar"/>
+                                        </span>
+                                        <div>
+                                          <span class="orderType"><strong>{{row.name}}</strong></span>
+                                          
+                                        </div>
+                                    </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Product"
+                            <el-table-column :label="$t('depot_agio')"
+                                            prop="agio"
+                                            min-width="250px"
+                                            >
+                                    <template v-slot="{row}">
+                                        <span>{{$n(row.agio)}} €</span>
+                                        <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
+                                    </template> 
+                            </el-table-column>
+
+                            <el-table-column :label="$t('amount')"
+                                            prop="gold_amount"
+                                            min-width="150px"
+                                            sortable>
+                                <template v-slot="{row}">
+                                    <span class="status">{{$n(row.gold_amount/1000)}} g</span>
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column :label="$t('saving_plan')"
+                                            prop="is_savings_plan"
+                                            min-width="190px"
+                                            >
+                                    <template v-slot="{row}">
+                                        <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
+                                        <div v-if="row.is_savings_plan==1">
+                                            <div>{{$n(row.interval_amount)}} €</div>
+                                            <div class="dateStyle">{{$d(new Date(row.interval_startdate))}} - {{$d(new Date(row.interval_enddate))}}</div>
+                                        </div>
+                                    </template>
+                            </el-table-column>
+                            <el-table-column :label="$t('status')"
                                             prop="status.name_translation_key"
                                             min-width="190px"
-                                            sortable>
+                                            >
+                                     <template v-slot="{row}">
+                                <Badge type="success" v-if="row.status.name_translation_key=='depot_status_active'">{{row.status.translated_name}}</Badge>
+                                     </template>
                             </el-table-column>
-
-                            <!-- <el-table-column label="Status"
-                                            min-width="170px"
-                                            prop="status"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <badge class="badge-dot mr-4" type="">
-                                        <i :class="`bg-${row.statusType}`"></i>
-                                        <span class="status">{{row.status}}</span>
-                                    </badge>
-                                </template>
-                            </el-table-column> -->
-
-                            <!-- <el-table-column label="Users" min-width="190px">
-                                <div class="avatar-group">
-                                    <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip"
-                                    data-original-title="Ryan Tompson">
-                                        <img alt="Image placeholder" src="img/theme/team-1.jpg">
-                                    </a>
-                                    <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip"
-                                    data-original-title="Romina Hadid">
-                                        <img alt="Image placeholder" src="img/theme/team-2.jpg">
-                                    </a>
-                                    <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip"
-                                    data-original-title="Alexander Smith">
-                                        <img alt="Image placeholder" src="img/theme/team-3.jpg">
-                                    </a>
-                                    <a href="#" class="avatar avatar-sm rounded-circle" data-toggle="tooltip"
-                                    data-original-title="Jessica Doe">
-                                        <img alt="Image placeholder" src="img/theme/team-4.jpg">
-                                    </a>
-                                </div>
-                            </el-table-column>
-
-                            <el-table-column label="Completion"
-                                            prop="completion"
-                                            min-width="240px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <div class="d-flex align-items-center">
-                                        <span class="completion mr-2">{{row.completion}}%</span>
-                                        <div>
-                                            <base-progress :type="row.statusType" :value="row.completion"/>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column> -->
+                           
                             <el-table-column min-width="230px">
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+                                    <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                                <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -169,7 +147,8 @@
 import { mapGetters } from "vuex"
 import Details from '@/components/Depots/Details'
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
-
+import {Badge} from '@/components/argon-core';
+import IconButton from '@/components/common/Buttons/IconButton';
 export default {
     components: {
         [Table.name]: Table,
@@ -177,7 +156,9 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        Badge,
+        IconButton
     },
     data() {
         return {
@@ -228,6 +209,7 @@ export default {
             .dispatch('product-classes/pairs')
             .then(res => {
                 // console.error('products', res.data.data)
+                console.log(res.data.data);
                 this.productClasses = res.data.data
             })
     },
@@ -243,7 +225,8 @@ export default {
                     .dispatch("depots/fetchList", pageQuery)
                     .then(response => {
                         // console.error('data', response.data)
-                        this.data = response.data.data
+                        this.data = response.data.data;
+                        console.log(this.data);
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false
@@ -287,8 +270,9 @@ export default {
         },
         getProductClass(cid) {
             if (this.productClasses) {
-                let c   = Object.keys(this.productClasses).find(cl => this.productClasses[cl] == cid)
-                return c || cid
+                let c   = Object.values(this.productClasses).find(cl => cl == cid)
+                console.log(Object.values(this.productClasses))
+                return c;
             }
             return cid
         }
@@ -303,5 +287,24 @@ export default {
 
 .mdi-10 {
     font-size: 18px;
+}
+.orderType {
+  white-space: nowrap;
+}
+.avatar, .avatar img {
+  height: 40px;
+  width: 40px;
+}
+.dateStyle {
+  color:#b5bacc;
+  font-size:0.85em;
+  margin-top:-0.5em;
+  white-space: nowrap;
+}
+.removeImageBorder {
+    background-color: transparent !important
+}
+.actionBtnStyle {
+    color:#8898aa;
 }
 </style>

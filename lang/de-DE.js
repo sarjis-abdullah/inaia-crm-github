@@ -98,5 +98,14 @@ export default {
     bank:'Bank',
     iban:'IBAN',
     transactions:'Transaktionen',
-    account_holder:'Account holder'
+    account_holder:'Account holder',
+    depot_name:'Depot name',
+    depot_agio:'Depot agio',
+    saving_plan:'Saving plan',
+    onetime:'Agio sofort bezahlen',
+    installment:'Verrechnung 50/50',
+    no_saving_plan:'No saving plan',
+    product_class_premium:'GoldDinar Premuim',
+    product_class_standard:'GoldDinar Standard',
+    product:'Produkt'
 }
