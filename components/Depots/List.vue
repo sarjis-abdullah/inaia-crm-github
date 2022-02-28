@@ -108,6 +108,10 @@
                                             >
                                      <template v-slot="{row}">
                                 <Badge type="success" v-if="row.status.name_translation_key=='depot_status_active'">{{row.status.translated_name}}</Badge>
+                                <Badge type="info" v-if="row.status.name_translation_key=='depot_status_completed'">{{row.status.translated_name}}</Badge>
+                                <Badge type="warning" v-if="row.status.name_translation_key=='depot_status_paused'">{{row.status.translated_name}}</Badge>
+                                <Badge type="primary" v-if="row.status.name_translation_key=='depot_status_canceled'">{{row.status.translated_name}}</Badge>
+                                <Badge type="danger" v-if="row.status.name_translation_key=='depot_status_blocked'">{{row.status.translated_name}}</Badge>
                                      </template>
                             </el-table-column>
                            
