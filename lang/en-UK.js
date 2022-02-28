@@ -78,7 +78,7 @@ export default {
     select_start_date_placeholder:'Select start date',
     select_end_date_placeholder:'Select end date',
     from:'from',
-    to:'until',
+    until:'until',
     filter:'Filter',
     make_payment: 'Make payment',
     order_details:'Order details',
@@ -110,5 +110,8 @@ export default {
     no_saving_plan:'No saving plan',
     product_class_premium:'GoldDinar Premuim',
     product_class_standard:'GoldDinar Standard',
-    product:'Product'
+    product:'Product',
+    agio_payment_plan:'Agio payment plan',
+    select_interval_start_date_placeholder:'Interval start date',
+    select_interval_end_date_placeholder:'Interval end date'
 }

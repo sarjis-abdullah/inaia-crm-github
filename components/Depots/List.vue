@@ -21,10 +21,20 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
-                        <div class="border-0 card-header">
-                            <h3 class="mb-0">{{$t('depot_list')}}</h3>
-                        </div>
+                        <div class="card-header">
+                          <div class="row align-items-center">
+                            <div class="col-8">
+                              <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById"/>
+                            </div>
+                            <div class="col-4 text-right">
+                              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                              </button>
+                            </div>
+                          </div>
 
+                        </div>
+                        <depot-filter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
@@ -149,6 +159,7 @@ import Details from '@/components/Depots/Details'
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import {Badge} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
+import DepotFilter from '@/components/Depots/DepotFilter'
 export default {
     components: {
         [Table.name]: Table,
@@ -158,7 +169,8 @@ export default {
         [DropdownMenu.name]: DropdownMenu,
         Details,
         Badge,
-        IconButton
+        IconButton,
+        DepotFilter
     },
     data() {
         return {
@@ -180,7 +192,10 @@ export default {
             perPage: 10,
             page: 1,
             totalTableData: 0,
-            sortedBy: { customer: "asc" }
+            sortedBy: { customer: "asc" },
+            showFilter: false,
+            filterQuery:null,
+            searchValue:null
         }
     },
     computed: {
@@ -189,7 +204,7 @@ export default {
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
-                `&per_page=${this.perPage}`
+                `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
         totalPages() {
@@ -275,6 +290,36 @@ export default {
                 return c;
             }
             return cid
+        },
+       doSearchById(value) {
+           if(value)
+           {
+               this.$store
+                    .dispatch("depots/fetchList", "&name_or_number="+value)
+                    .then(response => {
+                        this.data = response.data.data
+
+                        this.totalTableData = response.data.meta.total
+                    }).catch(() => {
+                        this.data = [];
+                    })
+           }
+           else
+           {
+               this.clearSearchById();
+           }
+
+        },
+        clearSearchById() {
+
+               this.fetchList(this.searchQuery);
+        },
+         toggleFilter: function() {
+          this.showFilter=!this.showFilter;
+        },
+        applyFilter: function(query)
+        {
+            this.filterQuery = query;
         }
     }
 }

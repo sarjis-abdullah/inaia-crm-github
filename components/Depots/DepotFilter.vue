@@ -28,67 +28,53 @@
               </Option>
              </Select>
 
-             <Select :placeholder="$t('depots')"
-                    v-model="selectedDepots"
-                    filterable
+             <Select :placeholder="$t('saving_plan')"
+                    v-model="selectedSavingPlan"
                     clearable
-                    @clear="clearDepot"
                     class="filterElement"
-                    :disabled="selectedCustomer==null"
+                    @clear="removeSelectedPlan"
                     >
-              <Option v-for="option in depots"
+              <Option v-for="option in savinplans"
 
-                        :value="option.id"
-                        :label="option.name"
+                        :value="option.value"
+                        :label="$t(option.label)"
                         :key="option.id">
               </Option>
             </Select>
           </div>
           <div class="col-md displayFlex flex-column align-content-center">
-            <Select :placeholder="$t('status')"
-                    v-model="selectedStatus"
+            <Select :placeholder="$t('agio_payment_plan')"
+                    v-model="selectedAgioPaymentPlan"
                     filterable
-                    multiple
                     class="mb-3"
-                    @remove-tag="applyFilter"
-                    :loading="loadingStatus"
+                    clearable
+                    @clear="removeAgioPaymentPlan"
 
                     >
-              <Option v-for="option in status"
+              <Option v-for="option in agioPaymentPlans"
 
-                        :value="option.id"
-                        :label="$t(option.name_translation_key)"
+                        :value="option.value"
+                        :label="$t(option.label)"
                         :key="option.id">
               </Option>
             </Select>
-             <Select :placeholder="$t('types')"
-                    v-model="selectedType"
-                    filterable
-                    multiple
-                    class="mb-3"
-                    @remove-tag="applyFilter"
-                    :loading="loadingTypes">
-              <Option v-for="option in types"
-
-                        :value="option.id"
-                        :label="$t(option.name_translation_key)"
-                        :key="option.id">
-              </Option>
-            </Select>
+             <el-input v-model="selectedAgio" type="number" :placeholder="$t('agio')" clearable @clear="removeAgio"/>
           </div>
           <div class="col-md displayFlex flex-column align-content-center">
             <date-picker
             size="large"
               class="filterElement"
-              v-model="startDate"
+              v-model="intervalstartDate"
               type="date"
-              :placeholder="$t('select_start_date_placeholder')">
+              :placeholder="$t('select_interval_start_date_placeholder')"
+              @clear="removeDate">
             </date-picker>
           <date-picker
           class="filterElement"
-            v-model="endDate"
+            v-model="intervalendDate"
             type="date"
-            :placeholder="$t('select_end_date_placeholder')">
+            :placeholder="$t('select_interval_end_date_placeholder')"
+            @clear="removeDate">
           </date-picker>
           </div>
         </div>
@@ -101,10 +87,10 @@
     <div class="card-header border-0 border-top" v-if="filterIsActive">
 
       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
-       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus" v-bind:key="stat.id">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType" v-bind:key="type.id">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
-      <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">{{$t('from')}}: {{$d(startDate)}}  {{$t('until')}}: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedSavingPlan!=null">{{$t(formatSelectedSavingPlanTag())}}<a class="badgeIcon" @click.prevent="removeSelectedPlan()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if = "selectedAgioPaymentPlan!=null">{{$t(selectedAgioPaymentPlan)}}<a class="badgeIcon" @click.prevent="removeAgioPaymentPlan()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if = "selectedAgio!=null">{{selectedAgio}}<a class="badgeIcon" @click.prevent="removeAgio()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if="intervalstartDate && intervalendDate">{{$t('from')}}: {{$d(intervalstartDate)}}  {{$t('until')}}: {{$d(intervalendDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
     </div>
 
   </div>
@@ -133,67 +119,39 @@ export default {
   },
   data:function(){
     return {
-      startDate:null,
-      endDate:null,
-      selectedType:[],
-      selectedStatus:[],
+      intervalstartDate:null,
+      intervalendDate:null,
+      selectedAgio:null,
+      selectedAgioPaymentPlan:null,
       selectedCustomer:null,
-      selectedDepots:null,
+      selectedSavingPlan:null,
       loadingCustomers:false,
-      loadingDepots:false,
       filterIsActive: false,
       lastRequest:null,
       selectedCustomerInfo:null,
       timer:null,
-      customerQuery:''
+      customerQuery:'',
+      savinplans:[{id:1,value:true,label:'saving_plan'},{id:2,value:false,label:'no_saving_plan'}],
+      agioPaymentPlans:[{id:1,value:'onetime',label:'onetime'},{id:2,value:'installment',label:'installment'}]
     }
 
   },
   mounted(){
-     this.$store.dispatch("orderStatus/fetchList","");
-     this.$store.dispatch("orderTypes/fetchOrderFilterList","");
 
   },
   computed :{
-   ...mapGetters('orderStatus',{
-     loadingStatus:'loading',
-      status:"list"
-   }),
-   ...mapGetters('orderTypes',{
-     loadingTypes:'loading',
-      types:"orderFilterList"
-   }),
-   ...mapGetters('depots',{
-     depots:"orderFilterList"
-   }),
    ...mapGetters('clients',{
      customers:"orderFilterList"
    })
   },
-  watch:{
-    selectedCustomer:{
-      handler() {
-        if(this.selectedCustomer!=null)
-        {
-          this.selectedDepots=null
-          this.$store.dispatch("depots/fetchDepotsByAccount",this.selectedCustomer).then(data=>console.log(data));
-        }
-      },
-      immediate: true,
-    }
-  },
   methods:{
-    clearDepot:function()
-    {
-      this.selectedDepots = null;
-      this.applyFilter();
-    },
+    formatDateToApiFormat,
     clearCustomer:function()
     {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
-      this.selectedDepots = null;
-      this.applyFilter();
+      if(this.filterIsActive)
+        this.applyFilter();
     },
     loadCustomers: function(query)
     {
@@ -273,21 +231,16 @@ export default {
       return this.selectedCustomerInfo.contact.name + ' '+ this.selectedCustomerInfo.contact.person_data.surname;
 
     },
-    formatDepotTag: function()
+    formatSelectedSavingPlanTag: function()
     {
-      let depot = this.depots.find(x=>x.id==this.selectedDepots)
-      if(depot)
+      if(this.selectedSavingPlan)
       {
-        return depot.name;
+        return 'saving_plan';
       }
-    },
-    searchDepot: function(query,cb)
-    {
-      let possibleValues = this.depots.filter(element=>
+      else
       {
-        return element.name.includes(query);
-      });
-      cb(possibleValues.slice(0,2))
+        return 'no_saving_plan';
+      }
     },
     loadStatus: function()
     {
@@ -302,30 +255,29 @@ export default {
     quiryBuilder:function()
     {
       let query = "";
-      if(this.selectedType.length>0)
+      if(this.selectedAgio && !isNaN(this.selectedAgio))
       {
-        query+='&order_type_ids='+this.selectedType.join(',');
+        query+='&agio='+parseInt(this.selectedAgio);
       }
-      if(this.selectedStatus.length>0)
+      if(this.selectedAgioPaymentPlan!=null)
       {
-        query+='&order_status_ids='+this.selectedStatus.join(',');
+        query+='&agio_payment_option='+this.selectedAgioPaymentPlan;
       }
       if(this.selectedCustomer!=null)
       {
-        query+='&account_ids='+this.selectedCustomer;
+        query+='&account_id='+this.selectedCustomer;
       }
-      if(this.selectedDepots!=null)
+      if(this.selectedSavingPlan!=null)
       {
-        query+='&depot_ids='+this.selectedDepots;
+        if(this.selectedSavingPlan)
+          query+='&is_savings_plan=1';
+        else
+          query+='&is_savings_plan=0';
       }
-      if(this.startDate!=null && this.endDate!=null)
+      if(this.intervalstartDate!=null && this.intervalendDate!=null)
       {
-        query+='&create_date_start='+formatDateToApiFormat(this.startDate);
-        
-      }
-      if(this.endDate!=null)
-      {
-        query+='&create_date_end='+formatDateToApiFormat(this.startDate);
+        query+='&interval_startdate='+this.formatDateToApiFormat(this.intervalstartDate);
+        query+='&interval_enddate='+this.formatDateToApiFormat(this.intervalendDate);
       }
       if(query=="")
       {
@@ -333,6 +285,7 @@ export default {
       }
       else
         this.filterIsActive = true;
+      console.log(query);
       return query;
     },
     applyFilter: function()
@@ -351,38 +304,41 @@ export default {
       let type = this.types.find(x=>x.id==id);
       return type.name_translation_key;
     },
-    removeStatus:function(id)
+    removeAgioPaymentPlan:function()
     {
-      this.selectedStatus = this.selectedStatus.filter(sta=>sta!=id);
-      const query = this.quiryBuilder();
-      this.$emit('filter',query)
+      this.selectedAgioPaymentPlan = null;
+       if(this.filterIsActive)
+        this.applyFilter();
     },
-    removeType:function(id)
+    removeAgio:function()
     {
-      this.selectedType = this.selectedType.filter(type=>type!=id);
-      const query = this.quiryBuilder();
-      this.$emit('filter',query)
+      this.selectedAgio = null;
+      if(this.filterIsActive)
+      {
+        const query = this.quiryBuilder();
+        this.$emit('filter',query)
+      }
+      
     },
-    removeDate:function(id)
+    removeDate:function()
     {
-      this.startDate = null;
-      this.endDate = null;
-      const query = this.quiryBuilder();
-      this.$emit('filter',query)
+      this.intervalstartDate = null;
+      this.intervalendDate = null;
+      if(this.filterIsActive)
+        this.applyFilter();
     },
     removeCustomer:function()
     {
       this.selectedCustomer = null;
-      this.selectedDepots = null;
       this.selectedCustomerInfo = null;
       const query = this.quiryBuilder();
       this.$emit('filter',query)
     },
-    removeDepot:function()
+    removeSelectedPlan:function()
     {
-      this.selectedDepots = null;
-      const query = this.quiryBuilder();
-      this.$emit('filter',query)
+      this.selectedSavingPlan = null;
+      if(this.filterIsActive)
+        this.applyFilter();
     }
   }
 }

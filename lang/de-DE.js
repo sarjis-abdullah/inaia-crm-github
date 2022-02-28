@@ -107,5 +107,8 @@ export default {
     no_saving_plan:'No saving plan',
     product_class_premium:'GoldDinar Premuim',
     product_class_standard:'GoldDinar Standard',
-    product:'Produkt'
+    product:'Produkt',
+    agio_payment_plan:'Agio payment plan',
+    select_interval_start_date_placeholder:'Interval start date',
+    select_interval_end_date_placeholder:'Interval end date'
 }
