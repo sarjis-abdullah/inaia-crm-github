@@ -133,5 +133,11 @@ export const actions = {
                 .get(`${ process.env.paymentsApiUrl }/payment-transactions/${payload}?include=payment_account`).then(res=>{
                     return res.data.data;
                 })
+    },
+    getCompleteOrderPreview(context,payload) {
+        return this.$axios
+                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}`).then(res=>{
+                    return res.data;
+                })
     }
 }

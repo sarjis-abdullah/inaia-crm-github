@@ -68,6 +68,7 @@ module.exports = {
     '~/plugins/dashboard/dashboard-plugin',
     '~/plugins/dashboard/full-calendar',
     '~/plugins/dashboard/world-map',
+    '~/plugins/slickCarousel'
     // {src: '~/plugins/dashboard/full-calendar', ssr: false },
     // {src: '~/plugins/dashboard/world-map', ssr: false },
   ],

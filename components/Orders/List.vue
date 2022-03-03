@@ -120,17 +120,19 @@
                             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                         </div>
 
-                        <modal :show.sync="showPopup" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary">
+                        <modal :show.sync="showPopup" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onDetailClose" :allowOutSideClose="false">
                             <template slot="header" class="pb-0">
                                 <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
                                 <span></span>
                             </template>
                             <div>
-                                <Details :resource="selectedResource" v-if="showPopup" />
+                                <Details :resource="selectedResource" v-if="showPopup" @slideChange="onOoderDetailSlideChanged" @completeDateSelected="setCompleteDate"/>
                             </div>
                             <template slot="footer">
                                 <base-button type="neutral" class="ml-auto" @click="showPopup = false">{{$t('close')}}</base-button>
-                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource))">{{$t('delete')}}</base-button>
+
+                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource)) && selectedResourceSlide==OoderDetailSlides.detail">{{$t('delete')}}</base-button>
+                                 <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource)) && selectedResourceSlide==OoderDetailSlides.complete">{{$t('complete')}}</base-button>
                             </template>
                         </modal>
 
@@ -188,6 +190,7 @@ import { isOrderPending, isOrderPaid } from '~/helpers/order'
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
+import {orderDetailSlides} from '../../helpers/constans';
 export default {
     components: {
         [Table.name]: Table,
@@ -212,6 +215,7 @@ export default {
             initiated: false,
             debounced: null,
             selectedResource: null,
+            selectedResourceSlide:orderDetailSlides.detail,
             showPopup: false,
             showConfirm: false,
             showOrderConfirm: false,
@@ -224,7 +228,8 @@ export default {
             isLoading:false,
             showFilter: false,
             filterQuery:null,
-            orderId:""
+            orderId:"",
+            completeOrderInfo:{date:null,paymentAccount:null}
         }
     },
     computed: {
@@ -239,6 +244,9 @@ export default {
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
         }
+    },
+    created (){
+        this.OoderDetailSlides = orderDetailSlides;
     },
     watch: {
         searchQuery: {
@@ -365,6 +373,19 @@ export default {
         applyFilter: function(query)
         {
             this.filterQuery = query;
+        },
+        onOoderDetailSlideChanged (slide)
+        {
+            this.selectedResourceSlide = slide
+        },
+        setCompleteDate (date)
+        {
+            this.completeOrderInfo.date = date;
+        },
+        onDetailClose ()
+        {
+            this.selectedResourceSlide = orderDetailSlides.detail;
+            this.completeOrderInfo = {date:null,paymentAccount:null};
         }
     }
 }
