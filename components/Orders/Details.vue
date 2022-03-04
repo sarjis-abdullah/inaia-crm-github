@@ -14,7 +14,7 @@
                 <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key=='gold_withdrawal'"></GoldWithdrawal>
             </div>
             <div>
-                <CompleteOrderDetail :order="resource" @dateselected="onCompleteDateSelected"/>
+                <CompleteOrderDetail :order="resource" @dateselected="onCompleteDateSelected" @paymentaccountselected="onPaymentAccountSelected"/>
             </div>
         </VueSlickCarousel>
          
@@ -77,6 +77,10 @@ export default {
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);
+         },
+         onPaymentAccountSelected(account)
+         {
+             this.$emit('completePaymentAccountSelected',account);
          }
     },
    

@@ -7,6 +7,17 @@
             @change="getPreview"
             :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
+          <Select :placeholder="$t('payment_accounts')"
+                    v-model="selectedPaymentAccount"
+                    class="filterElement"
+                    @change="setPaymentAccount"
+                    >
+              <Option v-for="option in paymentAccounts"
+                        :value="option.id"
+                        :label="displayPaymentAccountLabel(option)"
+                        :key="option.id">
+              </Option>
+            </Select>
         <div v-if="isLoading">
             <h3>{{$t('loading')}}...</h3>
         </div>
@@ -29,11 +40,13 @@
 <script >
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../../helpers/helpers';
-import {DatePicker} from 'element-ui';
+import {DatePicker,Select,Option} from 'element-ui';
 export default {
     components:{
         DetailListItem,
-        DatePicker
+        DatePicker,
+        Select,
+        Option
     },
     props:{
         order:{
@@ -45,7 +58,9 @@ export default {
             selectedDate:null,
             preview:null,
             isLoading:false,
-            error:null
+            error:null,
+            paymentAccounts:[],
+            selectedPaymentAccount:null,
         }
     },
     mounted:function(){
@@ -53,7 +68,11 @@ export default {
         this.selectedDate = new Date(today);
         this.selectedDate.setDate(this.selectedDate.getDate()-1);
         this.getPreview();
-        
+        this.$store.dispatch('payment-accounts/getPaymentAccountByUser',this.order.depot.account_id).then(res=>{
+            this.paymentAccounts = res;
+            this.selectedPaymentAccount = res[0].id;
+            this.$emit('paymentaccountselected',this.selectedPaymentAccount);
+        })
     },
     methods:{
         getPreview:function()
@@ -69,12 +88,39 @@ export default {
             this.$emit('dateselected',formatDateToApiFormat(this.selectedDate));
             this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate)}).then(res=>{
                 this.preview = res;
-                console.log(res);
             }).catch(err=>{
                 this.error = 'cant_load_preview'
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        displayPaymentAccountLabel:function(paymentAccount)
+        {
+            if(paymentAccount.payment_method.name_translation_key=="pps")
+            {
+                return "PPS";
+            }
+            else
+            {
+                let bank ="";
+                let iban ="";
+                paymentAccount.payment_account_specs.forEach(ele=>{
+                    if(ele.name=="bank_name")
+                    {
+                        bank = ele.value
+                    }
+                    if(ele.name=="iban")
+                    {
+                        iban = ele.value
+                    }
+                })
+                return bank + " " + iban;
+
+            }
+        },
+        setPaymentAccount (account)
+        {
+            this.$emit('paymentaccountselected',account);
         }
     }
 }

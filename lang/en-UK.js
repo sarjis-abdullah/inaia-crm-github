@@ -117,5 +117,6 @@ export default {
     depot_balance_before:'Depot balance before',
     depot_balance_after:'Depot balance after',
     select_right_preview_date:'The price date must not be in the future',
-    cant_load_preview:"We can't load preview please try again later"
+    cant_load_preview:"We can't load preview please try again later",
+    payment_accounts:'Payment accounts',
 }

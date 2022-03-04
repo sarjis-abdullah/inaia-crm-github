@@ -126,7 +126,7 @@
                                 <span></span>
                             </template>
                             <div>
-                                <Details :resource="selectedResource" v-if="showPopup" @slideChange="onOoderDetailSlideChanged" @completeDateSelected="setCompleteDate"/>
+                                <Details :resource="selectedResource" v-if="showPopup" @slideChange="onOoderDetailSlideChanged" @completeDateSelected="setCompleteDate" @completePaymentAccountSelected="setPaymentAccount"/>
                             </div>
                             <template slot="footer">
                                 <base-button type="neutral" class="ml-auto" @click="showPopup = false">{{$t('close')}}</base-button>
@@ -386,6 +386,10 @@ export default {
         {
             this.selectedResourceSlide = orderDetailSlides.detail;
             this.completeOrderInfo = {date:null,paymentAccount:null};
+        },
+        setPaymentAccount(account)
+        {
+            this.completeOrderInfo.paymentAccount = account;
         }
     }
 }
