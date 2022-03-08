@@ -364,8 +364,7 @@
       UserList,
       ProgressTrackList,
       GoldPrice,
-      inaiaMasterAccountBalance:0,
-      inaiaMasterAccountIban:""
+      
     },
     data() {
       return {
@@ -395,7 +394,9 @@
               data: [25, 20, 30, 22, 17, 29]
             }]
           }
-        }
+        },
+        inaiaMasterAccountBalance:0,
+      inaiaMasterAccountIban:""
       };
     },
     methods: {
@@ -416,7 +417,7 @@
     mounted() {
       this.initBigChart(0);
       this.$store.dispatch('banking-account/getInaiaBankingAccountInfo').then(res=>{
-        this.inaiaMasterAccountBalance = res.balance;
+        this.inaiaMasterAccountBalance = res.balance/100;
         this.inaiaMasterAccountIban = res.iban;
       })
     }

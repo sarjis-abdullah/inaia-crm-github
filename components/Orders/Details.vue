@@ -56,9 +56,6 @@ export default {
             type: Object
         }
     },
-    unmounted (){
-        console.log("about to remove the detail");
-    },
     methods:
     {
         isOrderPending,

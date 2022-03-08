@@ -107,11 +107,7 @@
                                             min-width="190px"
                                             >
                                      <template v-slot="{row}">
-                                <Badge type="success" v-if="row.status.name_translation_key=='depot_status_active'">{{row.status.translated_name}}</Badge>
-                                <Badge type="info" v-if="row.status.name_translation_key=='depot_status_completed'">{{row.status.translated_name}}</Badge>
-                                <Badge type="warning" v-if="row.status.name_translation_key=='depot_status_paused'">{{row.status.translated_name}}</Badge>
-                                <Badge type="primary" v-if="row.status.name_translation_key=='depot_status_canceled'">{{row.status.translated_name}}</Badge>
-                                <Badge type="danger" v-if="row.status.name_translation_key=='depot_status_blocked'">{{row.status.translated_name}}</Badge>
+                                        <Status :row="row"/>
                                      </template>
                             </el-table-column>
                            
@@ -163,7 +159,8 @@ import Details from '@/components/Depots/Details'
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import {Badge} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
-import DepotFilter from '@/components/Depots/DepotFilter'
+import DepotFilter from '@/components/Depots/DepotFilter';
+import Status from '@/components/Depots/Status';
 export default {
     components: {
         [Table.name]: Table,
@@ -174,7 +171,8 @@ export default {
         Details,
         Badge,
         IconButton,
-        DepotFilter
+        DepotFilter,
+        Status
     },
     data() {
         return {

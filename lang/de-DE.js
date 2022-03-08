@@ -116,4 +116,12 @@ export default {
     select_right_preview_date:'The price date must not be in the future',
     cant_load_preview:"We can't load preview please try again later",
     payment_accounts:'Payment accounts',
+    interval_amount:'Interval amount',
+    interval_startdate:'Interval start date',
+    interval_enddate:'Interval end date',
+    progress:'Progress',
+    last_saving_order_date:'Last saving order date',
+    loading_depot_details:'Loading depot details...',
+    loading_depot_details_error:"Error: We can't load the depot details",
+    depot_detail:'Depot details'
 }

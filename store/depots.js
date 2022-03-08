@@ -4,7 +4,8 @@ export const state = () => ({
     details: null,
     pairs: null,
     loading: false,
-    orderFilterList:[]
+    orderFilterList:[],
+    goldPrice:0
 })
 
 const initialState  = state()
@@ -13,13 +14,12 @@ export const getters = {
     list(state) {
         state.list
     },
-    details(state) {
-        state.details
-    },
+    details:state=>state.details,
     pairs(state) {
         state.pairs
     },
-    orderFilterList:state=>state.orderFilterList
+    orderFilterList:state=>state.orderFilterList,
+    getGoldPrice:state=>state.goldPrice
 }
 
 export const mutations = {
@@ -43,6 +43,9 @@ export const mutations = {
     },
     orderFilterList(state,list){
         state.orderFilterList = list
+    },
+    setGoldPrice(state,price){
+        state.goldPrice = price;
     }
 }
 
@@ -78,7 +81,8 @@ export const actions = {
         return await this.$axios
             .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`)
             .then(res => {
-                context.commit('details', res.data.data)
+                context.commit('details', res.data.data);
+                console.log(res.data.data);
                 return res
             }).catch((err) => {
                 // console.error('axios error during detailing role', err)
@@ -127,5 +131,16 @@ export const actions = {
                     context.commit('loading', false)
                 })
         }
+    },
+    getCurrentGoldPrice(context)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/current-gold-price`)
+                .then(res => {
+                    context.commit('setGoldPrice',res.data.data.currentGoldPrice);
+                    return res.data.data.currentGoldPrice;
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                })
     }
 }

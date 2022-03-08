@@ -35,7 +35,7 @@
 
                         </div>
 
-                        <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></OrderFilter>
+                        <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet"></OrderFilter>
 
                         <el-table class="table-responsive table-flush"
                                 header-row-class-name="thead-light"
@@ -203,6 +203,16 @@ export default {
         IconButton,
         OrderFilter
     },
+    props:{
+        isDepotSet:{
+            type:Boolean,
+            default:false,
+        },
+        depotSetId:{
+            type:Number,
+            default:0
+        }
+    },
     data() {
         return {
             title: 'Transaction List',
@@ -264,8 +274,13 @@ export default {
         doSearchById(value) {
            if(value)
            {
+               let query = "&id="+this.orderId;
+               if(this.isDepotSet && this.depotSetId!=0)
+                {
+                    query+='&depot_ids='+this.depotSetId;
+                }
                this.$store
-                    .dispatch("orders/fetchList", "&id="+this.orderId)
+                    .dispatch("orders/fetchList", query)
                     .then(response => {
                         this.data = response.data.data
 
@@ -287,11 +302,17 @@ export default {
         popupDetails(resource) {
             this.selectedResource   = resource
             this.showPopup          = true
-            console.log(resource);
         },
         fetchList(pageQuery) {
             if (!this.initiated) {
                 this.initiated  = true
+                if(this.isDepotSet && this.depotSetId!=0)
+                {
+                    if(!pageQuery.includes('&depot_ids='))
+                    {
+                        pageQuery+='&depot_ids='+this.depotSetId;
+                    }
+                }
                 this.$store
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {

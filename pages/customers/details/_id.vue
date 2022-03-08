@@ -4,7 +4,7 @@
 
 <script>
 import { mapGetters } from "vuex"
-import Details from "@/components/Contacts/Details"
+import Details from "@/components/Contacts/Details";
 
 export default {
     layout: 'DashboardLayout',
