@@ -11,13 +11,13 @@ const initialState  = state()
 
 export const getters = {
     list(state) {
-        state.list
+        return state.list
     },
     details(state) {
-        state.details
+        return state.details
     },
     pairs(state) {
-        state.pairs
+        return state.pairs
     },
     orderFilterList:state=>state.orderFilterList
 }
@@ -77,9 +77,9 @@ export const actions = {
     async details(context, payload) {
         return await this.$axios
             .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`)
-            .then(res => {
-                context.commit('details', res.data.data)
-                return res
+            .then(response => {
+                context.commit('details', response.data.data)
+                return response
             }).catch((err) => {
                 // console.error('axios error during detailing role', err)
                 return Promise.reject(err)
