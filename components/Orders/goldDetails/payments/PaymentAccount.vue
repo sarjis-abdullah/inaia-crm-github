@@ -28,6 +28,7 @@ import Collapse from '@/components/argon-core/Collapse/Collapse';
 import CollapseItem from '@/components/argon-core/Collapse/CollapseItem';
 import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
 import {Badge} from '@/components/argon-core';
+import { isOrderPending} from '~/helpers/order'
 export default {
     components:{
         Collapse,
@@ -44,7 +45,9 @@ export default {
     {
         return {
             paymentAccounts:[],
-            loading:false
+            loading:false,
+            activateEdit:false,
+            activeIndex:-1
         }
     },
     mounted:function()
@@ -55,11 +58,18 @@ export default {
                 this.$store.dispatch('orders/getPaymentMethod',trans.id).then(res=>{
                 console.log(res);
                 this.paymentAccounts.push(res);
+                if(isOrderPending(this.order))
+                {
+                    this.activateEdit = true
+                }
             }).finally(()=>{
                 this.loading = false;
             })
             })
         }
+    },
+    methods:{
+        
     }
 }
 </script>

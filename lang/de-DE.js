@@ -131,5 +131,11 @@ export default {
     Order_completed_successfully:'Order completed successfully!',
     Order_completed_unsuccessfully:'We could not complete the order due to an error',
     Order_deleted_successfully:'Order deleted successfully!',
-    Order_deleted_unsuccessfully:'We could not delete the order due to an error'
+    Order_deleted_unsuccessfully:'We could not delete the order due to an error',
+    mark_as_paid:'Mark as paid',
+    error_loading_payment_accounts:"We can't load payment accounts due to an error",
+    cancel_order:'Cancel order',
+    confirm_cancel_order:'Are you sure to cancel the order with id',
+    order_canceled_successfully:'Order canceled successfully!',
+    order_canceled_unsuccessfully:"Can't cancel order due to an error"
 }

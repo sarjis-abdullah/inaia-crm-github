@@ -128,6 +128,8 @@
                             <template slot="footer">
                                 <base-button type="neutral" class="ml-auto" @click="backToDetailScreen()" v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('back')}}</base-button>
                                 <base-button type="danger" @click="() => removeOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)">{{$t('delete')}}</base-button>
+                                <base-button type="danger" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)">{{$t('cancel_order')}}</base-button>
+                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)">{{$t('mark_as_paid')}}</base-button>
                                  <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete')}}</span>
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm')}}</span>
@@ -166,11 +168,15 @@
                                 <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
-                                Are you sure to cancel the order with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                                <select-payment-account :account_id="selectedResource.depot.account_id" 
+                                    v-if="selectedResource && isOrderPaid(selectedResource)"
+                                    @paymentaccountselected="setCancelPaymentAccount"
+                                />
+                                {{$t('confirm_cancel_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
                             </div>
                             <template slot="footer">
-                                <base-button type="secondary" @click="showOrderCancelConfirm = false">Close</base-button>
-                                <base-button type="danger" @click="cancelOrder(selectedResource)">Cancel Order</base-button>
+                                <base-button type="secondary" @click="showOrderCancelConfirm = false;selectedCancelPaymentAccount=null">{{$t('close')}}</base-button>
+                                <base-button type="success" @click="cancelOrder(selectedResource)" :disabled="selectedCancelPaymentAccount==null">{{$t('confirm')}}</base-button>
                             </template>
                         </modal>
                     </div>
@@ -190,6 +196,7 @@ import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import {orderDetailScreens} from '../../helpers/constans';
+import SelectPaymentAccount from './goldDetails/payments/SelectPaymentAccount.vue';
 export default {
     components: {
         [Table.name]: Table,
@@ -200,7 +207,8 @@ export default {
         Details,
         Status,
         IconButton,
-        OrderFilter
+        OrderFilter,
+        SelectPaymentAccount
     },
     props:{
         isDepotSet:{
@@ -238,7 +246,8 @@ export default {
             showFilter: false,
             filterQuery:null,
             orderId:"",
-            completeOrderInfo:{date:null,paymentAccount:null}
+            completeOrderInfo:{date:null,paymentAccount:null},
+            selectedCancelPaymentAccount:null
         }
     },
     computed: {
@@ -354,12 +363,22 @@ export default {
                 }).catch(()=>{this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
         },
         cancelOrder(resource) {
-            this.showOrderCancelConfirm = false
+            this.showOrderCancelConfirm = false;
+            let data = {
+                id:resource.id,
+                data:{
+                    payment_account_id:this.selectedCancelPaymentAccount
+                }
+            }
             this.$store
-                .dispatch('orders/cancel', resource.id)
+                .dispatch('orders/cancel', data)
                 .then( res => {
-                    this.$notify({type: 'warning', timeout: 5000, message: 'Order canceled successfully!'})
+                    this.showPopup = false;
+                    this.selectedCancelPaymentAccount=null;
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
                     // console.error('order->', res.data.data)
+                }).catch(()=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
                 })
         },
         handleSearch(search) {
@@ -458,6 +477,18 @@ export default {
                 }
             }
             return false;
+        },
+        shouldDisplayOrderCancelButton(resource)
+        {
+            return isOrderPaid(resource);
+        },
+        shouldDisplayOrderPaidButton(resource)
+        {
+            return isOrderPending(resource);
+        },
+        setCancelPaymentAccount(account)
+        {
+            this.selectedCancelPaymentAccount = account;
         }
     }
 }
