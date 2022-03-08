@@ -1,4 +1,4 @@
-export const orderDetailSlides = {
+export const orderDetailScreens = {
     detail:"detail",
     complete:"complete"
 }

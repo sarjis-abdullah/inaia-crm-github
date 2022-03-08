@@ -108,10 +108,7 @@
 
                             <el-table-column min-width="180px" v-bind:label="$t('action')">
                                 <template v-slot="{row}">
-
-                                <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
-                                <icon-button type="cancel" @click="() => cancelOrderConfirm(row)" v-if="isOrderPending(row) || isOrderPaid(row)"></icon-button>
-                                <icon-button type="confirm" @click="() => completeOrderConfirm(row)" v-if="isOrderPending(row) || isOrderPaid(row)"></icon-button>
+                                    <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -126,22 +123,24 @@
                                 <span></span>
                             </template>
                             <div>
-                                <Details :resource="selectedResource" v-if="showPopup" @slideChange="onOoderDetailSlideChanged" @completeDateSelected="setCompleteDate" @completePaymentAccountSelected="setPaymentAccount"/>
+                                <Details :resource="selectedResource" v-if="showPopup" :selectedScreen="selectedResourceScreen" @completeDateSelected="setCompleteDate" @completePaymentAccountSelected="setPaymentAccount"/>
                             </div>
                             <template slot="footer">
-                                <base-button type="neutral" class="ml-auto" @click="showPopup = false">{{$t('close')}}</base-button>
-
-                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource)) && selectedResourceSlide==OoderDetailSlides.detail">{{$t('delete')}}</base-button>
-                                 <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && (isOrderPending(selectedResource) || isOrderPaid(selectedResource)) && selectedResourceSlide==OoderDetailSlides.complete">{{$t('complete')}}</base-button>
+                                <base-button type="neutral" class="ml-auto" @click="backToDetailScreen()" v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('back')}}</base-button>
+                                <base-button type="danger" @click="() => removeOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)">{{$t('delete')}}</base-button>
+                                 <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
+                                    <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete')}}</span>
+                                    <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm')}}</span>
+                                 </base-button>
                             </template>
                         </modal>
 
                         <modal :show.sync="showConfirm">
                             <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                                <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
-                                Are you sure to delete order with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                                {{$t('confirm_delete_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
                             </div>
                             <template slot="footer">
                                 <base-button type="secondary" @click="showConfirm = false">Close</base-button>
@@ -151,7 +150,7 @@
 
                         <modal :show.sync="showOrderConfirm">
                             <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                                <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
                                 Are you sure to complete the order with id "{{ selectedResource ? selectedResource.id : '' }}"?
@@ -164,7 +163,7 @@
 
                         <modal :show.sync="showOrderCancelConfirm">
                             <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                                <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
                                 Are you sure to cancel the order with id "{{ selectedResource ? selectedResource.id : '' }}"?
@@ -186,11 +185,11 @@ import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'elemen
 import Details from '@/components/Orders/Details'
 import Status from '@/components/Orders/Status';
 import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
-import { isOrderPending, isOrderPaid } from '~/helpers/order'
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed } from '~/helpers/order'
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
-import {orderDetailSlides} from '../../helpers/constans';
+import {orderDetailScreens} from '../../helpers/constans';
 export default {
     components: {
         [Table.name]: Table,
@@ -225,7 +224,7 @@ export default {
             initiated: false,
             debounced: null,
             selectedResource: null,
-            selectedResourceSlide:orderDetailSlides.detail,
+            selectedResourceScreen:orderDetailScreens.detail,
             showPopup: false,
             showConfirm: false,
             showOrderConfirm: false,
@@ -256,7 +255,7 @@ export default {
         }
     },
     created (){
-        this.OoderDetailSlides = orderDetailSlides;
+        this.orderDetailsSceens = orderDetailScreens;
     },
     watch: {
         searchQuery: {
@@ -341,26 +340,18 @@ export default {
             this.showOrderCancelConfirm = true
         },
         removeOrder(resource) {
-            this.showConfirm        = false
+            this.showConfirm        = false;
+            this.showPopup = false;
             this.$store
                 .dispatch('orders/remove', resource.id)
                 .then( () => {
-                    this.$notify({type: 'warning', timeout: 5000, message: 'Order removed successfully!'})
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_deleted_successfully')})
                     if (!this.data.length && this.page > 1) {
                         this.page = this.page - 1;
                     } else {
                         this.fetchList(this.searchQuery)
                     }
-                })
-        },
-        completeOrder(resource) {
-            this.showOrderConfirm   = false
-            this.$store
-                .dispatch('orders/complete', resource.id)
-                .then( res => {
-                    this.$notify({type: 'success', timeout: 5000, message: 'Order completed successfully!'})
-                    // console.error('order->', res.data.data)
-                })
+                }).catch(()=>{this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
         },
         cancelOrder(resource) {
             this.showOrderCancelConfirm = false
@@ -395,9 +386,9 @@ export default {
         {
             this.filterQuery = query;
         },
-        onOoderDetailSlideChanged (slide)
+        onOrderDetailScreenChanged (slide)
         {
-            this.selectedResourceSlide = slide
+            this.selectedResourceScreen = slide
         },
         setCompleteDate (date)
         {
@@ -405,12 +396,68 @@ export default {
         },
         onDetailClose ()
         {
-            this.selectedResourceSlide = orderDetailSlides.detail;
+            this.selectedResourceScreen = orderDetailScreens.detail;
             this.completeOrderInfo = {date:null,paymentAccount:null};
         },
         setPaymentAccount(account)
         {
             this.completeOrderInfo.paymentAccount = account;
+        },
+        shouldDisplayOrderDeleteButton(resource)
+        {
+            if(isOrderPending(resource) || isOrderPaymentFailed(resource))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        },
+        shouldDisplayOrderCompleteButton(resource)
+        {
+            return isOrderPaid(resource);
+        },
+        completeOrder(resource)
+        {
+            if(this.selectedResourceScreen == orderDetailScreens.detail)
+            {
+                this.selectedResourceScreen = orderDetailScreens.complete;
+            }
+            else
+            {
+                
+                let data = {
+                    id:resource.id,
+                    data:{price_date:this.completeOrderInfo.date,
+                    payment_account_id:this.completeOrderInfo.paymentAccount}
+                }
+                this.$store
+                .dispatch('orders/complete', data)
+                .then( res => {
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
+                    this.selectedResource = null;
+                    this.showPopup = false;
+
+                }).catch(err=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
+                })
+            }
+            
+        },
+        backToDetailScreen()
+        {
+            this.selectedResourceScreen = orderDetailScreens.detail;
+        },
+        shouldDisableCompleteButton(){
+            if(this.selectedResourceScreen == orderDetailScreens.complete)
+            {
+                if(!this.completeOrderInfo || !this.completeOrderInfo.paymentAccount || !this.completeOrderInfo.date)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

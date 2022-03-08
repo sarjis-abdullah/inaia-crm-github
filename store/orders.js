@@ -31,9 +31,9 @@ export const mutations = {
         const idx   = state.list.findIndex( i => i.id == id)
         state.list  = state.list.splice(idx, 1)
     },
-    update(state, order) {
+    updateComplete(state, order) {
         const item  = state.list.find( i => i.id == order.id)
-        Object.assign(item, order)
+        Object.assign(item.order_status, order.order_status)
     },
     pairs(state, data) {
         state.pairs = data
@@ -114,10 +114,10 @@ export const actions = {
     },
     complete(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/complete`)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/complete`,payload.data)
             .then(res => {
-                context.commit('update', res.data.data)
-                return res
+                context.commit('updateComplete', res.data.data)
+                return res.data.data.order_status
             })
     },
     cancel(context, payload) {

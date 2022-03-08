@@ -126,5 +126,13 @@ export default {
     last_saving_order_date:'Last saving order date',
     loading_depot_details:'Loading depot details...',
     loading_depot_details_error:"Error: We can't load the depot details",
-    depot_detail:'Depot details'
+    depot_detail:'Depot details',
+    back:'Back',
+    confirm:"Confirm",
+    confirm_delete_order:'Are you sure to delete order with id',
+    confirmation:'Confirmation',
+    Order_completed_successfully:'Order completed successfully!',
+    Order_completed_unsuccessfully:'We could not complete the order due to an error',
+    Order_deleted_successfully:'Order deleted successfully!',
+    Order_deleted_unsuccessfully:'We could not delete the order due to an error'
 }
