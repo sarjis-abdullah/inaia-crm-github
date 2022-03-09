@@ -129,7 +129,7 @@
                                 <base-button type="neutral" class="ml-auto" @click="backToDetailScreen()" v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('back')}}</base-button>
                                 <base-button type="danger" @click="() => removeOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)">{{$t('delete')}}</base-button>
                                 <base-button type="danger" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)">{{$t('cancel_order')}}</base-button>
-                                <base-button type="primary" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)">{{$t('mark_as_paid')}}</base-button>
+                                <base-button type="primary" @click="() => paidOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)">{{$t('mark_as_paid')}}</base-button>
                                  <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete')}}</span>
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm')}}</span>
@@ -160,6 +160,18 @@
                             <template slot="footer">
                                 <base-button type="secondary" @click="showOrderConfirm = false">Close</base-button>
                                 <base-button type="primary" @click="completeOrder(selectedResource)">Complete Order</base-button>
+                            </template>
+                        </modal>
+                        <modal :show.sync="showOrderPaidConfirm">
+                            <template slot="header">
+                                <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
+                            </template>
+                            <div>
+                                {{$t('confirm_paid_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
+                            </div>
+                            <template slot="footer">
+                                <base-button type="secondary" @click="showOrderConfirm = false">{{$t('close')}}</base-button>
+                                <base-button type="success" @click="markPaidOrder(selectedResource)">{{$t('confirm')}}</base-button>
                             </template>
                         </modal>
 
@@ -237,6 +249,7 @@ export default {
             showConfirm: false,
             showOrderConfirm: false,
             showOrderCancelConfirm: false,
+            showOrderPaidConfirm:false,
             pageTitle: 'Orders',
             perPage: 10,
             page: 1,
@@ -344,6 +357,10 @@ export default {
             this.selectedResource   = resource
             this.showOrderConfirm   = true
         },
+        paidOrderConfirm(resource){
+            this.selectedResource = resource;
+            this.showOrderPaidConfirm = true;
+        },
         cancelOrderConfirm(resource) {
             this.selectedResource       = resource
             this.showOrderCancelConfirm = true
@@ -376,7 +393,6 @@ export default {
                     this.showPopup = false;
                     this.selectedCancelPaymentAccount=null;
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
-                    // console.error('order->', res.data.data)
                 }).catch(()=>{
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
                 })
@@ -463,6 +479,19 @@ export default {
                 })
             }
             
+        },
+        markPaidOrder (resource){
+            this.$store
+                .dispatch('orders/paid', resource.id)
+                .then( res => {
+                     this.showOrderPaidConfirm = false;
+                    this.showPopup = false;
+                    
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
+                    // console.error('order->', res.data.data)
+                }).catch(()=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_paid_unsuccessfully')})
+                })
         },
         backToDetailScreen()
         {

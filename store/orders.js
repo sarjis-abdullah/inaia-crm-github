@@ -120,6 +120,14 @@ export const actions = {
                 return res.data.data.order_status
             })
     },
+    paid(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/paid`)
+            .then(res => {
+                context.commit('updateStatus', res.data.data)
+                return res.data.data.order_status
+            })
+    },
     cancel(context, payload) {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/cancel`,payload.data)

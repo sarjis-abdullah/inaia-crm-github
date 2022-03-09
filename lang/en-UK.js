@@ -140,5 +140,8 @@ export default {
     cancel_order:'Cancel order',
     confirm_cancel_order:'Are you sure to cancel the order with id',
     order_canceled_successfully:'Order canceled successfully!',
-    order_canceled_unsuccessfully:"Can't cancel order due to an error"
+    order_canceled_unsuccessfully:"Can't cancel order due to an error",
+    confirm_paid_order:'Are you sure to mark the order as paid with id',
+    Order_paid_successfully:'Order mark as paid successfully!',
+    Order_paid_unsuccessfully:'We could not mark the order as paid due to an error',
 }
