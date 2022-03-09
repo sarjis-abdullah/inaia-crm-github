@@ -113,8 +113,10 @@
                            
                             <el-table-column min-width="230px">
                                 <template v-slot="{row}">
+
                                     <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
                                 <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
+
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -355,3 +357,4 @@ export default {
     color:#8898aa;
 }
 </style>
+

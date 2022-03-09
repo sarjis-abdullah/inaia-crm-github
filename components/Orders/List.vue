@@ -83,7 +83,7 @@
 
                             <el-table-column v-bind:label="$t('amount')"
                                             prop="amount"
-                                            min-width="100px"
+                                            min-width="140px"
                                             align="right"
                                             sortable>
                                 <template v-slot="{row}">

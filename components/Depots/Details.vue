@@ -19,7 +19,7 @@
                  <base-progress class="mt-3" show-label type="success" :height="8" :value="resource.progress/100" :label="$t('progress')"></base-progress>
              </div>
         </div>
-    </div>
+
 </template>
 
 <script>
@@ -56,7 +56,6 @@ export default {
                 this.goldPrice = res;
             })
         }
-        
     },
     methods: {
         getProductClass(cid) {
@@ -74,6 +73,7 @@ export default {
 .capitalize {
     text-transform: capitalize
 }
+
 .logo {
     width: 80px;
     height: 80px;
