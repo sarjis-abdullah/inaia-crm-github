@@ -80,17 +80,10 @@ export const actions = {
     },
     async details(context, payload) {
         return await this.$axios
-            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`)
-<<<<<<< HEAD
-            .then(res => {
+            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`).then(res => {
                 context.commit('details', res.data.data);
                 console.log(res.data.data);
                 return res
-=======
-            .then(response => {
-                context.commit('details', response.data.data)
-                return response
->>>>>>> development
             }).catch((err) => {
                 // console.error('axios error during detailing role', err)
                 return Promise.reject(err)

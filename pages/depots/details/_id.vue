@@ -3,11 +3,11 @@
     <base-header class="pb-6">
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
-          <h6 class="h2 text-white d-inline-block mb-0">
+          <h6 class="h2 text-white d-inline-block mb-0"  v-if="!loaded || loadedWithError">
             {{ $t("depot_detail") }}
           </h6>
-          <h6 class="h2 text-white d-inline-block mb-0">
-            {{ $t("depot") }} {{ resource.depot_number }}
+          <h6 class="h2 text-white d-inline-block mb-0" v-if="loaded && !loadedWithError">
+            {{ $t("depot") }} {{ depot.depot_number }}
           </h6>
         </div>
       </div>
@@ -18,6 +18,7 @@
         :textError="$t('loading_depot_details_error')"
         v-if="loaded && loadedWithError"
       />
+      <div  v-if="loaded && !loadedWithError">
       <div class="row">
         <div class="col-xl-4 col-md-6">
           <div class="card border-0">
@@ -25,10 +26,10 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">
-                    Depot Name
+                    {{$t('depot_name')}}
                   </h5>
                   <span class="h2 font-weight-bold mb-0">{{
-                    resource.name
+                    depot.name
                   }}</span>
                 </div>
                 <div class="col-auto">
@@ -49,8 +50,8 @@
                 </div>
               </div>
               <p class="mt-3 mb-0 text-sm">
-                <span class="text-nowrap"
-                  >Kunde: <a href="" class="">Yunus Morkramer</a></span
+                <span class="text-nowrap" v-if="client!=null"
+                  >{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{client.name + ' '+client.person_data.surname}}</a></span
                 >
               </p>
             </div>
@@ -63,10 +64,10 @@
               <div class="row">
                 <div class="col">
                   <h5 class="card-title text-uppercase text-muted mb-0">
-                    Goldbestand
+                    {{$t('total_gold_amount')}}
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ resource.gold_amount }} g</span
+                    >{{ depot.gold_amount }} g</span
                   >
                 </div>
                 <div class="col-auto">
@@ -87,14 +88,14 @@
                 </div>
               </div>
               <p class="mt-3 mb-0 text-sm">
-                <span class="text-nowrap">Depotwert: 151.897,33 €</span>
+                <span class="text-nowrap">{{$t('depot_value')}}: {{$n((depot.gold_amount/1000)*goldPrice)}} €</span>
               </p>
             </div>
           </div>
         </div>
 
         <div class="col-xl-4 col-md-6">
-          <div v-if="resource.is_savings_plan" class="card border-0">
+          <div v-if="depot.is_savings_plan" class="card border-0">
             <div class="card-body">
               <div class="row">
                 <div class="col">
@@ -102,20 +103,20 @@
                     <font-awesome-icon
                       icon="fa fa-clock-rotate-left"
                       class="mr-1"
-                    />Sparplan<span class="badge badge-success ml-2"
+                    />{{$t('saving_plan')}}<span class="badge badge-success ml-2"
                       ><font-awesome-icon icon="fa fa-play" class="mr-1" />{{
                         $t(
-                          resource.status
-                            ? resource.status.name_translation_key
-                            : resource.depot_status_id
+                          depot.status
+                            ? depot.status.name_translation_key
+                            : depot.depot_status_id
                         )
                       }}</span
                     >
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ resource.interval_amount }} €</span
+                    >{{ depot.interval_amount }} €</span
                   >
-                  <span class="text-muted"> / monatlich</span>
+                  <span class="text-muted"> / {{$t('monthly')}}</span>
                 </div>
                 <div class="col-auto">
                   <base-dropdown
@@ -136,8 +137,8 @@
               </div>
               <p class="mt-3 mb-0 text-sm">
                 <span class="text-nowrap"
-                  >Laufzeit: {{ resource.interval_start_date }} -
-                  {{ resource.interval_end_date }}</span
+                  >{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} -
+                  {{ $d(new Date(depot.interval_enddate),'short') }}</span
                 >
               </p>
             </div>
@@ -151,10 +152,10 @@
                     <font-awesome-icon
                       icon="fa fa-clock-rotate-left"
                       class="mr-1"
-                    />Sparplan
+                    />{{$t('saving_plan')}}
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >Nicht eingerichtet</span
+                    >{{$t('no_saving_plan')}}</span
                   >
                 </div>
               </div>
@@ -162,16 +163,14 @@
           </div>
         </div>
       </div>
-      <div></div>
-
-      <order-list />
+      <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
-import Details from '@/components/Depots/Details'
 import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
@@ -186,19 +185,29 @@ export default {
         return {
             depotId: this.$route.params.id,
             loaded:false,
-            loadedWithError:false
+            loadedWithError:false,
+            client:null,
         }
     },
     components: {
         PageLoader,
         TextError,
-        Details,
         OrderList
     },
     computed: {
        ...mapGetters('depots',{
-            depot:"details"
+            depot:"details",
+            goldPrice:"getGoldPrice"
         }),
+    },
+     mounted () {
+        if(this.goldPrice==0)
+        {
+            this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
+                this.goldPrice = res;
+            })
+        }
+        
     },
     watch: {
         depotId: {
@@ -215,6 +224,9 @@ export default {
         {
             this.$store.dispatch('depots/details',this.depotId).then(()=>{
                 this.loadedWithError=false;
+                this.$store.dispatch('clients/clientDetailsData',this.depot.account_id).then(res=>{
+                      this.client = res.data.data.customer;
+                  })
             }).
             catch(err=>{
                 this.loadedWithError=true;

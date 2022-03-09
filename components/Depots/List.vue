@@ -134,6 +134,7 @@
                             </div>
                             <template slot="footer">
                                 <base-button type="secondary" @click="showPopup = false">Close</base-button>
+                                <base-button type="primary" @click="() => $router.push('/depots/details/'+selectedResource.id)">{{$t('see_more')}}</base-button>
                             </template>
                         </modal>
 

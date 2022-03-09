@@ -1,5 +1,4 @@
 <template>
-    <div>
         <div class="text-center">
             <img :src="resource.avatar" class="logo"/>
             <h2 class="card-title mt-3 mb-0 title">{{resource.name}}</h2>

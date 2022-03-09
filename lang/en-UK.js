@@ -107,7 +107,7 @@ export default {
     saving_plan:'Saving plan',
     onetime:'Pay immediately',
     installment:'Billing 50/50',
-    no_saving_plan:'No saving plan',
+    no_saving_plan:'Not set',
     product_class_premium:'GoldDinar Premuim',
     product_class_standard:'GoldDinar Standard',
     product:'Product',
@@ -144,4 +144,12 @@ export default {
     confirm_paid_order:'Are you sure to mark the order as paid with id',
     Order_paid_successfully:'Order mark as paid successfully!',
     Order_paid_unsuccessfully:'We could not mark the order as paid due to an error',
+    see_more:'See more',
+    orders:'Orders',
+    depot_name:'Depot Name',
+    client:'Client',
+    depot_value:'Depot value',
+    monthly:'monthly',
+    running_time:'Duration',
+    cancel_contract:'Cancel contract'
 }

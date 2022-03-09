@@ -104,7 +104,7 @@ export default {
     saving_plan:'Saving plan',
     onetime:'Agio sofort bezahlen',
     installment:'Verrechnung 50/50',
-    no_saving_plan:'No saving plan',
+    no_saving_plan:'Nicht eingerichtet',
     product_class_premium:'GoldDinar Premuim',
     product_class_standard:'GoldDinar Standard',
     product:'Produkt',
@@ -141,4 +141,13 @@ export default {
     confirm_paid_order:'Are you sure to mark the order as paid with id',
     Order_paid_successfully:'Order mark as paid successfully!',
     Order_paid_unsuccessfully:'We could not mark the order as paid due to an error',
+    see_more:'See more',
+    orders:'Orders',
+    depot_name:'Depot Name',
+    client:'Kunde',
+    depot_value:'Depotwert',
+    monthly:'monatlich',
+    running_time:'Laufzeit',
+    cancel_contract:'Cancel contract'
+    
 }
