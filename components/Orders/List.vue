@@ -120,6 +120,10 @@
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete')}}</span>
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm')}}</span>
                                  </base-button>
+                                 <base-button type="primary" @click="() => orderRefundConfirm(selectedResource)" v-if="selectedResource && shouldDisplayRefundButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
+                                    <span>{{$t('order_refund')}}</span>
+        
+                                 </base-button>
                             </template>
                         </modal>
 
@@ -177,6 +181,21 @@
                                 <base-button type="success" @click="cancelOrder(selectedResource)" :disabled="selectedCancelPaymentAccount==null">{{$t('confirm')}}</base-button>
                             </template>
                         </modal>
+                        <modal :show.sync="showOrderRefundConfirm">
+                            <template slot="header">
+                                <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
+                            </template>
+                            <div>
+                                <select-payment-account :account_id="selectedResource.depot.account_id" 
+                                    @paymentaccountselected="setRefundPaymentAccount" v-if="selectedResource &&  shouldDisplayRefundButton(selectedResource)"
+                                />
+                                {{$t('confirm_refund_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
+                            </div>
+                            <template slot="footer">
+                                <base-button type="secondary" @click="showOrderCancelConfirm = false;selectedCancelPaymentAccount=null">{{$t('close')}}</base-button>
+                                <base-button type="success" @click="refundOrder(selectedResource)" :disabled="selectedRefundPaymentAccount==null">{{$t('confirm')}}</base-button>
+                            </template>
+                        </modal>
                     </div>
                 </div>
             </div>
@@ -189,7 +208,7 @@ import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'elemen
 import Details from '@/components/Orders/Details'
 import Status from '@/components/Orders/Status';
 import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed } from '~/helpers/order'
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isOrderGoldPurchase,isOrderCompleted,isOrderGoldPurchaseInterval } from '~/helpers/order'
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
@@ -236,6 +255,7 @@ export default {
             showOrderConfirm: false,
             showOrderCancelConfirm: false,
             showOrderPaidConfirm:false,
+            showOrderRefundConfirm:false,
             pageTitle: 'Orders',
             perPage: 10,
             page: 1,
@@ -246,7 +266,8 @@ export default {
             filterQuery:null,
             orderId:"",
             completeOrderInfo:{date:null,paymentAccount:null},
-            selectedCancelPaymentAccount:null
+            selectedCancelPaymentAccount:null,
+            selectedRefundPaymentAccount:null
         }
     },
     computed: {
@@ -346,6 +367,10 @@ export default {
         paidOrderConfirm(resource){
             this.selectedResource = resource;
             this.showOrderPaidConfirm = true;
+        },
+        orderRefundConfirm(resource){
+            this.selectedResource = resource;
+            this.showOrderRefundConfirm = true;
         },
         cancelOrderConfirm(resource) {
             this.selectedResource       = resource
@@ -479,6 +504,25 @@ export default {
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_paid_unsuccessfully')})
                 })
         },
+        refundOrder(resource)
+        {
+            this.showOrderRefundConfirm = false;
+            let data = {
+                id:resource.id,
+                data:{
+                    payment_account_id:this.selectedRefundPaymentAccount
+                }
+            }
+            this.$store
+                .dispatch('orders/refund', data)
+                .then( res => {
+                    this.showPopup = false;
+                    this.selectedRefundPaymentAccount=null;
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
+                }).catch(()=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_refunded_unsuccessfully')})
+                })
+        },
         backToDetailScreen()
         {
             this.selectedResourceScreen = orderDetailScreens.detail;
@@ -504,7 +548,14 @@ export default {
         setCancelPaymentAccount(account)
         {
             this.selectedCancelPaymentAccount = account;
-        }
+        },
+        shouldDisplayRefundButton(resource){
+            return isOrderCompleted(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
+        },
+        setRefundPaymentAccount(account)
+        {
+            this.selectedRefundPaymentAccount = account;
+        },
     }
 }
 </script>

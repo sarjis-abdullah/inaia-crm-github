@@ -17,7 +17,7 @@
                     </div>
                 </template>
                 <div class="list-group list-group-flush">
-                    <PaymentAccountItem :paymentAccount="account.payment_account"/>
+                    <PaymentAccountItem :paymentAccount="account.payment_account" :isEditable="activateEdit" :account_id="order.depot.account_id" :order="order"/>
                 </div>
             </collapse-item>
         </collapse>
@@ -28,7 +28,7 @@ import Collapse from '@/components/argon-core/Collapse/Collapse';
 import CollapseItem from '@/components/argon-core/Collapse/CollapseItem';
 import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
 import {Badge} from '@/components/argon-core';
-import { isOrderPending} from '~/helpers/order'
+import { isOrderPending,isOrderPaymentFailed} from '~/helpers/order'
 export default {
     components:{
         Collapse,
@@ -52,16 +52,16 @@ export default {
     },
     mounted:function()
     {
+        if(isOrderPending(this.order) || isOrderPaymentFailed(this.order))
+        {
+            this.activateEdit = true
+        }
         if(this.order.orders_payment_transactions && this.order.orders_payment_transactions.length>0)
         {
             this.order.orders_payment_transactions.forEach(trans=>{
-                this.$store.dispatch('orders/getPaymentMethod',trans.id).then(res=>{
-                console.log(res);
+                this.$store.dispatch('orders/getPaymentMethod',trans.payment_transaction_id).then(res=>{
                 this.paymentAccounts.push(res);
-                if(isOrderPending(this.order))
-                {
-                    this.activateEdit = true
-                }
+                
             }).finally(()=>{
                 this.loading = false;
             })

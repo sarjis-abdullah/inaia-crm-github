@@ -148,6 +148,19 @@ export default {
     depot_value:'Depotwert',
     monthly:'monatlich',
     running_time:'Laufzeit',
-    cancel_contract:'Cancel contract'
+    cancel_contract:'Cancel contract',
+    save:'Save',
+    bank_account:'Bank account',
+    pps:'PPS',
+    bank_transfer:'Bank transfer',
+    Order_payment_changed_successfully:'Order payment changed successfully',
+    Order_payment_changed_unsuccessfully:"Can't change order payment due to an error",
+    execute_payment:'Initiate payment',
+    payment_initiated_successfully:'Payment initiated successfully',
+    payment_initiated_unsuccessfully:"Can't initiate payment order due an error",
+    order_refund:'Order refund',
+    confirm_refund_order:'Are you sure you want to refund the order with id',
+    order_refunded_successfully:'Order refunded successfully',
+    order_refunded_unsuccessfully:"We couldn't refund the order due to an error"
     
 }

@@ -1,16 +1,21 @@
 export const state = () => ({
-    paymentAccounts:[]
+    paymentAccounts:[],
+    paymentMethods:[]
 })
 const initialState  = state()
 
 export const getters = {
-    paymentAccounts : (state)=>state.paymentAccounts 
+    paymentAccounts : (state)=>state.paymentAccounts,
+    paymentMethods : (state)=>state.paymentMethods
         
 }
 export const mutations = {
     paymentAccounts(state, list) {
         state.paymentAccounts  = list
     },
+    paymentMethods(state,list){
+        state.paymentMethods  = list
+    }
     
 }
 export const actions = {
@@ -21,4 +26,11 @@ export const actions = {
                     return res.data.data;
                 })
     },
+    getPaymentMethods(context,payload) {
+        return this.$axios
+        .get(`${ process.env.paymentsApiUrl }/payment-methods`).then(res=>{
+            context.commit('paymentMethods', res.data.data)
+            return res.data.data;
+        })
+    }
 }

@@ -35,6 +35,10 @@ export const mutations = {
         const item  = state.list.find( i => i.id == order.id)
         Object.assign(item.order_status, order.order_status)
     },
+    update(state, order) {
+        const item  = state.list.find( i => i.id == order.id)
+        Object.assign(item, order)
+    },
     pairs(state, data) {
         state.pairs = data
     },
@@ -136,6 +140,14 @@ export const actions = {
                 return res
             })
     },
+    refund(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/refund`,payload.data)
+            .then(res => {
+                context.commit('updateStatus', res.data.data)
+                return res
+            })
+    },
     getPaymentMethod(context,payload) {
         return this.$axios
                 .get(`${ process.env.paymentsApiUrl }/payment-transactions/${payload}?include=payment_account`).then(res=>{
@@ -147,5 +159,23 @@ export const actions = {
                 .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}`).then(res=>{
                     return res.data;
                 })
+    },
+    updatePaymentMethod(context,payload){
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/change-payment-account?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .then(res => {
+                context.commit('update', res.data.data)
+                console.log(res.data.data);
+                return res.data.data;
+            })
+    },
+    retryPayment(context,payload){
+        return this.$axios
+            .post(`${ process.env.golddinarApiUrl }/orders/${ payload }/retry-payment?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .then(res => {
+                context.commit('update', res.data.data)
+                console.log(res.data.data);
+                return res.data.data;
+            })
     }
 }
