@@ -1,9 +1,9 @@
 <template>
-   
 
-        
 
-        
+
+
+
             <div class="row">
                 <div class="col">
                     <div class="card">
@@ -112,17 +112,16 @@
                                 <Details :resource="selectedResource" v-if="showPopup" :selectedScreen="selectedResourceScreen" @completeDateSelected="setCompleteDate" @completePaymentAccountSelected="setPaymentAccount"/>
                             </div>
                             <template slot="footer">
-                                <base-button type="neutral" class="ml-auto" @click="backToDetailScreen()" v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('back')}}</base-button>
-                                <base-button type="danger" @click="() => removeOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)">{{$t('delete')}}</base-button>
+                                <base-button type="link" class="ml-auto" @click="backToDetailScreen()" v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('cancel')}}</base-button>
+                                <base-button type="danger" @click="() => removeOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)">{{$t('delete_order')}}</base-button>
                                 <base-button type="danger" @click="() => cancelOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)">{{$t('cancel_order')}}</base-button>
                                 <base-button type="primary" @click="() => paidOrderConfirm(selectedResource)" v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)">{{$t('mark_as_paid')}}</base-button>
                                  <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
-                                    <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete')}}</span>
-                                    <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm')}}</span>
+                                    <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete_order')}}</span>
+                                    <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
                                  </base-button>
                                  <base-button type="primary" @click="() => orderRefundConfirm(selectedResource)" v-if="selectedResource && shouldDisplayRefundButton(selectedResource)" :disabled="shouldDisableCompleteButton()">
                                     <span>{{$t('order_refund')}}</span>
-        
                                  </base-button>
                             </template>
                         </modal>
@@ -170,7 +169,7 @@
                                 <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
-                                <select-payment-account :account_id="selectedResource.depot.account_id" 
+                                <select-payment-account :account_id="selectedResource.depot.account_id"
                                     v-if="selectedResource && isOrderPaid(selectedResource)"
                                     @paymentaccountselected="setCancelPaymentAccount"
                                 />
@@ -186,7 +185,7 @@
                                 <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
-                                <select-payment-account :account_id="selectedResource.depot.account_id" 
+                                <select-payment-account :account_id="selectedResource.depot.account_id"
                                     @paymentaccountselected="setRefundPaymentAccount" v-if="selectedResource &&  shouldDisplayRefundButton(selectedResource)"
                                 />
                                 {{$t('confirm_refund_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
@@ -199,8 +198,8 @@
                     </div>
                 </div>
             </div>
-        
-    
+
+
 </template>
 <script>
 import { mapGetters } from "vuex"
@@ -472,7 +471,7 @@ export default {
             }
             else
             {
-                
+
                 let data = {
                     id:resource.id,
                     data:{price_date:this.completeOrderInfo.date,
@@ -489,7 +488,7 @@ export default {
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
                 })
             }
-            
+
         },
         markPaidOrder (resource){
             this.$store
@@ -497,7 +496,7 @@ export default {
                 .then( res => {
                      this.showOrderPaidConfirm = false;
                     this.showPopup = false;
-                    
+
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                     // console.error('order->', res.data.data)
                 }).catch(()=>{
@@ -539,7 +538,9 @@ export default {
         },
         shouldDisplayOrderCancelButton(resource)
         {
+          if (this.selectedResourceScreen == orderDetailScreens.detail)
             return isOrderPaid(resource);
+          else return false;
         },
         shouldDisplayOrderPaidButton(resource)
         {
