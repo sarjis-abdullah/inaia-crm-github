@@ -45,15 +45,15 @@
                                             min-width="180px"
                                             >
                                 <template v-slot="{row}">
-                                    <div class="d-flex">
+                                    <a href="" @click="() => $router.push('/depots/details/'+row.id)" class="d-flex">
                                         <span href="#!" class="avatar mr-3 removeImageBorder">
                                           <img v-bind:src="row.logo"/>
                                         </span>
                                         <div>
-                                          <span class="orderType"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
+                                          <span class="orderType text-dark"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
                                           <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </template>
                             </el-table-column>
 

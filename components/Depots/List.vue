@@ -59,14 +59,14 @@
                                             sortable
                                             >
                                  <template v-slot="{row}">
-                                    <div class="d-flex align-middle">
+                                    <a href="#" @click="() => $router.push('/depots/details/'+row.id)" class="d-flex align-middle">
                                         <span href="#!" class="avatar mr-3">
                                           <img v-bind:src="row.avatar"/>
                                         </span>
-                                        <div class="d-flex align-items-center">
+                                        <div class="d-flex align-items-center text-body">
                                           <span><strong>{{row.name}}</strong></span>
                                         </div>
-                                    </div>
+                                    </a>
                                 </template>
                             </el-table-column>
 
