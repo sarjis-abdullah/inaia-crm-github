@@ -35,9 +35,10 @@
 
                         </div>
                         <depot-filter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
-                        <el-table class="table-responsive table-flush"
+                        <el-table class="table-hover table-responsive table-flush"
                                 header-row-class-name="thead-light"
-                                :data="data">
+                                :data="data"
+                                @row-click="gotoDetails">
                             <el-table-column label="#"
                                             min-width="120px"
                                             prop="id"
@@ -59,14 +60,14 @@
                                             sortable
                                             >
                                  <template v-slot="{row}">
-                                    <a href="#" @click="() => $router.push('/depots/details/'+row.id)" class="d-flex align-middle">
+                                    <div class="d-flex align-middle">
                                         <span href="#!" class="avatar mr-3">
                                           <img v-bind:src="row.avatar"/>
                                         </span>
                                         <div class="d-flex align-items-center text-body">
                                           <span><strong>{{row.name}}</strong></span>
                                         </div>
-                                    </a>
+                                    </div>
                                 </template>
                             </el-table-column>
 
@@ -111,15 +112,16 @@
                                      </template>
                             </el-table-column>
 
+                            <!--
                             <el-table-column>
                                 <template v-slot="{row}">
 
-                                  <icon-button type="info" @click="() => $router.push('/depots/details/'+row.id)"></icon-button>
-                                  <!--<icon-button type="info" @click="() => popupDetails(row)"></icon-button>-->
-                                  <!--<icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>-->
+                                  <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                                  <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
 
                                 </template>
                             </el-table-column>
+                            -->
                         </el-table>
 
                         <div class="card-footer py-4 d-flex justify-content-end">
@@ -256,6 +258,9 @@ export default {
                         this.initiated  = false
                     })
             }
+        },
+        gotoDetails(resource){
+          this.$router.push('/depots/details/'+resource.id)
         },
         newDepot() {
             this.$router.push('/depots/add')

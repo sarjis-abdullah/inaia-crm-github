@@ -6,3 +6,8 @@
         overflow:visible !important;
     }
 }
+
+.table-hover tr:hover td {
+  background: $gray-100 !important;
+  cursor: pointer;
+}
