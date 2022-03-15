@@ -1,9 +1,9 @@
 <template>
-   
 
-        
 
-        
+
+
+
             <div class="row">
                 <div class="col">
                     <div class="card">
@@ -92,7 +92,7 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column min-width="180px" v-bind:label="$t('action')">
+                            <el-table-column>
                                 <template v-slot="{row}">
                                     <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
                                 </template>
@@ -166,7 +166,7 @@
                                 <h5 class="modal-title" id="confirmModal">{{$t('confirmation')}}</h5>
                             </template>
                             <div>
-                                <select-payment-account :account_id="selectedResource.depot.account_id" 
+                                <select-payment-account :account_id="selectedResource.depot.account_id"
                                     v-if="selectedResource && isOrderPaid(selectedResource)"
                                     @paymentaccountselected="setCancelPaymentAccount"
                                 />
@@ -180,8 +180,8 @@
                     </div>
                 </div>
             </div>
-        
-    
+
+
 </template>
 <script>
 import { mapGetters } from "vuex"
@@ -447,7 +447,7 @@ export default {
             }
             else
             {
-                
+
                 let data = {
                     id:resource.id,
                     data:{price_date:this.completeOrderInfo.date,
@@ -464,7 +464,7 @@ export default {
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
                 })
             }
-            
+
         },
         markPaidOrder (resource){
             this.$store
@@ -472,7 +472,7 @@ export default {
                 .then( res => {
                      this.showOrderPaidConfirm = false;
                     this.showPopup = false;
-                    
+
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                     // console.error('order->', res.data.data)
                 }).catch(()=>{

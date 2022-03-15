@@ -100,7 +100,7 @@ export default {
     transactions:'Transaktionen',
     account_holder:'Account holder',
     depot_name:'Depot name',
-    depot_agio:'Depot agio',
+    depot_agio:'Agio',
     saving_plan:'Saving plan',
     onetime:'Agio sofort bezahlen',
     installment:'Verrechnung 50/50',
@@ -149,5 +149,5 @@ export default {
     monthly:'monatlich',
     running_time:'Laufzeit',
     cancel_contract:'Cancel contract'
-    
+
 }

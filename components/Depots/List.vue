@@ -55,35 +55,24 @@
                             </el-table-column>
                             <el-table-column :label="$t('depot_name')"
                                             prop="name"
-                                            min-width="300px"
+                                            min-width="200px"
                                             sortable
                                             >
                                  <template v-slot="{row}">
-                                    <div class="d-flex">
-                                        <span href="#!" class="avatar mr-3 removeImageBorder">
+                                    <div class="d-flex align-middle">
+                                        <span href="#!" class="avatar mr-3">
                                           <img v-bind:src="row.avatar"/>
                                         </span>
-                                        <div>
-                                          <span class="orderType"><strong>{{row.name}}</strong></span>
-                                          
+                                        <div class="d-flex align-items-center">
+                                          <span><strong>{{row.name}}</strong></span>
                                         </div>
                                     </div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column :label="$t('depot_agio')"
-                                            prop="agio"
-                                            min-width="250px"
-                                            >
-                                    <template v-slot="{row}">
-                                        <span>{{$n(row.agio)}} €</span>
-                                        <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
-                                    </template> 
-                            </el-table-column>
-
-                            <el-table-column :label="$t('amount')"
+                            <el-table-column :label="$t('total_gold_amount')"
                                             prop="gold_amount"
-                                            min-width="150px"
+                                            min-width="160px"
                                             sortable>
                                 <template v-slot="{row}">
                                     <span class="status">{{$n(row.gold_amount/1000)}} g</span>
@@ -92,7 +81,7 @@
 
                             <el-table-column :label="$t('saving_plan')"
                                             prop="is_savings_plan"
-                                            min-width="190px"
+                                            min-width="160px"
                                             >
                                     <template v-slot="{row}">
                                         <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
@@ -102,20 +91,32 @@
                                         </div>
                                     </template>
                             </el-table-column>
+
+                            <el-table-column :label="$t('depot_agio')"
+                                             prop="agio"
+                                             min-width="160px"
+                            >
+                              <template v-slot="{row}">
+                                <span>{{$n(row.agio)}} €</span>
+                                <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
+                              </template>
+                            </el-table-column>
+
                             <el-table-column :label="$t('status')"
                                             prop="status.name_translation_key"
-                                            min-width="190px"
+                                            min-width="160px"
                                             >
                                      <template v-slot="{row}">
                                         <Status :row="row"/>
                                      </template>
                             </el-table-column>
-                           
-                            <el-table-column min-width="230px">
+
+                            <el-table-column>
                                 <template v-slot="{row}">
 
-                                    <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
-                                <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
+                                  <icon-button type="info" @click="() => $router.push('/depots/details/'+row.id)"></icon-button>
+                                  <!--<icon-button type="info" @click="() => popupDetails(row)"></icon-button>-->
+                                  <!--<icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>-->
 
                                 </template>
                             </el-table-column>
@@ -133,11 +134,12 @@
                                 <Details :resource="selectedResource" :productClasses="productClasses" v-if="showPopup" />
                             </div>
                             <template slot="footer">
-                                <base-button type="secondary" @click="showPopup = false">Close</base-button>
+                                <!--<base-button type="secondary" @click="showPopup = false">Close</base-button>-->
                                 <base-button type="primary" @click="() => $router.push('/depots/details/'+selectedResource.id)">{{$t('see_more')}}</base-button>
                             </template>
                         </modal>
 
+                        <!--
                         <modal :show.sync="showConfirm">
                             <template slot="header">
                                 <h5 class="modal-title" id="confirmModal">Confirmation</h5>
@@ -150,6 +152,8 @@
                                 <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
                             </template>
                         </modal>
+                        -->
+
                     </div>
                 </div>
             </div>
@@ -338,21 +342,16 @@ export default {
 .mdi-10 {
     font-size: 18px;
 }
-.orderType {
-  white-space: nowrap;
-}
 .avatar, .avatar img {
   height: 40px;
   width: 40px;
+  border-radius: 100%;
 }
 .dateStyle {
   color:#b5bacc;
   font-size:0.85em;
   margin-top:-0.5em;
   white-space: nowrap;
-}
-.removeImageBorder {
-    background-color: transparent !important
 }
 .actionBtnStyle {
     color:#8898aa;
