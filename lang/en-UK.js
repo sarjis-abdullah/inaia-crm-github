@@ -151,5 +151,9 @@ export default {
     depot_value:'Depot value',
     monthly:'monthly',
     running_time:'Duration',
-    cancel_contract:'Cancel contract'
+    cancel_contract:'Cancel contract',
+
+    verified: 'verified',
+    not_verified: 'not verified',
+
 }

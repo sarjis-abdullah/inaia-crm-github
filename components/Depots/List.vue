@@ -44,14 +44,7 @@
                                             prop="id"
                                             >
                                 <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <!-- <a href="#" class="avatar rounded-circle mr-3">
-                                            <img alt="Image placeholder" src="">
-                                        </a> -->
-                                        <div class="media-body">
-                                            <div class="font-weight-300 name" >{{row.id}}</div>
-                                        </div>
-                                    </div>
+                                    <div>{{row.id}}</div>
                                 </template>
                             </el-table-column>
                             <el-table-column :label="$t('depot_name')"
@@ -61,9 +54,9 @@
                                             >
                                  <template v-slot="{row}">
                                     <div class="d-flex align-middle">
-                                        <span href="#!" class="avatar mr-3">
-                                          <img v-bind:src="row.avatar"/>
-                                        </span>
+                                        <div class="avatar mr-3">
+                                          <img v-bind:src="row.avatar" />
+                                        </div>
                                         <div class="d-flex align-items-center text-body">
                                           <span><strong>{{row.name}}</strong></span>
                                         </div>
@@ -348,8 +341,8 @@ export default {
     font-size: 18px;
 }
 .avatar, .avatar img {
-  height: 40px;
-  width: 40px;
+  height: 48px;
+  width: 48px;
   border-radius: 100%;
 }
 .dateStyle {

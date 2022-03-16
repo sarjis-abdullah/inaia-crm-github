@@ -11,9 +11,11 @@
                     </nav>
                     -->
                 </div>
+                <!--
                 <div class="col-lg-6 col-5 text-right">
                     <base-button size="sm" type="neutral" @click="newCustomer">New Customer</base-button>
                 </div>
+                -->
             </div>
         </base-header>
 
@@ -22,10 +24,10 @@
                 <div class="col">
                     <div class="card">
                         <div class="border-0 card-header">
-                            <h3 class="mb-0">{{ tableTitle }}</h3>
+                          <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" />
                         </div>
 
-                        <el-table class="table-responsive table-flush"
+                        <el-table class="table-hover table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
                             <!-- <el-table-column label="ID"
@@ -42,16 +44,19 @@
                             </el-table-column> -->
 
                             <el-table-column label="Name"
-                                            min-width="300px">
+                                            min-width="200px">
                                 <template v-slot="{row}">
-                                    <a href="#" @click.prevent="() => $router.push('/customers/details/'+row.id)" class="media align-items-center">
-                                        <span class="avatar rounded-circle mr-3">
-                                            <img alt="Im" :src="avatar(row)">
-                                        </span>
+                                    <div class="media align-items-center">
+                                        <div class="avatar mr-3">
+                                            <img v-bind:src="avatar(row)" alt="" />
+                                      </div>
                                         <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
+                                            <div class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</div>
+                                            <div class="name mb-0 text-xs text-muted">
+                                              <i class="fa mr-1" :class="`${row.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.is_verified ? $t('verified') : $t('not_verified') }}
+                                            </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </template>
                             </el-table-column>
 
@@ -62,28 +67,32 @@
                                 </template>
                             </el-table-column> -->
 
-                            <el-table-column label="Contact"
-                                            min-width="210px"
+                            <el-table-column :label="$t('mobile')"
+                                            min-width="160px"
                                             >
                                 <template v-slot="{row}">
-                                    <span>{{getChannelInfo(row.channels, 'mobile') || getChannelInfo(row.channels, 'tel') || 'N/A'}}</span>
-                                    <template v-if="getChannelInfo(row.channels, 'email')">
-                                        <br />
-                                        <span>{{getChannelInfo(row.channels, 'email')}}</span>
-                                    </template>
+                                    <div v-if="getChannelInfo(row.channels, 'mobile')"><i class="fa fa-mobile text-light mr-1"></i>{{getChannelInfo(row.channels, 'mobile')}}</div>
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="Status"
-                                            min-width="170px"
+                          <el-table-column :label="$t('email')"
+                                           min-width="160px"
+                          >
+                            <template v-slot="{row}">
+                              <div v-if="getChannelInfo(row.channels, 'email')"><i class="fa fa-envelope text-light mr-1"></i>{{getChannelInfo(row.channels, 'email')}}</div>
+                            </template>
+                          </el-table-column>
+
+                          <el-table-column label="Status"
+                                            min-width="160px"
                                             prop="is_active"
                                             sortable
                                             >
                                 <template v-slot="{row}">
-                                    <badge class="badge-dot mr-4" type="">
-                                        <i :class="`bg-${row.is_active ? 'success' : 'danger'}`"></i>
-                                        <span class="status">{{row.is_active ? 'active' : 'inactive'}}</span>
-                                    </badge>
+                                  <badge :type="`${row.is_active ? 'success' : 'danger'}`">{{row.is_active ? $t('active') : $t('inactive')}}</badge>
+
+                                  <badge v-if="row.is_locked" type="danger">{{$t('locked')}}</badge>
+
                                 </template>
                             </el-table-column>
 
@@ -94,21 +103,32 @@
                                 </template>
                             </el-table-column> -->
 
-                            <el-table-column min-width="180px" >
+
+                            <el-table-column>
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown ml-2">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+
+                                  <icon-button type="info" @click="gotoDetails(row)"></icon-button>
+
                                 </template>
                             </el-table-column>
+
+                          <!--
+                          <el-table-column min-width="180px" >
+                              <template v-slot="{row}">
+                                  <el-dropdown trigger="click" class="dropdown ml-2">
+                                      <span class="btn btn-sm btn-icon-only text-light">
+                                          <i class="fas fa-ellipsis-v mt-2"></i>
+                                      </span>
+                                      <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
+                                          <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
+                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
+                                          <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
+                                      </el-dropdown-menu>
+                                  </el-dropdown>
+                              </template>
+                          </el-table-column>
+                          -->
                         </el-table>
 
                         <div class="card-footer py-4 d-flex justify-content-end">
@@ -148,6 +168,7 @@
 <script>
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
 
 export default {
@@ -157,7 +178,8 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        IconButton
     },
     data() {
         return {
@@ -220,6 +242,9 @@ export default {
             this.selectedResource= resource
             this.showPopup      = true
         },
+        gotoDetails(resource) {
+          this.$router.push('/customers/details/'+resource.id)
+        },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {
                 this.initiated  = true
@@ -266,13 +291,14 @@ export default {
             return null
         },
         avatar(resource) {
-            if (resource && resource.person_data) {
-                let gender    = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
-                if (gender == 'female' || gender == 'f') {
-                    return '/img/theme/avatar_f.png'
-                }
-            }
-            return '/img/theme/avatar_m.png'
+          if (resource && resource.avatar) return resource.avatar;
+          else if (resource && resource.person_data) {
+              let gender = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
+              if (gender == 'female' || gender == 'f') {
+                  return '/img/theme/avatar_f.png'
+              }
+          }
+          return '/img/theme/avatar_m.png'
         },
         handleSearch(search) {
             if (this.debouced) {
@@ -302,5 +328,13 @@ export default {
 
 .mdi-10 {
     font-size: 18px;
+}
+.avatar {
+  border-radius: 100%;
+  overflow: hidden;
+  align-items: unset;
+}
+.avatar img {
+  object-fit: cover;
 }
 </style>

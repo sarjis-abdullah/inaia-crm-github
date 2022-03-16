@@ -148,6 +148,9 @@ export default {
     depot_value:'Depotwert',
     monthly:'monatlich',
     running_time:'Laufzeit',
-    cancel_contract:'Cancel contract'
+    cancel_contract:'Cancel contract',
+
+    verified: 'verifiziert',
+    not_verified: 'nicht verifiziert',
 
 }
