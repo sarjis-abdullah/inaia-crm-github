@@ -8,7 +8,7 @@
       <detail-list-item :title="$t('proceeds')"><div slot="value"> <i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
-    <PaymentAccount :order="order" v-if="!isOrderPending(order)"/>
+    <PaymentAccount :order="order"/>
   </div>
 </template>
 <script>
