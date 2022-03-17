@@ -185,4 +185,10 @@ export const actions = {
                 return res.data.data.order_status
             })
     },
+    orderGoldGift(context,payload){
+        return this.$axios
+            .post(`${ process.env.golddinarApiUrl }/orders/gift`,payload).then(res=>{
+                return res;
+            })
+    }
 }

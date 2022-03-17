@@ -67,7 +67,7 @@
                     {{$t('total_gold_amount')}}
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ depot.gold_amount }} g</span
+                    >{{ depot.gold_amount/1000 }} g</span
                   >
                 </div>
                 <div class="col-auto">
@@ -82,6 +82,9 @@
 
                     <a class="dropdown-item" href="#">{{
                       $t("make_payment")
+                    }}</a>
+                    <a class="dropdown-item" @click.prevent="addGoldGift">{{
+                      $t("gold_gift")
                     }}</a>
                     <a class="dropdown-item" href="#">{{ $t("details") }}</a>
                   </base-dropdown>
@@ -114,7 +117,7 @@
                     >
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ depot.interval_amount }} €</span
+                    >{{ $n(depot.interval_amount/100) }} €</span
                   >
                   <span class="text-muted"> / {{$t('monthly')}}</span>
                 </div>
@@ -164,6 +167,7 @@
         </div>
       </div>
       <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+      <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>>
       </div>
     </div>
   </div>
@@ -174,6 +178,7 @@ import { mapGetters } from "vuex"
 import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
+import GoldGift from '@/components/Depots/GoldGift';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -187,12 +192,14 @@ export default {
             loaded:false,
             loadedWithError:false,
             client:null,
+            showGoldGift:false,
         }
     },
     components: {
         PageLoader,
         TextError,
-        OrderList
+        OrderList,
+        GoldGift
     },
     computed: {
        ...mapGetters('depots',{
@@ -233,6 +240,12 @@ export default {
             }).finally(()=>{
                 this.loaded = true;
             });
+        },
+        addGoldGift(){
+          this.showGoldGift = true;
+        },
+        onGoldGiftClose(){
+          this.showGoldGift =  false;
         }
     }
 

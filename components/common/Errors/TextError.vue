@@ -1,5 +1,5 @@
 <template>
-    <div class="error-text">{{textError}}</div>
+    <div class="mt-3 mb-3 error-text">{{textError}}</div>
 </template>
 <script>
 export default {
@@ -13,7 +13,7 @@ export default {
 </script>
 <style scoped>
     .error-text {
-        font-size: 1em;
+        font-size: 0.8em;
         color: #f5365c;
         width: 100%;
         text-align: center;

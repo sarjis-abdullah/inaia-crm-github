@@ -168,7 +168,18 @@ export default {
     sell_gold:'Sell gold',
     gold_sold_successfully:'Gold sold successfully',
     Order_sold_unsuccessfully:"We couldn't sell gold due to an error",
-    confirm_complete_order:'Are you sure you want to complete the order with id '
+    confirm_complete_order:'Are you sure you want to complete the order with id ',
+    select_gold_price_date:'Select gold price date',
+    enter_gift_gold_amount:'Please enter gift gold amount',
+    enter_gift_gold_comment:'Please enter comment',
+    gold_gift_successfully:'Gold was gifted successfully',
+    gold_gift_unsuccessfully:"We can't gift gold to an error",
+    gold_price_sell:'Selling gold price',
+    gold_price_buy:'Buying gold price',
+    gold_price_average:'Average gold price',
+    add_valid_date:'Price date is required and needs to be a valid date',
+    add_gold_gift_amount:'Amount is required and must be a number > 0.99 g',
+    add_gold_gift_comment:'Comment is required'
 
 
 }
