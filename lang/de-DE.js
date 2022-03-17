@@ -1,4 +1,38 @@
 export default {
+    customers: 'Kunden',
+    customer: 'Kunde',
+    customer_details: 'Kundendetails',
+    customer_number: 'Kundennr.',
+    number_short: 'Nr.',
+
+    active: 'aktiv',
+    inactive: 'inaktiv',
+    locked: 'gesperrt',
+    activate_account: 'Account aktivieren',
+    deactivate_account: 'Account deaktivieren',
+    unlock_account: 'Account entsperren',
+
+    edit_address: 'Adresse editieren',
+    edit_mobile: 'Mobilnr. editieren',
+    edit_email: 'E-Mail editieren',
+    kyc_documents: 'KYC Dokumente',
+
+    account_data:'Account',
+    person_data:'Personendaten',
+    address_data:'Adresse',
+    contact_data:'Kontakt',
+
+    account_number:'Account nr.',
+    created_at:'Erstellt am',
+    status:'Status',
+    referral_code:'Empfehlungscode',
+    mobile_pin: 'Mobile PIN',
+    not_set: 'nicht gesetzt',
+
+    birthdate: 'Geburtsdatum',
+    birthplace: 'Geburtsort',
+    nationality: 'Nationalität',
+
     date: 'Datum',
     search: 'Suche',
 
@@ -69,7 +103,7 @@ export default {
     order_status_refund:'refund',
     order_status_rejected:'rejected',
     order_status_executed:'executed',
-    status:'Status',
+
     customer_filter_placeholder:'Please enter customer name',
     apply_filter:'Filter anwenden',
     types:'Typen',
@@ -142,7 +176,7 @@ export default {
     Order_paid_successfully:'Order mark as paid successfully!',
     Order_paid_unsuccessfully:'We could not mark the order as paid due to an error',
     see_more:'See more',
-    orders:'Orders',
+    orders:'Aufträge',
     depot_name:'Depot Name',
     client:'Kunde',
     depot_value:'Depotwert',
