@@ -4,6 +4,7 @@ export const ORDER_STATUS_PENDING   = 'order_status_pending'
 export const ORDER_STATUS_PAID      = 'order_status_paid'
 export const ORDER_STATUS_PAYMENT_FAILED      = 'order_status_payment_failed'
 export const ORDER_STATUS_COMPLETED     = 'order_status_completed'
+export const ORDER_STATUS_OUTSTANDING = "order_status_payment_outstanding"
 export function isOrderPending(order) {
     if (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_PENDING) {
         return true
@@ -34,4 +35,10 @@ export function isOrderGoldPurchase(order){
 }
 export function isOrderGoldPurchaseInterval(order){
     return order.order_type.name_translation_key=="gold_purchase_interval";
+}
+export function isOrderGoldSale(order){
+    return order.order_type.name_translation_key=="gold_sell";
+}
+export function isOrderOutstanding(order){
+    return (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_OUTSTANDING)
 }

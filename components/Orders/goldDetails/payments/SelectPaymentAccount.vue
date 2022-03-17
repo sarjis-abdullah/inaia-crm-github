@@ -34,6 +34,10 @@ export default {
         paymentMethod:{
             type:String,
             default:''
+        },
+        initialValue:{
+            type:Number,
+            default:-1
         }
     },
     data (){
@@ -96,8 +100,14 @@ export default {
                         }
                     })
                 }
-                
-                this.selectedPaymentAccount = this.paymentAccounts[0].id;
+                if(this.initialValue!=-1)
+                {
+                    this.selectedPaymentAccount = this.initialValue;
+                }
+                else
+                {
+                    this.selectedPaymentAccount = this.paymentAccounts[0].id;
+                }
                 this.$emit('paymentaccountselected',this.selectedPaymentAccount);
             }).catch(()=>{
                 this.error = this.$t('error_loading_payment_accounts');

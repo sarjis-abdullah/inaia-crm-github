@@ -39,11 +39,20 @@
                             :key="option.id">
                     </Option>
                 </Select>
-               <select-payment-account :account_id="account_id" :paymentMethod="paymentMethodName" v-if="shouldDisplayPaymentAccout" @paymentaccountselected="onPaymentAccountSelected"/>
+               <select-payment-account 
+                    :account_id="account_id" 
+                    :paymentMethod="paymentMethodName" 
+                    v-if="shouldDisplayPaymentAccout" 
+                    @paymentaccountselected="onPaymentAccountSelected"
+                    :initialValue="paymentAccountInitialData"
+               />
                <el-input :placeholder="$t('reference')" v-model="reference"  class="filterElement"/>
             </div>
         </div>
         <div class="mt-3 row d-flex justify-content-center" v-if="isEditable" >
+            <base-button type="link" @click="cancelEdit" v-if="editActive">
+                {{$t('cancel')}}
+            </base-button>
             <base-button type="secondary" @click="editInfo" :disabled="editActive && selectedPaymentMethod==null">
                 <span v-if="!editActive">{{$t('edit_info')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
@@ -109,31 +118,35 @@ export default {
             shouldDisplayPaymentAccout:false,
             paymentMethodName:'',
             reference:null,
-            selectedPaymentAccount:null
+            selectedPaymentAccount:null,
+            paymentAccountInitialData:-1
         }
     },
    mounted:function(){
-        if(this.paymentAccount.payment_account_specs && this.paymentAccount.payment_account_specs.length>0)
-        {
-        
-            console.log(this.paymentAccount);
-            this.paymentAccount.payment_account_specs.forEach((element)=>{
-                if(element.name == 'bank_name')
-                {
-                    this.bank = element.value;
-                }
-                if(element.name == 'iban')
-                {
-                    this.iban = element.value;
-                }
-                if(element.name == 'account_holder')
-                {
-                    this.accountHolder = element.value;
-                }
-            })
-        }
+       
+        this.initView();
     },
     methods:{
+        initView(){
+            if(this.paymentAccount && this.paymentAccount.payment_account_specs && this.paymentAccount.payment_account_specs.length>0)
+            {
+            
+                this.paymentAccount.payment_account_specs.forEach((element)=>{
+                    if(element.name == 'bank_name')
+                    {
+                        this.bank = element.value;
+                    }
+                    if(element.name == 'iban')
+                    {
+                        this.iban = element.value;
+                    }
+                    if(element.name == 'account_holder')
+                    {
+                        this.accountHolder = element.value;
+                    }
+                })
+            }
+        },
         editInfo (){
             if(!this.editActive)
             {
@@ -142,6 +155,10 @@ export default {
 
                 this.$store.dispatch('payment-accounts/getPaymentMethods').then(res=>{
                     this.error = "";
+                    if(this.paymentAccount){
+                        this.selectedPaymentMethod = this.paymentAccount.payment_method.id;
+                        this.setPaymentMethod(this.selectedPaymentMethod);
+                    }
 
                 }).catch(()=>{
                     this.error = this.$t('error_loading_payment_accounts');
@@ -160,13 +177,17 @@ export default {
                 }
                 if(this.reference!='')
                 {
-                    data.reference_data = reference;
+                    data.reference_data = this.reference;
                 }
                 this.$store.dispatch("orders/updatePaymentMethod",{
                     id:this.order.id,
                     data:data
-                }).then(()=>{
-                    this.editActive = false;
+                }).then((res)=>{
+                   
+                    this.$emit('paymentAccountUpdated',res);
+                     this.editActive = false;
+                     this.reference = null;
+                     
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
                 }).catch((err)=>{
                     console.log(err);
@@ -178,6 +199,17 @@ export default {
             let pm = this.paymentMethods.find(x=>x.id==method);
             if(pm && pm.name_translation_key!='bank_transfer')
             {
+                if(this.paymentAccount)
+                {
+                    if(this.paymentAccount.payment_method.id == method)
+                    {
+                        this.paymentAccountInitialData =  this.paymentAccount.id;
+                    }
+                    else
+                    {
+                        this.paymentAccountInitialData = -1;
+                    }
+                }
                 this.paymentMethodName =pm.name_translation_key;
                 this.shouldDisplayPaymentAccout = true;
             }
@@ -191,7 +223,10 @@ export default {
             this.selectedPaymentAccount = paymentAccount;
         },
         shouldDisplayExecutePayment(){
-            return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && (this.paymentAccount.payment_method.name_translation_key=="pps")
+            
+            return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
+            (this.paymentAccount.payment_method.name_translation_key=="pps") &&
+            !this.editActive;
         },
         executePayment(){
             this.$store.dispatch('orders/retryPayment',this.order.id).then((res)=>{
@@ -199,6 +234,9 @@ export default {
             }).catch((err)=>{
                 this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
             })
+        },
+        cancelEdit (){
+            this.editActive = false;
         }
     }
 }

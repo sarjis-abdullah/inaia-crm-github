@@ -13,8 +13,41 @@
             <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key=='gold_withdrawal'"></GoldWithdrawal>
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
-                <CompleteOrderDetail :order="resource" @dateselected="onCompleteDateSelected" @paymentaccountselected="onPaymentAccountSelected"/>
-            </div>
+                <CompleteOrderDetail :order="resource" 
+                    @dateselected="onCompleteDateSelected" 
+                    v-if="isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource)"
+                />
+                <span v-if="isOrderGoldSale(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
+        </div>
+         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.sell">
+                <SellOrderDetail :order="resource" 
+                    @dateselected="onSellGoldDateSelected" 
+                />
+        </div>
+         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
+                <div>
+                    <select-payment-account :account_id="resource.depot.account_id"
+                        v-if="resource"
+                        @paymentaccountselected="setCancelPaymentAccount"
+                    />
+                    {{$t('confirm_cancel_order')}} "{{ resource ? resource.id : '' }}"?
+                </div>
+        </div>
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
+            {{$t('confirm_delete_order')}} "{{ resource ? resource.id : '' }}"?
+
+            <Input :placeholder="$t('order_id_delete_placeholder')" class="mt-4" v-model="deleteOrderId"/>
+        </div>
+        
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.paid">
+            {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
+        </div>
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
+            <select-payment-account :account_id="selectedResource.depot.account_id"
+                @paymentaccountselected="setRefundPaymentAccount"
+            />
+            {{$t('confirm_refund_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
+        </div>
     </div>
 </template>
 
@@ -25,10 +58,13 @@ import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
 import GoldGift from '@/components/Orders/goldDetails/GoldGift';
 import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
 import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
-import { isOrderPending, isOrderPaid } from '~/helpers/order';
+import { isOrderPending, isOrderPaid,isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale } from '~/helpers/order';
 import VueSlickCarousel from 'vue-slick-carousel';
 import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
+import SellOrderDetail from '@/components/Orders/goldDetails/SellOrderDetails';
 import {orderDetailScreens} from '../../helpers/constans';
+import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
+import {Input} from 'element-ui';
 export default {
     components:{
         GoldSale,
@@ -38,7 +74,10 @@ export default {
         GoldTransfer,
         GoldWithdrawal,
         VueSlickCarousel,
-        CompleteOrderDetail
+        CompleteOrderDetail,
+        SelectPaymentAccount,
+        Input,
+        SellOrderDetail
     },
     props: {
         resource: {
@@ -51,15 +90,32 @@ export default {
     },
     data:function(){
         return {
+            deleteOrderId:''
         }
     },
     created (){
         this.orderDetailScreens = orderDetailScreens
     },
+    watch:{
+        deleteOrderId : {
+            handler (){
+                if(this.deleteOrderId == this.resource.id)
+                {
+                    this.$emit("shouldEnableDelete",true);
+                }
+                else{
+                    this.$emit("shouldEnableDelete",false);
+                }
+            }
+        }
+    },
     methods:
     {
         isOrderPending,
         isOrderPaid,
+        isOrderGoldPurchase,
+        isOrderGoldPurchaseInterval,
+        isOrderGoldSale,
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);
@@ -67,8 +123,17 @@ export default {
          onPaymentAccountSelected(account)
          {
              this.$emit('completePaymentAccountSelected',account);
-         }
-    },
+         },
+         onSellGoldDateSelected(date){
+             this.$emit('sellGoldDateSelected',date)
+         },
+         setCancelPaymentAccount(account){
+            this.$emit('cancelpaymentaccountselected',account)
+        },
+        setRefundPaymentAccount(account){
+            this.$emit('refundpaymentaccountselected',account)
+        }
+    }
    
 }
 </script>

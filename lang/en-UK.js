@@ -69,7 +69,7 @@ export default {
     order_status_refund:'refund',
     order_status_rejected:'rejected',
     order_status_executed:'executed',
-
+    order_status_payment_outstanding:'outstanding',
     status:'Status',
     customer_filter_placeholder:'Please enter customer name',
     apply_filter:'Apply filter',
@@ -162,5 +162,10 @@ export default {
     order_refund:'Order refund',
     confirm_refund_order:'Are you sure you want to refund the order with id',
     order_refunded_successfully:'Order refunded successfully',
-    order_refunded_unsuccessfully:"We couldn't refund the order due to an error"
+    order_refunded_unsuccessfully:"We couldn't refund the order due to an error",
+    order_id_delete_placeholder:'Enter order id to confirm delete',
+    sell_gold:'Sell gold',
+    gold_sold_successfully:'Gold sold successfully',
+    Order_sold_unsuccessfully:"We couldn't sell gold due to an error",
+    confirm_complete_order:'Are you sure you want to complete the order with id '
 }

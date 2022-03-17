@@ -165,7 +165,6 @@ export const actions = {
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/change-payment-account?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
             .then(res => {
                 context.commit('update', res.data.data)
-                console.log(res.data.data);
                 return res.data.data;
             })
     },
@@ -177,5 +176,13 @@ export const actions = {
                 console.log(res.data.data);
                 return res.data.data;
             })
-    }
+    },
+    sellGold(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .then(res => {
+                context.commit('update', res.data.data)
+                return res.data.data.order_status
+            })
+    },
 }
