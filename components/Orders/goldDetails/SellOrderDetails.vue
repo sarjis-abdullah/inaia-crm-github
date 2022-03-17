@@ -7,13 +7,13 @@
             @change="getPreview"
             :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
-        <div v-if="isLoading">
-            <h3>{{$t('loading')}}...</h3>
+        <div class="mt-4" v-if="isLoading">
+            <Loader :width="25" :height="25"/>
         </div>
-        <div v-else-if="!isLoading && error!=null">
-            <h5 style="color:#f5365c">{{$t(error)}}</h5>
+        <div v-else-if="!isLoading && error!=null" class="mt-4">
+            <TextError :textError="error"/>
         </div>
-        <div v-else-if="!isLoading && error==null && preview!=null" >
+        <div v-else-if="!isLoading && error==null && preview!=null" class="mt-4">
             <!--<detail-list-item title="ID"><div slot="value">{{preview.order_id}}</div></detail-list-item>-->
             <detail-list-item :title="$t('date')"><div slot="value"> {{$d(new Date(preview.gold_price_date),'short')}}</div></detail-list-item>
             <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
@@ -28,26 +28,30 @@
         </div>
     </div>
 </template>
-<script >
+<script>
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../../helpers/helpers';
 import {DatePicker} from 'element-ui';
+import Loader from '@/components/common/Loader/Loader';
+import TextError from '@/components/common/Errors/TextError';
 export default {
     components:{
-        DetailListItem,
         DatePicker,
+        DetailListItem,
+        Loader,
+        TextError
     },
     props:{
         order:{
             type:Object
         }
     },
-    data:function(){
-        return {
-            selectedDate:null,
-            preview:null,
+    data (){
+        return{
             isLoading:false,
+            selectedDate:null,
             error:null,
+            preview:null
         }
     },
     mounted:function(){
@@ -78,7 +82,6 @@ export default {
         }
     }
 }
-
 </script>
 <style scoped>
 

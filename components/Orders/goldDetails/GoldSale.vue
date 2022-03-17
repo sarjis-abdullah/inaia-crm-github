@@ -5,10 +5,10 @@
       
       <detail-list-item :title="$t('date')"><div slot="value">{{$d(new Date(order.created_at),'short')}}</div></detail-list-item>
       <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
-      <detail-list-item :title="$t('proceeds')"><div slot="value"> <i18n-n :value="order.amount/100"></i18n-n> €</div></detail-list-item>
+      <detail-list-item :title="$t('proceeds')"><div slot="value"> <i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
-    <PaymentAccount :order="order"/>
+    <PaymentAccount :order="order" v-if="!isOrderPending(order)"/>
   </div>
 </template>
 <script>
@@ -17,6 +17,7 @@ import Status from '@/components/Orders/Status';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
+import { isOrderPending } from '~/helpers/order'
 export default {
     components:{
         DetailListItem,
@@ -29,6 +30,9 @@ export default {
             type: Object
         }
     },
+    methods:{
+      isOrderPending
+    }
 
 }
 </script>
