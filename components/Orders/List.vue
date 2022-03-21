@@ -112,7 +112,6 @@
                                 v-if="showPopup"
                                 :selectedScreen="selectedResourceScreen"
                                 @completeDateSelected="setCompleteDate"
-                                @completePaymentAccountSelected="setPaymentAccount"
                                 @cancelpaymentaccountselected ="setCancelPaymentAccount"
                                 @shouldEnableDelete ="onEnableDeletingChanged"
                                 @refundpaymentaccountselected="setRefundPaymentAccount"

@@ -83,6 +83,9 @@
                     <a class="dropdown-item" href="#">{{
                       $t("make_payment")
                     }}</a>
+                    <a class="dropdown-item" @click.prevent="addGoldGift">{{
+                      $t("gold_gift")
+                    }}</a>
                     <a class="dropdown-item" href="#">{{ $t("details") }}</a>
                   </base-dropdown>
                 </div>
@@ -114,7 +117,7 @@
                     >
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ depot.interval_amount }} €</span
+                    >{{ $n(depot.interval_amount/100) }} €</span
                   >
                   <span class="text-muted"> / {{$t('monthly')}}</span>
                 </div>
@@ -164,6 +167,7 @@
         </div>
       </div>
       <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+      <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>>
       </div>
     </div>
   </div>
@@ -187,12 +191,14 @@ export default {
             loaded:false,
             loadedWithError:false,
             client:null,
+            showGoldGift:false,
         }
     },
     components: {
         PageLoader,
         TextError,
-        OrderList
+        OrderList,
+        GoldGift
     },
     computed: {
        ...mapGetters('depots',{
@@ -238,6 +244,12 @@ export default {
             }).finally(()=>{
                 this.loaded = true;
             });
+        },
+        addGoldGift(){
+          this.showGoldGift = true;
+        },
+        onGoldGiftClose(){
+          this.showGoldGift =  false;
         }
     }
 

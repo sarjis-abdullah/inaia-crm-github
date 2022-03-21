@@ -142,5 +142,15 @@ export const actions = {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
+    },
+    getGoldPriceByDate(context,payload)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/historical-price?date=${payload}`)
+                .then(res => {
+                    return res.data.data[0];
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                })
     }
 }
