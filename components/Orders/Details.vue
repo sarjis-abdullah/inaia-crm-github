@@ -4,7 +4,7 @@
             <img :src="resource.logo" class="logo"/>
             <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
         </div>
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail">
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete">
             <GoldSale :order="resource" v-if="resource.order_type.name_translation_key=='gold_sell'"></GoldSale>
             <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key=='gold_purchase' || resource.order_type.name_translation_key=='gold_purchase_interval'"></GoldPurchase>
             <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key=='gold_delivery'"></GoldDelivery>
@@ -13,15 +13,15 @@
             <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key=='gold_withdrawal'"></GoldWithdrawal>
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
-                <CompleteOrderDetail :order="resource" 
-                    @dateselected="onCompleteDateSelected" 
+                <CompleteOrderDetail :order="resource"
+                    @dateselected="onCompleteDateSelected"
                     v-if="isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource)"
                 />
                 <span v-if="isOrderGoldSale(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.sell">
-                <SellOrderDetail :order="resource" 
-                    @dateselected="onSellGoldDateSelected" 
+                <SellOrderDetail :order="resource"
+                    @dateselected="onSellGoldDateSelected"
                 />
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
@@ -34,11 +34,10 @@
                 </div>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
-            {{$t('confirm_delete_order')}} "{{ resource ? resource.id : '' }}"?
-
-            <Input :placeholder="$t('order_id_delete_placeholder')" class="mt-4" v-model="deleteOrderId"/>
+            <h4>{{$tc('confirm_delete_order', resource.id)}}</h4>
+            <Input :placeholder="$t('order_id_delete_placeholder')" class="mt-2" v-model="deleteOrderId"/>
         </div>
-        
+
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.paid">
             {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
@@ -134,7 +133,7 @@ export default {
             this.$emit('refundpaymentaccountselected',account)
         }
     }
-   
+
 }
 </script>
 

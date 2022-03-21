@@ -162,7 +162,7 @@ export default {
     complete_order: 'Complete order',
     delete_order: 'Delete order',
     confirm_order:"Confirm",
-    confirm_delete_order:'Are you sure to delete order with id',
+    confirm_delete_order:'Are you sure to delete order with id `{n}`?',
     confirmation:'Confirmation',
     Order_completed_successfully:'Order completed successfully!',
     Order_completed_unsuccessfully:'We could not complete the order due to an error',

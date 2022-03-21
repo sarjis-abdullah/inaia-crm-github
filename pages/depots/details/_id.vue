@@ -67,7 +67,7 @@
                     {{$t('total_gold_amount')}}
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ depot.gold_amount }} g</span
+                    ><i18n-n :value="depot.gold_amount/1000"></i18n-n> g</span
                   >
                 </div>
                 <div class="col-auto">
@@ -88,7 +88,7 @@
                 </div>
               </div>
               <p class="mt-3 mb-0 text-sm">
-                <span class="text-nowrap">{{$t('depot_value')}}: {{$n((depot.gold_amount/1000)*goldPrice)}} €</span>
+                <span class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="depot.gold_amount/1000*goldPrice"></i18n-n> €</span>
               </p>
             </div>
           </div>

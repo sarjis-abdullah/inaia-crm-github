@@ -7,7 +7,7 @@
                 <DetailListItem :title="$t('gold_amount')"><div slot="value">{{$n(resource.gold_amount/1000)}} g</div></DetailListItem>
                 <DetailListItem :title="$t('course')"><div slot="value">{{$n(goldPrice)}} €</div></DetailListItem>
                 <DetailListItem :title="$t('amount')"><div slot="value">{{$n((resource.gold_amount/1000)*goldPrice)}} €</div></DetailListItem>
-                
+
              </div>
              <div class="list-group list-group-flush" v-if="resource.is_savings_plan==1">
                 <h4 class="mt-4 text-center">{{$t('saving_plan')}}</h4>

@@ -22,8 +22,7 @@
 
                 <el-table class="table-hover table-responsive table-flush"
                         header-row-class-name="thead-light"
-                        :data="data"
-                        @row-click="popupDetails">
+                        :data="data">
                     <el-table-column label="#"
                                    min-width="100px"
                                     prop="id"
@@ -91,13 +90,12 @@
                         </template>
                     </el-table-column>
 
-                    <!--
                     <el-table-column>
                         <template v-slot="{row}">
                             <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
                         </template>
                     </el-table-column>
-                    -->
+
                 </el-table>
 
                 <div class="card-footer py-4 d-flex justify-content-end">
@@ -109,11 +107,11 @@
                                 <span></span>
                             </template>
                             <div>
-                                <Details 
-                                :resource="selectedResource" 
-                                v-if="showPopup" 
-                                :selectedScreen="selectedResourceScreen" 
-                                @completeDateSelected="setCompleteDate" 
+                                <Details
+                                :resource="selectedResource"
+                                v-if="showPopup"
+                                :selectedScreen="selectedResourceScreen"
+                                @completeDateSelected="setCompleteDate"
                                 @completePaymentAccountSelected="setPaymentAccount"
                                 @cancelpaymentaccountselected ="setCancelPaymentAccount"
                                 @shouldEnableDelete ="onEnableDeletingChanged"
@@ -122,37 +120,37 @@
                                 />
                             </div>
                             <template slot="footer">
-                                <base-button type="link" class="ml-auto" @click="backToDetailScreen()" 
+                                <base-button type="link" class="ml-auto" @click="backToDetailScreen()"
                                     v-if="selectedResourceScreen!=orderDetailsSceens.detail">{{$t('cancel')}}
                                 </base-button>
-                                <base-button type="danger" @click="() => removeOrder(selectedResource)" 
-                                    v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)" 
+                                <base-button type="danger" @click="() => removeOrder(selectedResource)"
+                                    v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)"
                                     :disabled="!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete">{{$t('delete_order')}}
                                 </base-button>
-                                <base-button type="danger" @click="() => cancelOrder(selectedResource)" 
+                                <base-button type="danger" @click="() => cancelOrder(selectedResource)"
                                     v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
                                     :disabled="selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel"
                                     >
                                     {{$t('cancel_order')}}
                                 </base-button>
-                                <base-button type="primary" @click="() => markPaidOrder(selectedResource)" 
+                                <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
                                     v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)"
-                                    
+
                                     >
                                     {{$t('mark_as_paid')}}
                                 </base-button>
-                                 <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)" 
+                                 <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
                                     :disabled="shouldDisableCompleteButton()">
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('complete_order')}}</span>
                                     <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
                                  </base-button>
-                                 <base-button type="primary" @click="() => refundOrder(selectedResource)" 
-                                    v-if="selectedResource && shouldDisplayRefundButton(selectedResource)" 
+                                 <base-button type="primary" @click="() => refundOrder(selectedResource)"
+                                    v-if="selectedResource && shouldDisplayRefundButton(selectedResource)"
                                     :disabled="selectedRefundPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.refund">
                                     <span>{{$t('order_refund')}}</span>
                                  </base-button>
-                                  <base-button type="primary" @click="() => sellGold(selectedResource)" 
-                                    v-if="selectedResource && shouldDisplaySellGoldButton(selectedResource)" 
+                                  <base-button type="primary" @click="() => sellGold(selectedResource)"
+                                    v-if="selectedResource && shouldDisplaySellGoldButton(selectedResource)"
                                     :disabled="sellGoldDate==null && selectedResourceScreen==orderDetailsSceens.sell">
                                     <span>{{$t('sell_gold')}}</span>
                                  </base-button>
@@ -381,7 +379,7 @@ export default {
         },
         applyFilter: function(query)
         {
-            
+
             this.page = 1;
             this.filterQuery = query;
         },
@@ -408,7 +406,7 @@ export default {
         },
         shouldDisplayOrderDeleteButton(resource)
         {
-            if((isOrderPending(resource) || isOrderPaymentFailed(resource)) && 
+            if((isOrderPending(resource) || isOrderPaymentFailed(resource)) &&
                 (this.selectedResourceScreen == orderDetailScreens.delete || this.selectedResourceScreen == orderDetailScreens.detail))
             {
                 return true;
@@ -530,7 +528,7 @@ export default {
             return isOrderCompleted(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
         },
         shouldDisplaySellGoldButton(resource){
-            return isOrderPending(resource) && 
+            return isOrderPending(resource) &&
                 (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.sell) &&
                 isOrderGoldSale(resource)
         },
