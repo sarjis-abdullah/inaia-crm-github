@@ -5,8 +5,9 @@
         <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
         
         <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
-        <PaymentAccount :order="order"/>
+        
         <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
+        <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
     </div>
 </template>
 <script>

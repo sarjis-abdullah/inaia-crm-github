@@ -120,10 +120,6 @@ export default {
          {
              this.$emit('completeDateSelected',date);
          },
-         onPaymentAccountSelected(account)
-         {
-             this.$emit('completePaymentAccountSelected',account);
-         },
          onSellGoldDateSelected(date){
              this.$emit('sellGoldDateSelected',date)
          },
