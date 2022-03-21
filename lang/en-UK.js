@@ -1,4 +1,38 @@
 export default {
+    customers: 'Customers',
+    customer: 'Customer',
+    customer_details: 'Customer details',
+    customer_number: 'Customer no.',
+    number_short: 'No.',
+
+    active: 'active',
+    inactive: 'inactive',
+    locked: 'locked',
+    activate_account: 'Activate account',
+    deactivate_account: 'Deactivate account',
+    unlock_account: 'unlock account',
+
+    edit_address: 'Edit address',
+    edit_mobile: 'Edit mobile number',
+    edit_email: 'Edit email',
+    kyc_documents: 'KYC Documents',
+
+    account_data:'Account data',
+    person_data:'Person data',
+    address_data:'Address',
+    contact_data:'Contact',
+
+    account_number:'Account no.',
+    created_at:'Created at',
+    status:'Status',
+    referral_code:'Referral code',
+    mobile_pin: 'Mobile PIN',
+    not_set: 'not set',
+
+    birthdate: 'Birth date',
+    birthplace: 'Birth place',
+    nationality: 'Nationality',
+
     date: 'Date',
     search: 'Search',
 
@@ -70,7 +104,7 @@ export default {
     order_status_rejected:'rejected',
     order_status_executed:'executed',
     order_status_payment_outstanding:'outstanding',
-    status:'Status',
+
     customer_filter_placeholder:'Please enter customer name',
     apply_filter:'Apply filter',
     types:'Types',
@@ -101,6 +135,7 @@ export default {
     transactions:'Transactions',
     account_holder:'Account holder',
     depot_list: 'Depot list',
+    depot_name:'Depot name',
     depot_agio:'Depot agio',
     saving_plan:'Saving plan',
     onetime:'Pay immediately',
@@ -144,14 +179,15 @@ export default {
     Order_paid_unsuccessfully:'We could not mark the order as paid due to an error',
     see_more:'See more',
     orders:'Orders',
-    depot_name:'Depot Name',
     client:'Client',
     depot_value:'Depot value',
     monthly:'monthly',
     running_time:'Duration',
     cancel_contract:'Cancel contract',
+
     verified: 'verified',
     not_verified: 'not verified',
+
     save:'Save',
     bank_account:'Bank account',
     pps:'PPS',

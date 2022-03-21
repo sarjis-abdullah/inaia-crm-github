@@ -51,7 +51,7 @@
               </div>
               <p class="mt-3 mb-0 text-sm">
                 <span class="text-nowrap" v-if="client!=null"
-                  >{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{client.name + ' '+client.person_data.surname}}</a></span
+                  >{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{getCustomerName(client)}}</a></span
                 >
               </p>
             </div>
@@ -214,7 +214,7 @@ export default {
                 this.goldPrice = res;
             })
         }
-        
+
     },
     watch: {
         depotId: {
@@ -227,6 +227,11 @@ export default {
         },
     },
     methods: {
+        getCustomerName(client) {
+          if (client.person_data) return client.name + ' '+client.person_data.surname;
+          else if (client.name) return client.name;
+          else return false;
+        },
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then(()=>{

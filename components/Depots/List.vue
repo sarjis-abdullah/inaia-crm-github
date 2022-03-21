@@ -49,7 +49,7 @@
                             </el-table-column>
                             <el-table-column :label="$t('depot_name')"
                                             prop="name"
-                                            min-width="200px"
+                                            min-width="240px"
                                             sortable
                                             >
                                  <template v-slot="{row}">

@@ -4,7 +4,7 @@
         <base-header class="pb-6">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{ pageTitle }}</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{{ $t('customers') }}</h6>
                     <!--
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <route-breadcrumb/>
@@ -44,12 +44,12 @@
                             </el-table-column> -->
 
                             <el-table-column label="Name"
-                                            min-width="200px">
+                                            min-width="260px">
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
                                         <div class="avatar mr-3">
                                             <img v-bind:src="avatar(row)" alt="" />
-                                      </div>
+                                        </div>
                                         <div class="media-body">
                                             <div class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</div>
                                             <div class="name mb-0 text-xs text-muted">
@@ -60,30 +60,41 @@
                                 </template>
                             </el-table-column>
 
-                            <!-- <el-table-column label="Account No."
-                                            min-width="190px">
+                            <el-table-column label="Account No."
+                                            min-width="160px"
+                                            prop="row.account.account_number"
+                                            sortable>
                                 <template v-slot="{row}">
                                     <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
                                 </template>
-                            </el-table-column> -->
+                            </el-table-column>
 
                             <el-table-column :label="$t('mobile')"
                                             min-width="160px"
                                             >
                                 <template v-slot="{row}">
-                                    <div v-if="getChannelInfo(row.channels, 'mobile')"><i class="fa fa-mobile text-light mr-1"></i>{{getChannelInfo(row.channels, 'mobile')}}</div>
+                                    <div v-if="getChannelInfo(row.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.channels, 'mobile')}}</div>
                                 </template>
                             </el-table-column>
 
-                          <el-table-column :label="$t('email')"
-                                           min-width="160px"
-                          >
-                            <template v-slot="{row}">
-                              <div v-if="getChannelInfo(row.channels, 'email')"><i class="fa fa-envelope text-light mr-1"></i>{{getChannelInfo(row.channels, 'email')}}</div>
-                            </template>
-                          </el-table-column>
+                            <el-table-column :label="$t('email')"
+                                             min-width="160px">
+                              <template v-slot="{row}">
+                                <div v-if="getChannelInfo(row.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.channels, 'email')}}</div>
+                              </template>
+                            </el-table-column>
 
-                          <el-table-column label="Status"
+                            <!--
+                            <el-table-column :label="$t('address')"
+                                             min-width="160px">
+                              <template v-slot="{row}">
+                                <div>{{row.address ? row.address.line1 : ''}}</div>
+                                <div>{{row.address ? row.address.country.name_translation_key : ''}}</div>
+                              </template>
+                            </el-table-column>
+                            -->
+
+                            <el-table-column label="Status"
                                             min-width="160px"
                                             prop="is_active"
                                             sortable
@@ -91,7 +102,7 @@
                                 <template v-slot="{row}">
                                   <badge :type="`${row.is_active ? 'success' : 'danger'}`">{{row.is_active ? $t('active') : $t('inactive')}}</badge>
 
-                                  <badge v-if="row.is_locked" type="danger">{{$t('locked')}}</badge>
+                                  <badge v-if="row.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
 
                                 </template>
                             </el-table-column>
@@ -183,10 +194,7 @@ export default {
     },
     data() {
         return {
-            pageTitle: 'Customers',
-            tableTitle: 'Customer List',
-            data: [
-            ],
+            data: [],
             search: '',
             sort: 'id',
             order: 'desc',
@@ -221,7 +229,7 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
-        }
+        },
     },
     watch: {
         searchQuery: {

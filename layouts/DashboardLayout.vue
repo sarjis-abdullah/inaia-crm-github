@@ -148,9 +148,9 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Customers', path: '/customers' }"/>
-          <sidebar-item :link="{ name: 'Depots', path: '/depots' }"/>
-          <sidebar-item :link="{ name: 'Orders', path: '/orders' }"/>
+          <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
+          <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
+          <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
         </sidebar-item>
 
 
