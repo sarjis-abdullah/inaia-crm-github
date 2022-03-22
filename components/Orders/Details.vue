@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="text-center">
-            <img :src="resource.logo" class="logo"/>
+            <img :src="resource.logo" class="icon"/>
             <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete">
@@ -137,9 +137,9 @@ export default {
 .capitalize {
     text-transform: capitalize
 }
-.logo {
-    width: 80px;
-    height: 80px;
+.icon {
+    width: 90px;
+    height: 90px;
 }
 .title {
 }

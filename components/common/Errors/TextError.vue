@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-3 mb-3 error-text">{{textError}}</div>
+    <div class="my-2 error-text">{{textError}}</div>
 </template>
 <script>
 export default {
@@ -16,7 +16,7 @@ export default {
         font-size: 0.8em;
         color: #f5365c;
         width: 100%;
-        text-align: center;
+        /*text-align: center;*/
         min-height: 20px;
     }
 </style>

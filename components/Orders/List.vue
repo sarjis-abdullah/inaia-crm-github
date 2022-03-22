@@ -580,8 +580,8 @@ export default {
   white-space: nowrap;
 }
 .avatar, .avatar img {
-  height: 40px;
-  width: 40px;
+  height: 44px;
+  width: 44px;
 }
 .dateStyle {
   color:#b5bacc;

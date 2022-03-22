@@ -1,6 +1,6 @@
 <template>
         <div class="text-center">
-            <img :src="resource.avatar" class="logo"/>
+            <img :src="resource.avatar" class="icon"/>
             <h2 class="card-title mt-3 mb-0 title">{{resource.name}}</h2>
              <div class="list-group list-group-flush mt-3">
                  <DetailListItem :title="$t('status')"><div slot="value"><Status :row="resource"/></div></DetailListItem>
@@ -73,9 +73,9 @@ export default {
     text-transform: capitalize
 }
 
-.logo {
-    width: 80px;
-    height: 80px;
+.icon {
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
 }
 </style>

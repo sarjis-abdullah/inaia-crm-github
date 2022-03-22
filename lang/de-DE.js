@@ -46,12 +46,16 @@ export default {
     cards: 'Karten',
     edit_info: 'Daten bearbeiten',
     change_password: 'Passwort ändern',
-    action:'Action',
+    action:'Aktion',
+
+    total_card_balance: 'Kartenguthaben',
+
+    gold_price:'Goldpreis',
+    gold_price_sell:'Verkaufskurs',
+    gold_price_buy:'Ankaufskurs',
     gold_price_per_gram: 'Goldpreis in Gramm',
     total_gold_amount: 'Goldbestand',
     total_gold_value: 'Goldwert',
-    total_card_balance: 'Kartenguthaben',
-
     storage_fee: 'Lagergebühr',
     gold_purchase: 'Goldkauf',
     gold_sale: 'Goldverkauf',
@@ -153,9 +157,8 @@ export default {
     interval_enddate:'Interval end date',
     progress:'Progress',
     last_saving_order_date:'Last saving order date',
-    loading_depot_details:'Loading depot details...',
+    loading_depot_details:'Depotdaten werden geladen...',
     loading_depot_details_error:"Error: We can't load the depot details",
-    depot_detail:'Depot details',
     back:'Back',
     complete_order: 'Auftrag ausführen',
     delete_order: 'Auftrag löschen',
@@ -185,6 +188,7 @@ export default {
 
     verified: 'verifiziert',
     not_verified: 'nicht verifiziert',
+
     save:'Speichern',
     bank_account:'Bankkonto',
     pps:'PPS',
@@ -203,17 +207,10 @@ export default {
     gold_sold_successfully:'Gold sold successfully',
     Order_sold_unsuccessfully:"We couldn't sell gold due to an error",
     confirm_complete_order:'Are you sure you want to complete the order with id ',
-    select_gold_price_date:'Select gold price date',
     enter_gift_gold_amount:'Please enter gift gold amount',
-    enter_gift_gold_comment:'Please enter comment',
     gold_gift_successfully:'Gold was gifted successfully',
     gold_gift_unsuccessfully:"We can't gift gold to an error",
-    gold_price_sell:'Selling gold price',
-    gold_price_buy:'Buying gold price',
-    gold_price_average:'Average gold price',
     add_valid_date:'Price date is required and needs to be a valid date',
-    add_gold_gift_amount:'Amount is required and must be a number > 0.99 g',
-    add_gold_gift_comment:'Comment is required'
-
-
+    add_gold_gift_amount:'Menge muss größer 0 sein.',
+    add_gold_gift_comment:'Comment is required',
 }

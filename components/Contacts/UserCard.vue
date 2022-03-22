@@ -1,86 +1,95 @@
 <template>
   <div>
-    <!-- Page content -->
 
-      <div class="card card-profile shadow">
-        <div class="px-4">
-          <div class="row justify-content-center">
-            <div class="col-lg-3 order-lg-2">
-              <div class="card-profile-image">
-                <a href="#">
-                  <img :src="avatar" class="rounded-circle">
-                </a>
-              </div>
-            </div>
+    <div class="card">
+      <div class="card-body">
+
+        <div class="media align-items-center border-bottom mb-2 pb-4">
+          <div class="profile avatar rounded-circle mr-3 mb-0">
+            <img :src="avatar" alt="" />
           </div>
 
-          <div class="text-center border-0 pt-7 pt-lg-4 pb-0 pb-md-4">
-            <div class="d-flex justify-content-center justify-content-lg-end">
-              <!-- <nuxt-link to="/profile/edit" class="btn btn-sm btn-primary mr-4 ">Edit Data</nuxt-link>
-              <nuxt-link to="/profile/reset-password" class="btn btn-sm btn-primary float-right">Change Password</nuxt-link> -->
-            </div>
-          </div>
-
-          <div class="col-lg-4 order-lg-1">
-            <!--
-            <div class="card-profile-stats d-flex justify-content-center">
-              <div>
-                <span class="heading">22</span>
-                <span class="description">Friends</span>
-              </div>
-              <div>
-                <span class="heading">10</span>
-                <span class="description">Photos</span>
-              </div>
-              <div>
-                <span class="heading">89</span>
-                <span class="description">Comments</span>
-              </div>
-            </div>
-            -->
-          </div>
-
-          <div class="text-center mt-5 mt-md-4 mt-lg-3">
-            <h1>{{ firstName }} {{ surName }}<!--<span class="font-weight-light" v-if="age">, {{ age }}</span>--></h1>
-            <div class="h4 font-weight-300"><i class="ni ni-pin-3 mr-2"></i>{{ address }}</div>
-            <!--
-            <div class="h4 mt-4"><i class="ni business_briefcase-24 mr-2"></i>Solution Manager - Creative Tim Officer</div>
-            <div><i class="ni education_hat mr-2"></i>University of Computer Science</div>
-            -->
-          </div>
-          <div class="mt-5 py-5 border-top text-center">
-            <div class="row justify-content-center">
-              <div class="col-lg-9">
-                <!--
-                <p>An artist of considerable range, Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure. An artist of considerable range.</p>
-                <a href="javascript:;">Show more</a>
-                -->
-
-                <!-- <p>Your Apps and Services</p>
-
-                <div class="row justify-content-center shortcuts">
-                  <a :href="crm" class="col-lg-3 shortcut-item"><span class="shortcut-media avatar avatar-xl bg-gradient-info"><i class="fas fa-users fa-2x"></i></span> <small>CRM</small></a>
-                  <a :href="golddinar" class="col-lg-3 shortcut-item"><span class="shortcut-media avatar avatar-xl bg-gradient-info"><i class="fas fa-coins fa-2x"></i></span> <small>Gold Dinar</small></a>
-                  <a :href="admin" class="col-lg-3 shortcut-item"><span class="shortcut-media avatar avatar-xl bg-gradient-info"><i class="fas fa-cog fa-2x"></i></span> <small>Admin Panel</small></a>
-                </div> -->
-
-              </div>
+          <div>
+            <div class="h1 mb-0">{{ getName }}</div>
+            <div>
+              <span class="mr-2"><i class="fa mr-1" :class="`${info.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ info.is_verified ? $t('verified') : $t('not_verified') }}</span>
             </div>
           </div>
         </div>
+
+        <div class="position-absolute" style="right: 1.5rem; top:1.5rem;">
+          <base-dropdown
+            title-classes="btn btn-sm btn-neutral mr-0"
+            menu-on-right
+            :has-toggle="false"
+          >
+            <template slot="title">
+              <i class="fas fa-ellipsis-h"></i>
+            </template>
+
+            <a class="dropdown-item" href="#">{{ $t("edit_address") }}</a>
+            <a class="dropdown-item" href="#">{{ $t("edit_mobile") }}</a>
+            <a class="dropdown-item" href="#">{{ $t("edit_email") }}</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
+            <a class="dropdown-item" href="#" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
+            <a class="dropdown-item" href="#" v-if="!info.is_active">{{ $t("activate_account") }}</a>
+          </base-dropdown>
+        </div>
+
+
+        <div class="row">
+          <div class="col-sm-6 _col-xl-3" v-if="info.account">
+
+            <div class="account_data text-sm mt-3">
+              <div class="h5 text-muted text-uppercase ls-1">{{$t('account_data')}}</div>
+              <div>{{$t('status')}}:
+                <badge :type="`${info.is_active ? 'success' : 'danger'}`" class="ml-1">{{info.is_active ? $t('active') : $t('inactive')}}</badge>
+                <badge v-if="info.is_locked" type="danger" class="ml-1"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
+              </div>
+              <div>{{$t('created_at')}}: </div>
+              <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
+              <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
+            </div>
+
+          </div>
+          <div class="col-sm-6 _col-xl-3" v-if="info.person_data">
+
+            <div class="person_data text-sm mt-3">
+              <div class="h5 text-muted text-uppercase ls-1">{{$t('person_data')}}</div>
+              <div>{{$t('gender')}}: <i v-if="info.person_data" class="lnir ml-1" :class="`${info.person_data.gender == 'male' ? 'lnir-male rotate-45' : 'lnir-female lnir-rotate-180'}`" /></div>
+              <div>{{$t('birthdate')}}: {{$d(new Date(info.person_data.birthdate),'narrow')}}</div>
+              <div>{{$t('birthplace')}}: </div>
+              <div>{{$t('nationality')}}: </div>
+            </div>
+
+          </div>
+          <div class="col-sm-6 _col-xl-3" v-if="info.address">
+
+            <div class="address text-sm mt-3">
+              <div class="h5 text-muted text-uppercase ls-1">{{$t('address_data')}}</div>
+              <div><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address.line1}}</div>
+              <div v-if="info.address.line2" class="pl-4">{{info.address.line2}}</div>
+              <div><i class="lnir lnir-map mr-2 text-muted" />{{info.address.postal_code}} {{info.address.city}}</div>
+              <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + info.address.country.name_translation_key}}</div>
+            </div>
+
+          </div>
+          <div class="col-sm-6 _col-xl-3" v-if="info.channels">
+            <div class="contact text-sm mt-3">
+              <div class="h5 text-muted text-uppercase ls-1">{{$t('contact_data')}}</div>
+              <div class="text-nowrap"><i class="lnir lnir-mobile-alt-1 mr-2 text-muted" />{{ getChannelInfo('mobile') }}</div>
+              <div class="text-nowrap"><i class="lnir lnir-envelope mr-2 text-muted" />{{ getChannelInfo('email') }}</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <!--
-      <div class="row mt-3">
-        <div class="col-6">
-            <router-link to="/services"><small>Service Dashboard</small></router-link>
-        </div>
-        <div class="col-6 text-right">
-            <router-link to="/logout"><small>Logout</small></router-link>
-        </div>
-      </div>
-      -->
 
+    </div>
 
   </div>
 </template>
@@ -94,36 +103,22 @@ export default {
         }
     },
     computed: {
-        // ...mapGetters({
-        //     auth: "auth/auth",
-        //     account: "auth/account",
-        //     contact: "clients/singleClientData"
-        // }),
-        // crm() {
-        //   return process.env.entryPoints.crm + '?token=' + this.auth
-        // },
-        // admin() {
-        //   return process.env.entryPoints.admin + '?token=' + this.auth
-        // },
-        // golddinar() {
-        //   return process.env.entryPoints.golddinar + '?token=' + this.auth
-        // },
         info() {
-            // return this.contact && this.contact.customer
-            return this.resource && this.resource.customer
+          //console.log('resource', this.resource)
+          return this.resource && this.resource.customer;
+        },
+        getName() {
+          return this.info.name + (this.info.person_data ? ' ' + this.info.person_data.surname : '')
         },
         avatar() {
-            if (this.info) {
-                if (!this.info.avatar && this.info.person_data) {
-                    let gender    = this.info.person_data.gender && this.info.person_data.gender.toLowerCase()
-                    if (gender == 'female' || gender == 'f') {
-                        return '/img/theme/avatar_f.png'
-                    }
-                } else if (this.info.avatar) {
-                    return process.env.s3BucketUri + this.info.avatar
-                }
+          if (this.info && this.info.avatar) return this.info.avatar;
+          else if (this.info && this.info.person_data) {
+            let gender = this.info.person_data.gender ? this.info.person_data.gender.toLowerCase() : ''
+            if (gender == 'female' || gender == 'f') {
+              return '/img/theme/avatar_f.png'
             }
-            return '/img/theme/avatar_m.png'
+          }
+          return '/img/theme/avatar_m.png'
         },
         firstName() {
             return (this.info && this.info.name) || ''
@@ -131,10 +126,15 @@ export default {
         surName() {
             return (this.info && this.info.person_data && this.info.person_data.surname) || ''
         },
-        address() {
-            let city = (this.info && this.info.address && this.info.address.city) || '',
-                country = (this.info && this.info.address && this.info.address.country && this.info.address.country.name_translation_key) || ''
-            return city && country ? city + ', ' + country : city + '' + country
+        getAddress() {
+          return this.info.address ?
+            this.info.address.line1 +
+            (this.info.address.line2 ? "\n" + this.info.address.line2 : '') +
+            (this.info.address.postal_code ? '<br>' + this.info.address.postal_code : '') +
+            (this.info.address.city ? ' ' + this.info.address.city : '') +
+            (this.info.address.region ? '<br>' + this.info.address.region : '') +
+            (this.info.address.country ? '<br>' + this.info.address.country.name_translation_key : '')
+            : ''
         },
         age() {
             let birthDate   = new Date((this.info && this.info.person_data && this.info.person_data.birthdate) || null),
@@ -147,18 +147,36 @@ export default {
             return age
         }
     },
-    // mounted() {
-    //     if (!this.auth || !this.account) {
-    //         this.$router.push('/logout')
-    //     }
-    //     this.initClientData()
-    // },
-    // methods: {
-    //     initClientData() {
-    //         this.$axios.setToken(`Bearer ${ this.auth }`)
-    //         this.$store.dispatch("clients/clientDetailsData", this.account.id)
-    //     },
-    // }
+    methods: {
+      getChannelInfo(type) {
+        let channel = this.info.channels && this.info.channels.length && this.info.channels.find( c => c.type.value == type )
+        if (channel) {
+          return channel.value
+        }
+        return null
+      }
+
+    }
 
 }
 </script>
+
+<style scoped>
+
+  .profile {
+    width: 90px;
+    min-width: 90px;
+    height: 90px;
+    min-height: 90px;
+    overflow: hidden;
+    align-items: unset;
+  }
+  .profile img {
+    object-fit: cover;
+  }
+  .rotate-45 {
+    filter: none;
+    transform: rotate(45deg);
+  }
+
+</style>

@@ -1,30 +1,52 @@
 <template>
     <modal :show.sync="showModal" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onClose" :allowOutSideClose="false">
         <template slot="header" class="pb-0">
-            <h5 class="modal-title" id="exampleModalLabel">{{$t('gold_gift')}}</h5>           
+          <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+          <span></span>
         </template>
         <div>
-            <div class="mb-4 text-center">
-            <img src="/img/theme/gold-gift.png" class="logo"/>
+            <div class="text-center">
+              <img src="/img/theme/gold-gift.png" class="icon"/>
+              <h2 class="card-title mt-3 mb-0 title">{{$t('gold_gift')}}</h2>
             </div>
-            <div class="dflex alignItemsCenter justifyContentCenter mt-3">
-                <DatePicker class="filterElement" v-model="priceDate" :placeholder="$t('select_gold_price_date')" @change="getPrice"/>
-                <TextError :textError="$t(validationError.date)" v-if="validationError.date!=null"/>
-                <Input class="filterElement" v-model="amount" :placeholder="$t('enter_gift_gold_amount')" type="number" @change="onAmountChange"/>
-                <TextError :textError="$t(validationError.amount)" v-if="validationError.amount!=null"/>
-                <Input class="filterElement" v-model="comment" :placeholder="$t('enter_gift_gold_comment')"/>
-                <TextError :textError="$t(validationError.comment)" v-if="validationError.comment!=null"/>
+            <div class="mt-4 list-group list-group-flush" v-if="!isLoading && error==null && currentPrice!=null">
+              <detail-list-item :title="$t('gold_price')"><div slot="value">{{$n(currentPrice.au_avg)}} €</div></detail-list-item>
+              <!--
+              <detail-list-item :title="$t('gold_price_sell')"><div slot="value">{{$n(currentPrice.au_bid)}} €</div></detail-list-item>
+              <detail-list-item :title="$t('gold_price_buy')"><div slot="value">{{$n(currentPrice.au_ask)}} €</div></detail-list-item>
+              <detail-list-item :title="$t('gold_price_average')"><div slot="value">{{$n(currentPrice.au_avg)}} €</div></detail-list-item>
+              -->
             </div>
+            <div class="mt-4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <div class="text-sm">{{ $t('date') }}</div>
+                      <DatePicker class="filterElement mb-0" v-model="priceDate" placeholder="" @change="getPrice"/>
+                      <TextError :textError="$t(validationError.date)" v-if="validationError.date!=null"/>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <div class="text-sm">{{ $t('gold_amount') }}</div>
+                      <Input class="filterElement mb-0" v-model="amount" :placeholder="$t('0')" type="number" @change="onAmountChange"/>
+                      <TextError :textError="$t(validationError.amount)" v-if="validationError.amount!=null"/>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-sm">{{ $t('comment') }}
+                  <Input class="filterElement" v-model="comment" />
+                  <TextError :textError="$t(validationError.comment)" v-if="validationError.comment!=null"/>
+                </div>
+
+            </div>
+
             <div class="mt-4" v-if="isLoading">
                 <Loader/>
             </div>
             <div class="mt-4" v-if="!isLoading && error!=null">
                 <TextError :textError="error"/>
-            </div>
-            <div class="mt-4 list-group list-group-flush" v-if="!isLoading && error==null && currnetPrice!=null">
-                <detail-list-item :title="$t('gold_price_sell')"><div slot="value">{{$n(currnetPrice.au_bid)}} €</div></detail-list-item>
-                <detail-list-item :title="$t('gold_price_buy')"><div slot="value">{{$n(currnetPrice.au_ask)}} €</div></detail-list-item>
-                <detail-list-item :title="$t('gold_price_average')"><div slot="value">{{$n(currnetPrice.au_avg)}} €</div></detail-list-item>
             </div>
         </div>
         <template slot="footer">
@@ -70,7 +92,7 @@ export default {
             isSubmitting:false,
             isLoading:false,
             error:null,
-            currnetPrice:null,
+            currentPrice:null,
             validationError:{
                 date:null,
                 amount:null,
@@ -119,7 +141,7 @@ export default {
             this.error = null;
             this.isLoading = true;
             this.$store.dispatch('depots/getGoldPriceByDate',formatDateToApiFormat(this.priceDate)).then(res=>{
-                this.currnetPrice = res;
+                this.currentPrice = res;
             }).catch(err=>{
                 this.error = 'cant_load_preview'
             }).finally(()=>{
@@ -127,7 +149,7 @@ export default {
             })
         },
         onAmountChange(value){
-            if(!isNaN(value) && value*1000>=999)
+            if(!isNaN(value) && value>=1)
             {
                 this.validationError.amount = null;
             }
@@ -137,13 +159,13 @@ export default {
             }
         }
     },
-    
+
 }
 </script>
 <style scoped>
-.logo {
-    width: 120px;
-    height: 120px;
+.icon {
+    width: 90px;
+    height: 90px;
 }
 .filterElement {
   margin-bottom: 15px;
