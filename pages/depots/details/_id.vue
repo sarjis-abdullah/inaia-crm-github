@@ -178,7 +178,7 @@ import { mapGetters } from "vuex"
 import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
-import GoldGift from "../../../components/Depots/GoldGift";
+import GoldGift from "@/components/Depots/GoldGift";
 export default {
     layout: 'DashboardLayout',
     props: {
