@@ -116,6 +116,8 @@
                                 @shouldEnableDelete ="onEnableDeletingChanged"
                                 @refundpaymentaccountselected="setRefundPaymentAccount"
                                 @sellGoldDateSelected ="setSellGoldDate"
+                                @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
+                                @shippmentDetailsChanged="onShippmentDetailsChanged"
                                 />
                             </div>
                             <template slot="footer">
@@ -167,7 +169,7 @@ import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'elemen
 import Details from '@/components/Orders/Details'
 import Status from '@/components/Orders/Status';
 import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isOrderGoldPurchase,isOrderCompleted,isOrderGoldPurchaseInterval,isOrderOutstanding,isOrderGoldSale } from '~/helpers/order'
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isOrderGoldPurchase,isOrderCompleted,isOrderGoldPurchaseInterval,isOrderOutstanding,isOrderGoldSale,isOrderDelivery } from '~/helpers/order'
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
@@ -223,7 +225,9 @@ export default {
             selectedCancelPaymentAccount:null,
             selectedRefundPaymentAccount:null,
             enableDeleting:false,
-            sellGoldDate:null
+            sellGoldDate:null,
+            shippmentDetails:null,
+            chargeShippmentFee:true,
         }
     },
     computed: {
@@ -417,7 +421,9 @@ export default {
         },
         shouldDisplayOrderCompleteButton(resource)
         {
-            return (isOrderPaid(resource) || isOrderOutstanding(resource)) && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail);
+            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isOrderDelivery(resource))) 
+            && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
+            ;
         },
         completeOrder(resource)
         {
@@ -434,6 +440,18 @@ export default {
                 if(isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
                 {
                     data.data = {price_date:this.completeOrderInfo.date}
+                }
+                if(isOrderDelivery(resource))
+                {
+                    data.data = {charge_delivery_cost:this.chargeShippmentFee};
+                    if(this.shippmentDetails){
+                        data.data.shipping_company = this.shippmentDetails.shippmentCompany;
+                        data.data.shipping_number = this.shippmentDetails.shippmentNumber;
+                        if(this.shippmentDetails.trackingLink)
+                        {
+                            data.data.tracking_link = this.shippmentDetails.trackingLink;
+                        }
+                    }
                 }
                 this.$store
                 .dispatch('orders/complete', data)
@@ -469,9 +487,9 @@ export default {
         },
         refundOrder(resource)
         {
-            if(this.selectedResourceScreen != orderDetailScreens.paid)
+            if(this.selectedResourceScreen != orderDetailScreens.refund)
             {
-                this.selectedResourceScreen = orderDetailScreens.paid;
+                this.selectedResourceScreen = orderDetailScreens.refund;
             }
             else{
                 let data = {
@@ -504,6 +522,13 @@ export default {
                     if(!this.completeOrderInfo || !this.completeOrderInfo.date)
                     {
                         return true;
+                    }
+                }
+                if(isOrderDelivery(this.selectedResource))
+                {
+                    if(this.shippmentDetails)
+                    {
+                        return !this.shippmentDetails.isValid();
                     }
                 }
             }
@@ -561,6 +586,16 @@ export default {
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_sold_unsuccessfully')})
                 })
             }
+        },
+        onShippmentFeeChargeChanged(value)
+        {
+            this.chargeShippmentFee = value;
+
+        },
+        onShippmentDetailsChanged(value)
+        {
+            this.shippmentDetails = value;
+            
         }
     }
 }

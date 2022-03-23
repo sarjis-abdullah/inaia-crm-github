@@ -213,7 +213,12 @@ export default {
     gold_price_average:'Average gold price',
     add_valid_date:'Price date is required and needs to be a valid date',
     add_gold_gift_amount:'Amount is required and must be a number > 0.99 g',
-    add_gold_gift_comment:'Comment is required'
-
+    add_gold_gift_comment:'Comment is required',
+    include_delivery_fee: 'Charge shippment fee',
+    add_shippment_details: 'Add shippment details',
+    shippment_company:'Shippment company',
+    shippment_number:'Shippment number',
+    tracking_link:'Tracking link',
+    enter_a_valid_url:'Please enter a valid URL',
 
 }

@@ -7,3 +7,7 @@ export const orderDetailScreens = {
     refund:'refund',
     sell:"sell"
 }
+export const events = {
+    shippmentFeeChargeChanged:'shippmentFeeChargeChanged',
+    addShippmentCanceled: 'addShippmentCanceled'
+}

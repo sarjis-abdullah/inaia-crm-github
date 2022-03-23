@@ -7,6 +7,7 @@
 
         <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
         <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
+        <ShipmentDetails v-if="order.order_shipping_details" :shippmentDetails="order.order_shipping_details" :isNew="false" :order_id="order.id"/>
     </div>
 </template>
 <script>
@@ -15,12 +16,14 @@ import Status from '@/components/Orders/Status';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
+import ShipmentDetails from '@/components/Orders/goldDetails/ShipmentDetails';
 export default {
     components:{
         DetailListItem,
         Status,
         PaymentAccount,
-        Transactions
+        Transactions,
+        ShipmentDetails
     },
     props: {
         order: {
