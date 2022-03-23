@@ -175,7 +175,7 @@ export default {
                 {
                     data.payment_account_id = this.selectedPaymentAccount;
                 }
-                if(this.reference!='')
+                if(this.reference)
                 {
                     data.reference_data = this.reference;
                 }
