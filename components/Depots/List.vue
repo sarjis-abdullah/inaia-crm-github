@@ -1,158 +1,145 @@
 <template>
     <div>
 
-        <base-header class="pb-6">
-            <div class="row align-items-center py-4">
-                <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{this.pageTitle}}</h6>
-                    <!--
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                        <route-breadcrumb/>
-                    </nav>
-                    -->
-                </div>
-                <div class="col-lg-6 col-5 text-right">
-                    <!-- <base-button size="sm" type="neutral">New</base-button> -->
-                </div>
-            </div>
-        </base-header>
-
-        <div class="container-fluid mt--6">
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header">
-                          <div class="row align-items-center">
-                            <div class="col-8">
-                              <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById"/>
-                            </div>
-                            <div class="col-4 text-right">
-                              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
-                              </button>
-                            </div>
-                          </div>
-
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                      <div class="row align-items-center">
+                        <div class="col-8">
+                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
+                          <h5 v-else class="h3 mb-0">{{ $t('depots') }}</h5>
                         </div>
-                        <depot-filter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
-                        <el-table class="table-hover table-responsive table-flush"
-                                header-row-class-name="thead-light"
-                                :data="data"
-                                @row-click="gotoDetails">
-                            <el-table-column label="#"
-                                            min-width="120px"
-                                            prop="id"
-                                            >
-                                <template v-slot="{row}">
-                                    <div>{{row.id}}</div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column :label="$t('depot_name')"
-                                            prop="name"
-                                            min-width="240px"
-                                            sortable
-                                            >
-                                 <template v-slot="{row}">
-                                    <div class="d-flex align-middle">
-                                        <div class="avatar mr-3">
-                                          <img v-bind:src="row.avatar" />
-                                        </div>
-                                        <div class="d-flex align-items-center text-body">
-                                          <span><strong>{{row.name}}</strong></span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('total_gold_amount')"
-                                            prop="gold_amount"
-                                            min-width="160px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status">{{$n(row.gold_amount/1000)}} g</span>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('saving_plan')"
-                                            prop="is_savings_plan"
-                                            min-width="160px"
-                                            >
-                                    <template v-slot="{row}">
-                                        <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
-                                        <div v-if="row.is_savings_plan==1">
-                                            <div>{{$n(row.interval_amount)}} €</div>
-                                            <div class="dateStyle">{{$d(new Date(row.interval_startdate))}} - {{$d(new Date(row.interval_enddate))}}</div>
-                                        </div>
-                                    </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('depot_agio')"
-                                             prop="agio"
-                                             min-width="160px"
-                            >
-                              <template v-slot="{row}">
-                                <span>{{$n(row.agio)}} €</span>
-                                <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
-                              </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('status')"
-                                            prop="status.name_translation_key"
-                                            min-width="160px"
-                                            >
-                                     <template v-slot="{row}">
-                                        <Status :row="row"/>
-                                     </template>
-                            </el-table-column>
-
-                            <!--
-                            <el-table-column>
-                                <template v-slot="{row}">
-
-                                  <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
-                                  <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
-
-                                </template>
-                            </el-table-column>
-                            -->
-                        </el-table>
-
-                        <div class="card-footer py-4 d-flex justify-content-end">
-                            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                        <div class="col-4 text-right">
+                          <button v-if="accountId==0" @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                            <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                          </button>
                         </div>
-
-                        <modal :show.sync="showPopup">
-                            <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Depot details</h5>
-                            </template>
-                            <div>
-                                <Details :resource="selectedResource" :productClasses="productClasses" v-if="showPopup" />
-                            </div>
-                            <template slot="footer">
-                                <!--<base-button type="secondary" @click="showPopup = false">Close</base-button>-->
-                                <base-button type="primary" @click="() => $router.push('/depots/details/'+selectedResource.id)">{{$t('see_more')}}</base-button>
-                            </template>
-                        </modal>
-
-                        <!--
-                        <modal :show.sync="showConfirm">
-                            <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
-                            </template>
-                            <div>
-                                Are you sure to delete depot with id "{{ selectedResource ? selectedResource.id : '' }}"?
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showConfirm = false">Close</base-button>
-                                <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
-                            </template>
-                        </modal>
-                        -->
+                      </div>
 
                     </div>
+
+                    <depot-filter v-if="accountId==0" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
+
+                    <el-table class="table-hover table-responsive table-flush"
+                            header-row-class-name="thead-light"
+                            :data="data">
+                        <el-table-column label="#"
+                                        min-width="120px"
+                                        prop="id"
+                                        >
+                            <template v-slot="{row}">
+                                <div>{{row.id}}</div>
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('depot_name')"
+                                        prop="name"
+                                        min-width="240px"
+                                        sortable
+                                        >
+                             <template v-slot="{row}">
+                                <div class="d-flex align-middle">
+                                    <div class="avatar mr-3">
+                                      <img v-bind:src="row.avatar" />
+                                    </div>
+                                    <div class="d-flex align-items-center text-body">
+                                      <span><strong>{{row.name}}</strong></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column :label="$t('total_gold_amount')"
+                                        prop="gold_amount"
+                                        min-width="160px"
+                                        sortable>
+                            <template v-slot="{row}">
+                                <span class="status">{{$n(row.gold_amount/1000)}} g</span>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column :label="$t('saving_plan')"
+                                        prop="is_savings_plan"
+                                        min-width="160px"
+                                        >
+                                <template v-slot="{row}">
+                                    <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
+                                    <div v-if="row.is_savings_plan==1">
+                                        <div>{{$n(row.interval_amount)}} €</div>
+                                        <div class="dateStyle">{{$d(new Date(row.interval_startdate))}} - {{$d(new Date(row.interval_enddate))}}</div>
+                                    </div>
+                                </template>
+                        </el-table-column>
+
+                        <el-table-column :label="$t('depot_agio')"
+                                         prop="agio"
+                                         min-width="160px"
+                        >
+                          <template v-slot="{row}">
+                            <span>{{$n(row.agio)}} €</span>
+                            <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
+                          </template>
+                        </el-table-column>
+
+                        <el-table-column :label="$t('status')"
+                                        prop="status.name_translation_key"
+                                        min-width="160px"
+                                        >
+                                 <template v-slot="{row}">
+                                    <Status :row="row"/>
+                                 </template>
+                        </el-table-column>
+
+                        <el-table-column>
+                            <template v-slot="{row}">
+
+                              <icon-button type="info" @click="() => gotoDetails(row)"></icon-button>
+                              <!--
+                              <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                              <icon-button type="cancel" @click="() => removeConfirm(row)"></icon-button>
+                              -->
+
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+
+                    <div class="card-footer py-4 d-flex justify-content-end">
+                        <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                    </div>
+
+                    <modal :show.sync="showPopup">
+                        <template slot="header">
+                            <h5 class="modal-title" id="exampleModalLabel">Depot details</h5>
+                        </template>
+                        <div>
+                            <Details :resource="selectedResource" :productClasses="productClasses" v-if="showPopup" />
+                        </div>
+                        <template slot="footer">
+                            <!--<base-button type="secondary" @click="showPopup = false">Close</base-button>-->
+                            <base-button type="primary" @click="() => $router.push('/depots/details/'+selectedResource.id)">{{$t('see_more')}}</base-button>
+                        </template>
+                    </modal>
+
+                    <!--
+                    <modal :show.sync="showConfirm">
+                        <template slot="header">
+                            <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                        </template>
+                        <div>
+                            Are you sure to delete depot with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                        </div>
+                        <template slot="footer">
+                            <base-button type="secondary" @click="showConfirm = false">Close</base-button>
+                            <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
+                        </template>
+                    </modal>
+                    -->
+
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 <script>
@@ -175,6 +162,12 @@ export default {
         IconButton,
         DepotFilter,
         Status
+    },
+    props:{
+      accountId:{
+        type:Number,
+        default:0
+      }
     },
     data() {
         return {
@@ -239,7 +232,13 @@ export default {
         },
         fetchList(pageQuery) {
             if (!this.initiated) {
-                this.initiated  = true
+                this.initiated  = true;
+                if(this.accountId!==0) {
+                  if(!pageQuery.includes('&account_id=')) {
+                    pageQuery+='&account_id='+this.accountId;
+                  }
+                }
+
                 this.$store
                     .dispatch("depots/fetchList", pageQuery)
                     .then(response => {
@@ -301,15 +300,15 @@ export default {
        doSearchById(value) {
            if(value)
            {
-               this.$store
-                    .dispatch("depots/fetchList", "&name_or_number="+value)
-                    .then(response => {
-                        this.data = response.data.data
+             this.$store
+                  .dispatch("depots/fetchList", "&name_or_number="+value)
+                  .then(response => {
+                      this.data = response.data.data
 
-                        this.totalTableData = response.data.meta.total
-                    }).catch(() => {
-                        this.data = [];
-                    })
+                      this.totalTableData = response.data.meta.total
+                  }).catch(() => {
+                      this.data = [];
+                  })
            }
            else
            {

@@ -102,12 +102,6 @@ import { mapGetters,mapMutations } from "vuex";
 import {formatDateToApiFormat} from '../../helpers/helpers';
 import moment from 'moment'
 export default {
-  props:{
-    showFilter:{
-      type:Boolean,
-      default:false
-    }
-  },
   components:{
     Badge,
     Select,
@@ -116,6 +110,12 @@ export default {
     Autocomplete,
     Form,
     FormItem
+  },
+  props:{
+    showFilter:{
+      type:Boolean,
+      default:false
+    },
   },
   data:function(){
     return {
@@ -137,7 +137,6 @@ export default {
 
   },
   mounted(){
-
   },
   computed :{
    ...mapGetters('clients',{
@@ -318,7 +317,7 @@ export default {
         const query = this.quiryBuilder();
         this.$emit('filter',query)
       }
-      
+
     },
     removeDate:function()
     {

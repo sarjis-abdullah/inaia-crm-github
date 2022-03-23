@@ -28,12 +28,17 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
-          <div class="card bg-gradient-primary border-0">
+          <div class="card border-0">
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0 text-white-50">PPS Master Account</h5>
-                  <span class="h2 font-weight-bold mb-0 text-white">{{$n(inaiaMasterAccountBalance)}} €</span>
+                  <div class="media">
+                    <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
+                    <div class="media-body">
+                      <h5 class="card-title text-uppercase text-muted mb-0">PPS Master Account</h5>
+                      <span class="h2 font-weight-bold mb-0">{{$n(inaiaMasterAccountBalance)}} €</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="col-auto">
                   <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
@@ -49,9 +54,9 @@
                   </base-dropdown>
                 </div>
               </div>
-              <p class="mt-3 mb-0 text-sm">
-                <span class="text-nowrap text-white">IBAN {{inaiaMasterAccountIban}}</span>
-              </p>
+              <div class="mt-3 mb-0 text-sm">
+                IBAN: <span class="text-nowrap iban">{{inaiaMasterAccountIban}}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -418,9 +423,10 @@
       this.initBigChart(0);
       this.$store.dispatch('banking-account/getInaiaBankingAccountInfo').then(res=>{
         this.inaiaMasterAccountBalance = res.balance/100;
-        this.inaiaMasterAccountIban = res.iban;
+        this.inaiaMasterAccountIban = res.iban.match(/.{1,4}/g).join(' ');
       })
     }
   };
 </script>
-<style></style>
+<style>
+</style>

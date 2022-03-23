@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="text-center">
-            <img :src="resource.logo" class="logo"/>
+            <img :src="resource.logo" class="icon"/>
             <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
         </div>
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete">
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete || selectedScreen==orderDetailScreens.cancel">
             <GoldSale :order="resource" v-if="resource.order_type.name_translation_key=='gold_sell'"></GoldSale>
             <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key=='gold_purchase' || resource.order_type.name_translation_key=='gold_purchase_interval'"></GoldPurchase>
             <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key=='gold_delivery'"></GoldDelivery>
@@ -31,11 +31,13 @@
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
                 <div>
-                    <select-payment-account :account_id="resource.depot.account_id"
-                        v-if="resource"
-                        @paymentaccountselected="setCancelPaymentAccount"
-                    />
-                    {{$t('confirm_cancel_order')}} "{{ resource ? resource.id : '' }}"?
+                  <h4>{{$tc('confirm_cancel_order', resource.id)}}</h4>
+
+                  <div class="mt-4 mb-1">{{ $t('choose_payment_account_for_payback') }}:</div>
+                  <select-payment-account :account_id="resource.depot.account_id"
+                                          v-if="resource"
+                                          @paymentaccountselected="setCancelPaymentAccount"
+                  />
                 </div>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
@@ -47,10 +49,10 @@
             {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
-            <select-payment-account :account_id="selectedResource.depot.account_id"
+            <select-payment-account :account_id="resource.depot.account_id"
                 @paymentaccountselected="setRefundPaymentAccount"
             />
-            {{$t('confirm_refund_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
+            {{$t('confirm_refund_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
     </div>
 </template>
@@ -153,9 +155,9 @@ export default {
 .capitalize {
     text-transform: capitalize
 }
-.logo {
-    width: 80px;
-    height: 80px;
+.icon {
+    width: 90px;
+    height: 90px;
 }
 .title {
 }

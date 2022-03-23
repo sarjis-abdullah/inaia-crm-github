@@ -9,6 +9,7 @@
                         <div class="d-flex align-items-center">
                           <div class="amount mb-0 mr-2">{{$n(account.amount/100)}} €</div>
                           <div>
+                            <Badge type="success" v-if="account.status.name_translation_key=='completed'" >{{$t(account.status.name_translation_key)}}</Badge>
                             <Badge type="danger" v-if="account.status.name_translation_key=='failed'" >{{$t(account.status.name_translation_key)}}</Badge>
                             <Badge type="secondary" v-if="account.status.name_translation_key=='pending'" >{{$t(account.status.name_translation_key)}}</Badge>
                             <Badge type="warning" v-if="account.status.name_translation_key=='rejected'" >{{$t(account.status.name_translation_key)}}</Badge>
@@ -17,9 +18,9 @@
                     </div>
                 </template>
                 <div class="list-group list-group-flush">
-                    <PaymentAccountItem 
-                    :paymentAccount="account.payment_account" 
-                    :isEditable="activateEdit" 
+                    <PaymentAccountItem
+                    :paymentAccount="account.payment_account"
+                    :isEditable="activateEdit"
                     :account_id="order.depot.account_id" :order="order"
                     @paymentAccountUpdated="onPaymentAccountUpdated"
                     />
@@ -73,7 +74,7 @@ export default {
                     console.log(res);
                     this.paymentAccounts.push(res);
                     console.log(this.paymentAccounts);
-                    
+
                 }).finally(()=>{
                     this.loading = false;
                 })
