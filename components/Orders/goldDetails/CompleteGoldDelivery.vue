@@ -19,6 +19,7 @@ import { Checkbox } from 'element-ui';
 import { events } from '~/helpers/constans';
 import ShipmentDetails from '@/components/Orders/goldDetails/ShipmentDetails';
 import BaseButton from '../../argon-core/BaseButton.vue';
+import { validURL } from '../../../helpers/helpers';
 export default {
     components:{
         Checkbox,
@@ -44,6 +45,10 @@ export default {
                     if(this.shippmentCompany && this.shippmentNumber)
                     {
                         return true;
+                    }
+                    if(this.trackingLink && !validURL(this.trackingLink))
+                    {
+                        return false;
                     }
                     return false;
                 }

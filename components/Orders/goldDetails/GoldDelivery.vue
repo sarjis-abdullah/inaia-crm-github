@@ -7,7 +7,18 @@
 
         <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
         <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
-        <ShipmentDetails v-if="order.order_shipping_details" :shippmentDetails="order.order_shipping_details" :isNew="false" :order_id="order.id"/>
+         <h4 class="mt-4 text-center" v-if="order.order_shipping_details">{{$t('shipping_details')}}</h4>
+         <collapse multipleActive v-if="order.order_shipping_details">
+            <collapse-item>
+                <template v-slot:title>
+                    <h5 class="type">{{$t('shipping_details')}}</h5>
+                </template>
+                <div class="list-group list-group-flush">
+                    <ShipmentDetails  :shippmentDetails="order.order_shipping_details" :isNew="false" :order_id="order.id"/>
+                </div>
+            </collapse-item>
+        </collapse>   
+        
     </div>
 </template>
 <script>
@@ -17,13 +28,17 @@ import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
 import ShipmentDetails from '@/components/Orders/goldDetails/ShipmentDetails';
+import Collapse from '@/components/argon-core/Collapse/Collapse';
+import CollapseItem from '@/components/argon-core/Collapse/CollapseItem';
 export default {
     components:{
         DetailListItem,
         Status,
         PaymentAccount,
         Transactions,
-        ShipmentDetails
+        ShipmentDetails,
+        Collapse,
+        CollapseItem
     },
     props: {
         order: {

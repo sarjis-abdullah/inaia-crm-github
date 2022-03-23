@@ -1,17 +1,19 @@
 <template>
-    <div class="d-flex flex-column align-items-center justify-content-center">
-        <div :v-if="isEditing || isNew">
+    <div>
+        <div v-if="isEditing || isNew"  class="d-flex flex-column align-items-center justify-content-center">
             <Input v-model="shippmentCompany" :placeholder="$t('shippment_company')" class="mt-4" @change="onCompanyNameChanged"/>
             <Input v-model="shippmentNumber" :placeholder="$t('shippment_number')" class="mt-4" @change="onCompanyNumberChanged"/>
             <Input v-model="trackingLink" :placeholder="$t('tracking_link')" class="mt-4" @change="onTrackingLinkChanged"/>
             <TextError :textError="linkError"/>
         </div>
-        <div :v-if="!isNew">
-            <detail-list-item :title="$t('shippment_company')"><div slot="value">{{shippmentDetails ? shippmentDetails.shipping_company : ''}}</div></detail-list-item>
+        <div   class="list-group list-group-flush" v-if="!isEditing && !isNew">
+            <detail-list-item :title="$t('shippment_company')" ><div slot="value">{{shippmentDetails ? shippmentDetails.shipping_company : ''}}</div></detail-list-item>
+            <detail-list-item :title="$t('shippment_number')" ><div slot="value">{{shippmentDetails ? shippmentDetails.shipping_number : ''}}</div></detail-list-item>
+            <detail-list-item :title="$t('tracking_link')" ><div slot="value">{{shippmentDetails ? shippmentDetails.tracking_link : ''}}</div></detail-list-item>
         </div>
-        <div class="row justify-content-end">
+        <div class="row justify-content-center">
              <base-button type="link" @click="() => cancelEdit()"
-                :v-if="isEditing || isNew">
+                v-if="isEditing || isNew">
                 <span>{{$t('cancel')}}</span>
             </base-button>
             <base-button type="primary" @click="() => enableEdit()"
@@ -21,7 +23,7 @@
             </base-button>
             <base-button type="primary" @click="() => save()"
                 v-if="isEditing"
-                :disabled="shippmentCompany==null || shippmentNumber==null || (tracking_link!=null && !validURL(tracking_link)) || isUploading">
+                :disabled="shippmentCompany==null || shippmentNumber==null || (trackingLink && !validURL(trackingLink)) || isUploading">
                 <span>{{$t('save')}}</span>
             </base-button>
         </div>
@@ -60,6 +62,7 @@ export default {
             isEditing:false,
             linkError:null,
             isUploading:false,
+            test:false
         }
     },
     mounted(){
@@ -112,7 +115,7 @@ export default {
                 }
                 this.isUploading = true;
                 this.$store.dispatch('orders/updateShippmentInfo',palyLoad).then(res=>{
-                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Shippment_details_changed_successfully')})
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Shippment_details_changed_successfully')});
                     this.shippmentDetails = res;
                     this.isEditing = false;
                 }).catch(()=>{

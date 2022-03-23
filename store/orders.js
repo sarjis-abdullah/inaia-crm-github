@@ -199,7 +199,7 @@ export const actions = {
         .put(`${ process.env.golddinarApiUrl }/order-shipping-details/${ payload.id }`,payload.data)
         .then(res => {
             context.commit('updateShippment', {data:res.data.data,order_id:payload.order_id})
-            return res.data;
+            return res.data.data;
         })
     }
 }

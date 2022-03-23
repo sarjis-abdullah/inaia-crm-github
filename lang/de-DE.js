@@ -221,5 +221,6 @@ export default {
     tracking_link:'Tracking link',
     enter_a_valid_url:'Please enter a valid URL',
     Shippment_details_changed_successfully:'Shipping details changed successfully',
-    Shippment_details_changed_unsuccessfully:"We couldn't change the shipping details due to an error"
+    Shippment_details_changed_unsuccessfully:"We couldn't change the shipping details due to an error",
+    shipping_details:'Shipping details'
 }
