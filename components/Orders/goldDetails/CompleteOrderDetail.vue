@@ -1,17 +1,17 @@
 <template>
     <div class="list-group list-group-flush">
         <date-picker
-            class="filterElement"
+            class="align-self-center"
             v-model="selectedDate"
             type="date"
             @change="getPreview"
             :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
         <div v-if="isLoading">
-            <h3>{{$t('loading')}}...</h3>
+            <p class="mt-2 text-sm text-center text-muted">{{$t('loading')}}...</p>
         </div>
         <div v-else-if="!isLoading && error!=null">
-            <h5 style="color:#f5365c">{{$t(error)}}</h5>
+            <p class="mt-2 text-sm text-center text-danger">{{$t(error)}}</p>
         </div>
         <div v-else-if="!isLoading && error==null && preview!=null" >
             <!--<detail-list-item title="ID"><div slot="value">{{preview.order_id}}</div></detail-list-item>-->

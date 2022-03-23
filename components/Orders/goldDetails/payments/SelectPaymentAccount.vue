@@ -1,18 +1,18 @@
 <template>
-    <div class="selectcontainer d-flex align-items-center justify-content-center">
-    <Loader  v-if="loading" :width="10" :height="10"/>
-    <text-error :textError="error" v-if="error!='' && !loading"/>
-    <Select :placeholder="$t('payment_accounts')"
-            v-model="selectedPaymentAccount"
-            class="filterElement"
-            @change="setPaymentAccount"
-            v-if="!loading && error==''">
-        <Option v-for="option in paymentAccounts"
-                :value="option.id"
-                :label="displayPaymentAccountLabel(option)"
-                :key="option.id">
-        </Option>
-    </Select>
+    <div class="d-flex align-items-center justify-content-center w-100">
+      <Loader v-if="loading" :width="20" :height="20" />
+      <text-error :textError="error" v-if="error!='' && !loading"/>
+      <Select :placeholder="$t('payment_accounts')"
+              v-model="selectedPaymentAccount"
+              class="w-100"
+              @change="setPaymentAccount"
+              v-if="!loading && error==''">
+          <Option v-for="option in paymentAccounts"
+                  :value="option.id"
+                  :label="displayPaymentAccountLabel(option)"
+                  :key="option.id">
+          </Option>
+      </Select>
     </div>
 </template>
 <script>
@@ -26,7 +26,7 @@ export default {
         Loader
     ,
         TextError},
-    
+
     props:{
         account_id:{
             type:Number,
@@ -57,9 +57,9 @@ export default {
     }
   },
     mounted (){
-            
+
        this.initData();
-        
+
     },
     methods:{
         displayPaymentAccountLabel:function(paymentAccount)
@@ -119,22 +119,5 @@ export default {
 }
 </script>
 <style scoped>
-.selectcontainer {
-    width: 100%;
-    min-height: 40px !important;
-}
-.filterElement {
-  margin-bottom: 15px;
-  margin-top: 15px;
-  width: 100%;
-  display: flex;
-  align-content: center;
-  justify-content: center;
-}
-.filterElement input {
 
-    height: 40px !important;
-    line-height: 40px !important;
-    font-size: 0.875rem;
-}
 </style>
