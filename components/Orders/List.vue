@@ -122,9 +122,10 @@
                                 <base-button type="link" class="ml-auto" @click="backToDetailScreen()"
                                     v-if="selectedResourceScreen!=orderDetailsSceens.detail">{{$t('cancel')}}
                                 </base-button>
-                                <base-button type="danger" @click="() => removeOrder(selectedResource)"
+                                <base-button type="white" class="text-danger" @click="() => removeOrder(selectedResource)"
                                     v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)"
-                                    :disabled="!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete">{{$t('delete_order')}}
+                                    :disabled="!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete">
+                                  <i class="fa fa-trash mr-2"></i>{{$t('delete_order')}}
                                 </base-button>
                                 <base-button type="danger" @click="() => cancelOrder(selectedResource)"
                                     v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
@@ -133,9 +134,7 @@
                                     {{$t('cancel_order')}}
                                 </base-button>
                                 <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
-                                    v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource)"
-
-                                    >
+                                    v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete">
                                     {{$t('mark_as_paid')}}
                                 </base-button>
                                  <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
