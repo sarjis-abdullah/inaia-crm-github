@@ -105,7 +105,8 @@ export default {
                 }
                 else
                 {
-                    this.selectedPaymentAccount = this.paymentAccounts[0].id;
+                    let ppsAccount = this.paymentAccounts.find(x=>x.payment_method.name_translation_key=="pps");
+                    this.selectedPaymentAccount = ppsAccount.id;
                 }
                 this.$emit('paymentaccountselected',this.selectedPaymentAccount);
             }).catch(()=>{
