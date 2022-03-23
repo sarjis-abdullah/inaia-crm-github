@@ -44,10 +44,10 @@
             {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
-            <select-payment-account :account_id="selectedResource.depot.account_id"
+            <select-payment-account :account_id="resource.depot.account_id"
                 @paymentaccountselected="setRefundPaymentAccount"
             />
-            {{$t('confirm_refund_order')}} "{{ selectedResource ? selectedResource.id : '' }}"?
+            {{$t('confirm_refund_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
     </div>
 </template>

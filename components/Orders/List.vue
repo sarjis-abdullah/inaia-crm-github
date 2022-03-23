@@ -475,9 +475,9 @@ export default {
         },
         refundOrder(resource)
         {
-            if(this.selectedResourceScreen != orderDetailScreens.paid)
+            if(this.selectedResourceScreen != orderDetailScreens.refund)
             {
-                this.selectedResourceScreen = orderDetailScreens.paid;
+                this.selectedResourceScreen = orderDetailScreens.refund;
             }
             else{
                 let data = {
