@@ -57,9 +57,7 @@ export default {
     }
   },
     mounted (){
-
-       this.initData();
-
+       //this.initData();
     },
     methods:{
         displayPaymentAccountLabel:function(paymentAccount)
@@ -85,7 +83,7 @@ export default {
         initData(){
             this.error = '';
             this.loading = true;
-            this.paymentAccounts=[]
+            this.paymentAccounts=[];
             this.$store.dispatch('payment-accounts/getPaymentAccountByUser',this.account_id).then(res=>{
                 if(this.paymentMethod=='')
                 {
@@ -93,6 +91,7 @@ export default {
                 }
                 else
                 {
+                    
                     res.forEach(el=>{
                         if(el.payment_method.name_translation_key==this.paymentMethod)
                         {
