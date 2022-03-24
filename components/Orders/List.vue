@@ -25,7 +25,6 @@
                         header-row-class-name="thead-light"
                         :empty-text="$t('no_data')"
                         v-loading="isLoading"
-                        v-loading.text="asdsad"
                         :data="data">
                     <el-table-column label="#"
                                    min-width="100px"
