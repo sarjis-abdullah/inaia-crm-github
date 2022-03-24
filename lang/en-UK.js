@@ -217,5 +217,14 @@ export default {
     gold_gift_unsuccessfully:"We can't gift gold to an error",
     add_valid_date:'Price date is required and needs to be a valid date',
     add_gold_gift_amount:'Amount is required and must be greater than 0',
-    add_gold_gift_comment:'Comment is required'
+    add_gold_gift_comment:'Comment is required',
+    include_delivery_fee: 'Charge shippment fee',
+    add_shippment_details: 'Add shippment details',
+    shippment_company:'Shippment company',
+    shippment_number:'Shippment number',
+    tracking_link:'Tracking link',
+    enter_a_valid_url:'Please enter a valid URL',
+    Shippment_details_changed_successfully:'Shipping details changed successfully',
+    Shippment_details_changed_unsuccessfully:"We couldn't change the shipping details due to an error",
+    shipping_details:'Shipping details'
 }

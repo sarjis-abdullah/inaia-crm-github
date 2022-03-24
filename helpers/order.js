@@ -42,3 +42,6 @@ export function isOrderGoldSale(order){
 export function isOrderOutstanding(order){
     return (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_OUTSTANDING)
 }
+export function isOrderDelivery(order) {
+    return order.order_type.name_translation_key=="gold_delivery";
+}

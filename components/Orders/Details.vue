@@ -18,6 +18,11 @@
                     v-if="isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource)"
                 />
                 <span v-if="isOrderGoldSale(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
+                <CompleteGoldDelivery v-if="isOrderDelivery(resource)"
+                    @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
+                    @shippmentDetailsChanged="onShippmentDetailsChanged"
+                
+                />
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.sell">
                 <SellOrderDetail :order="resource"
@@ -59,9 +64,10 @@ import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
 import GoldGift from '@/components/Orders/goldDetails/GoldGift';
 import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
 import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
-import { isOrderPending, isOrderPaid,isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale } from '~/helpers/order';
+import { isOrderPending, isOrderPaid,isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale,isOrderDelivery } from '~/helpers/order';
 import VueSlickCarousel from 'vue-slick-carousel';
 import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
+import CompleteGoldDelivery from '@/components/Orders/goldDetails/CompleteGoldDelivery';
 import SellOrderDetail from '@/components/Orders/goldDetails/SellOrderDetails';
 import {orderDetailScreens} from '../../helpers/constans';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
@@ -78,7 +84,8 @@ export default {
         CompleteOrderDetail,
         SelectPaymentAccount,
         Input,
-        SellOrderDetail
+        SellOrderDetail,
+        CompleteGoldDelivery
     },
     props: {
         resource: {
@@ -117,6 +124,7 @@ export default {
         isOrderGoldPurchase,
         isOrderGoldPurchaseInterval,
         isOrderGoldSale,
+        isOrderDelivery,
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);
@@ -129,7 +137,15 @@ export default {
         },
         setRefundPaymentAccount(account){
             this.$emit('refundpaymentaccountselected',account)
+        },
+        onShippmentDetailsChanged(value)
+        {
+            this.$emit('shippmentDetailsChanged',value);
+        },
+        onShippmentFeeChargeChanged(value){
+            this.$emit('shippmentFeeChargeChanged',value);
         }
+
     }
 
 }

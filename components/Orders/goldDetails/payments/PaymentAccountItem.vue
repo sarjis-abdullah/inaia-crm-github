@@ -53,11 +53,11 @@
             <base-button type="link" @click="cancelEdit" v-if="editActive">
                 {{$t('cancel')}}
             </base-button>
-            <base-button type="secondary" @click="editInfo" :disabled="editActive && selectedPaymentMethod==null">
+            <base-button type="secondary" @click="editInfo" :disabled="(editActive && selectedPaymentMethod==null) || isSubmitting">
                 <span v-if="!editActive">{{$t('edit_info')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
             </base-button>
-            <base-button type="secondary" @click="executePayment" v-if="shouldDisplayExecutePayment()">
+            <base-button type="secondary" @click="executePayment" v-if="shouldDisplayExecutePayment()" :disabled="isSubmitting">
                 <span>{{$t('execute_payment')}}</span>
             </base-button>
         </div>
@@ -119,7 +119,8 @@ export default {
             paymentMethodName:'',
             reference:null,
             selectedPaymentAccount:null,
-            paymentAccountInitialData:-1
+            paymentAccountInitialData:-1,
+            isSubmitting:false
         }
     },
    mounted:function(){
@@ -175,10 +176,11 @@ export default {
                 {
                     data.payment_account_id = this.selectedPaymentAccount;
                 }
-                if(this.reference!='')
+                if(this.reference)
                 {
                     data.reference_data = this.reference;
                 }
+                this.isSubmitting = true;
                 this.$store.dispatch("orders/updatePaymentMethod",{
                     id:this.order.id,
                     data:data
@@ -190,8 +192,9 @@ export default {
                      
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
                 }).catch((err)=>{
-                    console.log(err);
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_payment_changed_unsuccessfully')})
+                }).finally(()=>{
+                    this.isSubmitting = false;
                 })
             }
         },
@@ -229,10 +232,14 @@ export default {
             !this.editActive;
         },
         executePayment(){
+            this.isSubmitting = true
             this.$store.dispatch('orders/retryPayment',this.order.id).then((res)=>{
                 this.$notify({type: 'success', timeout: 5000, message: this.$t('payment_initiated_successfully')})
+                this.$emit('paymentAccountUpdated',res);
             }).catch((err)=>{
                 this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+            }).finally(()=>{
+                this.isSubmitting = false;
             })
         },
         cancelEdit (){

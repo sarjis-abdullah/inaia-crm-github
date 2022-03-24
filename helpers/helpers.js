@@ -98,4 +98,8 @@ export function formatDateToApiFormat(date)
     }
     return date.getFullYear()+"-"+month+"-"+day;
 }
+export function validURL(str) {
+    var pattern = new RegExp('(?:(?:https?|ftp|file):\/\/)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])','i'); // fragment locator
+    return !!pattern.test(str);
+  }
 

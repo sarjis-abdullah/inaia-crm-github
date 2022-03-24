@@ -1,4 +1,4 @@
-
+const includes = "order_type,order_status,order_depot,order_transactions,orders_payment_transactions,order_shipping_details";
 export const state = () => ({
     list: null,
     details: null,
@@ -39,6 +39,10 @@ export const mutations = {
         const item  = state.list.find( i => i.id == order.id)
         Object.assign(item, order)
     },
+    updateShippment(state, shippment) {
+        const item  = state.list.find( i => i.id == shippment.order_id)
+        Object.assign(item.order_shipping_details, shippment.data)
+    },
     pairs(state, data) {
         state.pairs = data
     },
@@ -66,7 +70,7 @@ export const actions = {
     fetchList(context, payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions,orders_updated_at${ payload }`)
+            return this.$axios.get(`${ process.env.golddinarApiUrl }/orders?include=${includes}${ payload }`)
                 .then(res => {
                     context.commit('list', res.data.data)
                     return res
@@ -118,33 +122,33 @@ export const actions = {
     },
     complete(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/complete`,payload.data)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/complete?include=${includes}`,payload.data)
             .then(res => {
-                context.commit('updateStatus', res.data.data)
+                context.commit('update', res.data.data)
                 return res.data.data.order_status
             })
     },
     paid(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/paid`)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/paid?include=${includes}`)
             .then(res => {
-                context.commit('updateStatus', res.data.data)
+                context.commit('update', res.data.data)
                 return res.data.data.order_status
             })
     },
     cancel(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/cancel`,payload.data)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/cancel?include=${includes}`,payload.data)
             .then(res => {
-                context.commit('updateStatus', res.data.data)
+                context.commit('update', res.data.data)
                 return res
             })
     },
     refund(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/refund`,payload.data)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/refund?include=${includes}`,payload.data)
             .then(res => {
-                context.commit('updateStatus', res.data.data)
+                context.commit('update', res.data.data)
                 return res
             })
     },
@@ -162,7 +166,7 @@ export const actions = {
     },
     updatePaymentMethod(context,payload){
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/change-payment-account?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/change-payment-account?include=${includes}`,payload.data)
             .then(res => {
                 context.commit('update', res.data.data)
                 return res.data.data;
@@ -170,16 +174,15 @@ export const actions = {
     },
     retryPayment(context,payload){
         return this.$axios
-            .post(`${ process.env.golddinarApiUrl }/orders/${ payload }/retry-payment?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .post(`${ process.env.golddinarApiUrl }/orders/${ payload }/retry-payment?include=${includes}`,payload.data)
             .then(res => {
                 context.commit('update', res.data.data)
-                console.log(res.data.data);
                 return res.data.data;
             })
     },
     sellGold(context, payload) {
         return this.$axios
-            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=order_type,order_status,order_depot,order_transactions,orders_payment_transactions`,payload.data)
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=${includes}`,payload.data)
             .then(res => {
                 context.commit('update', res.data.data)
                 return res.data.data.order_status
@@ -190,5 +193,13 @@ export const actions = {
             .post(`${ process.env.golddinarApiUrl }/orders/gift`,payload).then(res=>{
                 return res;
             })
+    },
+    updateShippmentInfo(context,payload){
+        return this.$axios
+        .put(`${ process.env.golddinarApiUrl }/order-shipping-details/${ payload.id }`,payload.data)
+        .then(res => {
+            context.commit('updateShippment', {data:res.data.data,order_id:payload.order_id})
+            return res.data.data;
+        })
     }
 }
