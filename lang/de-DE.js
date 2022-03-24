@@ -5,6 +5,8 @@ export default {
     customer_number: 'Kundennr.',
     number_short: 'Nr.',
 
+    no_data: 'Keine Daten vorhanden',
+
     active: 'aktiv',
     inactive: 'inaktiv',
     locked: 'gesperrt',

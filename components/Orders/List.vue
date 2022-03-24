@@ -23,6 +23,9 @@
 
                 <el-table class="table-hover table-responsive table-flush"
                         header-row-class-name="thead-light"
+                        :empty-text="$t('no_data')"
+                        v-loading="isLoading"
+                        v-loading.text="asdsad"
                         :data="data">
                     <el-table-column label="#"
                                    min-width="100px"
@@ -221,7 +224,7 @@ export default {
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
-            isLoading:false,
+            isLoading:true,
             showFilter: false,
             filterQuery:null,
             orderId:"",
@@ -310,6 +313,8 @@ export default {
                         this.data = response.data.data
 
                         this.totalTableData = response.data.meta.total
+
+                        this.isLoading = false
                     }).finally(() => {
                         this.initiated  = false
                     })
