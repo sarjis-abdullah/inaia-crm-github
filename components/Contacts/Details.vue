@@ -48,7 +48,6 @@
                     <i class="fas fa-ellipsis-h"></i>
                   </template>
 
-                  <a class="dropdown-item" href="#">{{$t('make_payment')}}</a>
                   <a class="dropdown-item" href="#">{{$t('details')}}</a>
                 </base-dropdown>
 
@@ -59,21 +58,25 @@
             </div>
           </card>
 
+          <div>- Products and specs</div>
+
         </div>
 
       </div>
+
+      <div>
+        <div>- Account settings (language, allow_marketing, privacy) - as a popup??</div>
+      </div>
+
 
       <depot-list :accountId="getAccoundId"></depot-list>
 
 
 
 
-      <div>- Account settings (language, allow_marketing, privacy)</div>
-      <div>- Products and specs</div>
-      <div>- Money account</div>
-      <div>- Cards</div>
-      <div>- Depots</div>
-      <div>- Orders</div>
+      <div>- Latest Transactions</div>
+      <div>- Agio Transactions</div>
+      <div>- Claims</div>
 
 
 
