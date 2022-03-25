@@ -1,10 +1,49 @@
 <template>
-    
-    <Badge type="success" v-if="row.status.name_translation_key=='depot_status_active'">{{row.status.translated_name}}</Badge>
-    <Badge type="info" v-else-if="row.status.name_translation_key=='depot_status_completed'">{{row.status.translated_name}}</Badge>
-    <Badge type="warning" v-else-if="row.status.name_translation_key=='depot_status_paused'">{{row.status.translated_name}}</Badge>
-    <Badge type="primary" v-else-if="row.status.name_translation_key=='depot_status_canceled'">{{row.status.translated_name}}</Badge>
-    <Badge type="danger"  v-else-if="row.status.name_translation_key=='depot_status_blocked'">{{row.status.translated_name}}</Badge>
+    <span class="badge badge-success ml-2" v-if="row.status && row.status.name_translation_key=='depot_status_active'">
+        <font-awesome-icon icon="fa fa-play" class="mr-1" />{{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
+    <span class="badge badge-info ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_completed'">
+        <font-awesome-icon icon="fa fa-check" class="mr-1" />{{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
+    <span class="badge badge-warning ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_paused'">
+        <font-awesome-icon icon="fa fa-pause" class="mr-1" />{{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
+    <span class="badge badge-primary ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_canceled'">
+        <font-awesome-icon icon="fa fa-ban" class="mr-1" />{{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
+    <span class="badge badge-danger ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_blocked'">
+        <font-awesome-icon icon="fa fa-ban" class="mr-1" />{{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
 </template>
 <script>
     import {Badge} from '@/components/argon-core';

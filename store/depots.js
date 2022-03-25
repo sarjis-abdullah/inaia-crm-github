@@ -1,11 +1,36 @@
-
+import {formatDateToApiFormat} from '~/helpers/helpers';
+function changeDepotStatus($axios,context,depot_id,status_id,account_id)
+{
+    let date = formatDateToApiFormat(new Date());
+    const data ={
+        "status_id": status_id,
+        "account_id": account_id,
+        "end_date": date
+    };
+    return $axios.put(`${process.env.golddinarApiUrl}/depots/${depot_id}/status?include=depot_status`,data).then((res)=>{
+        context.commit('details', res.data.data);
+        return res.data.data;
+    })
+}
+function getStatusId(statuses,status)
+{
+    let id = -1;
+    statuses.forEach(el=>{
+        if(el.name_translation_key==status)
+        {
+            id = el.id;
+        }
+    })
+    return id;
+}
 export const state = () => ({
     list: null,
     details: null,
     pairs: null,
     loading: false,
     orderFilterList:[],
-    goldPrice:0
+    goldPrice:0,
+    depotStatuses:[]
 })
 
 const initialState  = state()
@@ -20,7 +45,8 @@ export const getters = {
         return state.pairs
     },
     orderFilterList:state=>state.orderFilterList,
-    getGoldPrice:state=>state.goldPrice
+    getGoldPrice:state=>state.goldPrice,
+    depotStatuses:state=>state.depotStatuses,
 }
 
 export const mutations = {
@@ -47,6 +73,9 @@ export const mutations = {
     },
     setGoldPrice(state,price){
         state.goldPrice = price;
+    },
+    depotStatuses(state,statuses){
+        state.depotStatuses = statuses;
     }
 }
 
@@ -152,5 +181,64 @@ export const actions = {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
-    }
+    },
+    getDepotStatuses(context){
+        return this.$axios.get(`${process.env.golddinarApiUrl}/depot-statuses`)
+        .then(res => {
+            context.commit('depotStatuses',res.data.data);
+            return res.data.data;
+            
+        })
+    },
+    pauseSavingPlan(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_paused');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_paused');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    resumeSavingPlan(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_active');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_active');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    cancelSavingPlan(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_canceled');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_canceled');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
 }

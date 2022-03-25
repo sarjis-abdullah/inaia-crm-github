@@ -98,15 +98,7 @@
                       <font-awesome-icon
                         icon="fa fa-clock-rotate-left"
                         class="mr-1"
-                      />{{$t('saving_plan')}}<span class="badge badge-success ml-2"
-                        ><font-awesome-icon icon="fa fa-play" class="mr-1" />{{
-                          $t(
-                            depot.status
-                              ? depot.status.name_translation_key
-                              : depot.depot_status_id
-                          )
-                        }}</span
-                      >
+                      />{{$t('saving_plan')}} <Status :row="depot"/>
                     </h5>
                     <span class="h2 font-weight-bold mb-0"
                       >{{ $n(depot.interval_amount/100) }} €</span
@@ -123,8 +115,13 @@
                         <i class="fas fa-ellipsis-h"></i>
                       </template>
 
-                      <a class="dropdown-item" href="#">{{ $t("pause") }}</a>
-                      <a class="dropdown-item" href="#">{{
+                      <a class="dropdown-item" @click.prevent="confirmPause()"
+                        v-if="depot.status.name_translation_key=='depot_status_active'"
+                      >{{ $t("pause") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmResume()"
+                        v-if="depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled'"
+                      >{{ $t("resume") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">{{
                         $t("cancel_contract")
                       }}</a>
                     </base-dropdown>
@@ -160,6 +157,64 @@
         </div>
         <order-list :isDepotSet="true" :depotSetId="depot.id"/>
         <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>
+        <modal :show.sync="showPauseConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+                    <template slot="header" class="pb-0">
+                        <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                        <span></span>
+                    </template>
+                    <div>
+                        {{$t('pause_saving_plan_question')}}
+                    </div>
+                    <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="cancelPause()">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="primary" @click="() => pauseSavinPlan()"
+                            
+                            :disabled="isSubmitting">
+                            <span>{{$t('pause')}}</span>
+                         </base-button>
+                    </template>
+        </modal>
+        <modal :show.sync="showResumeConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('resume_saving_plan_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelResume()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => resumeSavinPlan()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('resume')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showCancelConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div v-if="depot.agio==0">
+                {{$t('cancel_saving_plan_question')}}
+            </div>
+            <div v-else>
+              {{$t('cant_cancel_agio_not_zero')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelCancel()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => cancelSavinPlan()"
+                    :disabled="isSubmitting" v-if="depot.agio==0">
+                    <span>{{$t('cancel_contract')}}</span>
+                  </base-button>
+            </template>
+        </modal>
       </div>
     </div>
   </div>
@@ -172,6 +227,7 @@ import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
 import Loader from "../../../components/common/Loader/Loader";
+import Status from '@/components/Depots/Status';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -186,6 +242,10 @@ export default {
             loadedWithError:false,
             client:null,
             showGoldGift:false,
+            showPauseConfirm:false,
+            showResumeConfirm:false,
+            isSubmitting:false,
+            showCancelConfirm:false
         }
     },
     components: {
@@ -193,7 +253,8 @@ export default {
         PageLoader,
         TextError,
         OrderList,
-        GoldGift
+        GoldGift,
+        Status
     },
     computed: {
        ...mapGetters('depots',{
@@ -245,6 +306,69 @@ export default {
         },
         onGoldGiftClose(){
           this.showGoldGift =  false;
+        },
+        cancelPause(){
+          this.showPauseConfirm = false;
+        },
+        confirmPause(){
+          this.showPauseConfirm = true;
+        },
+        pauseSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id 
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/pauseSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_paused_successfully')});
+             this.showPauseConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_paused_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelResume(){
+          this.showResumeConfirm = false;
+        },
+        confirmResume(){
+          this.showResumeConfirm = true;
+        },
+        resumeSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id 
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/resumeSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_resumed_successfully')});
+             this.showResumeConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_resumed_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelCancel(){
+          this.showCancelConfirm = false;
+        },
+        confirmCancel(){
+          this.showCancelConfirm = true;
+        },
+        cancelSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id 
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
+             this.showCancelConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
         }
     }
 

@@ -98,7 +98,7 @@ export default {
     depot_status_active: 'Active',
     depot_status_pending: 'Pending',
     depot_status_canceled: 'Canceled',
-
+    depot_status_paused: 'Paused',
     order_status_paid:'paid',
     order_status_pending:'pending',
     order_status_payment_failed:'failed',
@@ -226,5 +226,17 @@ export default {
     enter_a_valid_url:'Please enter a valid URL',
     Shippment_details_changed_successfully:'Shipping details changed successfully',
     Shippment_details_changed_unsuccessfully:"We couldn't change the shipping details due to an error",
-    shipping_details:'Shipping details'
+    shipping_details:'Shipping details',
+    pause_saving_plan_question:'Are you sure you want to pause this saving plan?',
+    resume:'Resume',
+    Depot_paused_successfully:'Saving plan paused successfully',
+    Depot_paused_unsuccessfully:"We couldn't pause the saving plan due to an error",
+    resume_saving_plan_question:'Are you sure you want to resume this saving plan?',
+    Depot_resumed_successfully: 'Saving plan resumed successfully',
+    Depot_resumed_unsuccessfully: "We couldn't resume the saving plan due to an error",
+    pause:"Pause",
+    cancel_saving_plan_question:'Are you sure want to cancel the contract of this saing plan?',
+    cant_cancel_agio_not_zero:"We can't cancel the contract of this saving plan because agio is not zero",
+    Depot_canceled_successfully:'Contract has been canceled successfully',
+    Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error"
 }
