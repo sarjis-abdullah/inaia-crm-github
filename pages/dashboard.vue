@@ -36,7 +36,7 @@
                     <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                     <div class="media-body">
                       <h5 class="card-title text-uppercase text-muted mb-0">PPS Master Account</h5>
-                      <span class="h2 font-weight-bold mb-0">{{$n(inaiaMasterAccountBalance)}} €</span>
+                      <span class="h2 font-weight-bold mb-0 text-nowrap">{{$n(inaiaMasterAccountBalance)}} €</span>
                     </div>
                   </div>
                 </div>

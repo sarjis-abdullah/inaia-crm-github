@@ -75,7 +75,6 @@
 
 
       <div>- Latest Transactions</div>
-      <div>- Agio Transactions</div>
       <div>- Claims</div>
 
 

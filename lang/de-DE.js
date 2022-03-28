@@ -183,7 +183,7 @@ export default {
     depot_value:'Depotwert',
     monthly:'monatlich',
     running_time:'Laufzeit',
-    cancel_contract:'Cancel contract',
+    cancel_contract:'Stornieren',
 
     verified: 'verifiziert',
     not_verified: 'nicht verifiziert',
@@ -225,17 +225,19 @@ export default {
     Shippment_details_changed_successfully:'Shipping details changed successfully',
     Shippment_details_changed_unsuccessfully:"We couldn't change the shipping details due to an error",
     shipping_details:'Shipping details',
+    pause_savings_plan:"Pausieren",
     pause_saving_plan_question:'Are you sure you want to pause this saving plan?',
-    resume:'Resume',
+    resume_savings_plan:'Fortsetzen',
     Depot_paused_successfully:'Saving plan paused successfully',
     Depot_paused_unsuccessfully:"We couldn't oause the saving plan due to an error",
     resume_saving_plan_question:'Are you sure you want to resume this saving plan?',
     Depot_resumed_successfully: 'Saving plan resumed successfully',
     Depot_resumed_unsuccessfully: "We couldn't resume the saving plan due to an error",
-    pause:"Pause",
     cancel_saving_plan_question:'Are you sure want to cancel the contract of this saing plan?',
     cant_cancel_agio_not_zero:"We can't cancel the contract of this saving plan because agio is not zero",
     Depot_canceled_successfully:'Contract has been canceled successfully',
-    Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error"
+    Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error",
 
+    status_history: 'Status-Historie',
+    agio_history: 'Agio-Historie',
 }

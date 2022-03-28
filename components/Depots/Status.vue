@@ -1,6 +1,6 @@
 <template>
-    <span class="badge badge-success ml-2" v-if="row.status && row.status.name_translation_key=='depot_status_active'">
-        <font-awesome-icon icon="fa fa-play" class="mr-1" />{{
+    <span class="badge badge-success" v-if="row.status && row.status.name_translation_key=='depot_status_active'">
+        {{
             $t(
             row.status
                 ? row.status.name_translation_key
@@ -8,8 +8,8 @@
             )
         }}
     </span>
-    <span class="badge badge-info ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_completed'">
-        <font-awesome-icon icon="fa fa-check" class="mr-1" />{{
+    <span class="badge badge-info" v-else-if="row.status && row.status.name_translation_key=='depot_status_completed'">
+        {{
             $t(
             row.status
                 ? row.status.name_translation_key
@@ -17,8 +17,8 @@
             )
         }}
     </span>
-    <span class="badge badge-warning ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_paused'">
-        <font-awesome-icon icon="fa fa-pause" class="mr-1" />{{
+    <span class="badge badge-warning" v-else-if="row.status && row.status.name_translation_key=='depot_status_paused'">
+        {{
             $t(
             row.status
                 ? row.status.name_translation_key
@@ -26,8 +26,8 @@
             )
         }}
     </span>
-    <span class="badge badge-primary ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_canceled'">
-        <font-awesome-icon icon="fa fa-ban" class="mr-1" />{{
+    <span class="badge badge-primary" v-else-if="row.status && row.status.name_translation_key=='depot_status_canceled'">
+        {{
             $t(
             row.status
                 ? row.status.name_translation_key
@@ -35,8 +35,8 @@
             )
         }}
     </span>
-    <span class="badge badge-danger ml-2" v-else-if="row.status && row.status.name_translation_key=='depot_status_blocked'">
-        <font-awesome-icon icon="fa fa-ban" class="mr-1" />{{
+    <span class="badge badge-danger" v-else-if="row.status && row.status.name_translation_key=='depot_status_blocked'">
+        {{
             $t(
             row.status
                 ? row.status.name_translation_key

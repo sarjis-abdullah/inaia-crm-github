@@ -30,27 +30,9 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-auto">
-                    <base-dropdown
-                      title-classes="btn btn-sm btn-neutral mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-h"></i>
-                      </template>
-
-                      <a class="dropdown-item" href="#">{{
-                        $t("make_payment")
-                      }}</a>
-                      <a class="dropdown-item" href="#">{{ $t("details") }}</a>
-                    </base-dropdown>
-                  </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap" v-if="client!=null"
-                    >{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{getCustomerName(client)}}</a></span
-                  >
+                  <span class="text-nowrap" v-if="client!=null">{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{getCustomerName(client)}}</a></span>
                 </p>
               </div>
             </div>
@@ -78,7 +60,7 @@
                         <i class="fas fa-ellipsis-h"></i>
                       </template>
 
-                      <a class="dropdown-item" @click.prevent="addGoldGift">{{$t("gold_gift")}}</a>
+                      <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
                     </base-dropdown>
                   </div>
                 </div>
@@ -94,16 +76,17 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">
+                    <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
                       <font-awesome-icon
                         icon="fa fa-clock-rotate-left"
                         class="mr-1"
-                      />{{$t('saving_plan')}} <Status :row="depot"/>
+                      />{{$t('saving_plan')}}<Status class="ml-2" :row="depot"/>
                     </h5>
-                    <span class="h2 font-weight-bold mb-0"
-                      >{{ $n(depot.interval_amount/100) }} €</span
-                    >
-                    <span class="text-muted"> / {{$t('monthly')}}</span>
+
+                    <div>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount/100) }} €</span>
+                      <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
+                    </div>
                   </div>
                   <div class="col-auto">
                     <base-dropdown
@@ -115,24 +98,24 @@
                         <i class="fas fa-ellipsis-h"></i>
                       </template>
 
+                      <a class="dropdown-item" href="#">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" href="#">{{ $t("agio_history") }}</a>
+                      <div class="dropdown-divider"></div>
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active'"
-                      >{{ $t("pause") }}</a>
+                      ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmResume()"
                         v-if="depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled'"
-                      >{{ $t("resume") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">{{
-                        $t("cancel_contract")
-                      }}</a>
+                      ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">
+                        <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
                     </base-dropdown>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap"
-                    >{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} -
-                    {{ $d(new Date(depot.interval_enddate),'short') }}</span
-                  >
-                </p>
+                <div class="mt-3 mb-0 text-sm">
+                  <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
+                  <div>{{$t('agio')}}: {{ $n(depot.agio/100) }} €</div>
+                </div>
               </div>
             </div>
 
@@ -170,7 +153,7 @@
                           {{$t('cancel')}}
                         </base-button>
                         <base-button type="primary" @click="() => pauseSavinPlan()"
-                            
+
                             :disabled="isSubmitting">
                             <span>{{$t('pause')}}</span>
                          </base-button>
@@ -316,7 +299,7 @@ export default {
         pauseSavinPlan(){
           const data = {
             depot_id:this.depot.id,
-            account_id:this.depot.account_id 
+            account_id:this.depot.account_id
           };
           this.isSubmitting = true;
           this.$store.dispatch('depots/pauseSavingPlan',data).then(()=>{
@@ -337,7 +320,7 @@ export default {
         resumeSavinPlan(){
           const data = {
             depot_id:this.depot.id,
-            account_id:this.depot.account_id 
+            account_id:this.depot.account_id
           };
           this.isSubmitting = true;
           this.$store.dispatch('depots/resumeSavingPlan',data).then(()=>{
@@ -358,7 +341,7 @@ export default {
         cancelSavinPlan(){
           const data = {
             depot_id:this.depot.id,
-            account_id:this.depot.account_id 
+            account_id:this.depot.account_id
           };
           this.isSubmitting = true;
           this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
@@ -374,3 +357,6 @@ export default {
 
 }
 </script>
+<style>
+.dropdown-item i { width: 16px; text-align: center}
+</style>
