@@ -34,7 +34,8 @@
                   <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3">
                   <div class="media-body">
                     <h5 class="card-title text-uppercase text-muted mb-0">PPS Account</h5>
-                    <span class="h2 font-weight-bold mb-0">2.452,44 €</span>
+                    <span class="h2 font-weight-bold mb-0" v-if="bankAccountDetails">2.452,44 €</span>
+                    <span v-else><Loader :width="24" :height="24"></Loader></span>
                   </div>
                 </div>
               </div>
@@ -53,8 +54,9 @@
 
               </div>
             </div>
-            <div class="mt-3 mb-0 text-sm">
-              IBAN: <span class="text-nowrap iban">BE11 1111 1111 1111 1111</span>
+            <div class="mt-3 mb-0 text-sm">IBAN:
+              <span class="text-nowrap iban" v-if="bankAccountDetails">{{ bankAccountDetails.iban }}</span>
+              <span v-else><Loader :width="14" :height="14"></Loader></span>
             </div>
           </card>
 
@@ -90,9 +92,11 @@ import Form from "@/components/Contacts/Form";
 import UserCard from "@/components/Contacts/UserCard";
 import Products from '@/components/Contacts/Products';
 import DepotList from "@/components/Depots/List";
+import Loader from "../common/Loader/Loader";
 
 export default {
     components: {
+      Loader,
         Form,
         UserCard,
         Products,
@@ -103,9 +107,14 @@ export default {
             type: Object
         }
     },
+    data() {
+      return {
+        bankAccountDetails: null
+      }
+    },
     computed: {
         ...mapGetters({
-            types: "types/pairs"
+            types: "types/pairs",
         }),
         info() {
             console.log('resource', this.resource)
@@ -125,8 +134,16 @@ export default {
           if (this.info.account) return this.info.account.id;
           else return false;
         }
-
     },
+    mounted () {
+      if(this.bankAccountDetails==null)
+      {
+        this.$store.dispatch("banking-account/getBankingAccountDetails", this.info.account.id).then(res=>{
+          this.bankAccountDetails = res.data;
+        })
+      }
+
+    }
 
 }
 </script>
