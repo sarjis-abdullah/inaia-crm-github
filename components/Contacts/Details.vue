@@ -34,7 +34,7 @@
                   <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3">
                   <div class="media-body">
                     <h5 class="card-title text-uppercase text-muted mb-0">PPS Account</h5>
-                    <span class="h2 font-weight-bold mb-0" v-if="bankAccountDetails">2.452,44 €</span>
+                    <span class="h2 font-weight-bold mb-0" v-if="bankAccountDetails">{{ $n(bankAccountDetails.balance/100) }} €</span>
                     <span v-else><Loader :width="24" :height="24"></Loader></span>
                   </div>
                 </div>

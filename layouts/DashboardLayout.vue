@@ -151,6 +151,7 @@
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
           <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
+          <sidebar-item :link="{ name: $t('banking_accounts'), path: '/banking-accounts' }"/>
         </sidebar-item>
 
 
