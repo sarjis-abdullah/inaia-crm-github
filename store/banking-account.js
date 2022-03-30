@@ -1,20 +1,33 @@
 export const actions={
-    getInaiaBankingAccountInfo (context){
+    getMasterAccountInfo (context){
         return this.$axios
                 .get(`${ process.env.bankingApiUrl }/banking-accounts/inaia/master`).then(res=>{
                     return res.data;
                 })
     },
 
-    getBankingAccountDetails (context, payload){
+    getBankingAccountDetails(context, payload) {
       return this.$axios
-        .get(`${ process.env.bankingApiUrl }/banking-accounts/account-id/${ payload }`).then(res=>{
-          context.commit('details', res.data.data);
-          return res.data;
-        }).catch((err) => {
-          // console.error('axios error during detailing role', err)
-          return Promise.reject(err)
+        .get(process.env.bankingApiUrl + '/banking-accounts/account-id/' + payload)
+        .then(response => {
+          return response.data
         })
-  }
+        .catch(error => {
+          console.log('error-fetch', error)
+          return Promise.reject(error)
+        })
+    },
+
+    getBankingTransactions(context, payload) {
+      return this.$axios
+        .get(process.env.bankingApiUrl + '/banking-transactions' + payload)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          console.log('error-fetch', error)
+          return Promise.reject(error)
+        })
+    },
 
 }

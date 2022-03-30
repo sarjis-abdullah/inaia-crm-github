@@ -26,6 +26,7 @@
                         :empty-text="$t('no_data')"
                         v-loading="isLoading"
                         :data="data">
+
                     <el-table-column label="#"
                                    min-width="100px"
                                     prop="id"
@@ -40,6 +41,7 @@
                             </div>
                         </template>
                     </el-table-column>
+
                     <el-table-column v-bind:label="$t('type')"
                                     prop="order_type_id"
                                     min-width="180px"
@@ -57,16 +59,15 @@
                         </template>
                     </el-table-column>
 
-
-                            <el-table-column v-bind:label="$t('depot')"
-                                            prop="depotName"
-                                            min-width="180"
-                                            >
-                                            <template v-slot="{row}">
-                                                <span>{{row.depotName}}</span>
-                                                <div class="dateStyle">{{row.depot ? '# '+row.depot.id : ''}}</div>
-                                            </template>
-                            </el-table-column>
+                    <el-table-column v-bind:label="$t('depot')"
+                                    prop="depotName"
+                                    min-width="180"
+                                    >
+                                    <template v-slot="{row}">
+                                        <span>{{row.depotName}}</span>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.id : ''}}</div>
+                                    </template>
+                    </el-table-column>
 
                     <el-table-column v-bind:label="$t('amount')"
                                     prop="amount"
@@ -74,10 +75,10 @@
                                     align="right"
                                     sortable>
                         <template v-slot="{row}">
-                            <span class="status" v-if="row.unit === 'gram'">
+                            <span class="amount" v-if="row.unit === 'gram'">
                                 <i18n-n :value="row.amount/1000"></i18n-n> g
                             </span>
-                            <span class="status" v-else>
+                            <span class="amount" v-else>
                                 <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
                             </span>
                             <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
@@ -293,7 +294,6 @@ export default {
 
         },
         clearSearchById() {
-
                this.fetchList(this.searchQuery);
         },
         popupDetails(resource) {
@@ -435,7 +435,7 @@ export default {
         },
         shouldDisplayOrderCompleteButton(resource)
         {
-            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isOrderDelivery(resource))) 
+            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isOrderDelivery(resource)))
             && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
@@ -613,7 +613,7 @@ export default {
         onShippmentDetailsChanged(value)
         {
             this.shippmentDetails = value;
-            
+
         }
     }
 }

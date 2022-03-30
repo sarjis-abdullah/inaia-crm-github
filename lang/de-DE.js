@@ -240,4 +240,12 @@ export default {
 
     status_history: 'Status-Historie',
     agio_history: 'Agio-Historie',
+
+    banking_account: 'Banking Account',
+    banking_accounts: 'Banking Accounts',
+    banking_master_account: 'PPS Master Account',
+
+    FUND_TRANSFER: 'Geldtransfer',
+
+    APPROVED: 'Genehmigt',
 }

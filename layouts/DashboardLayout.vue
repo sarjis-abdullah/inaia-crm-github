@@ -136,8 +136,19 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Banking', path: '/banking' }"/>
           <sidebar-item :link="{ name: 'Claims', path: '/claims' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'PPS',
+            icon: 'fas fa-university text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Master', path: '/banking-master' }"/>
+          <sidebar-item :link="{ name: 'Accounts', path: '/banking-accounts' }"/>
         </sidebar-item>
 
         <sidebar-item
@@ -151,7 +162,6 @@
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
           <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
-          <sidebar-item :link="{ name: $t('banking_accounts'), path: '/banking-accounts' }"/>
         </sidebar-item>
 
 
