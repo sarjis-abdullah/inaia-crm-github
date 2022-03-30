@@ -18,13 +18,6 @@
     </base-header>
 
     <div class="container-fluid mt--6">
-      <div class="row">
-
-        <div class="col-xl-4 col-md-6">
-          <MasterAmountCard />
-        </div>
-
-      </div>
 
       <BankingTransactionsList />
 
