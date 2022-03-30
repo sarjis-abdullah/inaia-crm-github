@@ -1,5 +1,5 @@
 <template>
-    <Details v-if="singleClientData.customer" :resource="singleClientData" />
+    <Details v-if="singleClientData.customer" :resource="singleClientData"/>
 </template>
 
 <script>

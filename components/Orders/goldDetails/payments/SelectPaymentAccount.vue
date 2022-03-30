@@ -106,10 +106,18 @@ export default {
                 else
                 {
                     let ppsAccount = this.paymentAccounts.find(x=>x.payment_method.name_translation_key=="pps");
-                    this.selectedPaymentAccount = ppsAccount.id;
+                    if(ppsAccount)
+                    {
+                        this.selectedPaymentAccount = ppsAccount.id;
+                    }
+                    else
+                    {
+                        this.selectedPaymentAccount = this.paymentAccounts[0].id;
+                    }
                 }
                 this.$emit('paymentaccountselected',this.selectedPaymentAccount);
-            }).catch(()=>{
+            }).catch((err)=>{
+                console.error(err);
                 this.error = this.$t('error_loading_payment_accounts');
             }).finally(()=>{
                 this.loading = false;

@@ -69,14 +69,8 @@
       <div>
         <div>- Account settings (language, allow_marketing, privacy) - as a popup??</div>
       </div>
-
-
-      <depot-list :accountId="getAccoundId"></depot-list>
-
-
-
-
-      <div>- Latest Transactions</div>
+      <DepotList  v-if="resource && resource.customer && resource.customer.account" :accountId="getAccoundId"/>
+      <LatestTransactions v-if="resource" :account_id="getAccoundId" />
       <div>- Claims</div>
 
 
@@ -94,13 +88,17 @@ import Products from '@/components/Contacts/Products';
 import DepotList from "@/components/Depots/List";
 import Loader from "../common/Loader/Loader";
 
+
+import LatestTransactions from "@/components/Contacts/LatestTransactions"
+
 export default {
     components: {
         Loader,
         Form,
         UserCard,
         Products,
-        DepotList
+        DepotList,
+        LatestTransactions
     },
     props: {
         resource: {

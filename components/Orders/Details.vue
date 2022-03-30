@@ -1,166 +1,386 @@
 <template>
-    <div>
-        <div class="text-center">
-            <img :src="resource.logo" class="icon"/>
-            <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
-        </div>
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete || selectedScreen==orderDetailScreens.cancel">
-            <GoldSale :order="resource" v-if="resource.order_type.name_translation_key=='gold_sell'"></GoldSale>
-            <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key=='gold_purchase' || resource.order_type.name_translation_key=='gold_purchase_interval'"></GoldPurchase>
-            <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key=='gold_delivery'"></GoldDelivery>
-            <GoldGift :order="resource" v-if="resource.order_type.name_translation_key=='gold_gift'"></GoldGift>
-            <GoldTransfer :order="resource" v-if="resource.order_type.name_translation_key=='gold_transfer_in' || resource.order_type.name_translation_key=='gold_transfer_out'"></GoldTransfer>
-            <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key=='gold_withdrawal'"></GoldWithdrawal>
-        </div>
-         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
-                <CompleteOrderDetail :order="resource"
-                    @dateselected="onCompleteDateSelected"
-                    v-if="isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource)"
-                />
-                <span v-if="isOrderGoldSale(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
-                <CompleteGoldDelivery v-if="isOrderDelivery(resource)"
-                    @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
-                    @shippmentDetailsChanged="onShippmentDetailsChanged"
-                
-                />
-        </div>
-         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.sell">
-                <SellOrderDetail :order="resource"
-                    @dateselected="onSellGoldDateSelected"
-                />
-        </div>
-         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
-                <div>
-                  <h4>{{$tc('confirm_cancel_order', resource.id)}}</h4>
-
-                  <div class="mt-4 mb-1">{{ $t('choose_payment_account_for_payback') }}:</div>
-                  <select-payment-account :account_id="resource.depot.account_id"
-                                          v-if="resource"
-                                          @paymentaccountselected="setCancelPaymentAccount"
-                  />
-                </div>
-        </div>
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
-            <h4>{{$tc('confirm_delete_order', resource.id)}}</h4>
-            <Input :placeholder="$t('order_id_delete_placeholder')" class="mt-2" v-model="deleteOrderId"/>
-        </div>
-
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.paid">
-            {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
-        </div>
-        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
-            <select-payment-account :account_id="resource.depot.account_id"
-                @paymentaccountselected="setRefundPaymentAccount"
-            />
-            {{$t('confirm_refund_order')}} "{{ resource ? resource.id : '' }}"?
-        </div>
-    </div>
+    <modal :show.sync="showPopup" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onDetailClose" :allowOutSideClose="false">
+                    <template slot="header" class="pb-0">
+                        <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                        <span></span>
+                    </template>
+                    <div>
+                        <DetailsInfo
+                        :resource="selectedResource"
+                        v-if="showPopup"
+                        :selectedScreen="selectedResourceScreen"
+                        @completeDateSelected="setCompleteDate"
+                        @cancelpaymentaccountselected ="setCancelPaymentAccount"
+                        @shouldEnableDelete ="onEnableDeletingChanged"
+                        @refundpaymentaccountselected="setRefundPaymentAccount"
+                        @sellGoldDateSelected ="setSellGoldDate"
+                        @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
+                        @shippmentDetailsChanged="onShippmentDetailsChanged"
+                        @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
+                        />
+                    </div>
+                    <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="backToDetailScreen()"
+                            v-if="selectedResourceScreen!=orderDetailsSceens.detail">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="white" class="text-danger" @click="() => removeOrder(selectedResource)"
+                            v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)"
+                            :disabled="(!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete) || isSubmitting">
+                          <i class="lnir lnir-trash mr-1"></i>{{$t('delete_order')}}
+                        </base-button>
+                        <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
+                            v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
+                            :disabled="(selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            >
+                          <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
+                        </base-button>
+                        <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
+                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete"
+                            :disabled="isSubmitting">
+                          {{$t('mark_as_paid')}}
+                        </base-button>
+                         <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
+                            :disabled="shouldDisableCompleteButton() || isSubmitting">
+                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('preview_order')}}</span>
+                            <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
+                         </base-button>
+                         <base-button type="white" @click="() => refundOrder(selectedResource)"
+                            v-if="selectedResource && shouldDisplayRefundButton(selectedResource)"
+                            :disabled="(selectedRefundPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.refund) ||
+                            isSubmitting">
+                           <i class="lnir lnir-undo mr-1"></i><span>{{$t('order_refund')}}</span>
+                         </base-button>
+                          <base-button type="primary" @click="() => sellGold(selectedResource)"
+                            v-if="selectedResource && shouldDisplaySellGoldButton(selectedResource)"
+                            :disabled="((selectedSellingPaymentAccount == null || sellGoldDate==null) && selectedResourceScreen==orderDetailsSceens.sell) || isSubmitting">
+                            <span>{{$t('sell_gold')}}</span>
+                         </base-button>
+                    </template>
+                </modal>
 </template>
-
 <script>
-import GoldSale from '@/components/Orders/goldDetails/GoldSale';
-import GoldPurchase from '@/components/Orders/goldDetails/GoldPurchase';
-import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
-import GoldGift from '@/components/Orders/goldDetails/GoldGift';
-import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
-import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
-import { isOrderPending, isOrderPaid,isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale,isOrderDelivery } from '~/helpers/order';
-import VueSlickCarousel from 'vue-slick-carousel';
-import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
-import CompleteGoldDelivery from '@/components/Orders/goldDetails/CompleteGoldDelivery';
-import SellOrderDetail from '@/components/Orders/goldDetails/SellOrderDetails';
 import {orderDetailScreens} from '../../helpers/constans';
-import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
-import {Input} from 'element-ui';
+import DetailsInfo from '@/components/Orders/DetailsInfo';
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isOrderGoldPurchase,isOrderCompleted,isOrderGoldPurchaseInterval,isOrderOutstanding,isOrderGoldSale,isOrderDelivery } from '~/helpers/order'
 export default {
-    components:{
-        GoldSale,
-        GoldPurchase,
-        GoldDelivery,
-        GoldGift,
-        GoldTransfer,
-        GoldWithdrawal,
-        VueSlickCarousel,
-        CompleteOrderDetail,
-        SelectPaymentAccount,
-        Input,
-        SellOrderDetail,
-        CompleteGoldDelivery
-    },
-    props: {
-        resource: {
-            type: Object
+    props:{
+        showPopup:{
+            type: Boolean,
+            default: false
         },
-        selectedScreen: {
-            type:String,
-            default:orderDetailScreens.detail
+        selectedResource: {
+            type: Boolean,
+            default: null
         }
     },
-    data:function(){
+    components:{
+        DetailsInfo
+    },
+    data () {
         return {
-            deleteOrderId:''
+            completeOrderInfo:{date:null},
+            selectedCancelPaymentAccount:null,
+            selectedRefundPaymentAccount:null,
+            selectedSellingPaymentAccount:null,
+            enableDeleting:false,
+            sellGoldDate:null,
+            shippmentDetails:null,
+            chargeShippmentFee:true,
+            isSubmitting: false,
+            selectedResourceScreen:orderDetailScreens.detail,
         }
     },
-    created (){
-        this.orderDetailScreens = orderDetailScreens
+     created (){
+        this.orderDetailsSceens = orderDetailScreens;
     },
     watch:{
-        deleteOrderId : {
-            handler (){
-                if(this.deleteOrderId == this.resource.id)
+        showPopup:{
+            handler() {
+                if(!this.showPopup)
                 {
-                    this.$emit("shouldEnableDelete",true);
-                }
-                else{
-                    this.$emit("shouldEnableDelete",false);
+                    this.$emit("onClose");
                 }
             }
         }
     },
-    methods:
-    {
+    methods :{
         isOrderPending,
         isOrderPaid,
-        isOrderGoldPurchase,
-        isOrderGoldPurchaseInterval,
-        isOrderGoldSale,
-        isOrderDelivery,
-         onCompleteDateSelected(date)
-         {
-             this.$emit('completeDateSelected',date);
-         },
-         onSellGoldDateSelected(date){
-             this.$emit('sellGoldDateSelected',date)
-         },
-         setCancelPaymentAccount(account){
-            this.$emit('cancelpaymentaccountselected',account)
+         removeOrder(resource) {
+            if(this.selectedResourceScreen != orderDetailScreens.delete)
+            {
+                this.selectedResourceScreen = orderDetailScreens.delete;
+            }
+            else
+            {
+                
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/remove', resource.id)
+                    .then( () => {
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_deleted_successfully')})
+                        this.$emit('orderDeleted');
+                        this.showPopup = false;
+                        this.onDetailClose();
+                    }).catch((err)=>{console.error(err);this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
+                    .finally(()=>this.isSubmitting = false)
+            }
         },
-        setRefundPaymentAccount(account){
-            this.$emit('refundpaymentaccountselected',account)
+        cancelOrder(resource) {
+            if(this.selectedResourceScreen == orderDetailScreens.detail)
+            {
+                this.selectedResourceScreen = orderDetailScreens.cancel;
+            }
+            else if(this.selectedResourceScreen == orderDetailScreens.cancel){
+                let data = {
+                    id:resource.id,
+                    data:{
+                        payment_account_id:this.selectedCancelPaymentAccount
+                    }
+                }
+                this.isSubmitting =  true;
+                this.$store
+                    .dispatch('orders/cancel', data)
+                    .then( res => {
+                        this.showPopup = false;
+                        this.onDetailClose();
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
+                    }).catch(()=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
+                    }).finally(()=>this.isSubmitting = false)
+            }
+        },
+        onOrderDetailScreenChanged (slide)
+        {
+            this.selectedResourceScreen = slide
+        },
+        setCompleteDate (date)
+        {
+            this.completeOrderInfo.date = date;
+        },
+        setSellGoldDate(date)
+        {
+            this.sellGoldDate = date;
+        },
+        onDetailClose ()
+        {
+            this.selectedResourceScreen = orderDetailScreens.detail;
+            this.completeOrderInfo = {date:null};
+            this.selectedCancelPaymentAccount = null;
+            this.enableDeleting = false;
+            this.selectedRefundPaymentAccount=null;
+            this.sellGoldDate = null;
+            this.selectedSellingPaymentAccount = null;
+        },
+        shouldDisplayOrderDeleteButton(resource)
+        {
+            if((isOrderPending(resource) || isOrderPaymentFailed(resource)) &&
+                (this.selectedResourceScreen == orderDetailScreens.delete || this.selectedResourceScreen == orderDetailScreens.detail))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        },
+        shouldDisplayOrderCompleteButton(resource)
+        {
+            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isOrderDelivery(resource))) 
+            && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
+            ;
+        },
+        completeOrder(resource)
+        {
+            if(this.selectedResourceScreen == orderDetailScreens.detail)
+            {
+                this.selectedResourceScreen = orderDetailScreens.complete;
+            }
+            else
+            {
+
+                let data ={
+                    id:resource.id,
+                }
+                if(isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
+                {
+                    data.data = {price_date:this.completeOrderInfo.date}
+                }
+                if(isOrderDelivery(resource))
+                {
+                    data.data = {charge_delivery_cost:this.chargeShippmentFee};
+                    if(this.shippmentDetails){
+                        data.data.shipping_company = this.shippmentDetails.shippmentCompany;
+                        data.data.shipping_number = this.shippmentDetails.shippmentNumber;
+                        if(this.shippmentDetails.trackingLink)
+                        {
+                            data.data.tracking_link = this.shippmentDetails.trackingLink;
+                        }
+                    }
+                }
+                this.isSubmitting = true;
+                this.$store
+                .dispatch('orders/complete', data)
+                .then( res => {
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
+                    this.selectedResource = null;
+                    this.showPopup = false;
+                    this.onDetailClose();
+
+                }).catch(err=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
+                }).finally(()=>this.isSubmitting = false)
+            }
+
+        },
+        markPaidOrder (resource){
+            if(this.selectedResourceScreen != orderDetailScreens.paid)
+            {
+                this.selectedResourceScreen = orderDetailScreens.paid;
+            }
+            else{
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/paid', resource.id)
+                    .then( res => {
+                        this.showPopup = false;
+                        this.onDetailClose();
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
+                        // console.error('order->', res.data.data)
+                    }).catch(()=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_paid_unsuccessfully')})
+                    }).finally(()=>this.isSubmitting = false)
+            }
+        },
+        refundOrder(resource)
+        {
+            if(this.selectedResourceScreen != orderDetailScreens.refund)
+            {
+                this.selectedResourceScreen = orderDetailScreens.refund;
+            }
+            else{
+                let data = {
+                    id:resource.id,
+                    data:{
+                        payment_account_id:this.selectedRefundPaymentAccount
+                    }
+                }
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/refund', data)
+                    .then( res => {
+                        this.showPopup = false;
+                        this.onDetailClose();
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
+                    }).catch(()=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_refunded_unsuccessfully')})
+                    }).finally(()=>this.isSubmitting = false)
+            }
+        },
+        backToDetailScreen()
+        {
+            this.selectedResourceScreen = orderDetailScreens.detail;
+            this.selectedCancelPaymentAccount = null;
+        },
+        shouldDisableCompleteButton(){
+            if(this.selectedResourceScreen == orderDetailScreens.complete)
+            {
+                if(isOrderGoldPurchase(this.selectedResource) || isOrderGoldPurchaseInterval(this.selectedResource))
+                {
+                    if(!this.completeOrderInfo || !this.completeOrderInfo.date)
+                    {
+                        return true;
+                    }
+                }
+                if(isOrderDelivery(this.selectedResource))
+                {
+                    if(this.shippmentDetails)
+                    {
+                        return !this.shippmentDetails.isValid();
+                    }
+                }
+            }
+            return false;
+        },
+        shouldDisplayOrderCancelButton(resource)
+        {
+          if (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.cancel)
+            return isOrderPaid(resource);
+          else return false;
+        },
+        shouldDisplayOrderPaidButton(resource)
+        {
+            return isOrderPending(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource));
+        },
+        setCancelPaymentAccount(account)
+        {
+            this.selectedCancelPaymentAccount = account;
+        },
+        shouldDisplayRefundButton(resource){
+            return isOrderCompleted(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
+        },
+        shouldDisplaySellGoldButton(resource){
+            return isOrderPending(resource) &&
+                (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.sell) &&
+                isOrderGoldSale(resource)
+        },
+        setRefundPaymentAccount(account)
+        {
+            this.selectedRefundPaymentAccount = account;
+        },
+        onEnableDeletingChanged(value)
+        {
+            this.enableDeleting = value;
+        },
+        sellGold (resource){
+            if(this.selectedResourceScreen != orderDetailScreens.sell)
+            {
+                this.selectedResourceScreen = orderDetailScreens.sell;
+            }
+            else{
+                let data = {
+                    id:resource.id,
+                    data:
+                    {
+                        price_date:this.sellGoldDate,
+                        payment_method_id:this.selectedSellingPaymentAccount.payment_method_id
+                    }
+                }
+                if(this.selectedSellingPaymentAccount.payment_account_id)
+                {
+                    data.data.payment_account_id = this.selectedSellingPaymentAccount.payment_account_id;
+                }
+                this.isSubmitting = true;
+                this.$store
+                .dispatch('orders/sellGold', data)
+                .then( res => {
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
+                    this.selectedResource = null;
+                    this.showPopup = false;
+                    
+                    this.onDetailClose();
+
+                }).catch(err=>{
+                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_sold_unsuccessfully')})
+                }).finally(()=>this.isSubmitting = false)
+            }
+        },
+        onShippmentFeeChargeChanged(value)
+        {
+            this.chargeShippmentFee = value;
+
         },
         onShippmentDetailsChanged(value)
         {
-            this.$emit('shippmentDetailsChanged',value);
+            this.shippmentDetails = value;
+            
         },
-        onShippmentFeeChargeChanged(value){
-            this.$emit('shippmentFeeChargeChanged',value);
+        onSellingPaymentAccountSelected(account){
+            this.selectedSellingPaymentAccount = account;
         }
-
     }
-
 }
 </script>
-
 <style scoped>
-.capitalize {
-    text-transform: capitalize
-}
-.icon {
-    width: 90px;
-    height: 90px;
-}
-.title {
-}
-.detailsContainer {
-}
 </style>

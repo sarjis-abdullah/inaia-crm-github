@@ -237,7 +237,6 @@ export default {
     cant_cancel_agio_not_zero:"We can't cancel the contract of this saving plan because agio is not zero",
     Depot_canceled_successfully:'Contract has been canceled successfully',
     Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error",
-
     status_history: 'Status-Historie',
     agio_history: 'Agio-Historie',
 
@@ -250,5 +249,9 @@ export default {
     PAYMENT_OUT:'SEPA-Überweisung',
     FUND_TRANSFER: 'Geldtransfer',
     WITHDRAWAL:'Bargeldbezug',
-    REDEMPTION:'REDEMPTION'
+    REDEMPTION:'REDEMPTION',
+    latest_transactions:'Latest transactions',
+    
+    COMPLETE: 'Complete',
+    set_Payment_method: 'Set payment'
 }
