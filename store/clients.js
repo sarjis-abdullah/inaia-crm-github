@@ -6,7 +6,8 @@ export const state = () => {
         // singleLeadData: {},
         countryList: [],
         countryListLoaded: 0,
-        orderFilterList:[]
+        orderFilterList:[],
+        latestTransactions:[]
     }
 }
 
@@ -32,7 +33,8 @@ export const getters = {
     countryListLoaded(state) {
         return state.countryListLoaded
     },
-    orderFilterList:state=>state.orderFilterList
+    orderFilterList:state=>state.orderFilterList,
+    latestTransactions:state=>state.latestTransactions,
 }
 export const mutations = {
 
@@ -65,6 +67,9 @@ export const mutations = {
     },
     orderFilterList(state,list) {
         state.orderFilterList = list;
+    },
+    latestTransactions(state,list) {
+        state.latestTransactions = list;
     }
 }
 export const actions = {
@@ -195,4 +200,12 @@ export const actions = {
                 return response
             })
     },
+    getClientLatestTransactions(context,payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=order_transactions,orders_payment_transactions&${payload}`)
+            .then(res=>{
+                context.commit('latestTransactions',res.data.data);
+                return res.data;
+            })
+    }
 }

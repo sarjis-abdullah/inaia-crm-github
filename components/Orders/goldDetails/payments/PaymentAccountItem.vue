@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="!editActive">
+        <div v-if="!editActive && !isNew">
             <detail-list-item  :title="$t('bank')">
                 <div slot="value">
                     
@@ -20,7 +20,7 @@
                     </div>
             </detail-list-item>
         </div>
-        <div v-if="editActive">
+        <div v-if="editActive || isNew">
             <div class="mt-3 row d-flex justify-content-center" v-if="loadindPaymentInformation">
                 <loader/>
             </div>
@@ -46,16 +46,17 @@
                     @paymentaccountselected="onPaymentAccountSelected"
                     :initialValue="paymentAccountInitialData"
                />
-               <el-input :placeholder="$t('reference')" v-model="reference"  class="filterElement"/>
+               <el-input :placeholder="$t('reference')" v-model="reference"  class="filterElement" v-if="!isNew"/>
             </div>
         </div>
-        <div class="mt-3 row d-flex justify-content-center" v-if="isEditable" >
+        <div class="mt-3 row d-flex justify-content-center" v-if="isEditable || isNew" >
             <base-button type="link" @click="cancelEdit" v-if="editActive">
                 {{$t('cancel')}}
             </base-button>
-            <base-button type="secondary" @click="editInfo" :disabled="(editActive && selectedPaymentMethod==null) || isSubmitting">
-                <span v-if="!editActive">{{$t('edit_info')}}</span>
+            <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting">
+                <span v-if="!editActive && !isNew">{{$t('edit_info')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
+                <span v-if="isNew">{{$t('set_Payment_method')}}</span>
             </base-button>
             <base-button type="secondary" @click="executePayment" v-if="shouldDisplayExecutePayment()" :disabled="isSubmitting">
                 <span>{{$t('execute_payment')}}</span>
@@ -99,6 +100,10 @@ export default {
         order:{
             type:Object,
             default:null
+        },
+        isNew:{
+            type:Object,
+            default: false
         }
     },
     computed:{
@@ -124,8 +129,14 @@ export default {
         }
     },
    mounted:function(){
-       
-        this.initView();
+       if(!this.isNew)
+       {
+           this.initView();
+       }
+       else{
+           this.initForm();
+       }
+        
     },
     methods:{
         initView(){
@@ -148,11 +159,8 @@ export default {
                 })
             }
         },
-        editInfo (){
-            if(!this.editActive)
-            {
-                this.editActive = true;
-                this.loadindPaymentInformation = true
+        initForm(){
+            this.loadindPaymentInformation = true
 
                 this.$store.dispatch('payment-accounts/getPaymentMethods').then(res=>{
                     this.error = "";
@@ -161,11 +169,18 @@ export default {
                         this.setPaymentMethod(this.selectedPaymentMethod);
                     }
 
-                }).catch(()=>{
+                }).catch((err)=>{
+                    console.error(err);
                     this.error = this.$t('error_loading_payment_accounts');
                 }).finally(()=>{
                     this.loadindPaymentInformation = false;
                 })
+        },
+        editInfo (){
+            if(!this.editActive && !this.isNew)
+            {
+                this.editActive = true;
+                this.initForm();
             }
             else{
                 let data ={
@@ -181,45 +196,57 @@ export default {
                     data.reference_data = this.reference;
                 }
                 this.isSubmitting = true;
-                this.$store.dispatch("orders/updatePaymentMethod",{
-                    id:this.order.id,
-                    data:data
-                }).then((res)=>{
-                   
-                    this.$emit('paymentAccountUpdated',res);
-                     this.editActive = false;
-                     this.reference = null;
-                     
-                    this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
-                }).catch((err)=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_payment_changed_unsuccessfully')})
-                }).finally(()=>{
+                if(this.isNew)
+                {
+                    this.$emit("paymentSet",data);
                     this.isSubmitting = false;
-                })
+                }
+                else
+                {
+                    this.$store.dispatch("orders/updatePaymentMethod",{
+                        id:this.order.id,
+                        data:data
+                    }).then((res)=>{
+                    
+                        this.$emit('paymentAccountUpdated',res);
+                        this.editActive = false;
+                        this.reference = null;
+                        
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
+                    }).catch((err)=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_payment_changed_unsuccessfully')})
+                    }).finally(()=>{
+                        this.isSubmitting = false;
+                    })
+                }
             }
         },
         setPaymentMethod(method){
             let pm = this.paymentMethods.find(x=>x.id==method);
-            if(pm && pm.name_translation_key!='bank_transfer')
+            if(pm)
             {
-                if(this.paymentAccount)
-                {
-                    if(this.paymentAccount.payment_method.id == method)
-                    {
-                        this.paymentAccountInitialData =  this.paymentAccount.id;
-                    }
-                    else
-                    {
-                        this.paymentAccountInitialData = -1;
-                    }
-                }
                 this.paymentMethodName =pm.name_translation_key;
-                this.shouldDisplayPaymentAccout = true;
-            }
-            else
-            {
-                this.selectedPaymentAccount = null;
-                this.shouldDisplayPaymentAccout = false;
+                if(pm.name_translation_key!='bank_transfer')
+                {
+                    if(this.paymentAccount)
+                    {
+                        if(this.paymentAccount.payment_method.id == method)
+                        {
+                            this.paymentAccountInitialData =  this.paymentAccount.id;
+                        }
+                        else
+                        {
+                            this.paymentAccountInitialData = -1;
+                        }
+                    }
+                
+                    this.shouldDisplayPaymentAccout = true;
+                }
+                else
+                {
+                    this.selectedPaymentAccount = null;
+                    this.shouldDisplayPaymentAccout = false;
+                }
             }
         },
         onPaymentAccountSelected(paymentAccount){
@@ -228,8 +255,8 @@ export default {
         shouldDisplayExecutePayment(){
             
             return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
-            (this.paymentAccount.payment_method.name_translation_key=="pps") &&
-            !this.editActive;
+            (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps") &&
+            !this.editActive && !this.isNew;
         },
         executePayment(){
             this.isSubmitting = true

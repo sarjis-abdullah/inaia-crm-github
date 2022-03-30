@@ -7,6 +7,12 @@
             @change="getPreview"
             :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
+          <PaymentAccountItem
+                :account_id="order.depot.account_id"
+                :order="order"
+                @paymentSet="setSellingPaymentAccount"
+                :isNew="true"
+            />
         <div class="mt-4" v-if="isLoading">
             <Loader :width="25" :height="25"/>
         </div>
@@ -15,6 +21,7 @@
         </div>
         <div v-else-if="!isLoading && error==null && preview!=null" class="mt-4">
             <!--<detail-list-item title="ID"><div slot="value">{{preview.order_id}}</div></detail-list-item>-->
+            <detail-list-item :title="$t('payment_accounts')" v-if="paymentMethod"><div slot="value"> {{$t(paymentMethod)}}</div></detail-list-item>
             <detail-list-item :title="$t('date')"><div slot="value"> {{$d(new Date(preview.gold_price_date),'short')}}</div></detail-list-item>
             <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
             <detail-list-item :title="$t('course')"><div slot="value"> <i18n-n :value="preview.gold_price_trading/100"></i18n-n> €</div></detail-list-item>
@@ -34,12 +41,14 @@ import {formatDateToApiFormat} from '../../../helpers/helpers';
 import {DatePicker} from 'element-ui';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
+import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
 export default {
     components:{
         DatePicker,
         DetailListItem,
         Loader,
-        TextError
+        TextError,
+        PaymentAccountItem
     },
     props:{
         order:{
@@ -51,7 +60,8 @@ export default {
             isLoading:false,
             selectedDate:null,
             error:null,
-            preview:null
+            preview:null,
+            paymentMethod:null,
         }
     },
     mounted:function(){
@@ -79,6 +89,10 @@ export default {
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        setSellingPaymentAccount(account) {
+            this.paymentMethod = account.payment_method;
+            this.$emit('sellingPaymentAccountSelected',account);
         }
     }
 }

@@ -238,5 +238,14 @@ export default {
     cancel_saving_plan_question:'Are you sure want to cancel the contract of this saing plan?',
     cant_cancel_agio_not_zero:"We can't cancel the contract of this saving plan because agio is not zero",
     Depot_canceled_successfully:'Contract has been canceled successfully',
-    Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error"
+    Depot_canceled_unsuccessfully:"We couldn't cancel the contract due to an error",
+    latest_transactions:'Latest transactions',
+    FUND_TRANSFER: 'Fund transfer',
+    PAYMENT_IN:'Payment in',
+    PAYMENT_OUT: 'SEPA-Payment',
+    FUND_TRANSFER: 'Fund transfer',
+    WITHDRAWAL: 'Withdrawal',
+    REDEMPTION: '',
+    COMPLETE: 'Complete',
+    set_Payment_method: 'Set payment'
 }
