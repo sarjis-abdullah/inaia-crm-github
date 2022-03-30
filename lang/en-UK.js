@@ -247,7 +247,9 @@ export default {
     banking_accounts: 'Banking Accounts',
     banking_master_account: 'PPS Master Account',
 
+    PAYMENT_IN:'Payment in',
+    PAYMENT_OUT:'Payment out',
     FUND_TRANSFER: 'Fund transfer',
-
-    APPROVED: 'Approved',
+    WITHDRAWAL:'Withdrawal',
+    REDEMPTION:'REDEMPTION'
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="card border-0">
       <div class="card-body">
-        <div class="row flex-column">
+        <div class="row">
           <div class="col">
             <div class="media">
               <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
@@ -22,7 +22,6 @@
               </template>
 
               <a class="dropdown-item" href="#">{{$t('make_payment')}}</a>
-              <a class="dropdown-item" href="#">{{$t('details')}}</a>
             </base-dropdown>
           </div>
         </div>

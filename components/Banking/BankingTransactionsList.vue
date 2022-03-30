@@ -58,12 +58,24 @@
               </template>
             </el-table-column>
 
+            <el-table-column v-bind:label="$t('reason_text')"
+                             prop="amount"
+                             min-width="180px"
+                             sortable>
+              <template v-slot="{row}">
+                    <span class="reason">
+                        {{ row.reason_text }}
+                    </span>
+              </template>
+            </el-table-column>
+
             <el-table-column v-bind:label="$t('amount')"
                              prop="amount"
                              min-width="140px"
                              sortable>
                 <template v-slot="{row}">
                     <span class="amount">
+                        {{ row.direction == 'DEBIT' ? '-' : '+' }}
                         <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
                     </span>
                 </template>
@@ -75,6 +87,14 @@
             >
               <template v-slot="{row}">
                 <Status :status='row.status' :lifecycle_status="row.lifecycle_status" />
+              </template>
+            </el-table-column>
+
+            <el-table-column>
+              <template v-slot="{row}">
+
+                <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+
               </template>
             </el-table-column>
 
@@ -96,11 +116,14 @@
 <script>
 import { Table, TableColumn } from 'element-ui'
 import Status from '@/components/Banking/TransactionStatus';
+import IconButton from '@/components/common/Buttons/IconButton';
+
 export default {
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
-    Status
+    Status,
+    IconButton
   },
   props:{
     bankingAccountId:{
@@ -120,6 +143,18 @@ export default {
     }
   },
   computed: {
+    searchQuery() {
+      let query = '?';
+      /*
+      query = (this.search ? '&short_name=' + this.search + '&name_translation_key=' + this.search : '') +
+        `&order_by=${ this.sort }&order_direction=${ this.order }` +
+        `&page=${this.search ? 1 : this.page}` +
+        `&per_page=${this.perPage}`;
+      */
+      if (this.bankingAccountId!==0) query += '&banking_account_id='+this.bankingAccountId;
+
+      return query;
+    },
     totalPages() {
       return Math.ceil(this.totalTableData / this.perPage)
     }
@@ -128,7 +163,7 @@ export default {
     bankingAccountId: {
       handler() {
         if (this.bankingAccountId) {
-          this.fetchList()
+          this.fetchList(this.searchQuery)
         }
       },
       immediate: true
@@ -143,7 +178,7 @@ export default {
         this.initiated  = true
         if(this.bankingAccountId!==0) {
           this.$store
-            .dispatch("banking-account/getBankingTransactions", '?banking_account_id='+this.bankingAccountId )
+            .dispatch("banking-account/getBankingTransactions", pageQuery )
             .then(response => {
               console.log('data', response)
               this.data = response.data

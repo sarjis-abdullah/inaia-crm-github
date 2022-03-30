@@ -245,7 +245,10 @@ export default {
     banking_accounts: 'Banking Accounts',
     banking_master_account: 'PPS Master Account',
 
+    reason_text: 'Zweck',
+    PAYMENT_IN:'Zahlungseingang',
+    PAYMENT_OUT:'SEPA-Überweisung',
     FUND_TRANSFER: 'Geldtransfer',
-
-    APPROVED: 'Genehmigt',
+    WITHDRAWAL:'Bargeldbezug',
+    REDEMPTION:'REDEMPTION'
 }
