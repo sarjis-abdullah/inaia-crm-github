@@ -99,7 +99,7 @@
                       </template>
 
                       <a class="dropdown-item" href="#">{{ $t("status_history") }}</a>
-                      <a class="dropdown-item" href="#">{{ $t("agio_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active'"
@@ -198,6 +198,16 @@
                   </base-button>
             </template>
         </modal>
+        <modal :show.sync="showAgioTransaction" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+              <AgioTransactions :depot_id="depotId"/>
+           </div>
+            
+        </modal>
       </div>
     </div>
   </div>
@@ -211,6 +221,7 @@ import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
 import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
+import AgioTransactions from '@/components/Depots/AgioTransactions';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -228,7 +239,8 @@ export default {
             showPauseConfirm:false,
             showResumeConfirm:false,
             isSubmitting:false,
-            showCancelConfirm:false
+            showCancelConfirm:false,
+            showAgioTransaction:false
         }
     },
     components: {
@@ -237,9 +249,11 @@ export default {
         TextError,
         OrderList,
         GoldGift,
-        Status
+        Status,
+        AgioTransactions
     },
-    computed: {
+    computed:
+        {
        ...mapGetters('depots',{
             depot:"details",
             goldPrice:"getGoldPrice"

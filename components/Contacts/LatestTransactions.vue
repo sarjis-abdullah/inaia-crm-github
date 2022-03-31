@@ -70,8 +70,7 @@
                                         <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                                     </div>
                                     <div v-else>
-                                        <Badge type="success" v-if="row.lifecycle_status=='COMPLETE'">{{$t(row.lifecycle_status)}}</Badge>
-                                        <Badge type="default" v-else>{{$t(row.lifecycle_status)}}</Badge>
+                                        <BankStatus :status="row.status"  :lifecycle_status="row.lifecycle_status"/>
                                     </div>                              
                                 </template>
                             </el-table-column>
@@ -104,6 +103,7 @@ import Status from '@/components/Orders/Status';
 import {Badge} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderDetails from '@/components/Orders/Details';
+import BankStatus from '@/components/Banking/TransactionStatus';
 export default {
     props:{
         account_id:{
@@ -117,7 +117,8 @@ export default {
         Status,
         Badge,
         IconButton,
-        OrderDetails
+        OrderDetails,
+        BankStatus
     },
     computed: {
         ...mapGetters({

@@ -30,7 +30,8 @@ export const state = () => ({
     loading: false,
     orderFilterList:[],
     goldPrice:0,
-    depotStatuses:[]
+    depotStatuses:[],
+    agioTransactions: []
 })
 
 const initialState  = state()
@@ -47,6 +48,7 @@ export const getters = {
     orderFilterList:state=>state.orderFilterList,
     getGoldPrice:state=>state.goldPrice,
     depotStatuses:state=>state.depotStatuses,
+    agioTransactions: state=>state.agioTransactions
 }
 
 export const mutations = {
@@ -76,6 +78,9 @@ export const mutations = {
     },
     depotStatuses(state,statuses){
         state.depotStatuses = statuses;
+    },
+    agioTransactions(state,agios){
+        state.agioTransactions = agios;
     }
 }
 
@@ -241,4 +246,14 @@ export const actions = {
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
     },
+    fetchAgioTransactionList(context,payload){
+        return this.$axios.get(`${process.env.golddinarApiUrl}/agio-transaction?include=agio_type${payload}`)
+                .then(res => {
+                    context.commit('agioTransactions',res.data.data)
+                    return res.data;
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                })
+    }
 }
