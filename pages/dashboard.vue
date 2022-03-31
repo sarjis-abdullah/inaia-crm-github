@@ -309,6 +309,7 @@
   import BaseProgress from '@/components/argon-core/BaseProgress';
   import RouteBreadCrumb from '@/components/argon-core/Breadcrumb/RouteBreadcrumb';
   import StatsCard from '@/components/argon-core/Cards/StatsCard';
+  import MasterAmountCard from "@/components/Banking/MasterAmountCard"
 
   // Lists
   import ActivityFeed from '@/components/pages/dashboard/ActivityFeed.vue';
@@ -322,7 +323,6 @@
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
-  import MasterAmountCard from "@/components/Banking/MasterAmountCard"
 
   export default {
     layout: 'DashboardLayout',

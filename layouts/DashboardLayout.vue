@@ -124,26 +124,26 @@
           :link="{
             name: 'Dashboard',
             path: '/dashboard',
-            icon: 'fas fa-chart-pie text-primary',
+            icon: 'lnir lnir-pie-chart text-primary',
           }"
         />
 
         <sidebar-item
           v-if="accountingAccess"
           :link="{
-            name: 'Accounting',
-            icon: 'fas fa-calculator text-primary',
+            name: 'CRM',
+            icon: 'lnir lnir-users text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Claims', path: '/claims' }"/>
+          <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
         </sidebar-item>
 
         <sidebar-item
           v-if="accountingAccess"
           :link="{
             name: 'PPS',
-            icon: 'fas fa-university text-primary',
+            icon: 'lnir lnir-credit-cards text-primary',
             collapsed: true
           }"
         >
@@ -154,21 +154,30 @@
         <sidebar-item
           v-if="accountingAccess"
           :link="{
-            name: 'CRM',
-            icon: 'fas fa-user-friends text-primary',
+            name: 'Gold',
+            icon: 'lnir lnir-gold-bar text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
           <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
         </sidebar-item>
 
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'Accounting',
+            icon: 'lnir lnir-calculator text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Claims', path: '/claims' }"/>
+        </sidebar-item>
 
         <sidebar-item
           :link="{
             name: 'Marketing',
-            icon: 'fas fa-bullseye text-primary',
+            icon: 'lnir lnir-bullhorn text-primary',
             collapsed: true
           }"
         >
@@ -179,7 +188,7 @@
           v-if="adminAccess"
           :link="{
             name: 'Admin',
-            icon: 'fas fa-cog text-primary',
+            icon: 'lnir lnir-cog text-primary',
             collapsed: true
           }"
         >

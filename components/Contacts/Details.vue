@@ -27,38 +27,9 @@
 
         <div class="col-lg-4">
 
-          <card class="border-0">
-            <div class="row">
-              <div class="col">
-                <div class="media align-items-center">
-                  <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3">
-                  <div class="media-body">
-                    <h5 class="card-title text-uppercase text-muted mb-0">{{ $t('banking_account') }}</h5>
-                    <span class="h2 font-weight-bold mb-0" v-if="bankAccountDetails">{{ $n(bankAccountDetails.balance/100) }} €</span>
-                    <span v-else><Loader :width="24" :height="24"></Loader></span>
-                  </div>
-                </div>
-              </div>
-              <div class="col-auto">
+          <ProductClassCard :productClassDetails="productClassDetails" />
 
-                <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
-                               menu-on-right
-                               :has-toggle="false">
-
-                  <template slot="title">
-                    <i class="fas fa-ellipsis-h"></i>
-                  </template>
-
-                  <a class="dropdown-item" href="#">{{$t('details')}}</a>
-                </base-dropdown>
-
-              </div>
-            </div>
-            <div class="mt-3 mb-0 text-sm">IBAN:
-              <span class="text-nowrap iban" v-if="bankAccountDetails">{{ bankAccountDetails.iban }}</span>
-              <span v-else><Loader :width="14" :height="14"></Loader></span>
-            </div>
-          </card>
+          <BankingAmountCard :bankingAccountDetails="bankingAccountDetails" />
 
           <div>- Products and specs</div>
 
@@ -82,14 +53,14 @@
 
 <script>
 import { mapGetters } from "vuex"
+import Loader from "../common/Loader/Loader";
 import Form from "@/components/Contacts/Form";
 import UserCard from "@/components/Contacts/UserCard";
 import Products from '@/components/Contacts/Products';
 import DepotList from "@/components/Depots/List";
-import Loader from "../common/Loader/Loader";
-
-
 import LatestTransactions from "@/components/Contacts/LatestTransactions"
+import BankingAmountCard from "@/components/Banking/BankingAmountCard"
+import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 
 export default {
     components: {
@@ -98,7 +69,9 @@ export default {
         UserCard,
         Products,
         DepotList,
-        LatestTransactions
+        LatestTransactions,
+        BankingAmountCard,
+        ProductClassCard
     },
     props: {
         resource: {
@@ -107,7 +80,10 @@ export default {
     },
     data() {
       return {
-        bankAccountDetails: null
+        bankingAccountDetails: {
+          id: 0
+        },
+        productClassDetails: {}
       }
     },
     computed: {
@@ -134,10 +110,10 @@ export default {
         }
     },
     mounted () {
-      if(this.bankAccountDetails==null)
+      if(this.bankingAccountDetails.id==0)
       {
         this.$store.dispatch("banking-account/getBankingAccountDetails", this.info.account.id).then(res=>{
-          this.bankAccountDetails = res.data;
+          this.bankingAccountDetails = res.data;
         })
       }
 

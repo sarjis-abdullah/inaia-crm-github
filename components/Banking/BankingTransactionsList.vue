@@ -180,7 +180,7 @@ export default {
           this.$store
             .dispatch("banking-account/getBankingTransactions", pageQuery )
             .then(response => {
-              console.log('data', response)
+              //console.log('data', response)
               this.data = response.data
 
               this.totalTableData = response.meta.total

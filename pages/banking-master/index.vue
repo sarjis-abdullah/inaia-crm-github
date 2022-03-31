@@ -21,7 +21,7 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
-          <MasterAmountCard />
+          <BankingAmountCard />
         </div>
 
       </div>
@@ -33,18 +33,20 @@
   </div>
 </template>
 <script>
-import MasterAmountCard from "@/components/Banking/MasterAmountCard"
+import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 import BankingTransactionsList from "@/components/Banking/BankingTransactionsList"
 
 export default {
   layout: 'DashboardLayout',
   components: {
-    MasterAmountCard,
+    AmountCard,
     BankingTransactionsList
   },
   data() {
     return {
-      masterAccountDetails: {}
+      masterAccountDetails: {
+        id: 0
+      }
     }
   },
   computed: {
