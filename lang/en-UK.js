@@ -254,6 +254,14 @@ export default {
 
     latest_transactions:'Latest transactions',
     COMPLETE: 'Complete',
-    set_Payment_method: 'Set payment'
+    set_Payment_method: 'Set payment',
+    agio_transaction:'Agio transaction',
+    agio_fee_rate:"Fee rate",
+    agio_before:"Agio before",
+    agio_after:'Agio after',
+    claim:"Claim",
+    discount:'Discount',
+    payment:'Payment',
+    add_transaction:"Add transaction"
 
 }
