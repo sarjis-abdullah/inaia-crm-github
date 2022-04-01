@@ -261,5 +261,8 @@ export default {
     claim:"Claim",
     discount:'Discount',
     payment:'Payment',
-    add_transaction:"Add transaction"
+    add_transaction:"Add transaction",
+    cant_load_agio_transactions_types:"We can't load agio transaction types",
+    agio_transaction_types:'Agio transaction types',
+    include_getting_money_from_bank_account:"Take the amount directly from bank account"
 }

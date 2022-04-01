@@ -1,0 +1,112 @@
+<template>
+    <div class="mt-4 flex-fill">
+        <div class="d-flex flex-row justify-content-center align-items-center">
+            <Loader v-if='isLoadingTypes'/>
+            <TextError :textError ="$t(typesError)" v-if="!isLoadingTypes && textError"/>
+            <div>
+                <Select :placeholder="$t('agio_transaction_types')" v-if="!isLoadingTypes && !textError"
+                            v-model="selectedAgioTransactionType"
+                            @change="typeSelected"
+                            >
+                        <Option v-for="option in filtredAgioTransactionTypes"
+                                :value="option.id"
+                                :label="$t(option.name_translation_key)"
+                                :key="option.id"
+                                >
+                        </Option>
+                </Select>
+                
+            </div>
+            <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
+            <div class="ml-2 d-flex flex-fill flex-row align-content-end">
+                <Button @click="cancelAddTransaction">{{$t('cancel')}}</Button>
+                <Button type="primary">{{$t('save')}}</Button>
+            </div>
+        </div>
+        <Checkbox v-model="includeClaim" :label="$t('include_getting_money_from_bank_account')" class="mt-2" v-if="paymentSelected"></Checkbox>
+    </div>
+</template>
+<script>
+import { mapGetters } from "vuex";
+import Loader from '@/components/common/Loader/Loader';
+import TextError from '@/components/common/Errors/TextError';
+import {Select,Option,Input,Checkbox,Button} from 'element-ui';
+export default ({
+    setup() {
+        
+    },
+    components:{
+        Loader,
+        TextError,
+        Select,
+        Option,
+        Input,
+        Checkbox,
+        Button
+    },
+    mounted(){
+        if(this.agioTransactionsTypes.length == 0)
+        {
+            this.isLoadingTypes = true;
+            this.$store.dispatch('depots/fetchAgioTransactionTypes')
+                .then(()=>{
+                    this.removeClaim();
+                })
+                .catch(
+                (err)=>{
+                    console.error(err);
+                    this.typesError = 'cant_load_agio_transactions_types'
+                }
+            ).finally(()=>this.isLoadingTypes = false);
+        }else
+        {
+            this.removeClaim();
+        }
+    },
+    data(){
+        return{
+            isLoadingTypes:false,
+            typesError:null,
+            filtredAgioTransactionTypes:[],
+            selectedAgioTransactionType:null,
+            amount:null,
+            paymentSelected:false,
+            includeClaim:false
+        }
+    },
+    computed:{
+        ...mapGetters({
+            agioTransactionsTypes: "depots/agioTransactionTypes",
+            }),
+    },
+    methods:{
+        removeClaim(){
+            this.filtredAgioTransactionTypes = this.agioTransactionsTypes.filter(x=>x.name_translation_key!='claim');
+        },
+        typeSelected(){
+            let type = this.agioTransactionsTypes.find(x=>x.id==this.selectedAgioTransactionType);
+            if(type)
+            {
+                if(type.name_translation_key=="payment")
+                {
+                    this.paymentSelected = true;
+                    return;
+                }
+            }
+            this.paymentSelected = false;
+            this.includeClaim = false;
+        },
+        cancelAddTransaction()
+        {
+            this.selectedAgioTransactionType = null;
+            this.amount =  null;
+            this.includeClaim = false;
+            this.paymentSelected = false;
+            this.$emit('canceled');
+        }
+    }
+})
+</script>
+<style scoped>
+
+</style>

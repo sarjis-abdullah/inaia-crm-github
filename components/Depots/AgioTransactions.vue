@@ -7,11 +7,14 @@
             <div class="col-8">
               <h5 class="h3 mb-0">{{ $t("agio_transaction") }}</h5>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-4 text-right" v-if="!showAddTransaction">
                 <button @click.prevent="toggleAddTransaction()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                   <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_transaction')}}</span>
                 </button>
             </div>
+          </div>
+          <div class="row" v-if="showAddTransaction">
+            <AddAgioTransaction @canceled="showAddTransaction=false"/>
           </div>
         </div>
         <el-table
@@ -99,7 +102,7 @@
           </el-table-column>
         </el-table>
 
-        <div class="card-footer py-4 d-flex justify-content-end">
+        <div class="card-footer py-4 d-flex justify-content-end" v-if="totalTableData>1">
           <base-pagination
             v-model="page"
             :per-page="perPage"
@@ -115,6 +118,7 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn } from "element-ui";
 import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
+import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 export default {
   props: {
     depot_id: {
@@ -127,6 +131,7 @@ export default {
     [TableColumn.name]: TableColumn,
     Badge,
     IconButton,
+    AddAgioTransaction
   },
   computed: {
     ...mapGetters({
@@ -156,6 +161,7 @@ export default {
       totalTableData: 0,
       isLoading: false,
       loadingError: null,
+      showAddTransaction:false
     };
   },
   methods: {
@@ -168,7 +174,7 @@ export default {
         .finally(() => (this.isLoading = false));
     },
     toggleAddTransaction() {
-      
+      this.showAddTransaction = true;
     }
   },
 };
