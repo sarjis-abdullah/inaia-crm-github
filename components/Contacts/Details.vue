@@ -27,11 +27,9 @@
 
         <div class="col-lg-4">
 
-          <ProductClassCard :productClassDetails="productClassDetails" />
+          <ProductClassCard :productClassDetails="getProductClass" />
 
-          <BankingAmountCard :bankingAccountDetails="bankingAccountDetails" />
-
-          <div>- Products and specs</div>
+          <BankingAmountCard :balance="bankingAccountBalance" :iban="bankingAccountIban" />
 
         </div>
 
@@ -81,11 +79,12 @@ export default {
     data() {
       return {
         bankingAccountDetails: {
-          id: 0
+          type:Object
         },
         productClassDetails: {}
       }
     },
+
     computed: {
         ...mapGetters({
             types: "types/pairs",
@@ -107,16 +106,38 @@ export default {
         getAccoundId() {
           if (this.info.account) return this.info.account.id;
           else return false;
-        }
+        },
+        getProductClass() {
+          if (this.info.account) return this.info.account_products[0];
+          else return false;
+        },
+        bankingAccountBalance() {
+          if (this.bankingAccountDetails) return  this.bankingAccountDetails.balance;
+          else return false;
+        },
+        bankingAccountIban() {
+          if (this.bankingAccountDetails) return  this.bankingAccountDetails.iban;
+          else return false;
+        },
+
+
     },
-    mounted () {
-      if(this.bankingAccountDetails.id==0)
-      {
+    watch: {
+      resource: {
+        handler() {
+          if (this.resource) {
+            this.initBankingAccountDetails();
+          }
+        },
+        immediate: true
+      },
+    },
+    methods: {
+      initBankingAccountDetails() {
         this.$store.dispatch("banking-account/getBankingAccountDetails", this.info.account.id).then(res=>{
           this.bankingAccountDetails = res.data;
         })
       }
-
     }
 
 }

@@ -21,46 +21,56 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
-          <BankingAmountCard />
+          <MasterAmountCard />
         </div>
 
       </div>
 
-      <BankingTransactionsList :bankingAccountId="masterAccountDetails.id" />
+      <BankingTransactionsList :bankingAccountId="bankingAccountId" />
 
     </div>
 
   </div>
 </template>
 <script>
-import BankingAmountCard from "@/components/Banking/BankingAmountCard"
+import MasterAmountCard from "@/components/Banking/MasterAmountCard"
 import BankingTransactionsList from "@/components/Banking/BankingTransactionsList"
 
 export default {
   layout: 'DashboardLayout',
   components: {
-    AmountCard,
+    MasterAmountCard,
     BankingTransactionsList
   },
   data() {
     return {
+      bankingAccountId: 0,
       masterAccountDetails: {
-        id: 0
+        type: Object
       }
     }
   },
   computed: {
   },
   watch: {
-
+    masterAccountDetails: {
+      handler() {
+        if (this.masterAccountDetails) {
+          this.bankingAccountId = this.masterAccountDetails.id;
+        }
+      },
+      immediate: true
+    },
   },
   methods: {
-
+    initMasterAccountDetails() {
+      this.$store.dispatch('banking-account/getMasterAccountInfo').then(res => {
+        this.masterAccountDetails = res;
+      })
+    }
   },
   mounted() {
-    this.$store.dispatch('banking-account/getMasterAccountInfo').then(res => {
-      this.masterAccountDetails = res;
-    })
+    this.initMasterAccountDetails();
   }
 }
 </script>

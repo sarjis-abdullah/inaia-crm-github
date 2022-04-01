@@ -7,7 +7,7 @@
             <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
             <div class="media-body">
               <h5 class="card-title text-uppercase text-muted mb-0">{{ $t('banking_account') }}</h5>
-              <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="bankingAccountDetails.balance">{{ $n(bankingAccountDetails.balance/100) }} €</span>
+              <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="balance">{{ $n(balance/100) }} €</span>
               <span v-else><Loader :width="24" :height="24"></Loader></span>
             </div>
           </div>
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="mt-3 mb-0 text-sm">IBAN:
-        <span class="text-nowrap iban" v-if="bankingAccountDetails.iban">{{ bankingAccountDetails.iban.match(/.{1,4}/g).join(' ') }}</span>
+        <span class="text-nowrap iban" v-if="iban">{{ iban.match(/.{1,4}/g).join(' ') }}</span>
         <span v-else><Loader :width="14" :height="14"></Loader></span>
       </div>
     </div>
@@ -40,9 +40,10 @@ export default {
     Loader
   },
   props:{
-    bankingAccountDetails:{
-      type:Object
-    }
+    balance: {
+      type: Number
+    },
+    iban: ''
   },
   data() {
     return {

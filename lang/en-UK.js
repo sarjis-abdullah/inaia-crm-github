@@ -83,6 +83,7 @@ export default {
     product_name_golddinar: 'Golddinar',
     product_class_standard: 'Standard',
     product_class_premium: 'Premium',
+    product_class_specs: 'Specifications',
 
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',
@@ -253,7 +254,7 @@ export default {
     REDEMPTION:'REDEMPTION',
 
     latest_transactions:'Latest transactions',
-    COMPLETE: 'Complete',
+
     set_Payment_method: 'Set payment',
     agio_transaction:'Agio transaction',
     agio_fee_rate:"Fee rate",
@@ -261,7 +262,6 @@ export default {
     agio_after:'Agio after',
     claim:"Claim",
     discount:'Discount',
-    payment:'Payment',
     add_transaction:"Add transaction"
 
 }
