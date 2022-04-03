@@ -86,6 +86,10 @@ export const mutations = {
     },
     agioTransactionTypes(state,types){
         state.agioTransactionTypes = types;
+    },
+    addAgioTransaction(state,agio)
+    {
+        state.agioTransactions.push(agio);
     }
 }
 
@@ -270,5 +274,15 @@ export const actions = {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
+    },
+    createAgioTransaction(context,payload)
+    {
+        return this.$axios.post(`${process.env.golddinarApiUrl}/agio-transaction?include=agio_type`,payload)
+            .then(res => {
+                context.commit('addAgioTransaction',res.data.data)
+                return res.data.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
     }
 }

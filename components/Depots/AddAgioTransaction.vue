@@ -19,8 +19,8 @@
             </div>
             <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
             <div class="ml-2 d-flex flex-fill flex-row align-content-end">
-                <Button @click="cancelAddTransaction">{{$t('cancel')}}</Button>
-                <Button type="primary">{{$t('save')}}</Button>
+                <Button @click="cancelAddTransaction" :disabled="isSubmitting">{{$t('cancel')}}</Button>
+                <Button type="primary" :disabled="shouldDisableSave() || isSubmitting">{{$t('save')}}</Button>
             </div>
         </div>
         <Checkbox v-model="includeClaim" :label="$t('include_getting_money_from_bank_account')" class="mt-2" v-if="paymentSelected"></Checkbox>
@@ -34,6 +34,12 @@ import {Select,Option,Input,Checkbox,Button} from 'element-ui';
 export default ({
     setup() {
         
+    },
+    props:{
+        depot_id:{
+            type:Number,
+            default:null
+        }
     },
     components:{
         Loader,
@@ -71,7 +77,8 @@ export default ({
             selectedAgioTransactionType:null,
             amount:null,
             paymentSelected:false,
-            includeClaim:false
+            includeClaim:false,
+            isSubmitting:false
         }
     },
     computed:{
@@ -103,6 +110,29 @@ export default ({
             this.includeClaim = false;
             this.paymentSelected = false;
             this.$emit('canceled');
+        },
+        saveAddTransaction()
+        {
+            let payload = {
+                "depot_id":this.depot_id,
+                "amount":Number(this.amount),
+                "includeClaim":this.includeClaim,
+                "agio_type_id":this.selectedAgioTransactionType,
+                "isManual":true
+            }
+            this.isSubmitting = true;
+            this.$store.dispatch('depots/createAgioTransaction',payload).then(res=>{
+                this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_created_successfully')})
+            }).catch((err)=>{
+                this.$notify({type: 'danger', timeout: 5000, message: this.$t('agio_transaction_created_unsuccessfully')})
+            }).finally(()=>{
+                this.isSubmitting = false;
+            })
+        },
+        shouldDisableSave()
+        {
+            const num = Number(this.amount);
+            return (!this.depot_id ||!this.selectedAgioTransactionType || !this.amount || !Number.isInteger(num) || num <= 0)
         }
     }
 })
