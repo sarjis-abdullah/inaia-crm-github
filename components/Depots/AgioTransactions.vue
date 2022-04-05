@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="row" v-if="showAddTransaction">
-            <AddAgioTransaction @canceled="showAddTransaction=false"/>
+            <AddAgioTransaction @canceled="showAddTransaction=false" :depot_id="depot_id"/>
           </div>
         </div>
         <el-table
@@ -66,7 +66,7 @@
             prop="agio_fee_rate"
           >
             <template v-slot="{ row }">
-              <span class="status">
+              <span class="status" v-if="row.agio_fee_rate">
                 <i18n-n :value="parseInt(row.agio_fee_rate) / 100"></i18n-n> €
               </span>
             </template>

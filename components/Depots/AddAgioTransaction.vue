@@ -20,7 +20,7 @@
             <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
             <div class="ml-2 d-flex flex-fill flex-row align-content-end">
                 <Button @click="cancelAddTransaction" :disabled="isSubmitting">{{$t('cancel')}}</Button>
-                <Button type="primary" :disabled="shouldDisableSave() || isSubmitting">{{$t('save')}}</Button>
+                <Button type="primary" :disabled="shouldDisableSave() || isSubmitting" @click="saveAddTransaction">{{$t('save')}}</Button>
             </div>
         </div>
         <Checkbox v-model="includeClaim" :label="$t('include_getting_money_from_bank_account')" class="mt-2" v-if="paymentSelected"></Checkbox>
