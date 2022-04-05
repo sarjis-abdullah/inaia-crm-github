@@ -207,5 +207,13 @@ export const actions = {
                 context.commit('latestTransactions',res.data.data);
                 return res.data;
             })
+    },
+    clientAccountDetails(context,payload){
+        return this.$axios
+            .get(`/accounts/${payload}?include=person_data,address,country,channels`)
+            .then(response => {
+                
+                return response.data.data;
+            })
     }
 }

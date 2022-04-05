@@ -31,7 +31,8 @@ export const state = () => ({
     orderFilterList:[],
     goldPrice:0,
     depotStatuses:[],
-    agioTransactions: []
+    agioTransactions: [],
+    agioTransactionTypes: []
 })
 
 const initialState  = state()
@@ -48,7 +49,8 @@ export const getters = {
     orderFilterList:state=>state.orderFilterList,
     getGoldPrice:state=>state.goldPrice,
     depotStatuses:state=>state.depotStatuses,
-    agioTransactions: state=>state.agioTransactions
+    agioTransactions: state=>state.agioTransactions,
+    agioTransactionTypes: state=>state.agioTransactionTypes
 }
 
 export const mutations = {
@@ -81,6 +83,13 @@ export const mutations = {
     },
     agioTransactions(state,agios){
         state.agioTransactions = agios;
+    },
+    agioTransactionTypes(state,types){
+        state.agioTransactionTypes = types;
+    },
+    addAgioTransaction(state,agio)
+    {
+        state.agioTransactions.push(agio);
     }
 }
 
@@ -114,7 +123,7 @@ export const actions = {
     },
     async details(context, payload) {
         return await this.$axios
-            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`).then(res => {
+            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status,depot_status_history`).then(res => {
                 context.commit('details', res.data.data);
                 console.log(res.data.data);
                 return res
@@ -255,5 +264,25 @@ export const actions = {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
+    },
+    fetchAgioTransactionTypes(context){
+        return this.$axios.get(`${process.env.golddinarApiUrl}/agio-transaction-type`)
+                .then(res => {
+                    context.commit('agioTransactionTypes',res.data.data)
+                    return res.data.data
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                })
+    },
+    createAgioTransaction(context,payload)
+    {
+        return this.$axios.post(`${process.env.golddinarApiUrl}/agio-transaction?include=agio_type`,payload)
+            .then(res => {
+                context.commit('addAgioTransaction',res.data.data)
+                return res.data.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
     }
 }
