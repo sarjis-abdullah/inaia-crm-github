@@ -96,8 +96,8 @@
             </template>
           </el-table-column>
           <el-table-column>
-            <template>
-              <icon-button type="delete"></icon-button>
+            <template v-slot="{row}">
+              <icon-button type="delete" v-if="displayDelete(row)"></icon-button>
             </template>
           </el-table-column>
         </el-table>
@@ -119,6 +119,7 @@ import { Table, TableColumn } from "element-ui";
 import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
+import moment from 'moment';
 export default {
   props: {
     depot_id: {
@@ -175,6 +176,13 @@ export default {
     },
     toggleAddTransaction() {
       this.showAddTransaction = true;
+    },
+    displayDelete(transaction)
+    {
+      let creationDate = moment(transaction.created_at);
+      const numberOfDays = creationDate.diff(moment(),'days');
+      const lastTransaction = this.agioTransactions[0];
+      return transaction.type.name_translation_key!='claim' && numberOfDays<=30 && transaction.id == lastTransaction.id;
     }
   },
 };

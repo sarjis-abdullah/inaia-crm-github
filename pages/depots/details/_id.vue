@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap" v-if="client!=null">{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+depot.account_id)" class="">{{getCustomerName(client)}}</a></span>
+                  <span class="text-nowrap" v-if="client!=null">{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+client.contact_id)" class="">{{getCustomerName(client)}}</a></span>
                 </p>
               </div>
             </div>
@@ -293,16 +293,15 @@ export default {
     },
     methods: {
         getCustomerName(client) {
-          if (client.person_data) return client.name + ' '+client.person_data.surname;
-          else if (client.name) return client.name;
-          else return false;
+          return client.username;
         },
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then(()=>{
                 this.loadedWithError=false;
-                this.$store.dispatch('clients/clientDetailsData',this.depot.account_id).then(res=>{
-                      this.client = res.data.data.customer;
+                this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
+                  console.log(res);
+                      this.client = res;
                   })
             }).
             catch(err=>{
