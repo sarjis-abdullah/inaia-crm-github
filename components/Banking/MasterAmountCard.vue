@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     initBankingAccountDetails() {
-      this.$store.dispatch('banking-account/getMasterAccountInfo').then(res => {
+      this.$store.dispatch('banking-accounts/getMasterAccountInfo').then(res => {
         this.masterAccountBalance = res.balance / 100;
         this.masterAccountIban = res.iban.match(/.{1,4}/g).join(' ');
       })

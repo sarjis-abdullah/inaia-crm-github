@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     initMasterAccountDetails() {
-      this.$store.dispatch('banking-account/getMasterAccountInfo').then(res => {
+      this.$store.dispatch('banking-accounts/getMasterAccountInfo').then(res => {
         this.masterAccountDetails = res;
       })
     }

@@ -134,7 +134,7 @@ export default {
     },
     methods: {
       initBankingAccountDetails() {
-        this.$store.dispatch("banking-account/getBankingAccountDetails", this.info.account.id).then(res=>{
+        this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
           this.bankingAccountDetails = res.data;
         })
       }

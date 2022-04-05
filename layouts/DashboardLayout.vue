@@ -181,7 +181,7 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Newsfeed', icon: 'fa fa-bullhorn text-primary', path: '/news-feeds' }"/>
+          <sidebar-item :link="{ name: 'Newsfeed', path: '/news-feeds' }"/>
         </sidebar-item>
 
         <sidebar-item
@@ -192,8 +192,8 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Users', icon: 'fa fa-users text-primary', path: '/users' }"/>
-          <sidebar-item :link="{ name: 'Roles', icon: 'fa fa-user-tag text-primary', path: '/roles' }"/>
+          <sidebar-item :link="{ name: 'Users', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', path: '/roles' }"/>
           <!--
           <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
           -->

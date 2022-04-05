@@ -178,7 +178,7 @@ export default {
         this.initiated  = true
         if(this.bankingAccountId!==0) {
           this.$store
-            .dispatch("banking-account/getBankingTransactions", pageQuery )
+            .dispatch("banking-accounts/getBankingTransactions", pageQuery )
             .then(response => {
               //console.log('data', response)
               this.data = response.data
