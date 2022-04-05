@@ -18,6 +18,18 @@ export const actions={
         })
     },
 
+    getBankingAccounts(context, payload) {
+      return this.$axios
+        .get(process.env.bankingApiUrl + '/banking-accounts' + payload)
+        .then(response => {
+          return response.data
+        })
+        .catch(error => {
+          console.log('error-fetch', error)
+          return Promise.reject(error)
+        })
+    },
+
     getBankingTransactions(context, payload) {
       return this.$axios
         .get(process.env.bankingApiUrl + '/banking-transactions' + payload)

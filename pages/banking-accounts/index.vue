@@ -19,7 +19,7 @@
 
     <div class="container-fluid mt--6">
 
-      <BankingTransactionsList />
+      <BankingAccountsList />
 
     </div>
 
@@ -27,12 +27,12 @@
 
 </template>
 <script>
-import BankingTransactionsList from "@/components/Banking/BankingTransactionsList"
+import BankingAccountsList from "../../components/Banking/BankingAccountsList";
 
 export default {
   layout: 'DashboardLayout',
   components: {
-    BankingTransactionsList
+    BankingAccountsList
   }
 }
 </script>

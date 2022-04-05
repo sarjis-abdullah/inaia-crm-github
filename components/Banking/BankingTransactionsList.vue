@@ -27,17 +27,11 @@
                     :data="data">
 
             <el-table-column label="#"
-                             min-width="100px"
+                             min-width="80px"
                              prop="id"
             >
               <template v-slot="{row}">
-                <div class="media align-items-center">
-                  <div class="media-body">
-
-                    <div class="font-weight-300 name" >{{row.id}}</div>
-
-                  </div>
-                </div>
+                  <div class="name" >{{row.id}}</div>
               </template>
             </el-table-column>
 
