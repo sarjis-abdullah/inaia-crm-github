@@ -116,9 +116,9 @@ export default ({
             let payload = {
                 "depot_id":this.depot_id,
                 "amount":Number(this.amount),
-                "includeClaim":this.includeClaim,
+                "include_claim":this.includeClaim,
                 "agio_type_id":this.selectedAgioTransactionType,
-                "isManual":true
+                "is_manual":true
             }
             this.isSubmitting = true;
             this.$store.dispatch('depots/createAgioTransaction',payload).then(res=>{
