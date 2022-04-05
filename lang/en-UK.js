@@ -267,5 +267,9 @@ export default {
     agio_transaction_types:'Agio transaction types',
     include_getting_money_from_bank_account:"Take the amount directly from bank account",
     agio_transaction_created_successfully:'Agio transaction has been created successfully',
-    agio_transaction_created_unsuccessfully:"We couldn't create agio transaction"
+    agio_transaction_created_unsuccessfully:"We couldn't create agio transaction",
+    start_date:'Start date',
+    end_date:'End date',
+    pause:'Pause',
+    resume:'Resume'
 }

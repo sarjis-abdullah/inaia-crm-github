@@ -98,7 +98,7 @@
                         <i class="fas fa-ellipsis-h"></i>
                       </template>
 
-                      <a class="dropdown-item" href="#">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" @click.prevent="confirmPause()"
@@ -208,6 +208,16 @@
            </div>
             
         </modal>
+        <modal :show.sync="showDepotStatusHistory" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+              <DepotStatusHistory :depotStatus="depot.status_history"/>
+           </div>
+            
+        </modal>
       </div>
     </div>
   </div>
@@ -222,6 +232,7 @@ import GoldGift from "@/components/Depots/GoldGift";
 import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
+import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -240,7 +251,8 @@ export default {
             showResumeConfirm:false,
             isSubmitting:false,
             showCancelConfirm:false,
-            showAgioTransaction:false
+            showAgioTransaction:false,
+            showDepotStatusHistory:false
         }
     },
     components: {
@@ -250,7 +262,8 @@ export default {
         OrderList,
         GoldGift,
         Status,
-        AgioTransactions
+        AgioTransactions,
+        DepotStatusHistory
     },
     computed:
         {

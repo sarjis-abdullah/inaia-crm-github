@@ -123,7 +123,7 @@ export const actions = {
     },
     async details(context, payload) {
         return await this.$axios
-            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status`).then(res => {
+            .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status,depot_status_history`).then(res => {
                 context.commit('details', res.data.data);
                 console.log(res.data.data);
                 return res
