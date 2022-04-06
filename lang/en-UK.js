@@ -272,6 +272,9 @@ export default {
     start_date:'Start date',
     end_date:'End date',
     pause:'Pause',
-    resume:'Resume'
+    resume:'Resume',
+    claims:'Claims',
+    claims_details:'Claim details',
+    price_yearly:'Price Yearly'
 
 }

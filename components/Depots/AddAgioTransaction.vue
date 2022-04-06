@@ -115,7 +115,7 @@ export default ({
         {
             let payload = {
                 "depot_id":this.depot_id,
-                "amount":Number(this.amount),
+                "amount":Number(this.amount)*100,
                 "include_claim":this.includeClaim,
                 "agio_type_id":this.selectedAgioTransactionType,
                 "is_manual":true
@@ -132,7 +132,7 @@ export default ({
         shouldDisableSave()
         {
             const num = Number(this.amount);
-            return (!this.depot_id ||!this.selectedAgioTransactionType || !this.amount || !Number.isInteger(num) || num <= 0)
+            return (!this.depot_id ||!this.selectedAgioTransactionType || !this.amount || Number.isNaN(num) || num <= 0)
         }
     }
 })

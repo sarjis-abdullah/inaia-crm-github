@@ -7,7 +7,10 @@ export const state = () => {
         countryList: [],
         countryListLoaded: 0,
         orderFilterList:[],
-        latestTransactions:[]
+        latestTransactions:[],
+        aggregatedClaims: [],
+        claimStatuses:[],
+        claims:[]
     }
 }
 
@@ -35,6 +38,9 @@ export const getters = {
     },
     orderFilterList:state=>state.orderFilterList,
     latestTransactions:state=>state.latestTransactions,
+    aggregatedClaims:state=>state.aggregatedClaims,
+    claimStatuses:state=>state.claimStatuses,
+    claims:state=> state.claims
 }
 export const mutations = {
 
@@ -70,6 +76,16 @@ export const mutations = {
     },
     latestTransactions(state,list) {
         state.latestTransactions = list;
+    },
+    aggregatedClaims(state,list)
+    {
+        state.aggregatedClaims = list;
+    },
+    claimStatuses(state,list) {
+        state.claimStatuses = list;
+    },
+    claims(state,list) {
+        state.claims = list;
     }
 }
 export const actions = {
@@ -215,5 +231,31 @@ export const actions = {
                 
                 return response.data.data;
             })
+    },
+    getClientAggregatedClaims(context,payload){
+        return this.$axios
+                .get(`/aggregated-claims?include=claim_status${payload}`)
+                .then(res=>{
+                    context.commit('aggregatedClaims',res.data.data);
+                    return res.data;
+                })
+    },
+    getClaimStatuses(context)
+    {
+        return this.$axios
+            .get(`/claim-statuses`)
+            .then(response => {
+                context.commit('claimStatuses', response.data.data)
+                return response
+            })
+    },
+    getClientClaims(context,payload)
+    {
+        return this.$axios
+                .get(`/claims?include=claim_type${payload}`)
+                .then(res=>{
+                    context.commit('claims',res.data.data);
+                    return res.data;
+                })
     }
 }
