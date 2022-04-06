@@ -247,6 +247,7 @@ export default {
     banking_accounts: 'Banking Accounts',
     banking_master_account: 'PPS Master Account',
 
+    reason_text: 'Reason',
     PAYMENT_IN:'Payment in',
     PAYMENT_OUT:'Payment out',
     FUND_TRANSFER: 'Fund transfer',
@@ -262,7 +263,7 @@ export default {
     agio_after:'Agio after',
     claim:"Claim",
     discount:'Discount',
-    payment:'Payment',
+    agio_payment:'Payment',
     add_transaction:"Add transaction",
     cant_load_agio_transactions_types:"We can't load agio transaction types",
     agio_transaction_types:'Agio transaction types',
