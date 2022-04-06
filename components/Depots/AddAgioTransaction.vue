@@ -1,10 +1,13 @@
 <template>
-    <div class="mt-4 flex-fill">
+    <div class="mb-3 flex-fill">
         <div class="d-flex flex-row justify-content-center align-items-center">
-            <Loader v-if='isLoadingTypes'/>
+            <Loader v-if='isLoadingTypes' :width="32" :height="32" />
             <TextError :textError ="$t(typesError)" v-if="!isLoadingTypes && textError"/>
-            <div>
-                <Select :placeholder="$t('agio_transaction_types')" v-if="!isLoadingTypes && !textError"
+            <div class="w-100">
+                <Select :placeholder="$t('type')"
+                        class="d-block"
+                        v-if="!isLoadingTypes && !textError"
+
                             v-model="selectedAgioTransactionType"
                             @change="typeSelected"
                             >
@@ -15,10 +18,10 @@
                                 >
                         </Option>
                 </Select>
-                
+
             </div>
             <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
-            <div class="ml-2 d-flex flex-fill flex-row align-content-end">
+            <div class="ml-3 d-flex flex-fill flex-row align-content-end">
                 <Button @click="cancelAddTransaction" :disabled="isSubmitting">{{$t('cancel')}}</Button>
                 <Button type="primary" :disabled="shouldDisableSave() || isSubmitting" @click="saveAddTransaction">{{$t('save')}}</Button>
             </div>
@@ -33,7 +36,7 @@ import TextError from '@/components/common/Errors/TextError';
 import {Select,Option,Input,Checkbox,Button} from 'element-ui';
 export default ({
     setup() {
-        
+
     },
     props:{
         depot_id:{

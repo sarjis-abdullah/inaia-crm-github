@@ -43,7 +43,7 @@ export default {
             }
             if(this.type=='delete')
             {
-                return 'fa fa-trash'
+                return 'lnir lnir-trash'
             }
             if(this.type=='cancel')
             {
