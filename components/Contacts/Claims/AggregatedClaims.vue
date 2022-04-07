@@ -59,6 +59,7 @@
           <el-table-column
             v-bind:label="$t('amount')"
             min-width="180px"
+            header-align="right"
             align="right"
             prop="amount"
           >

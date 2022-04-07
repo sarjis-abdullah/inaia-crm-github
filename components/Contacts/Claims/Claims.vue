@@ -7,7 +7,7 @@
             <div class="col-8">
               <h5 class="h3 mb-0">{{ $t("claims_details") }}</h5>
             </div>
-            
+
           </div>
         </div>
         <el-table
@@ -43,7 +43,7 @@
                       row.claim_type ? $t(row.claim_type.name_translation_key) : ""
                     }}</span
                   >
-                  
+
                 </div>
               </div>
             </template>
@@ -53,14 +53,14 @@
               <div class="d-flex align-items-center">
                 <div>
                   {{row.created_at?$d(new Date(row.created_at),'short'):""}}
-                  
+
                 </div>
               </div>
             </template>
           </el-table-column>
 
-          
-          
+
+
         </el-table>
         <div class="card-footer py-4 d-flex justify-content-end" v-if="totalTableData>1">
           <base-pagination

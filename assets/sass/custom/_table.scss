@@ -2,9 +2,14 @@
 .table,
 .el-table {
 
+  .is-right .cell {
+    justify-content: end;
+  }
+
     .cell {
         overflow:visible !important;
     }
+
 }
 
 .table-hover tr:hover td {
