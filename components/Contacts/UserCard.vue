@@ -19,17 +19,19 @@
 
         <div class="position-absolute" style="right: 1.5rem; top:1.5rem;">
           <base-dropdown
-            title-classes="btn btn-sm btn-neutral mr-0"
+            title-classes="btn btn-sm btn-link mr-0"
             menu-on-right
             :has-toggle="false"
           >
             <template slot="title">
-              <i class="fas fa-ellipsis-h"></i>
+              <i class="fas fa-ellipsis-v"></i>
             </template>
 
             <a class="dropdown-item" href="#">{{ $t("edit_address") }}</a>
             <a class="dropdown-item" href="#">{{ $t("edit_mobile") }}</a>
             <a class="dropdown-item" href="#">{{ $t("edit_email") }}</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">{{ $t("account_settings") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
             <div class="dropdown-divider"></div>

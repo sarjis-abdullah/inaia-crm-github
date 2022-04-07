@@ -18,6 +18,7 @@ export default {
     edit_mobile: 'Mobilnr. editieren',
     edit_email: 'E-Mail editieren',
     kyc_documents: 'KYC Dokumente',
+    account_settings: 'Einstellungen',
 
     account_data:'Account',
     person_data:'Personendaten',
@@ -78,9 +79,15 @@ export default {
     type: 'Typ',
 
     product_name_golddinar: 'Golddinar',
+    product_class: 'Produktklasse',
     product_class_standard: 'Standard',
     product_class_premium: 'Premium',
     product_class_specs: 'Spezifikationen',
+    monthly:'monatlich',
+    yearly: 'jährlich',
+    next_billing_date: 'Erneut fällig am',
+
+    batch_processing: 'Stapelverarbeitung',
 
     order_type_purchase: 'Kaufen',
     order_type_sell: 'Verkaufen',
@@ -183,7 +190,6 @@ export default {
     orders:'Aufträge',
     client:'Kunde',
     depot_value:'Depotwert',
-    monthly:'monatlich',
     running_time:'Laufzeit',
     cancel_contract:'Stornieren',
 

@@ -30,12 +30,12 @@
                   <base-progress class="progress-xs mt-3 mb-0" type="success" :value="30"></base-progress>
                 </div>
                 <div class="col-auto">
-                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+                  <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                                  menu-on-right
                                  :has-toggle="false">
 
                     <template slot="title">
-                      <i class="fas fa-ellipsis-h"></i>
+                      <i class="fas fa-ellipsis-v"></i>
                     </template>
 
                     <a class="dropdown-item" href="#">Action</a>
@@ -61,12 +61,12 @@
                   <base-progress class="progress-xs mt-3 mb-0" type="success" :value="50"></base-progress>
                 </div>
                 <div class="col-auto">
-                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+                  <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                                  menu-on-right
                                  :has-toggle="false">
 
                     <template slot="title">
-                      <i class="fas fa-ellipsis-h"></i>
+                      <i class="fas fa-ellipsis-v"></i>
                     </template>
 
                     <a class="dropdown-item" href="#">Action</a>
@@ -92,12 +92,12 @@
                   <base-progress class="progress-xs mt-3 mb-0" type="success" :value="80"></base-progress>
                 </div>
                 <div class="col-auto">
-                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+                  <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                                  menu-on-right
                                  :has-toggle="false">
 
                     <template slot="title">
-                      <i class="fas fa-ellipsis-h"></i>
+                      <i class="fas fa-ellipsis-v"></i>
                     </template>
 
                     <a class="dropdown-item" href="#">Action</a>
@@ -123,12 +123,12 @@
                   <base-progress class="progress-xs mt-3 mb-0" type="success" :value="90"></base-progress>
                 </div>
                 <div class="col-auto">
-                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+                  <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                                  menu-on-right
                                  :has-toggle="false">
 
                     <template slot="title">
-                      <i class="fas fa-ellipsis-h"></i>
+                      <i class="fas fa-ellipsis-v"></i>
                     </template>
 
                     <a class="dropdown-item" href="#">Action</a>

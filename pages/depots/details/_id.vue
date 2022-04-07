@@ -52,12 +52,12 @@
                   </div>
                   <div class="col-auto">
                     <base-dropdown
-                      title-classes="btn btn-sm btn-neutral mr-0"
+                      title-classes="btn btn-sm btn-link mr-0"
                       menu-on-right
                       :has-toggle="false"
                     >
                       <template slot="title">
-                        <i class="fas fa-ellipsis-h"></i>
+                        <i class="fas fa-ellipsis-v"></i>
                       </template>
 
                       <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
@@ -90,12 +90,12 @@
                   </div>
                   <div class="col-auto">
                     <base-dropdown
-                      title-classes="btn btn-sm btn-neutral mr-0"
+                      title-classes="btn btn-sm btn-link mr-0"
                       menu-on-right
                       :has-toggle="false"
                     >
                       <template slot="title">
-                        <i class="fas fa-ellipsis-h"></i>
+                        <i class="fas fa-ellipsis-v"></i>
                       </template>
 
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
@@ -206,7 +206,7 @@
             <div>
               <AgioTransactions :depot_id="depotId"/>
            </div>
-            
+
         </modal>
         <modal :show.sync="showDepotStatusHistory" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
           <template slot="header" class="pb-0">
@@ -216,7 +216,7 @@
             <div>
               <DepotStatusHistory :depotStatus="depot.status_history"/>
            </div>
-            
+
         </modal>
       </div>
     </div>

@@ -18,6 +18,7 @@ export default {
     edit_mobile: 'Edit mobile number',
     edit_email: 'Edit email',
     kyc_documents: 'KYC Documents',
+    account_settings: 'Account settings',
 
     account_data:'Account data',
     person_data:'Person data',
@@ -82,9 +83,15 @@ export default {
     type: 'Type',
 
     product_name_golddinar: 'Golddinar',
+    product_class: 'Product class',
     product_class_standard: 'Standard',
     product_class_premium: 'Premium',
     product_class_specs: 'Specifications',
+    monthly:'monthly',
+    yearly: 'yearly',
+    next_billing_date: 'Next billing date',
+
+    batch_processing: 'Batch processing',
 
     order_type_purchase: 'Purchase',
     order_type_sell: 'Sell',
@@ -190,7 +197,6 @@ export default {
     orders:'Orders',
     client:'Client',
     depot_value:'Depot value',
-    monthly:'monthly',
     running_time:'Duration',
     cancel_contract:'Cancel contract',
 

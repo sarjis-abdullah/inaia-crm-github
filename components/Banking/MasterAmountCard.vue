@@ -13,12 +13,12 @@
             </div>
           </div>
           <div class="col-auto">
-            <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
+            <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                            menu-on-right
                            :has-toggle="false">
 
               <template slot="title">
-                <i class="fas fa-ellipsis-h"></i>
+                <i class="fas fa-ellipsis-v"></i>
               </template>
 
               <a class="dropdown-item" href="#">{{$t('make_payment')}}</a>

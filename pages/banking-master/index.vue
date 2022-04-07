@@ -12,7 +12,7 @@
           -->
         </div>
         <div class="col-lg-6 col-5 text-right">
-          <!-- <base-button size="sm" type="neutral">New</base-button> -->
+          <base-button size="sm" type="neutral">{{ $t('make_payment') }}</base-button>
         </div>
       </div>
     </base-header>

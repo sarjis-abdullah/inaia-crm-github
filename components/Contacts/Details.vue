@@ -21,7 +21,7 @@
       <div class="row">
         <div class="col-lg-8">
 
-          <user-card :resource="resource"></user-card>
+          <UserCard :resource="resource" />
 
         </div>
 
@@ -35,9 +35,6 @@
 
       </div>
 
-      <div>
-        <div>- Account settings (language, allow_marketing, privacy) - as a popup??</div>
-      </div>
       <DepotList  v-if="resource && resource.customer && resource.customer.account" :accountId="getAccoundId"/>
       <LatestTransactions v-if="resource" :account_id="getAccoundId" />
       <AggregatedClaims v-if="resource" :account_id="getAccoundId" />
