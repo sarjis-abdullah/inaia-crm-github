@@ -213,7 +213,7 @@ export default {
         .finally(() => (this.isLoading = false));
     },
     displayDetails(resource) {
-        debugger;
+      //debugger;
       this.selectedAggregatedId = resource.id;
       this.showDetails = true;
     },

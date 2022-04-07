@@ -1,76 +1,76 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <div class="card">
-        <div class="card-header">
-          <div class="row align-items-center">
-            <div class="col-8">
-              <h5 class="h3 mb-0">{{ $t("claims_details") }}</h5>
-            </div>
+  <div>
 
-          </div>
-        </div>
-        <el-table
-          class="table-hover table-responsive table-flush"
-          header-row-class-name="thead-light"
-          :data="aggregatedClaims"
-        >
-          <el-table-column label="#" min-width="100px" prop="id">
-            <template v-slot="{ row }">
-              <div class="media align-items-center">
-                <div class="media-body">
-                  <div class="font-weight-300 name">{{ row.id }}</div>
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-            <el-table-column
-            v-bind:label="$t('amount')"
-            min-width="180px"
-            align="right"
-            prop="amount"
-          >
-            <template v-slot="{ row }">
-              <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            </template>
-          </el-table-column>
-            <el-table-column v-bind:label="$t('type')" min-width="180px" prop="type">
-            <template v-slot="{ row }">
-              <div class="d-flex align-items-center">
-                <div>
-                  <span class="orderType text-body"
-                    >{{
-                      row.claim_type ? $t(row.claim_type.name_translation_key) : ""
-                    }}</span
-                  >
-
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column v-bind:label="$t('date')" min-width="180px" prop="created_at">
-            <template v-slot="{ row }">
-              <div class="d-flex align-items-center">
-                <div>
-                  {{row.created_at?$d(new Date(row.created_at),'short'):""}}
-
-                </div>
-              </div>
-            </template>
-          </el-table-column>
-
-
-
-        </el-table>
-        <div class="card-footer py-4 d-flex justify-content-end" v-if="totalTableData>1">
-          <base-pagination
-            v-model="page"
-            :per-page="perPage"
-            :total="totalTableData"
-          ></base-pagination>
+    <div class="row align-items-center mb-3">
+      <div class="col-8">
+        <h5 class="h2 mb-0">{{ $t("claims_details") }}</h5>
+      </div>
+      <div class="col-4 text-right">
+        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm">
+          <span class="btn-inner--icon"><i class="fas fa-check"></i></span><span class="btn-inner--text">{{$t('mark_as_paid')}}</span>
+        </button>
       </div>
     </div>
-  </div>
+
+    <el-table
+      class="table-hover table-responsive table-flush"
+      header-row-class-name="thead-light"
+      :data="aggregatedClaims"
+    >
+      <el-table-column label="#" min-width="100px" prop="id">
+        <template v-slot="{ row }">
+          <div class="media align-items-center">
+            <div class="media-body">
+              <div class="font-weight-300 name">{{ row.id }}</div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+        <el-table-column
+        v-bind:label="$t('amount')"
+        min-width="180px"
+        align="right"
+        prop="amount"
+      >
+        <template v-slot="{ row }">
+          <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+        </template>
+      </el-table-column>
+        <el-table-column v-bind:label="$t('type')" min-width="180px" prop="type">
+        <template v-slot="{ row }">
+          <div class="d-flex align-items-center">
+            <div>
+              <span class="orderType text-body"
+                >{{
+                  row.claim_type ? $t(row.claim_type.name_translation_key) : ""
+                }}</span
+              >
+
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column v-bind:label="$t('date')" min-width="180px" prop="created_at">
+        <template v-slot="{ row }">
+          <div class="d-flex align-items-center">
+            <div>
+              {{row.created_at?$d(new Date(row.created_at),'short'):""}}
+
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+
+    </el-table>
+
+    <div class="py-1 d-flex justify-content-end" v-if="totalTableData>1">
+      <base-pagination
+        v-model="page"
+        :per-page="perPage"
+        :total="totalTableData"
+      ></base-pagination>
+    </div>
+
   </div>
 </template>
 <script>

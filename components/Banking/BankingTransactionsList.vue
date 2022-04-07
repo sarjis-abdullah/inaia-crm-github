@@ -53,7 +53,7 @@
             </el-table-column>
 
             <el-table-column v-bind:label="$t('reason_text')"
-                             prop="amount"
+                             prop="reason"
                              min-width="180px"
                              sortable>
               <template v-slot="{row}">
@@ -66,6 +66,8 @@
             <el-table-column v-bind:label="$t('amount')"
                              prop="amount"
                              min-width="140px"
+                             header-align="right"
+                             align="right"
                              sortable>
                 <template v-slot="{row}">
                     <span class="amount">

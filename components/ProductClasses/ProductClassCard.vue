@@ -6,7 +6,7 @@
         <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">{{ $t('product_class') }}</h5>
             <div v-if="productClassDetails">
-              <h2><i class="lnir" :class="productClassDetails.product_class.name_translation_key == 'product_class_premium' ? 'lnir-crown' : 'lnir-star'"></i> {{ $t(productClassDetails.product_class.name_translation_key) }}</h2>
+              <h2 class="mb-0"><i class="lnir" :class="productClassDetails.product_class.name_translation_key == 'product_class_premium' ? 'lnir-crown' : 'lnir-star'"></i> {{ $t(productClassDetails.product_class.name_translation_key) }}</h2>
             </div>
             <div v-else><Loader :width="24" :height="24"></Loader></div>
         </div>
@@ -23,7 +23,7 @@
           </base-dropdown>
         </div>
       </div>
-      <div class="mt-3 mb-0 text-sm text-center">
+      <div class="mt-2 mb-0 text-sm text-center">
         <div class="display-2 d-flex align-items-center justify-content-center">5 € <span class="text-sm ml-2">/ {{ productClassDetails.payment_period }}</span></div>
         <div>Next billing date: {{ $d(new Date(productClassDetails.next_billing_date),'narrow') }}</div>
       </div>

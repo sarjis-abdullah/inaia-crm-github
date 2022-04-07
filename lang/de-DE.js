@@ -23,6 +23,7 @@ export default {
     person_data:'Personendaten',
     address_data:'Adresse',
     contact_data:'Kontakt',
+    gender:'Geschlecht',
 
     account_number:'Account nr.',
     created_at:'Erstellt am',

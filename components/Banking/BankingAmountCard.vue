@@ -7,7 +7,7 @@
             <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
             <div class="media-body">
               <h5 class="card-title text-uppercase text-muted mb-0">{{ $t('banking_account') }}</h5>
-              <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="balance">{{ $n(balance/100) }} €</span>
+              <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="balance>=0">{{ $n(balance/100) }} €</span>
               <span v-else><Loader :width="24" :height="24"></Loader></span>
             </div>
           </div>
