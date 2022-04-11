@@ -281,5 +281,9 @@ export default {
     resume:'Fortsetzen',
     claims:'Claims',
     claims_details:'Claim details',
-    price_yearly:'Price Yearly'
+    price_yearly:'Price Yearly',
+    agio_transaction_id:'Agio transaction id',
+    enter_agio_transaction_id: 'Enter agio transaction id to confirm deletion',
+    agio_transaction_deleted_successfully:'Agio transaction deleted successfully',
+    agio_transaction_deleted_unsuccessfully: 'Agio transaction was not deleted',
 }

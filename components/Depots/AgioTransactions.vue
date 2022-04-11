@@ -16,7 +16,21 @@
         <AddAgioTransaction @canceled="showAddTransaction=false" :depot_id="depot_id"/>
       </div>
     </div>
-
+    <div class="mb-3" v-if="showDeleteTransaction">
+      <div class="mb-3">
+          {{$t('enter_agio_transaction_id')}}
+        </div>
+        <div class="row">
+      <div class="col">
+        
+        <Input :placeholder="$t('agio_transaction_id')" v-model="deletedAgioTransactionId"/>
+      </div>
+      <div class="col">
+        <Button  :disabled="isDeleting" @click="cancelDeletion">{{$t('cancel')}}</Button>
+        <Button type="danger" :disabled="shouldDeleteDisabled() || isDeleting" @click="confirmDeletion">{{$t('delete')}}</Button>
+      </div>
+      </div>
+    </div>
     <el-table
       class="table-hover table-responsive table-flush mb-3"
       header-row-class-name="thead-light"
@@ -93,7 +107,7 @@
       </el-table-column>
       <el-table-column>
         <template v-slot="{row}">
-          <icon-button type="delete" v-if="displayDelete(row)"></icon-button>
+          <icon-button type="delete" v-if="displayDelete(row) && !showDeleteTransaction" @click="deleteAgioTransaction(row)"></icon-button>
         </template>
       </el-table-column>
     </el-table>
@@ -111,11 +125,12 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { Table, TableColumn } from "element-ui";
+import { Table, TableColumn,Input,Button } from "element-ui";
 import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
+
 export default {
   props: {
     depot_id: {
@@ -128,7 +143,9 @@ export default {
     [TableColumn.name]: TableColumn,
     Badge,
     IconButton,
-    AddAgioTransaction
+    AddAgioTransaction,
+    Input,
+    Button
   },
   computed: {
     ...mapGetters({
@@ -158,7 +175,11 @@ export default {
       totalTableData: 0,
       isLoading: false,
       loadingError: null,
-      showAddTransaction:false
+      showAddTransaction:false,
+      showDeleteTransaction:false,
+      selectedAgioTransaction:null,
+      deletedAgioTransactionId:null,
+      isDeleting:false
     };
   },
   methods: {
@@ -179,6 +200,36 @@ export default {
       const numberOfDays = creationDate.diff(moment(),'days');
       const lastTransaction = this.agioTransactions[0];
       return transaction.type.name_translation_key!='claim' && numberOfDays<=30 && transaction.id == lastTransaction.id;
+    },
+    deleteAgioTransaction(transaction) {
+      this.selectedAgioTransaction = transaction;
+      this.showDeleteTransaction = true;
+    },
+    shouldDeleteDisabled()
+    {
+      if(this.selectedAgioTransaction)
+      {
+        return this.selectedAgioTransaction.id != this.deletedAgioTransactionId;
+      }
+      else
+      {
+        return true;
+      }
+    },
+    cancelDeletion()
+    {
+      this.showDeleteTransaction = false;
+      this.selectedAgioTransaction = null;
+      this.deletedAgioTransactionId = null;
+    },
+    confirmDeletion()
+    {
+      this.$store.dispatch('depots/deleteAgioTransaction').then(()=>{
+        this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
+        this.cancelDeletion();
+      }).catch(()=>{
+        this.$notify({type: 'danger', timeout: 5000, message: this.$t('agio_transaction_deleted_unsuccessfully')})
+      })
     }
   },
 };

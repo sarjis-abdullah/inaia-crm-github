@@ -90,6 +90,11 @@ export const mutations = {
     addAgioTransaction(state,agio)
     {
         state.agioTransactions.push(agio);
+    },
+    deleteAgioTransaction(state,id)
+    {
+        let index = state.agioTransactions.findIndex(x=>x.id==id);
+        state.agioTransactions.splice(index, 1);
     }
 }
 
@@ -281,6 +286,16 @@ export const actions = {
             .then(res => {
                 context.commit('addAgioTransaction',res.data.data)
                 return res.data.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
+    },
+    deleteAgioTransaction(context,payload)
+    {
+        return this.$axios.delete(`${process.env.golddinarApiUrl}/agio-transaction/${ payload }`)
+            .then(res => {
+                context.commit('deleteAgioTransaction',payload)
+                return true
             }).catch(err=>{
                 return Promise.reject(err)
             })
