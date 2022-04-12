@@ -288,5 +288,5 @@ export default {
     enter_agio_transaction_id: 'Enter agio transaction id to confirm deletion',
     agio_transaction_deleted_successfully:'Agio transaction deleted successfully',
     agio_transaction_deleted_unsuccessfully: 'Agio transaction was not deleted',
-
+    customer_product_spec: 'Customer product specifications'
 }

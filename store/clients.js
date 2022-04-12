@@ -1,7 +1,7 @@
 export const state = () => {
     return {
         clientData: [],
-        singleClientData: {},
+        singleClientData: null,
         // leadData: [],
         // singleLeadData: {},
         countryList: [],
@@ -209,10 +209,10 @@ export const actions = {
     },
     clientDetailsData(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels`)
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
             .then(response => {
-                const singleClientData = response.data.data
-                context.commit('singleClientData', singleClientData)
+                context.commit('singleClientData', response.data.data);
+                console.log(response.data.data);
                 return response
             })
     },

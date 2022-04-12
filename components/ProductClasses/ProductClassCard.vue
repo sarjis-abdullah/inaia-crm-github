@@ -19,7 +19,7 @@
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item" href="#">{{$t('product_class_specs')}}</a>
+            <a class="dropdown-item" @click.prevent="showProductSpecifications">{{$t('product_class_specs')}}</a>
           </base-dropdown>
         </div>
       </div>
@@ -28,15 +28,23 @@
         <div>{{$t('next_billing_date')}}: {{ $d(new Date(productClassDetails.next_billing_date),'narrow') }}</div>
       </div>
     </div>
-
+    <modal :show.sync="showProductSpec" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+      <template slot="header">
+          <h5 class="modal-title" id="confirmModal">{{$t('product_class_specs')}}</h5>
+      </template>
+      <ProductClassSpecification :account_product_spec="productClassDetails.account_product_class_specs" :product_class_id="productClassDetails.product_class.id"/>
+    </modal>
   </div>
 </template>
 <script>
 import Loader from "../common/Loader/Loader";
+import ProductClassSpecification from '@/components/ProductClasses/ProductClassSpecification';
+
 
 export default {
   components: {
-    Loader
+    Loader,
+    ProductClassSpecification
   },
   props:{
     productClassDetails:{
@@ -45,13 +53,16 @@ export default {
   },
   data() {
     return {
+      showProductSpec: false
     }
   },
   watch: {
 
   },
   methods: {
-
+    showProductSpecifications(){
+      this.showProductSpec = true;
+    }
   },
   mounted() {
 
