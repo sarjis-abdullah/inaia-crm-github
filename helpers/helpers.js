@@ -40,7 +40,32 @@ export function mapCountriesNationalities(list) {
     })
     return {countryList, nationalityList}
 }
-
+export function mapCountryCode(list){
+    let countyList = [];
+    list.forEach(item=>{
+        if(item.allow){
+            countyList.push({
+                id:item.id,
+                value:item.calling_code.replace('00','+'),
+                text:item.country+" ( "+ item.calling_code.replace('00','+') + " )"
+            })
+        }
+    })
+    return countyList;
+}
+export function extractCountryCode(phone,list)
+{
+    let phoneNumber = '';
+    let countryCode = '';
+    list.forEach(item=>{
+        if(phone.startsWith(item.value))
+        {
+            countryCode = item.value;
+            phoneNumber = phone.replace(item.value,'');
+        }
+    })
+    return {phoneNumber,countryCode}
+}
 export function notifyError(err, notify) {
     let response = err.response
     if (response.status === 403) {

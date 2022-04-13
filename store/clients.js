@@ -1,3 +1,4 @@
+import { mapCountryCode } from '../helpers/helpers';
 export const state = () => {
     return {
         clientData: [],
@@ -10,7 +11,8 @@ export const state = () => {
         latestTransactions:[],
         aggregatedClaims: [],
         claimStatuses:[],
-        claims:[]
+        claims:[],
+        countryCodeList:[]
     }
 }
 
@@ -40,7 +42,8 @@ export const getters = {
     latestTransactions:state=>state.latestTransactions,
     aggregatedClaims:state=>state.aggregatedClaims,
     claimStatuses:state=>state.claimStatuses,
-    claims:state=> state.claims
+    claims:state=> state.claims,
+    countryCodeList:state=>state.countryCodeList
 }
 export const mutations = {
 
@@ -52,6 +55,15 @@ export const mutations = {
     },
     singleClientData(state, singleClientData) {
         state.singleClientData = singleClientData
+    },
+    updateAddress(state,address)
+    {
+        
+        state.singleClientData.customer.address = address;
+    },
+    updateChannels(state,channels)
+    {
+        state.singleClientData.customer.channels = channels;
     },
     // initLeadData(state, leadData) {
     //     state.leadData = leadData
@@ -86,11 +98,14 @@ export const mutations = {
     },
     claims(state,list) {
         state.claims = list;
+    },
+    countryCodeList(state,list)
+    {
+        state.countryCodeList = list
     }
 }
 export const actions = {
     submitClient(context, payload) {
-
         if (!payload.id) {
             // console.log(payload)
             return this.$axios.post('/contacts/store-with-relations', payload).then(response => {
@@ -200,10 +215,11 @@ export const actions = {
         return this.$axios
             .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
-                const countryList = response.data.data
+                const countryList = response.data
                 // console.log('country-list loaded')
                 context.commit('initCountryList', countryList)
-                context.commit('countryListLoaded', 2)
+                context.commit('countryListLoaded', 2);
+                context.commit('countryCodeList',mapCountryCode(countryList));
                 return response
             })
     },

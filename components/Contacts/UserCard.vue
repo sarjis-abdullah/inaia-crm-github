@@ -27,11 +27,11 @@
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item" href="#">{{ $t("edit_address") }}</a>
-            <a class="dropdown-item" href="#">{{ $t("edit_mobile") }}</a>
-            <a class="dropdown-item" href="#">{{ $t("edit_email") }}</a>
+            <a class="dropdown-item" @click.prevent="displayEditAddress">{{ $t("edit_address") }}</a>
+            <a class="dropdown-item" @click.prevent="displayEditPhoneNumber">{{ $t("edit_mobile") }}</a>
+            <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">{{ $t("account_settings") }}</a>
+            <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
             <div class="dropdown-divider"></div>
@@ -92,17 +92,29 @@
 
 
     </div>
-
+    <EditAddress :showModal="showEditAddress" :customer="this.info" @cancelEdit="cancelEditAddress"/>
+    <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
+    <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
+    <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
-
+import EditAddress from '@/components/Contacts/EditAddress';
+import EditPhoneNumber from '@/components/Contacts/EditPhoneNumber';
+import EditEmail from '@/components/Contacts/EditEmail';
+import AccountSettings from '@/components/Contacts/AccountSettings';
 export default {
     props: {
         resource: {
             type: Object
         }
+    },
+    components:{
+      EditAddress,
+      EditPhoneNumber,
+      EditEmail,
+      AccountSettings
     },
     computed: {
         info() {
@@ -149,6 +161,15 @@ export default {
             return age
         }
     },
+    data(){
+      return {
+        showEditAddress:false,
+        showEditPhoneNumber:false,
+        showEditEmail: false,
+        showSettings: false
+      }
+      
+    },
     methods: {
       getChannelInfo(type) {
         let channel = this.info.channels && this.info.channels.length && this.info.channels.find( c => c.type.value == type )
@@ -156,6 +177,30 @@ export default {
           return channel.value
         }
         return null
+      },
+      displayEditAddress(){
+        this.showEditAddress = true;
+      },
+      cancelEditAddress(){
+        this.showEditAddress = false;
+      },
+      displayEditPhoneNumber(){
+        this.showEditPhoneNumber = true;
+      },
+      cancelEditPhoneNUmber(){
+        this.showEditPhoneNumber = false;
+      },
+      displayEditEmail(){
+        this.showEditEmail = true;
+      },
+      cancelEditEmail(){
+        this.showEditEmail = false;
+      },
+      displaySettings(){
+        this.showSettings = true;
+      },
+      closeSettings(){
+        this.showSettings = false;
       }
 
     }

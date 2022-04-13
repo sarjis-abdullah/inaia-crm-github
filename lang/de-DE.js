@@ -286,5 +286,23 @@ export default {
     enter_agio_transaction_id: 'Enter agio transaction id to confirm deletion',
     agio_transaction_deleted_successfully:'Agio transaction deleted successfully',
     agio_transaction_deleted_unsuccessfully: 'Agio transaction was not deleted',
-    customer_product_spec: 'Customer product specifications'
+    customer_product_spec: 'Customer product specifications',
+    address_line1:'Address Line1',
+    address_line2:'Address Line2',
+    postal_code: 'Postal Code',
+    city: 'City',
+    region: 'Region or state',
+    country:'Country',
+    address_updated_successfully:"Address information upddated successfully!",
+    address_updated_unsuccessfully:"Address information couldn't be updated",
+    phone_number:'Phone number',
+    country_code:'Country code',
+    select_country_code:'Select country code',
+    email:'Email',
+    locale: 'Language',
+    email_updated_successfully:'Email has been updated successfully',
+    email_updated_unsuccessfully:"Email couldn't be updated",
+    phone_updated_successfully:'Phone number updated successfully',
+    phone_updated_unsuccessfully:"Couldn't update phone number"
+
 }
