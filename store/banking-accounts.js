@@ -41,5 +41,14 @@ export const actions={
           return Promise.reject(error)
         })
     },
+    getBankingAccountLimit(context,payload)
+    {
+        return this.$axios
+                .get(process.env.bankingApiUrl +`/banking-accounts/${payload}/limits`)
+                .then(res=>{
+                    console.log(res.data);
+                    return res.data.data;
+                })
+    }
 
 }

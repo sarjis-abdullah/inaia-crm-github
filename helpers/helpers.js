@@ -66,6 +66,17 @@ export function extractCountryCode(phone,list)
     })
     return {phoneNumber,countryCode}
 }
+export function formatWithSpaces(str, n) {
+    let ret = [];
+    let i;
+    let len;
+
+    for(i = 0, len = str.length; i < len; i += n) {
+       ret.push(str.substr(i, n))
+    }
+
+    return ret.join(' ')
+};
 export function notifyError(err, notify) {
     let response = err.response
     if (response.status === 403) {

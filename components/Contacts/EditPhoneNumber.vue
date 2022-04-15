@@ -5,7 +5,7 @@
     bodyClasses="pt-0"
     footerClasses="border-top bg-secondary"
     :allowOutSideClose="false"
-    @close="canceled"
+    @close="cancelEdit"
   >
     <template slot="header" class="pb-0">
       <h5 class="modal-title">{{ $t("edit_mobile") }}</h5>

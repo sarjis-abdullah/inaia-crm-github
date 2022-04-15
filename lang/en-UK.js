@@ -305,5 +305,20 @@ export default {
     email_updated_successfully:'Email has been updated successfully',
     email_updated_unsuccessfully:"Email couldn't be updated",
     phone_updated_successfully:'Phone number updated successfully',
-    phone_updated_unsuccessfully:"Couldn't update phone number"
+    phone_updated_unsuccessfully:"Couldn't update phone number",
+    client_number:'Client Number',
+    inaia_mastercard:'INAIA Mastercard',
+    active:'Active',
+    blocked:'Blocked',
+    desactivated:'Deactivated',
+    block_card:'Block card',
+    activate_card:'Activate card',
+    unblock_card:'Unblock card',
+    virtual:'Virtual',
+    limits:'Limits',
+    atm:'ATM',
+    master_card:'Master card',
+    max_balance:'Max balance',
+    client_info:'Client info',
+    name:'Name'
 }

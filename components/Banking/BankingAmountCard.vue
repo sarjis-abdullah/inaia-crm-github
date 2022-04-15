@@ -21,7 +21,7 @@
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item" href="#">{{$t('details')}}</a>
+            <a class="dropdown-item" @click="$router.push('/banking-accounts/details/'+customerId)">{{$t('details')}}</a>
           </base-dropdown>
         </div>
       </div>
@@ -43,7 +43,11 @@ export default {
     balance: {
       type: Number
     },
-    iban: ''
+    iban: '',
+    customerId:{
+      type: Number,
+      default:-1
+    }
   },
   data() {
     return {

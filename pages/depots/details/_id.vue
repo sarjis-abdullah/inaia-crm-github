@@ -31,8 +31,8 @@
                     </div>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap" v-if="client!=null">{{$t('client')}}: <a href="" @click.prevent="() => $router.push('/customers/details/'+client.contact_id)" class="">{{getCustomerName(client)}}</a></span>
+                <p class="mt-3 mb-0 text-sm" v-if="client!=null">
+                  <UserInfo  :customerId="client.contact_id"></UserInfo>
                 </p>
               </div>
             </div>
@@ -233,6 +233,7 @@ import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -263,7 +264,8 @@ export default {
         GoldGift,
         Status,
         AgioTransactions,
-        DepotStatusHistory
+        DepotStatusHistory,
+        UserInfo
     },
     computed:
         {

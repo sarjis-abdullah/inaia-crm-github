@@ -1,9 +1,8 @@
 <template>
-    <BankingAccountDetails v-if="singleClientData.customer" :resource="singleClientData" />
+    <BankingAccountDetails v-if="bankingAccountInfo" :bankAccountnfo="bankingAccountInfo" :customerId="customerId"/>
 </template>
 
 <script>
-import { mapGetters } from "vuex"
 import BankingAccountDetails from "@/components/Banking/BankingAccountDetails";
 
 export default {
@@ -15,30 +14,28 @@ export default {
     },
     data() {
         return {
-            customerId: this.$route.params.id
+            customerId: this.$route.params.id,
+            bankingAccountInfo:null
         }
     },
     components: {
       BankingAccountDetails
     },
-    computed: {
-        ...mapGetters({
-            singleClientData: "clients/singleClientData",
-        })
-    },
     watch: {
         customerId: {
             handler() {
                 if (this.customerId) {
-                    this.initClientData()
+                    this.initBankingAccount()
                 }
             },
             immediate: true
         },
     },
     methods: {
-        initClientData() {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId)
+        initBankingAccount() {
+            this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.customerId).then((res)=>{
+                this.bankingAccountInfo = res.data;
+            })
         },
     }
 }

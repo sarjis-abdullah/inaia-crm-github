@@ -65,7 +65,7 @@
                              min-width="180px"
                              sortable>
               <template v-slot="{row}">
-                  <div v-for="card in row.cards">
+                  <div v-for="card in row.cards" :key="card.id">
                     {{ card.card_serial }}
                     <span class="text-muted">{{ card.pan }}</span>
                   </div>
@@ -86,14 +86,14 @@
             <el-table-column>
               <template v-slot="{row}">
 
-                <icon-button type="info"></icon-button>
+                <icon-button type="info" @click="$router.push('/banking-accounts/details/'+row.account_id)"></icon-button>
 
               </template>
             </el-table-column>
 
           </el-table>
 
-          <div class="card-footer py-4 d-flex justify-content-end">
+          <div class="card-footer py-4 d-flex justify-content-end" >
             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
           </div>
 

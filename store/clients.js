@@ -12,7 +12,8 @@ export const state = () => {
         aggregatedClaims: [],
         claimStatuses:[],
         claims:[],
-        countryCodeList:[]
+        countryCodeList:[],
+        loadedClients:[],
     }
 }
 
@@ -23,8 +24,33 @@ export const getters = {
     clientData(state) {
         return state.clientData
     },
-    singleClientData(state) {
-        return state.singleClientData
+    singleClientData:(state)=>(contactId,accountId)=> {
+        if(contactId && contactId!=-1)
+        {
+            let client = state.loadedClients.find(x=>{
+                return contactId==x.customer.id
+            });
+            if(client)
+            {
+                return client;
+            }
+        }
+        if(accountId && accountId!=-1)
+        {
+            let client = state.loadedClients.find(x=>{
+                if(x.customer.account)
+                {
+                    return accountId==x.customer.account.id
+                }
+                return false;
+            }
+                );
+            if(client)
+            {
+                return client;
+            }
+        }
+        return null;
     },
     // leadData(state) {
     //     return state.leadData
@@ -102,6 +128,10 @@ export const mutations = {
     countryCodeList(state,list)
     {
         state.countryCodeList = list
+    },
+    loadedClients(state,client)
+    {
+        state.loadedClients.push(client);
     }
 }
 export const actions = {
@@ -228,7 +258,7 @@ export const actions = {
             .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
             .then(response => {
                 context.commit('singleClientData', response.data.data);
-                console.log(response.data.data);
+                context.commit('loadedClients',response.data.data)
                 return response
             })
     },
@@ -273,5 +303,6 @@ export const actions = {
                     context.commit('claims',res.data.data);
                     return res.data;
                 })
-    }
+    },
+    
 }

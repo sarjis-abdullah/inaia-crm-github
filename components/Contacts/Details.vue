@@ -29,7 +29,7 @@
 
           <ProductClassCard :productClassDetails="getProductClass" />
 
-          <BankingAmountCard :balance="bankingAccountBalance" :iban="bankingAccountIban" />
+          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="getAccoundId" />
 
         </div>
 

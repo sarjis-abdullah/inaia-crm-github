@@ -15,7 +15,7 @@ export default {
     },
     data() {
         return {
-            customerId: this.$route.params.id
+            customerId: this.$route.params.id,
         }
     },
     components: {
@@ -23,8 +23,11 @@ export default {
     },
     computed: {
         ...mapGetters({
-            singleClientData: "clients/singleClientData",
-        })
+            client: "clients/singleClientData",
+        }),
+        singleClientData(){
+            return this.client(this.customerId);
+        }
     },
     watch: {
         customerId: {
@@ -38,7 +41,8 @@ export default {
     },
     methods: {
         initClientData() {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId)
+            if(!this.singleClientData)
+                this.$store.dispatch("clients/clientDetailsData", this.customerId)
         },
     }
 }
