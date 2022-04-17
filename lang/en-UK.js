@@ -320,5 +320,6 @@ export default {
     master_card:'Master card',
     max_balance:'Max balance',
     client_info:'Client info',
-    name:'Name'
+    name:'Name',
+    search_customer:'Search for customer by name'
 }

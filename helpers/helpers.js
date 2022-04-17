@@ -138,4 +138,14 @@ export function validURL(str) {
     var pattern = new RegExp('(?:(?:https?|ftp|file):\/\/)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])','i'); // fragment locator
     return !!pattern.test(str);
   }
+export function isEmail(email)
+{
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+export function isPhoneNumber(phone)
+{
+    phone = String(phone).replace(' ','').replace('+','');
+    return !isNaN(phone);
+}
 

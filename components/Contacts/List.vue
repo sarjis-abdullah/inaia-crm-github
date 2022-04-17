@@ -24,7 +24,12 @@
                 <div class="col">
                     <div class="card">
                         <div class="border-0 card-header">
-                          <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" />
+                          <el-input prefix-icon="el-icon-search" 
+                          :placeholder="$t('search_customer')" clearable 
+                          style="width: 500px" @change="onSearch" 
+                          v-model="searchWords"
+                          @clear="clearSearch"
+                          />
                         </div>
 
                         <el-table class="table-hover table-responsive table-flush"
@@ -181,6 +186,7 @@ import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
+import { isEmail,isPhoneNumber } from '../../helpers/helpers';
 
 export default {
     components: {
@@ -195,7 +201,7 @@ export default {
     data() {
         return {
             data: [],
-            search: '',
+            search: null,
             sort: 'id',
             order: 'desc',
             selected: [],
@@ -211,7 +217,8 @@ export default {
             perPage: 10,
             page: 1,
             totalTableData: 0,
-            sortedBy: { customer: "asc" }
+            sortedBy: { customer: "asc" },
+            searchWords:null
         }
     },
     computed: {
@@ -220,7 +227,7 @@ export default {
         }),
         searchQuery() {
             return (
-                (this.search ? '&search=' + this.search : '') +
+                (this.search ? '&' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
                 `&per_page=${this.perPage || 5}`
@@ -324,6 +331,22 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
+        },
+        onSearch(value){
+            if(value!="")
+            {
+                this.search = "name="+value;
+                this.page = 1;
+            }
+            else{
+                this.clearSearch();
+            }
+            
+        },
+        clearSearch()
+        {
+            this.search = "";
+            this.page = 1;
         }
     }
 }
