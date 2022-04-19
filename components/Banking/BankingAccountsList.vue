@@ -103,7 +103,7 @@
       </div>
 
     </div>
-
+    
   </div>
 </template>
 <script>
@@ -125,6 +125,7 @@ export default {
       perPage: 20,
       totalTableData: 0,
       data: [],
+      
     }
   },
   computed: {

@@ -89,7 +89,7 @@
             <el-table-column>
               <template v-slot="{row}">
 
-                <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                <icon-button type="info" @click="() => displayDetails(row)"></icon-button>
 
               </template>
             </el-table-column>
@@ -106,20 +106,21 @@
       </div>
 
     </div>
-
+    <BankingTransactionDetail v-if="selectedTransaction!=null" :showModal="showDetail" :transaction="selectedTransaction" @closed="onDetailClosed"/>
   </div>
 </template>
 <script>
 import { Table, TableColumn } from 'element-ui'
 import Status from '@/components/Banking/TransactionStatus';
 import IconButton from '@/components/common/Buttons/IconButton';
-
+import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
 export default {
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     Status,
-    IconButton
+    IconButton,
+    BankingTransactionDetail
   },
   props:{
     bankingAccountId:{
@@ -136,11 +137,13 @@ export default {
       perPage: 20,
       totalTableData: 0,
       data: [],
+      showDetail:false,
+      selectedTransaction:null
     }
   },
   computed: {
     searchQuery() {
-      let query = '?';
+      let query = '?page=' + this.page + `&per_page=${this.perPage}`;
       /*
       query = (this.search ? '&short_name=' + this.search + '&name_translation_key=' + this.search : '') +
         `&order_by=${ this.sort }&order_direction=${ this.order }` +
@@ -164,13 +167,21 @@ export default {
       },
       immediate: true
     },
+    searchQuery: {
+      handler() {
+        if (this.bankingAccountId) {
+          this.fetchList(this.searchQuery)
+        }
+      },
+      immediate: true
+    },
   },
   methods: {
     toggleFilter: function() {
       this.showFilter=!this.showFilter;
     },
     fetchList(pageQuery) {
-      if (!this.initiated) {
+     
         this.initiated  = true
         if(this.bankingAccountId!==0) {
           this.$store
@@ -186,8 +197,15 @@ export default {
             this.initiated  = false
           })
         }
-      }
     },
+    displayDetails(row){
+      this.selectedTransaction = row;
+      this.showDetail = true;
+    },
+    onDetailClosed(){
+      this.showDetail = false;
+      this.selectedTransaction = null;
+    }
 
   },
   mounted() {

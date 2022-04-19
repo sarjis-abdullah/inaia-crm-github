@@ -91,6 +91,7 @@
                             :selectedResource="selectedOrder" 
                             @onClose="onOrderDetailsClosed"
                         />
+                        <BankingTransactionDetail v-if="showBankTransactionDetail" :showModal="showBankTransactionDetail" :transaction="selectedOrder" @closed="onOrderDetailsClosed"/>
                     </div>
                 </div>
                 
@@ -104,6 +105,7 @@ import {Badge} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderDetails from '@/components/Orders/Details';
 import BankStatus from '@/components/Banking/TransactionStatus';
+import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
 export default {
     props:{
         account_id:{
@@ -118,7 +120,8 @@ export default {
         Badge,
         IconButton,
         OrderDetails,
-        BankStatus
+        BankStatus,
+        BankingTransactionDetail
     },
     computed: {
         ...mapGetters({
@@ -150,6 +153,7 @@ export default {
             loadingError: null,
             selectedOrder: null,
             showOrderDetails: false,
+            showBankTransactionDetail:false
         }
     },
     methods:{
@@ -162,15 +166,21 @@ export default {
         },
         displayDetails(resource)
         {
+            this.selectedOrder = resource;
             if(resource && resource.order_status)
             {
-                this.selectedOrder = resource;
+                
                 this.showOrderDetails = true;
+            }
+            else
+            {
+                this.showBankTransactionDetail =  true;
             }
         },
         onOrderDetailsClosed(){
             this.selectedOrder = null;
             this.showOrderDetails = false;
+            this.showBankTransactionDetail = false;
         }
     }
 }
