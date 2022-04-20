@@ -259,7 +259,7 @@ export default {
     PAYMENT_OUT:'Payment out',
     FUND_TRANSFER: 'Fund transfer',
     WITHDRAWAL:'Withdrawal',
-    REDEMPTION:'REDEMPTION',
+    REDEMPTION:'Redemption',
 
     latest_transactions:'Latest transactions',
 
@@ -326,4 +326,10 @@ export default {
     card_acceptor:'Card acceptor',
     sender:"Sender",
     receiver:'Payee',
+    search_by_id:'Search by ID',
+    lifecycle_status:'Life cycle status',
+    APPROVED:'Approved',
+    DECLINED:'Declined',
+    COMPLETE:'Completed',
+    AUTHORISED:'Authorised'
 }

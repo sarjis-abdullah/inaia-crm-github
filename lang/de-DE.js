@@ -257,7 +257,7 @@ export default {
     PAYMENT_OUT:'SEPA-Überweisung',
     FUND_TRANSFER: 'Geldtransfer',
     WITHDRAWAL:'Bargeldbezug',
-    REDEMPTION:'REDEMPTION',
+    REDEMPTION:'Redemption',
 
     latest_transactions:'Latest transactions',
 
@@ -324,4 +324,11 @@ export default {
     card_acceptor:'Akzeptanzstelle',
     sender:"Sender",
     receiver:'Empfänger',
+    search_by_id:'Search by ID',
+    lifecycle_status:'Life cycle status',
+    APPROVED:'Approved',
+    DECLINED:'Declined',
+    COMPLETE:'Completed',
+    AUTHORISED:'Authorised'
+
 }

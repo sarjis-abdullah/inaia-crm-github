@@ -7,7 +7,7 @@
           <div class="card-header">
             <div class="row align-items-center">
               <div class="col-8">
-                <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px"/>
+                <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_id')" clearable style="width: 200px" v-model="searchWords" @change="onSearch"/>
               </div>
               <div class="col-4 text-right">
                 <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
@@ -19,7 +19,7 @@
 
           </div>
 
-          <!--<OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet"></OrderFilter>-->
+          <TransactionListFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></TransactionListFilter>
 
           <el-table class="table-hover table-responsive table-flush"
                     header-row-class-name="thead-light"
@@ -114,13 +114,15 @@ import { Table, TableColumn } from 'element-ui'
 import Status from '@/components/Banking/TransactionStatus';
 import IconButton from '@/components/common/Buttons/IconButton';
 import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
+import TransactionListFilter from '@/components/Banking/Filters/TransactionListFilter';
 export default {
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     Status,
     IconButton,
-    BankingTransactionDetail
+    BankingTransactionDetail,
+    TransactionListFilter
   },
   props:{
     bankingAccountId:{
@@ -138,12 +140,15 @@ export default {
       totalTableData: 0,
       data: [],
       showDetail:false,
-      selectedTransaction:null
+      selectedTransaction:null,
+      search:null,
+      searchWords:null,
+      filterQuery:'',
     }
   },
   computed: {
     searchQuery() {
-      let query = '?page=' + this.page + `&per_page=${this.perPage}`;
+      let query = '?page=' + this.page + `&per_page=${this.perPage}${this.filterQuery}`;
       /*
       query = (this.search ? '&short_name=' + this.search + '&name_translation_key=' + this.search : '') +
         `&order_by=${ this.sort }&order_direction=${ this.order }` +
@@ -151,6 +156,10 @@ export default {
         `&per_page=${this.perPage}`;
       */
       if (this.bankingAccountId!==0) query += '&banking_account_id='+this.bankingAccountId;
+       if(this.search && this.search!="")
+       {
+         query+='&id='+this.search;
+       }
 
       return query;
     },
@@ -205,6 +214,14 @@ export default {
     onDetailClosed(){
       this.showDetail = false;
       this.selectedTransaction = null;
+    },
+    onSearch(value){
+      this.page = 1;
+      this.search = value;
+    },
+    applyFilter(query){
+      this.page = 1;
+      this.filterQuery = query
     }
 
   },
