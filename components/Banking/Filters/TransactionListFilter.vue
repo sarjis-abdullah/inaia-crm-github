@@ -150,7 +150,7 @@ export default {
       let query = "";
       if(this.selectedType.length > 0)
       {
-        query+='&type='+this.selectedType.join(',');
+        query+='&types='+this.selectedType.join(',');
       }
       if(this.selectedStatus)
       {
@@ -186,16 +186,6 @@ export default {
       const query = this.quiryBuilder();
 
       this.$emit('filter',query)
-    },
-    getStatusTranslationKey:function(id)
-    {
-      let stat = this.status.find(x=>x.id==id);
-      return stat.name_translation_key;
-    },
-    getTypeTranslationKey:function(id)
-    {
-      let type = this.types.find(x=>x.id==id);
-      return type.name_translation_key;
     },
     removeStatus:function()
     {
