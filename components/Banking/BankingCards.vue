@@ -20,9 +20,8 @@
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item" v-if="card.activated && !card.is_blocked">{{$t('block_card')}}</a>
-             <a class="dropdown-item" v-if="!card.activated">{{$t('activate_card')}}</a>
-             <a class="dropdown-item" v-if="card.is_blocked">{{$t('unblock_card')}}</a>
+            <a class="dropdown-item" v-if="card.activated && !card.is_blocked" @click.prevent="()=>displayBlockScreen(card)">{{$t('block_card')}}</a>
+             <a class="dropdown-item" v-if="card.is_blocked && card.block_reason=='OTHER'" @click.prevent="()=>confirmUnBlockingCard(card)">{{$t('unblock_card')}}</a>
             
           </base-dropdown>
         </div>
@@ -61,17 +60,72 @@
         
       </div>
     </div>
+    <modal :show.sync="showBlockModal"  headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="cancelBlockCard" :allowOutSideClose="false">
+        <template slot="header" class="pb-0">
+                        <h5 class="modal-title">{{$t('blocking_reason')}}</h5>
+                        <span></span>
+                    </template>
+        <div class="d-flex align-align-items-center justify-content-center">
+          <Select :placeholder="$t('blocking_reason')"
+                    v-model="blokingReason"
+                    clearable
+                    class="mb-3"
+                    >
+              <Option v-for="option in blockingReasons"
+
+                        :value="option.name_translation_key"
+                        :label="$t(option.name_translation_key)"
+                        :key="option.id">
+              </Option>
+            </Select>
+        </div>
+        <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="cancelBlockCard()">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="white" class="text-danger" @click="() => blockCard()"
+                            :disabled="(!blokingReason) || isSubmitting">
+                          {{$t('block_card')}}
+                        </base-button>
+                    </template>
+    </modal>
+    <modal :show.sync="showUnBlockModal"  headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="cancelUnBlockCard" :allowOutSideClose="false">
+        <template slot="header" class="pb-0">
+                        <h5 class="modal-title">{{$t('confirm_unblocking')}}</h5>
+                        <span></span>
+                    </template>
+        <div class="d-flex align-align-items-center justify-content-center">
+          {{$t('unblock_card_confirmation')}}
+        </div>
+        <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="cancelUnBlockCard()">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="primary" @click="() => UnBlockingCard()"
+                            :disabled="isSubmitting">
+                          {{$t('unblock_card')}}
+                        </base-button>
+                    </template>
+    </modal>
   </div>
 </template>
 <script>
 import moment from 'moment';
+import {Select,Option} from 'element-ui'
 import {formatWithSpaces} from '../../helpers/helpers';
+import { BLOCKREASONS} from '../../helpers/cards'
+import Modal from '../argon-core/Modal.vue';
 export default {
+  components: { Modal,Select,Option },
   props: {
     cards: {
       type: Array,
       default: [],
     },
+    account_id: {
+      type: Number,
+      default: -1
+    }
   },
   mounted(){
       if(this.cards.length>0)
@@ -98,11 +152,18 @@ export default {
               }
           }
       }
+      this.blockingReasons = BLOCKREASONS;
   },
   data(){
       return {
           rowCards:[
-          ]
+          ],
+          blockingReasons:[],
+          showBlockModal:false,
+          blokingReason:null,
+          isSubmitting:false,
+          selectedCard:null,
+          showUnBlockModal:false
       }
   },
   methods:{
@@ -111,6 +172,58 @@ export default {
       {
           let m = moment(date);
           return m.format('MM/YY');
+      },
+      displayBlockScreen(card){
+        this.showBlockModal = true;
+        this.selectedCard = card;
+      },
+      cancelBlockCard(){
+        this.showBlockModal = false;
+        this.blokingReason = null;
+        this.selectedCard = null;
+      },
+      blockCard(){
+        let data = {
+            "reason": this.blokingReason,
+            "cardSerial": this.selectedCard.card_serial,
+            "accountId": this.account_id,
+            "isPhysical": this.selectedCard.is_physical==1
+          }
+          this.isSubmitting = true
+          this.$store.dispatch("banking-accounts/blockCard",data).then(res=>{
+            console.log(res);
+            const c = this.cards.find(x=>x.id==res.id);
+            Object.assign(c,res);
+            this.$notify({type: 'success', timeout: 5000, message: this.$t('card_blocked_successfully')})
+            this.cancelBlockCard();
+          }).catch(()=>{
+            this.$notify({type: 'danger', timeout: 5000, message: this.$t('card_blocked_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+      },
+      confirmUnBlockingCard(card)
+      {
+        this.showUnBlockModal = true;
+        this.selectedCard = card;
+      },
+      cancelUnBlockCard()
+      {
+        this.showUnBlockModal = false;
+        this.selectedCard = false;
+      },
+      UnBlockingCard(){
+        this.isSubmitting = true
+          this.$store.dispatch("banking-accounts/resumeCard",this.selectedCard.id).then(res=>{
+            const c = this.cards.find(x=>x.id==res.id);
+            c.is_blocked = false;
+            this.$notify({type: 'success', timeout: 5000, message: this.$t('card_unblocked_successfully')})
+            this.cancelUnBlockCard();
+          }).catch(()=>{
+            this.$notify({type: 'danger', timeout: 5000, message: this.$t('card_unblocked_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
       }
   }
 };

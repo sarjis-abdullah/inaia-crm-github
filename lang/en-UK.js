@@ -331,5 +331,17 @@ export default {
     APPROVED:'Approved',
     DECLINED:'Declined',
     COMPLETE:'Completed',
-    AUTHORISED:'Authorised'
+    AUTHORISED:'Authorised',
+    LOST:'Lost',
+    STOLEN:'Stolen',
+    DAMAGED:'Damaged',
+    OTHER:"Other",
+    blocking_reason:'Blocking reason',
+    card_blocked_successfully:'Card blocked successfully',
+    card_blocked_unsuccessfully:"Card couldn't be blocked successfully",
+    unblock_card_confirmation:'Are you sure you want to un-block the card?',
+    confirm_unblocking:'Confirm un-blocking',
+    card_unblocked_successfully:'Card un-blocked successfully',
+    card_unblocked_unsuccessfully:"Card couldn't be un-blocked successfully",
+    confirm_unblocking:'Confirm un-blocking'
 }

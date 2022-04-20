@@ -46,6 +46,21 @@ export const actions={
         return this.$axios
                 .get(process.env.bankingApiUrl +`/banking-accounts/${payload}/limits`)
                 .then(res=>{
+                    return res.data.data;
+                })
+    },
+    blockCard(context,payload)
+    {
+      return this.$axios
+              .post(process.env.bankingApiUrl+'/stop-card',payload).then(res=>{
+                return res.data.data;
+              })
+    },
+    resumeCard(context,payload)
+    {
+      return this.$axios
+                .post(process.env.bankingApiUrl +`/cards/${payload}/resume`)
+                .then(res=>{
                     console.log(res.data);
                     return res.data.data;
                 })

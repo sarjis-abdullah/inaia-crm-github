@@ -124,7 +124,7 @@
         </div>
         
         <div class="col-lg-7">
-          <BankingCards :cards="bankAccountnfo.cards"/>
+          <BankingCards :cards="bankAccountnfo.cards" :account_id="bankAccountnfo.account_id"/>
         </div>
       </div>
       <BankingTransactionList :bankingAccountId="bankAccountnfo.id"/>
