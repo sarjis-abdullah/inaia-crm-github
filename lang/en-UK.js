@@ -343,5 +343,12 @@ export default {
     confirm_unblocking:'Confirm un-blocking',
     card_unblocked_successfully:'Card un-blocked successfully',
     card_unblocked_unsuccessfully:"Card couldn't be un-blocked successfully",
-    confirm_unblocking:'Confirm un-blocking'
+    confirm_unblocking:'Confirm un-blocking',
+    reissue_card:'Re-issue card',
+    reissue_reason:'Card re-issue reason',
+    should_keep_card_pin:'Keep card pin',
+    should_override_block:'Un-block',
+    should_include_fee: 'Include Fee',
+    card_reissued_successfully: 'Card re-issued successfully',
+    card_reissued_unsuccessfully: "Card can't be re-issued"
 }

@@ -22,6 +22,7 @@
 
             <a class="dropdown-item" v-if="card.activated && !card.is_blocked" @click.prevent="()=>displayBlockScreen(card)">{{$t('block_card')}}</a>
              <a class="dropdown-item" v-if="card.is_blocked && card.block_reason=='OTHER'" @click.prevent="()=>confirmUnBlockingCard(card)">{{$t('unblock_card')}}</a>
+              <a class="dropdown-item"  @click.prevent="()=>confirmReissueCard(card)">{{$t('reissue_card')}}</a>
             
           </base-dropdown>
         </div>
@@ -107,16 +108,56 @@
                         </base-button>
                     </template>
     </modal>
+    <modal :show.sync="showReissueModal"  headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="cancelReissueCard" :allowOutSideClose="false">
+        <template slot="header" class="pb-0">
+                        <h5 class="modal-title">{{$t('reissue_card')}}</h5>
+                        <span></span>
+                    </template>
+        <div class="d-flex flex-column align-align-items-center justify-content-center">
+          <Select :placeholder="$t('reissue_reason')"
+                    v-model="reissueReason"
+                    clearable
+                    class="mb-3"
+                    >
+              <Option v-for="option in blockingReasons"
+
+                        :value="option.name_translation_key"
+                        :label="$t(option.name_translation_key)"
+                        :key="option.id">
+              </Option>
+            </Select>
+            <div class="row mt-2">
+              <div class="col">
+                <Checkbox v-model="shouldKeepPin" :label="$t('should_keep_card_pin')" ></Checkbox>
+              </div>
+              <div class="col">
+                <Checkbox v-model="shouldOverrideBlock" v-if="selectedCard && selectedCard.is_blocked" :label="$t('should_override_block')"></Checkbox>
+              </div>
+              <div class="col">
+                <Checkbox v-model="shouldIncludeFee" :label="$t('should_include_fee')"></Checkbox>
+              </div>
+            </div>
+        </div>
+        <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="cancelReissueCard()">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="primary" @click="() => reissueCard()"
+                            :disabled="!reissueReason || isSubmitting">
+                          {{$t('reissue_card')}}
+                        </base-button>
+                    </template>
+    </modal>
   </div>
 </template>
 <script>
 import moment from 'moment';
-import {Select,Option} from 'element-ui'
+import {Select,Option,Checkbox} from 'element-ui'
 import {formatWithSpaces} from '../../helpers/helpers';
 import { BLOCKREASONS} from '../../helpers/cards'
 import Modal from '../argon-core/Modal.vue';
 export default {
-  components: { Modal,Select,Option },
+  components: { Modal,Select,Option,Checkbox },
   props: {
     cards: {
       type: Array,
@@ -163,7 +204,12 @@ export default {
           blokingReason:null,
           isSubmitting:false,
           selectedCard:null,
-          showUnBlockModal:false
+          showUnBlockModal:false,
+          showReissueModal:false,
+          reissueReason:null,
+          shouldKeepPin:true,
+          shouldOverrideBlock: true,
+          shouldIncludeFee: true
       }
   },
   methods:{
@@ -224,6 +270,43 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+      },
+      confirmReissueCard(card)
+      {
+        this.selectedCard = card;
+        this.showReissueModal = true;
+      },
+      cancelReissueCard()
+      {
+        this.showReissueModal = false;
+        this.selectedCard = null;
+        this.reissueReason = null;
+        this.shouldOverrideBlock = true;
+        this.shouldIncludeFee = true;
+        this.shouldKeepPin = true;
+      },
+      reissueCard(){
+        let data = {
+            id:this.selectedCard.id,
+            data:{
+              "reason": this.reissueReason,
+              "keepPin": this.shouldKeepPin,
+              "chargeFee": this.shouldIncludeFee,
+              "overrideBlock": this.shouldOverrideBlock}
+          }
+          this.isSubmitting = true
+          this.$store.dispatch("banking-accounts/reIssueCard",data).then(res=>{
+            console.log(res);
+            const c = this.cards.find(x=>x.id==res.id);
+            Object.assign(c,res);
+            this.$notify({type: 'success', timeout: 5000, message: this.$t('card_reissued_successfully')})
+            this.cancelBlockCard();
+          }).catch(()=>{
+            this.$notify({type: 'danger', timeout: 5000, message: this.$t('card_reissued_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+
       }
   }
 };

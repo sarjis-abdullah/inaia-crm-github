@@ -64,6 +64,14 @@ export const actions={
                     console.log(res.data);
                     return res.data.data;
                 })
+    },
+    reIssueCard(context,payload)
+    {
+      return this.$axios
+                .post(process.env.bankingApiUrl +`/cards/${payload.id}/reissue`,payload.data)
+                .then(res=>{
+                    return res.data.data;
+                })
     }
 
 }
