@@ -1,17 +1,15 @@
 <template>
   <div class="card">
-    <div role="tab" class="card-header" :aria-expanded="active">
-      <a
+    <a role="tab" class="card-header" :aria-expanded="active"
         data-toggle="collapse"
         data-parent="#accordion"
         :href="`#${itemId}`"
         @click.prevent="activate"
         :aria-controls="`content-${itemId}`"
-      >
+    >
         <slot name="title"> {{ title }} </slot>
         <i class="tim-icons icon-minimal-down"></i>
-      </a>
-    </div>
+    </a>
     <collapse-transition :duration="animationDuration">
       <div
         v-show="active"

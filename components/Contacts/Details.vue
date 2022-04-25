@@ -1,130 +1,94 @@
 <template>
   <div>
 
-    <base-header class="pb-6">
+    <base-header class="pb-5">
       <div class="row align-items-center py-4">
+
         <div class="col-lg-6 col-7">
-          <nav aria-label="breadcrumb" class="d-none d-md-inline-block ">
-              <route-breadcrumb/>
-          </nav>
+
+          <h6 class="h2 text-white d-inline-block mb-0">{{$t('customer') + ' '+$t('number_short') + ' ' + getAccountNumber }}</h6>
+
         </div>
         <div class="col-lg-6 col-5 text-right">
           <base-button size="sm" type="neutral" @click.prevent="() => $router.push('/customers/edit/'+info.id)">Edit Profile</base-button>
         </div>
+
       </div>
     </base-header>
 
-    <div class="container-fluid mt--4">
+    <div class="container-fluid mt--5">
+
       <div class="row">
-        <div class="col-xl-4 order-xl-2">
-          <user-card :resource="resource"></user-card>
-          <products />
+        <div class="col-lg-8">
+
+          <UserCard :resource="resource" />
+
         </div>
-        <div class="col-xl-8 order-xl-1">
-          <div class="row">
-            <div class="col-lg-6">
 
-              <card gradient="info" class="border-0">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Total traffic</h5>
-                    <span class="h2 font-weight-bold mb-0 text-white">350,897</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-white text-dark rounded-circle shadow">
-                      <i class="ni ni-active-40"></i>
-                    </div>
-                  </div>
-                </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-white mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                  <span class="text-nowrap text-light">Since last month</span>
-                </p>
-              </card>
+        <div class="col-lg-4">
 
-            </div>
-            <div class="col-lg-6">
+          <ProductClassCard :productClassDetails="getProductClass" />
 
-              <card gradient="danger" class="border-0">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Performance</h5>
-                    <span class="h2 font-weight-bold mb-0 text-white">49,65%</span>
-                  </div>
-                  <div class="col-auto">
-                    <div class="icon icon-shape bg-white text-dark rounded-circle shadow">
-                      <i class="ni ni-spaceship"></i>
-                    </div>
-                  </div>
-                </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-white mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                  <span class="text-nowrap text-light">Since last month</span>
-                </p>
-              </card>
+          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="getAccoundId" />
 
-            </div>
-          </div>
-          <!-- <Form :single-client-data="resource" /> -->
         </div>
+
       </div>
-    </div>
-  </div>
 
-    <!-- <div class="card">
-        <img
-            :src="require('@/static/img/theme/unknown.jpg')"
-            alt="user"
-            class="rounded-circle"
-            width="100"
-        />
-        <h4 class="card-title mt-3 mb-0">{{ getName() }}</h4>
-        <h5 class="text-muted capitalize">{{ getType() }}</h5>
-        <div class="mt-3 pt-3">
-            <address class="mb-0" v-if="resource.address">
-                {{ getAddress() }}
-            </address>
-            <address class="mb-0" v-if="getChannelInfo('mobile')">
-                <br />
-                <i class="mdi mdi-cellphone-iphone mr-2"></i>
-                {{ getChannelInfo('mobile') }}
-            </address>
-            <address class="mb-0" v-if="getChannelInfo('email')">
-                <br />
-                <i class="mdi mdi-email mr-2"></i>
-                {{ getChannelInfo('email') }}
-            </address>
-        </div>
-    </div> -->
+      <DepotList  v-if="resource && resource.customer && resource.customer.account" :accountId="getAccoundId"/>
+      <LatestTransactions v-if="resource" :account_id="getAccoundId" />
+      <AggregatedClaims v-if="resource" :account_id="getAccoundId" />
+    </div>
+
+  </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex"
+import Loader from "../common/Loader/Loader";
 import Form from "@/components/Contacts/Form";
 import UserCard from "@/components/Contacts/UserCard";
 import Products from '@/components/Contacts/Products';
+import DepotList from "@/components/Depots/List";
+import LatestTransactions from "@/components/Contacts/LatestTransactions"
+import BankingAmountCard from "@/components/Banking/BankingAmountCard"
+import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
+import AggregatedClaims from '@/components/Contacts/Claims/AggregatedClaims';
 
 export default {
     components: {
+        Loader,
         Form,
         UserCard,
-        Products
+        Products,
+        DepotList,
+        LatestTransactions,
+        BankingAmountCard,
+        ProductClassCard,
+        AggregatedClaims,
     },
     props: {
         resource: {
             type: Object
         }
     },
+    data() {
+      return {
+        bankingAccountDetails: {
+          type:Object
+        },
+        productClassDetails: {},
+        
+      }
+    },
+
     computed: {
         ...mapGetters({
-            types: "types/pairs"
+            types: "types/pairs",
         }),
         info() {
-            // console.error('resource', this.resource)
-            return this.resource && this.resource.customer
-        },
-        getName() {
-            return this.info.name + (this.info.person_data ? ' ' + this.info.person_data.surname : '')
+            console.log('resource', this.resource)
+            return this.resource && this.resource.customer;
         },
         getType() {
             if (this.types && this.info.account) {
@@ -132,24 +96,47 @@ export default {
             }
             return null
         },
-        getAddress() {
-            return this.info.address ?
-                    this.info.address.line1 + (this.info.address.line2 ? ' ' + this.info.address.line2 : '') +
-                    (this.info.address.city ? ', ' + this.info.address.city : '') +
-                    (this.info.address.region ? ', ' + this.info.address.region : '') +
-                    (this.info.address.postal_code ? ', ' + this.info.address.postal_code : '')
-                : ''
+        getAccountNumber() {
+          if (this.info.account) return this.info.account.account_number;
+          else return false;
         },
-        getChannelInfo(type) {
-            let channel = this.info.channels && this.info.channels.length && this.info.channels.find( c => c.type.value == type )
-            if (channel) {
-                return channel.value
-            }
-            return null
+        getAccoundId() {
+          if (this.info.account) return this.info.account.id;
+          else return false;
         },
+        getProductClass() {
+          if (this.info.account) return this.info.account_products[0];
+          else return false;
+        },
+        bankingAccountBalance() {
+          if (this.bankingAccountDetails) return  this.bankingAccountDetails.balance;
+          else return false;
+        },
+        bankingAccountIban() {
+          if (this.bankingAccountDetails) return  this.bankingAccountDetails.iban;
+          else return false;
+        },
+
+
+    },
+    watch: {
+      resource: {
+        handler() {
+          if (this.resource) {
+            this.initBankingAccountDetails();
+          }
+        },
+        immediate: true
+      },
     },
     methods: {
+      initBankingAccountDetails() {
+        this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
+          this.bankingAccountDetails = res.data;
+        })
+      }
     }
+
 }
 </script>
 

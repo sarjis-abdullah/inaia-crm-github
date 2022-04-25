@@ -1,7 +1,7 @@
 <template>
   <SlideYUpTransition :duration="animationDuration">
     <div class="modal fade"
-         @mousedown.self="closeModal"
+         @mousedown.self="closeOutSide"
          :class="[{'show d-block': show}, {'d-none': !show}, {'modal-mini': type === 'mini'}]"
          v-show="show"
          tabindex="-1"
@@ -98,12 +98,22 @@
         type: Number,
         default: 500,
         description: "Modal transition duration"
+      },
+      allowOutSideClose: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {
       closeModal() {
         this.$emit("update:show", false);
         this.$emit("close");
+      },
+      closeOutSide() {
+        if(this.allowOutSideClose)
+        {
+          this.closeModal();
+        }
       }
     },
     watch: {

@@ -324,7 +324,7 @@
                             </div>
                         </div> -->
 
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <base-button type="primary" native-type="submit" :disabled="isRequesting">Submit</base-button>
@@ -555,6 +555,7 @@ export default {
         customer: {
             type_id: 0,
             is_active: 1,
+            is_locked: 0,
             account: {
                 type_id: 0,
                 is_active: 0,
@@ -672,7 +673,7 @@ export default {
                             this.$set(this, key, JSON.parse(JSON.stringify(value[key])))
                         }
                     })
-                    
+
                     if (!this.customer.account) {
                         this.customer.account = {
                             is_active: 0
@@ -742,7 +743,7 @@ export default {
                     this.$notify({type: 'success', timeout: 10000, message: 'Customer information saved successfully!'})
                 }).catch( err => {
                     this.failed = err.response.data.message
-                    this.$refs.observer.setErrors(err.response.data.errors)          
+                    this.$refs.observer.setErrors(err.response.data.errors)
                 }).finally(() => {
                     this.isRequesting   = false
                 })

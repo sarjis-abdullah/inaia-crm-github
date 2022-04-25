@@ -1,0 +1,390 @@
+<template>
+  <div>
+    <base-header class="pb-6">
+      <div class="row align-items-center py-4">
+        <div class="col-lg-6 col-7">
+          <h6 class="h2 text-white d-inline-block mb-0" v-if="loaded && !loadedWithError">
+            {{ $t("depot") }} {{ depot.depot_number }}
+          </h6>
+        </div>
+      </div>
+    </base-header>
+    <div class="container-fluid mt--6">
+      <page-loader :loaddingText="$t('loading_depot_details')" v-if="!loaded"></page-loader>
+      <text-error
+        :textError="$t('loading_depot_details_error')"
+        v-if="loaded && loadedWithError"
+      />
+      <div v-if="loaded && !loadedWithError">
+        <div class="row">
+          <div class="col-xl-4 col-md-6">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <div class="media align-items-center">
+                      <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
+                      <div class="media-body">
+                        <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
+                        <span class="h2 font-weight-bold mb-0">{{depot.name }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="mt-3 mb-0 text-sm" v-if="client!=null">
+                  <UserInfo  :customerId="client.contact_id"></UserInfo>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-md-6">
+            <div class="card border-0">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">
+                      {{$t('total_gold_amount')}}
+                    </h5>
+                    <span class="h2 font-weight-bold mb-0"
+                      ><i18n-n :value="depot.gold_amount/1000"></i18n-n> g</span
+                    >
+                  </div>
+                  <div class="col-auto">
+                    <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+
+                      <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
+                    </base-dropdown>
+                  </div>
+                </div>
+                <p class="mt-3 mb-0 text-sm">
+                  <span class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="depot.gold_amount/1000*goldPrice"></i18n-n> €</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-4 col-md-6">
+            <div v-if="depot.is_savings_plan" class="card border-0">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
+                      <font-awesome-icon
+                        icon="fa fa-clock-rotate-left"
+                        class="mr-1"
+                      />{{$t('saving_plan')}}<Status class="ml-2" :row="depot"/>
+                    </h5>
+
+                    <div>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount/100) }} €</span>
+                      <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" @click.prevent="confirmPause()"
+                        v-if="depot.status.name_translation_key=='depot_status_active'"
+                      ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmResume()"
+                        v-if="depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled'"
+                      ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">
+                        <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
+                    </base-dropdown>
+                  </div>
+                </div>
+                <div class="mt-3 mb-0 text-sm">
+                  <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
+                  <div>{{$t('agio')}}: {{ $n(depot.agio/100) }} €</div>
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="card border-0">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">
+                    <h5 class="card-title text-uppercase text-muted mb-0">
+                      <font-awesome-icon
+                        icon="fa fa-clock-rotate-left"
+                        class="mr-1"
+                      />{{$t('saving_plan')}}
+                    </h5>
+                    <span class="h2 font-weight-bold mb-0"
+                      >{{$t('no_saving_plan')}}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+        <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>
+        <modal :show.sync="showPauseConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+                    <template slot="header" class="pb-0">
+                        <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                        <span></span>
+                    </template>
+                    <div>
+                        {{$t('pause_saving_plan_question')}}
+                    </div>
+                    <template slot="footer">
+                        <base-button type="link" class="ml-auto" @click="cancelPause()">
+                          {{$t('cancel')}}
+                        </base-button>
+                        <base-button type="primary" @click="() => pauseSavinPlan()"
+
+                            :disabled="isSubmitting">
+                            <span>{{$t('pause')}}</span>
+                         </base-button>
+                    </template>
+        </modal>
+        <modal :show.sync="showResumeConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('resume_saving_plan_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelResume()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => resumeSavinPlan()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('resume')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showCancelConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div v-if="depot.agio==0">
+                {{$t('cancel_saving_plan_question')}}
+            </div>
+            <div v-else>
+              {{$t('cant_cancel_agio_not_zero')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelCancel()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => cancelSavinPlan()"
+                    :disabled="isSubmitting" v-if="depot.agio==0">
+                    <span>{{$t('cancel_contract')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showAgioTransaction" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+              <AgioTransactions :depot_id="depotId"/>
+           </div>
+
+        </modal>
+        <modal :show.sync="showDepotStatusHistory" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+              <DepotStatusHistory :depotStatus="depot.status_history"/>
+           </div>
+
+        </modal>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from "vuex"
+import PageLoader from '@/components/common/Loader/PageLoader';
+import TextError from '@/components/common/Errors/TextError';
+import OrderList from '@/components/Orders/List'
+import GoldGift from "@/components/Depots/GoldGift";
+import Loader from "../../../components/common/Loader/Loader";
+import Status from '@/components/Depots/Status';
+import AgioTransactions from '@/components/Depots/AgioTransactions';
+import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
+import UserInfo from '@/components/Contacts/UserInfo';
+export default {
+    layout: 'DashboardLayout',
+    props: {
+        showViewPage: {
+            type: Boolean
+        }
+    },
+    data() {
+        return {
+            depotId: this.$route.params.id,
+            loaded:false,
+            loadedWithError:false,
+            client:null,
+            showGoldGift:false,
+            showPauseConfirm:false,
+            showResumeConfirm:false,
+            isSubmitting:false,
+            showCancelConfirm:false,
+            showAgioTransaction:false,
+            showDepotStatusHistory:false
+        }
+    },
+    components: {
+      Loader,
+        PageLoader,
+        TextError,
+        OrderList,
+        GoldGift,
+        Status,
+        AgioTransactions,
+        DepotStatusHistory,
+        UserInfo
+    },
+    computed:
+        {
+       ...mapGetters('depots',{
+            depot:"details",
+            goldPrice:"getGoldPrice"
+        }),
+    },
+     mounted () {
+        if(this.goldPrice==0)
+        {
+            this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
+                this.goldPrice = res;
+            })
+        }
+
+    },
+    watch: {
+        depotId: {
+            handler() {
+                if (this.depotId) {
+                    this.initDepotData()
+                }
+            },
+            immediate: true
+        },
+    },
+    methods: {
+        getCustomerName(client) {
+          return client.username;
+        },
+        initDepotData()
+        {
+            this.$store.dispatch('depots/details',this.depotId).then(()=>{
+                this.loadedWithError=false;
+                this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
+                  console.log(res);
+                      this.client = res;
+                  })
+            }).
+            catch(err=>{
+                this.loadedWithError=true;
+            }).finally(()=>{
+                this.loaded = true;
+            });
+        },
+        addGoldGift(){
+          this.showGoldGift = true;
+        },
+        onGoldGiftClose(){
+          this.showGoldGift =  false;
+        },
+        cancelPause(){
+          this.showPauseConfirm = false;
+        },
+        confirmPause(){
+          this.showPauseConfirm = true;
+        },
+        pauseSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/pauseSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_paused_successfully')});
+             this.showPauseConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_paused_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelResume(){
+          this.showResumeConfirm = false;
+        },
+        confirmResume(){
+          this.showResumeConfirm = true;
+        },
+        resumeSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/resumeSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_resumed_successfully')});
+             this.showResumeConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_resumed_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelCancel(){
+          this.showCancelConfirm = false;
+        },
+        confirmCancel(){
+          this.showCancelConfirm = true;
+        },
+        cancelSavinPlan(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
+             this.showCancelConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        }
+    }
+
+}
+</script>
+<style>
+.dropdown-item i { width: 16px; text-align: center}
+</style>

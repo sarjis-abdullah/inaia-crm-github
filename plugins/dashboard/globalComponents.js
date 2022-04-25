@@ -17,6 +17,12 @@ import StatsCard from '~/components/argon-core/Cards/StatsCard.vue';
 import { Input, Tooltip, Popover } from 'element-ui';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import Vue from 'vue';
+
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faClockRotateLeft, faPause, faPlay} from "@fortawesome/free-solid-svg-icons";
+library.add(faClockRotateLeft, faPause, faPlay)
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 /**
  * You can register global components here and use them as a plugin in your main Vue instance
  */
@@ -40,5 +46,8 @@ Vue.component(RouteBreadcrumb.name, RouteBreadcrumb);
 Vue.component(Input.name, Input);
 Vue.component('validation-provider', ValidationProvider)
 Vue.component('validation-observer', ValidationObserver)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
 Vue.use(Tooltip);
 Vue.use(Popover);

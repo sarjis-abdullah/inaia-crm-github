@@ -40,7 +40,43 @@ export function mapCountriesNationalities(list) {
     })
     return {countryList, nationalityList}
 }
+export function mapCountryCode(list){
+    let countyList = [];
+    list.forEach(item=>{
+        if(item.allow){
+            countyList.push({
+                id:item.id,
+                value:item.calling_code.replace('00','+'),
+                text:item.country+" ( "+ item.calling_code.replace('00','+') + " )"
+            })
+        }
+    })
+    return countyList;
+}
+export function extractCountryCode(phone,list)
+{
+    let phoneNumber = '';
+    let countryCode = '';
+    list.forEach(item=>{
+        if(phone.startsWith(item.value))
+        {
+            countryCode = item.value;
+            phoneNumber = phone.replace(item.value,'');
+        }
+    })
+    return {phoneNumber,countryCode}
+}
+export function formatWithSpaces(str, n) {
+    let ret = [];
+    let i;
+    let len;
 
+    for(i = 0, len = str.length; i < len; i += n) {
+       ret.push(str.substr(i, n))
+    }
+
+    return ret.join(' ')
+};
 export function notifyError(err, notify) {
     let response = err.response
     if (response.status === 403) {
@@ -97,5 +133,19 @@ export function formatDateToApiFormat(date)
         day = "0"+day;
     }
     return date.getFullYear()+"-"+month+"-"+day;
+}
+export function validURL(str) {
+    var pattern = new RegExp('(?:(?:https?|ftp|file):\/\/)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+export function isEmail(email)
+{
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+export function isPhoneNumber(phone)
+{
+    phone = String(phone).replace(' ','').replace('+','');
+    return !isNaN(phone);
 }
 

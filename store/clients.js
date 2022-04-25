@@ -1,12 +1,19 @@
+import { mapCountryCode } from '../helpers/helpers';
 export const state = () => {
     return {
         clientData: [],
-        singleClientData: {},
+        singleClientData: null,
         // leadData: [],
         // singleLeadData: {},
         countryList: [],
         countryListLoaded: 0,
-        orderFilterList:[]
+        orderFilterList:[],
+        latestTransactions:[],
+        aggregatedClaims: [],
+        claimStatuses:[],
+        claims:[],
+        countryCodeList:[],
+        loadedClients:[],
     }
 }
 
@@ -17,8 +24,33 @@ export const getters = {
     clientData(state) {
         return state.clientData
     },
-    singleClientData(state) {
-        return state.singleClientData
+    singleClientData:(state)=>(contactId,accountId)=> {
+        if(contactId && contactId!=-1)
+        {
+            let client = state.loadedClients.find(x=>{
+                return contactId==x.customer.id
+            });
+            if(client)
+            {
+                return client;
+            }
+        }
+        if(accountId && accountId!=-1)
+        {
+            let client = state.loadedClients.find(x=>{
+                if(x.customer.account)
+                {
+                    return accountId==x.customer.account.id
+                }
+                return false;
+            }
+                );
+            if(client)
+            {
+                return client;
+            }
+        }
+        return null;
     },
     // leadData(state) {
     //     return state.leadData
@@ -32,7 +64,12 @@ export const getters = {
     countryListLoaded(state) {
         return state.countryListLoaded
     },
-    orderFilterList:state=>state.orderFilterList
+    orderFilterList:state=>state.orderFilterList,
+    latestTransactions:state=>state.latestTransactions,
+    aggregatedClaims:state=>state.aggregatedClaims,
+    claimStatuses:state=>state.claimStatuses,
+    claims:state=> state.claims,
+    countryCodeList:state=>state.countryCodeList
 }
 export const mutations = {
 
@@ -44,6 +81,15 @@ export const mutations = {
     },
     singleClientData(state, singleClientData) {
         state.singleClientData = singleClientData
+    },
+    updateAddress(state,address)
+    {
+        
+        state.singleClientData.customer.address = address;
+    },
+    updateChannels(state,channels)
+    {
+        state.singleClientData.customer.channels = channels;
     },
     // initLeadData(state, leadData) {
     //     state.leadData = leadData
@@ -65,11 +111,31 @@ export const mutations = {
     },
     orderFilterList(state,list) {
         state.orderFilterList = list;
+    },
+    latestTransactions(state,list) {
+        state.latestTransactions = list;
+    },
+    aggregatedClaims(state,list)
+    {
+        state.aggregatedClaims = list;
+    },
+    claimStatuses(state,list) {
+        state.claimStatuses = list;
+    },
+    claims(state,list) {
+        state.claims = list;
+    },
+    countryCodeList(state,list)
+    {
+        state.countryCodeList = list
+    },
+    loadedClients(state,client)
+    {
+        state.loadedClients.push(client);
     }
 }
 export const actions = {
     submitClient(context, payload) {
-
         if (!payload.id) {
             // console.log(payload)
             return this.$axios.post('/contacts/store-with-relations', payload).then(response => {
@@ -109,7 +175,7 @@ export const actions = {
     },
     getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&surname=${payload}&type=customer`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer`)
             .then(response => {
                 const clientData = response.data.data;
                 console.log(clientData);
@@ -179,20 +245,64 @@ export const actions = {
         return this.$axios
             .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
-                const countryList = response.data.data
+                const countryList = response.data
                 // console.log('country-list loaded')
                 context.commit('initCountryList', countryList)
-                context.commit('countryListLoaded', 2)
+                context.commit('countryListLoaded', 2);
+                context.commit('countryCodeList',mapCountryCode(countryList));
                 return response
             })
     },
     clientDetailsData(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels`)
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
             .then(response => {
-                const singleClientData = response.data.data
-                context.commit('singleClientData', singleClientData)
+                context.commit('singleClientData', response.data.data);
+                context.commit('loadedClients',response.data.data)
                 return response
             })
     },
+    getClientLatestTransactions(context,payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=order_transactions,orders_payment_transactions&${payload}`)
+            .then(res=>{
+                context.commit('latestTransactions',res.data.data);
+                return res.data;
+            })
+    },
+    clientAccountDetails(context,payload){
+        return this.$axios
+            .get(`/accounts/${payload}?include=person_data,address,country,channels`)
+            .then(response => {
+                
+                return response.data.data;
+            })
+    },
+    getClientAggregatedClaims(context,payload){
+        return this.$axios
+                .get(`/aggregated-claims?include=claim_status${payload}`)
+                .then(res=>{
+                    context.commit('aggregatedClaims',res.data.data);
+                    return res.data;
+                })
+    },
+    getClaimStatuses(context)
+    {
+        return this.$axios
+            .get(`/claim-statuses`)
+            .then(response => {
+                context.commit('claimStatuses', response.data.data)
+                return response
+            })
+    },
+    getClientClaims(context,payload)
+    {
+        return this.$axios
+                .get(`/claims?include=claim_type${payload}`)
+                .then(res=>{
+                    context.commit('claims',res.data.data);
+                    return res.data;
+                })
+    },
+    
 }

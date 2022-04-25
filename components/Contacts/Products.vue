@@ -16,7 +16,7 @@
             <div class="col-auto">
               <!-- Avatar -->
               <a href="#" class="avatar rounded-circle">
-                <img alt="Image placeholder" :src="item.image" :alt="item.name">
+                <img  :src="item.image" :alt="item.name">
               </a>
             </div>
             <div class="col">

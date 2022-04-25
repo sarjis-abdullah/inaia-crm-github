@@ -1,9 +1,13 @@
+const defaultLocale = 'en';
+const i18nKey = 'i18n_redirected'
+const Cookie = process.client ? require('js-cookie') : undefined
+const locale    = Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale;
 
 export const state = () => ({
     list: null,
     details: null,
     pairs: null,
-    productClasses: null,
+    productClasses: [],
     loading: false
 })
 
@@ -19,9 +23,7 @@ export const getters = {
     pairs(state) {
         return state.pairs
     },
-    productClasses(state) {
-        return state.productClasses
-    }
+    productClasses:state=>state.productClasses
 }
 
 export const mutations = {
@@ -114,9 +116,10 @@ export const actions = {
     },
     productClasses(context) {
         return this.$axios
-            .get(`${process.env.productApiUrl}/product-classes?order_direction=asc&per_page=500`)
+            .get(`/products/gloddinar/pricing`,{headers:{'X-localization':locale}})
             .then(response => {
-                context.commit('productClasses', response.data.data)
+
+                context.commit('productClasses', Object.values(response.data.data))
                 return response
             })
             .catch(err => {
@@ -124,5 +127,5 @@ export const actions = {
             })
             .finally(() => {
             })
-    },
+    }
 }

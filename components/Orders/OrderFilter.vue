@@ -4,7 +4,7 @@
     <form class="card-header border-0" v-if="showFilter">
 
         <div class="row">
-          <div class="col-md displayFlex flex-column align-content-center">
+          <div class="col-md displayFlex flex-column align-content-center" v-if="!isDepotSet">
 
              <Select
               v-model="selectedCustomer"
@@ -100,8 +100,8 @@
 
     <div class="card-header border-0 border-top" v-if="filterIsActive">
 
-      <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
-       <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedCustomerInfo!=null && !isDepotSet">{{formatClientTag()}}<a class="badgeIcon" @click.prevent="removeCustomer()"><i class="fas fa-window-close"></i></a></Badge>
+      <Badge type="secondary" size="md" style="margin-right:10px" v-if= "selectedDepots!=null && !isDepotSet">{{formatDepotTag()}}<a class="badgeIcon" @click.prevent="removeDepot()"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-for = "stat in selectedStatus" v-bind:key="stat.id">{{$t(getStatusTranslationKey(stat))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-for = "type in selectedType" v-bind:key="type.id">{{$t(getTypeTranslationKey(type))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:10px" v-if="startDate && endDate">{{$t('from')}}: {{$d(startDate)}}  {{$t('until')}}: {{$d(endDate)}} <a class="badgeIcon" @click.prevent="removeDate()"><i class="fas fa-window-close"></i></a></Badge>
@@ -118,6 +118,10 @@ import moment from 'moment'
 export default {
   props:{
     showFilter:{
+      type:Boolean,
+      default:false
+    },
+    isDepotSet:{
       type:Boolean,
       default:false
     }
@@ -304,7 +308,7 @@ export default {
       let query = "";
       if(this.selectedType.length>0)
       {
-        query+='&order_status_ids='+this.selectedType.join(',');
+        query+='&order_type_ids='+this.selectedType.join(',');
       }
       if(this.selectedStatus.length>0)
       {
@@ -318,9 +322,10 @@ export default {
       {
         query+='&depot_ids='+this.selectedDepots;
       }
-      if(this.startDate!=null)
+      if(this.startDate!=null && this.endDate!=null)
       {
         query+='&create_date_start='+formatDateToApiFormat(this.startDate);
+        
       }
       if(this.endDate!=null)
       {

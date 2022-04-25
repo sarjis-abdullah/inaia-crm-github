@@ -1,6 +1,6 @@
 <template>
     <a class="actionBtnStyle" href="#" @click.prevent="() => onClick()" >
-        <i :class="returnIconName()" class="text-sm"></i>
+        <i :class="returnIconName()" class="text-sm" :style="returnColor()"></i>
     </a>
 </template>
 <script>
@@ -20,19 +20,19 @@ export default {
         returnColor:function() {
             if(this.type=='info'|| this.type=='default')
             {
-                return '#8898aa'
+                return 'color:#8898aa'
             }
             if(this.type=='delete')
             {
-                return '#f5365c'
+                return 'color:#f5365c'
             }
             if(this.type=='cancel')
             {
-                return '#f5365c'
+                return 'color:#f5365c'
             }
             if(this.type=='confirm')
             {
-                return '#2dce89'
+                return 'color:#2dce89'
             }
         },
         returnIconName:function()
@@ -43,7 +43,7 @@ export default {
             }
             if(this.type=='delete')
             {
-                return 'fa fa-trash'
+                return 'lnir lnir-trash'
             }
             if(this.type=='cancel')
             {

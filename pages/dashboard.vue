@@ -28,32 +28,7 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
-          <div class="card bg-gradient-primary border-0">
-            <div class="card-body">
-              <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0 text-white">PPS Master Account</h5>
-                  <span class="h2 font-weight-bold mb-0 text-white">151.897,33 €</span>
-                </div>
-                <div class="col-auto">
-                  <base-dropdown title-classes="btn btn-sm btn-neutral mr-0"
-                                 menu-on-right
-                                 :has-toggle="false">
-
-                    <template slot="title">
-                      <i class="fas fa-ellipsis-h"></i>
-                    </template>
-
-                    <a class="dropdown-item" href="#">{{$t('make_payment')}}</a>
-                    <a class="dropdown-item" href="#">{{$t('details')}}</a>
-                  </base-dropdown>
-                </div>
-              </div>
-              <p class="mt-3 mb-0 text-sm">
-                <span class="text-nowrap text-white">IBAN BE63 9740 8655 2608</span>
-              </p>
-            </div>
-          </div>
+          <MasterAmountCard />
         </div>
 
         <!--
@@ -334,6 +309,7 @@
   import BaseProgress from '@/components/argon-core/BaseProgress';
   import RouteBreadCrumb from '@/components/argon-core/Breadcrumb/RouteBreadcrumb';
   import StatsCard from '@/components/argon-core/Cards/StatsCard';
+  import MasterAmountCard from "@/components/Banking/MasterAmountCard"
 
   // Lists
   import ActivityFeed from '@/components/pages/dashboard/ActivityFeed.vue';
@@ -363,7 +339,8 @@
       LightTable,
       UserList,
       ProgressTrackList,
-      GoldPrice
+      GoldPrice,
+      MasterAmountCard
     },
     data() {
       return {
@@ -393,7 +370,9 @@
               data: [25, 20, 30, 22, 17, 29]
             }]
           }
-        }
+        },
+        masterAccountBalance:0,
+        masterAccountIban:""
       };
     },
     methods: {
@@ -413,7 +392,12 @@
     },
     mounted() {
       this.initBigChart(0);
+      this.$store.dispatch('banking-accounts/getMasterAccountInfo').then(res=>{
+        this.masterAccountBalance = res.balance/100;
+        this.masterAccountIban = res.iban.match(/.{1,4}/g).join(' ');
+      })
     }
   };
 </script>
-<style></style>
+<style>
+</style>
