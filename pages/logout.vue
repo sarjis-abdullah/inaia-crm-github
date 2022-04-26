@@ -15,8 +15,8 @@ export default {
                 // console.error('logout exception', err)
             }).finally(() => {
                 this.$nextTick(() => {
-                    // this.$router.push("/")
-                    window.location.href    = process.env.universalLogin + '/logout'
+                    this.$router.push("/")
+                    // window.location.href    = process.env.universalLogin + '/logout'
                 })
             })
     }

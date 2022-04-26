@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "nuxt",
     "local": "NODE_ENV=local nuxt",
-    "yunus": "NODE_ENV=yunus nuxt",
     "staging": "NODE_ENV=staging nuxt",
     "stage-build": "NODE_ENV=staging nuxt build",
     "stage-start": "NODE_ENV=staging nuxt start",

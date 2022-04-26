@@ -6,8 +6,8 @@ export default async function({ app, route, store, redirect }) {
     const gets = store.getters
 
     if (!route.matched.length) {
-        // return redirect(404, '/Error404')
-        return
+        return redirect(404, '/Error404')
+        // return
     }
 
     if (gets['auth/auth'] && gets['types/loading'] === false) {
@@ -55,7 +55,7 @@ export default async function({ app, route, store, redirect }) {
     }
 
     // console.log('path', route)
-    if (['/', '/dashboards'].includes(route.path)) {
+    if (['/dashboards'].includes(route.path)) {
         redirect(process.env.dashboardPath)
     }
     hasRedirect = false
