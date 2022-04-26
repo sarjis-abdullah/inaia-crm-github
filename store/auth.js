@@ -1,3 +1,5 @@
+import {hasAdminLoginAccess, getAppsAccess} from '~/helpers/auth'
+
 const userToken = 'inaiaUserToken'
 const authToken = 'inaiaAuthToken'
 const i18nKey = 'i18n_redirected'
@@ -65,7 +67,7 @@ export const mutations = {
 
 	user(state, user) {
 		state.user  = user;
-		localStorage.setItem(userToken, user ? JSON.stringify(user) : null)
+		localStorage.setItem(userToken, JSON.stringify(user))
 	},
 
     purgeAuth(state) {
@@ -116,19 +118,44 @@ export const actions = {
                 context.commit('loading', 2)
             })
     },
-    
+
+	postLogin(context, payload) {
+		return this.$axios
+			.post('/authenticate?for=admin', payload)
+			.then(response => {
+                let dt  = response.data.success
+                if (dt && hasAdminLoginAccess(dt.account.account)) {
+                    let st  = dt.account.account.settings,
+                        ad  = dt.account.address,
+                        lc  = st && st.find(s => s.name_translation_key == 'locale')
+
+                    context.commit('setAuth', dt.accessToken)
+                    context.commit('user', dt.account)
+                    if (lc && lc.value != context.state.locale) {
+                        context.commit('setLocale', lc.value)
+                    } else if (!lc && ad && ad.country) {
+                        context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
+                    }
+                } else {
+                    throw "Unauthorized"
+                }
+				return response
+			})
+			.catch(error => {
+				return Promise.reject(error)
+			})
+	},
+
     logout(context) {
-        // return this.$axios
-        //     .get('/logout')
-        //     .then(response => {
-        //         return Promise.resolve(response)
-        //     }).catch(error => {
-        //         return Promise.reject(error)
-        //     }).finally(() => {
-        //         resetState(context.commit)
-        //     })
-        resetState(context.commit)
-        return Promise.resolve()
+        return this.$axios
+            .get('/logout')
+            .then(response => {
+                return Promise.resolve(response)
+            }).catch(error => {
+                return Promise.reject(error)
+            }).finally(() => {
+                resetState(context.commit)
+            })
     },
 
     unauthorize(context) {
