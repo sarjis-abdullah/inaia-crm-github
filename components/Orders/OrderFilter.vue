@@ -67,7 +67,8 @@
                     multiple
                     class="mb-3"
                     @remove-tag="applyFilter"
-                    :loading="loadingTypes">
+                    :loading="loadingTypes"
+                    v-if="displayTypes">
               <Option v-for="option in types"
 
                         :value="option.id"
@@ -124,6 +125,10 @@ export default {
     isDepotSet:{
       type:Boolean,
       default:false
+    },
+    displayTypes:{
+      type:Boolean,
+      default:true
     }
   },
   components:{

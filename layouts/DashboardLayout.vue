@@ -161,7 +161,7 @@
         >
           <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
           <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
-          <sidebar-item :link="{ name: $t('batch_processing'), path: '/orders' }"/>
+          <sidebar-item :link="{ name: $t('batch_processing'), path: '/orders/batch-processing' }"/>
         </sidebar-item>
 
         <sidebar-item
