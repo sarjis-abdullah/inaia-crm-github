@@ -77,7 +77,7 @@ export const actions = {
         return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes?include=${includes}&id=${ payload }`)
                 .then(res => {
                     context.commit('batchProcess', res.data.data[0]);
-                    return res
+                    return res.data.data[0];
                 })
     }
 }

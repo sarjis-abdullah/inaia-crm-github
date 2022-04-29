@@ -9,7 +9,7 @@
         </div>
       </div>
     </base-header>
-    <div class="container-fluid mt--6" v-if="batchProcess">
+    <div class="container-fluid mt--6" v-if="batchProcess && !isInProgress">
     <div class="row" >
           <div class="col-xl-4 col-md-6">
             <div class="card border-0">
@@ -97,6 +97,9 @@
     <List :order_process_id="processId"/>
     <Complete :showConfirmComplete="showConfirmComplete" :selectedOrderProcess="batchProcess" @canceled="cancelConfirmComplete"/>
     </div>
+    <div class="mt-4 ml-4" v-else-if="isInProgress">
+      {{$t('cant_open_batch_because_it_is_in_progress')}}
+    </div>
     </div>
 </template>
 <script>
@@ -115,7 +118,8 @@ export default {
     return {
       processId: this.$route.params.id,
       isLoading: false,
-      showConfirmComplete:false
+      showConfirmComplete:false,
+      isInProgress:false
     };
   },
   computed: {
@@ -127,6 +131,12 @@ export default {
     this.isLoading = true;
     this.$store
       .dispatch("batch-processing/fetchOrderProcessDetails", this.processId)
+      .then(res=>{
+        if(res.order_process_status && res.order_process_status.name_translation_key=="in_progress")
+        {
+          this.isInProgress = true;
+        }
+      })
       .catch((err) => console.log(err))
       .finally(() => (this.isLoading = false));
   },

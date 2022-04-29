@@ -372,6 +372,7 @@ export default {
     order_batch_process: 'Order batch process',
     complete_batch:'Complete batch',
     upload_csv:'Upload CSV',
-    download_csv:'Download CSV'
+    download_csv:'Download CSV',
+    cant_open_batch_because_it_is_in_progress:"We can't open this batch process because it is beeing processed",
 
 }

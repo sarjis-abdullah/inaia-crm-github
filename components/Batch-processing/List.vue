@@ -106,7 +106,7 @@
 
                     <el-table-column>
                         <template v-slot="{row}">
-                            <icon-button type="info" @click="() => $router.push('/orders/batch-processing/details/'+row.id)"></icon-button>
+                            <icon-button type="info" @click="() => $router.push('/orders/batch-processing/details/'+row.id)" v-if="row.order_process_status && row.order_process_status.name_translation_key!='in_progress'"></icon-button>
                             <icon-button type="confirm" @click="() => confirmMarkAsComplete(row)"  v-if="row.order_process_status && row.order_process_status.name_translation_key=='pending'"></icon-button>
                         </template>
                     </el-table-column>
