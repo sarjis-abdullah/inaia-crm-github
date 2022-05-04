@@ -125,3 +125,32 @@ export function redirectPost(url, data) {
     }
     form.submit();
 }
+
+export function anonymousUserAvatar(gender = null) {
+    if (gender === 'female' || gender === 'f') {
+        return process.env.femaleAvatar
+    }
+    return process.env.maleAvatar
+}
+
+export function avatar(loggedInUser = null) {
+    let gender = null
+    if (loggedInUser) {
+        if (loggedInUser.avatar) {
+            return loggedInUser.avatar
+            // return process.env.s3BucketUri + loggedInUser.avatar
+        } else if (loggedInUser.person_data) {
+            gender = loggedInUser.person_data.gender.toLowerCase()
+        }
+    }
+    return anonymousUserAvatar(gender)
+}
+
+export function notifyError(err, notify) {
+    let response = err.response
+    if (response.status === 403) {
+        notify({type: 'danger', timeout: 7000, message: response.data.message })
+    } else {
+        notify({type: 'danger', timeout: 7000, message: err.message })
+    }
+}

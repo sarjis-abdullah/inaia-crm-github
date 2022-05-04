@@ -257,8 +257,9 @@ export const actions = {
         return this.$axios
             .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
             .then(response => {
-                context.commit('singleClientData', response.data.data);
-                context.commit('loadedClients',response.data.data)
+                const singleClientData = response.data.data
+                context.commit('singleClientData', singleClientData);
+                context.commit('loadedClients', singleClientData)
                 return response
             })
     },

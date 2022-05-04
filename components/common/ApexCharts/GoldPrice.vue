@@ -76,7 +76,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
     .apexcharts-tooltip { opacity: 0 !important; }
     .apexcharts-xaxistooltip-bottom {
         margin-top: 4px !important;

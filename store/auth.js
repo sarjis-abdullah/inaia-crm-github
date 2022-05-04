@@ -80,6 +80,11 @@ export const mutations = {
 		state.authorized    = false
     },
 
+    avatar(state, payload) {
+        state.user.avatar    = payload
+		localStorage.setItem(userToken, JSON.stringify(state.user))
+    },
+
     authorize(state, bool) {
         state.authorized = bool
     },
@@ -145,6 +150,17 @@ export const actions = {
 				return Promise.reject(error)
 			})
 	},
+
+    refreshAvatar(context, payload) {
+        return this.$axios
+            .get('/refresh-s3-file?file=' + payload)
+            .then(response => {
+                context.commit('avatar', response.data.url)
+                return Promise.resolve(response)
+            }).catch(error => {
+                return Promise.reject(error)
+            })
+    },
 
     logout(context) {
         return this.$axios
