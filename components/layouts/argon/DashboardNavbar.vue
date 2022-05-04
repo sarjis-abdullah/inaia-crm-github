@@ -241,7 +241,8 @@
         return null
       },
       editProfile() {
-        window.location.href    = process.env.universalLogin+'/profile'
+        // window.location.href    = process.env.universalLogin+'/profile'
+        this.$router.push('/profile')
       },
       logout() {
         // this.$store.dispatch('auth/logout')
