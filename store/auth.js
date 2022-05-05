@@ -95,6 +95,18 @@ export const mutations = {
 }
 
 export const actions = {
+    setLocale(context, payload) {
+        return this.$axios.put('account-settings/' + payload.accountId, {locale: payload.locale})
+            .then(res => {
+                context.commit('setLocale', payload.locale)
+                payload.vm.$i18n.locale = payload.locale
+                return res
+            }).catch(err => {
+                // return err
+                return Promise.reject(err)
+            }).finally(() => {
+            })
+    },
     fetchLoggedIn(context) {
         context.commit('loading', 1)
     
