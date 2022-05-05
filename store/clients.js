@@ -21,9 +21,7 @@ const initialState  = state()
 
 export const getters = {
 
-    clientData(state) {
-        return state.clientData
-    },
+    clientData:state=>state.clientData,
     singleClientData:(state)=>(contactId,accountId)=> {
         if(contactId && contactId!=-1)
         {
@@ -52,18 +50,10 @@ export const getters = {
         }
         return null;
     },
-    // leadData(state) {
-    //     return state.leadData
-    // },
-    // singleLeadData(state) {
-    //     return state.singleLeadData
-    // },
-    countryList(state) {
-        return state.countryList
-    },
-    countryListLoaded(state) {
-        return state.countryListLoaded
-    },
+    // leadData:state=>state.leadData,
+    // singleLeadData:state=>state.singleLeadData,
+    countryList:state=>state.countryList,
+    countryListLoaded:state=>state.countryListLoaded,
     orderFilterList:state=>state.orderFilterList,
     latestTransactions:state=>state.latestTransactions,
     aggregatedClaims:state=>state.aggregatedClaims,
@@ -154,6 +144,16 @@ export const actions = {
                 return Promise.reject(error)
             })
         }
+    },
+    saveAvatar(context, payload) {
+        const id = payload.id
+        delete payload.id
+        return this.$axios.put('/contacts/update-avatar/' + id, payload).then(response => {
+            context.commit('auth/avatar', response.data.data.avatar, { root: true })
+            return Promise.resolve(response)
+        }).catch(error => {
+            return Promise.reject(error)
+        })
     },
     initClientData(context, payload) {
         return this.$axios
