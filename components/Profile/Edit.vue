@@ -271,15 +271,16 @@ export default {
         ...mapGetters({
             auth: "auth/auth",
             account: "auth/user",
-            client: "clients/singleClientData",
+            // client: "clients/singleClientData",
+            singleClientData: "clients/singleClientData",
             countryList: "clients/countryList",
             countryListLoaded: "clients/countryListLoaded",
             types: "types/pairs",
             typesLoaded: "types/loading"
         }),
-        singleClientData(){
-            return this.client(this.account.id);
-        },
+        // singleClientData(){
+        //     return this.client(this.account.id);
+        // },
         updatedClientData() {
             return {
                 id: this.customer.id,

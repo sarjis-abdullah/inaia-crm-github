@@ -22,34 +22,35 @@ const initialState  = state()
 export const getters = {
 
     clientData:state=>state.clientData,
-    singleClientData:(state)=>(contactId,accountId)=> {
-        if(contactId && contactId!=-1)
-        {
-            let client = state.loadedClients.find(x=>{
-                return contactId==x.customer.id
-            });
-            if(client)
-            {
-                return client;
-            }
-        }
-        if(accountId && accountId!=-1)
-        {
-            let client = state.loadedClients.find(x=>{
-                if(x.customer.account)
-                {
-                    return accountId==x.customer.account.id
-                }
-                return false;
-            }
-                );
-            if(client)
-            {
-                return client;
-            }
-        }
-        return null;
-    },
+    singleClientData:state=>state.singleClientData,
+    // singleClientData:(state)=>(contactId,accountId)=> {
+    //     if(contactId && contactId!=-1)
+    //     {
+    //         let client = state.loadedClients.find(x=>{
+    //             return contactId==x.customer.id
+    //         });
+    //         if(client)
+    //         {
+    //             return client;
+    //         }
+    //     }
+    //     if(accountId && accountId!=-1)
+    //     {
+    //         let client = state.loadedClients.find(x=>{
+    //             if(x.customer.account)
+    //             {
+    //                 return accountId==x.customer.account.id
+    //             }
+    //             return false;
+    //         }
+    //             );
+    //         if(client)
+    //         {
+    //             return client;
+    //         }
+    //     }
+    //     return null;
+    // },
     // leadData:state=>state.leadData,
     // singleLeadData:state=>state.singleLeadData,
     countryList:state=>state.countryList,
