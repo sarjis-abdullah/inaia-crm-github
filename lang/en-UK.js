@@ -350,5 +350,8 @@ export default {
     should_override_block:'Un-block',
     should_include_fee: 'Include Fee',
     card_reissued_successfully: 'Card re-issued successfully',
-    card_reissued_unsuccessfully: "Card can't be re-issued"
+    card_reissued_unsuccessfully: "Card can't be re-issued",
+
+    privacy_policy: "Privacy Policy",
+    imprint: "Imprint"
 }

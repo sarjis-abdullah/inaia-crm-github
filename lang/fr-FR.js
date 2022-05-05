@@ -43,4 +43,7 @@ export default {
     depot_status_active: 'Aktif',
     depot_status_pending: 'Pendant',
     depot_status_canceled: 'Annulé',
+
+    privacy_policy: "Politique de confidentialité",
+    imprint: "Imprimer"
 }
