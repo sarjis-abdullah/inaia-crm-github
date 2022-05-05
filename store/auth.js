@@ -125,6 +125,7 @@ export const actions = {
                 } else if (!lc && ad && ad.country) {
                     context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
                 }
+                context.commit('clients/loadedClients', {customer: dt}, { root: true })
                 return response
             })
             .catch(error => {

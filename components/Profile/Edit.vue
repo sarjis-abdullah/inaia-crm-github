@@ -271,16 +271,15 @@ export default {
         ...mapGetters({
             auth: "auth/auth",
             account: "auth/user",
-            // client: "clients/singleClientData",
-            singleClientData: "clients/singleClientData",
+            client: "clients/singleClientData",
             countryList: "clients/countryList",
             countryListLoaded: "clients/countryListLoaded",
             types: "types/pairs",
             typesLoaded: "types/loading"
         }),
-        // singleClientData(){
-        //     return this.client(this.account.id);
-        // },
+        singleClientData(){
+            return this.client(this.account.id);
+        },
         updatedClientData() {
             return {
                 id: this.customer.id,
@@ -363,7 +362,6 @@ export default {
         } else {
             this.constructCountryOptions(this.countryList);
         }
-        this.initClientData()
     },
     methods: {
         initTypes() {
@@ -390,9 +388,6 @@ export default {
 
             this.countryOptions     = countryList;
             this.nationalityOptions = nationalityList;
-        },
-        initClientData() {
-            this.$store.dispatch("clients/clientDetailsData", this.account.id);
         },
         async validate() {
             this.isRequesting   = true
