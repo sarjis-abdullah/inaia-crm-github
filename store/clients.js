@@ -22,7 +22,6 @@ const initialState  = state()
 export const getters = {
 
     clientData:state=>state.clientData,
-    // singleClientData:state=>state.singleClientData,
     singleClientData:(state)=>(contactId,accountId)=> {
         if(contactId && contactId!=-1)
         {
