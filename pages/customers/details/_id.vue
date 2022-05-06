@@ -23,12 +23,11 @@ export default {
     },
     computed: {
         ...mapGetters({
-            // client: "clients/singleClientData",
-            singleClientData: "clients/singleClientData",
+            client: "clients/singleClientData",
         }),
-        // singleClientData(){
-        //     return this.client(this.customerId);
-        // }
+        singleClientData(){
+            return this.client(this.customerId);
+        }
     },
     watch: {
         customerId: {

@@ -78,13 +78,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-    //   client: "clients/singleClientData",
-      singleClientData: "clients/singleClientData",
+      client: "clients/singleClientData",
     }),
 
-    // singleClientData() {
-    //   return this.client(this.customerId,this.accountId);
-    // },
+    singleClientData() {
+      return this.client(this.customerId,this.accountId);
+    },
     info() {
       //console.log('resource', this.resource)
       return this.singleClientData && this.singleClientData.customer;

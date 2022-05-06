@@ -22,35 +22,29 @@ const initialState  = state()
 export const getters = {
 
     clientData:state=>state.clientData,
-    singleClientData:state=>state.singleClientData,
-    // singleClientData:(state)=>(contactId,accountId)=> {
-    //     if(contactId && contactId!=-1)
-    //     {
-    //         let client = state.loadedClients.find(x=>{
-    //             return contactId==x.customer.id
-    //         });
-    //         if(client)
-    //         {
-    //             return client;
-    //         }
-    //     }
-    //     if(accountId && accountId!=-1)
-    //     {
-    //         let client = state.loadedClients.find(x=>{
-    //             if(x.customer.account)
-    //             {
-    //                 return accountId==x.customer.account.id
-    //             }
-    //             return false;
-    //         }
-    //             );
-    //         if(client)
-    //         {
-    //             return client;
-    //         }
-    //     }
-    //     return null;
-    // },
+    singleClientData:(state)=>(contactId,accountId)=> {
+        if(contactId && contactId!=-1)
+        {
+            let client = state.loadedClients.find(
+                 x => contactId == x.customer.id
+            );
+            if(client)
+            {
+                return client;
+            }
+        }
+        if(accountId && accountId!=-1)
+        {
+            let client = state.loadedClients.find(
+                x => x.customer.account && accountId == x.customer.account.id
+            );
+            if(client)
+            {
+                return client;
+            }
+        }
+        return null;
+    },
     // leadData:state=>state.leadData,
     // singleLeadData:state=>state.singleLeadData,
     countryList:state=>state.countryList,
@@ -120,9 +114,14 @@ export const mutations = {
     {
         state.countryCodeList = list
     },
-    loadedClients(state,client)
+    loadedClients(state, client)
     {
-        state.loadedClients.push(client);
+        let existingClient  = state.loadedClients.find( x => client.customer.id == x.customer.id  )
+        if (existingClient) {
+            Object.assign(existingClient, client)
+        } else {
+            state.loadedClients.push(client);
+        }
     }
 }
 export const actions = {
