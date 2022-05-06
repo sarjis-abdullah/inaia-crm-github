@@ -348,8 +348,6 @@ export default {
     should_include_fee: 'Include Fee',
     card_reissued_successfully: 'Card re-issued successfully',
     card_reissued_unsuccessfully: "Card can't be re-issued",
-<<<<<<< HEAD
-=======
     trading_gold_price: 'Trading gold price',
     total_order_count:'Total orders count',
     in_progress:'In progress',
@@ -376,8 +374,6 @@ export default {
     upload_csv:'Upload CSV',
     download_csv:'Download CSV',
     cant_open_batch_because_it_is_in_progress:"We can't open this batch process because it is beeing processed",
->>>>>>> ic-71
-
     privacy_policy: "Datenschutz-Bestimmungen",
     imprint: "Impressum"
 }
