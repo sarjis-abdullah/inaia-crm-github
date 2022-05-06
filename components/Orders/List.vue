@@ -19,14 +19,13 @@
 
                 </div>
 
-                <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet"></OrderFilter>
+                <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
 
                 <el-table class="table-hover table-responsive table-flush"
                         header-row-class-name="thead-light"
                         :empty-text="$t('no_data')"
                         v-loading="isLoading"
                         :data="data">
-
                     <el-table-column label="#"
                                    min-width="100px"
                                     prop="id"
@@ -34,9 +33,12 @@
                         <template v-slot="{row}">
                             <div class="media align-items-center">
                                 <div class="media-body">
-
-                                    <div class="font-weight-300 name" >{{row.id}}</div>
-
+                                    <div class="font-weight-300 name" v-if="createNewBatch" >
+                                    <Checkbox :value="shouldCheck(row)" :label="row.id" @change="(value)=>addOrder(value,row)" :disabled="selectedOrders.type!='' && selectedOrders.type!=row.order_type.name_translation_key">
+                                        
+                                    </Checkbox>
+                                    </div>
+                                    <div class="font-weight-300 name" v-else>{{row.id}}</div>
                                 </div>
                             </div>
                         </template>
@@ -122,7 +124,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Checkbox } from 'element-ui'
 import Details from '@/components/Orders/Details'
 import Status from '@/components/Orders/Status';
 import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
@@ -142,7 +144,8 @@ export default {
         Status,
         IconButton,
         OrderFilter,
-        SelectPaymentAccount
+        SelectPaymentAccount,
+        Checkbox
     },
     props:{
         isDepotSet:{
@@ -152,6 +155,14 @@ export default {
         depotSetId:{
             type:Number,
             default:0
+        },
+        createNewBatch:{
+            type:Boolean,
+            default:false,
+        },
+        order_process_id:{
+            type:Number,
+            default:-1
         }
     },
     data() {
@@ -176,11 +187,16 @@ export default {
             showFilter: false,
             filterQuery:null,
             orderId:"",
+            selectedOrders:{
+                type:'',
+                orders:[]
+            }
         }
     },
     computed: {
         searchQuery() {
             return (
+                (this.order_process_id!=-1 ? '&order_process_id=' + this.order_process_id :'')+
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
@@ -295,6 +311,49 @@ export default {
                 this.page = this.page - 1;
             } else {
                 this.fetchList(this.searchQuery)
+            }
+        },
+        shouldCheck(row){
+            const result = this.selectedOrders.orders.find(x=>x.id==row.id);
+            return result!=null;
+        },
+        addOrder(value,row){
+            if(value)
+            {
+                if(this.selectedOrders.orders.length == 0)
+                {
+                    this.selectedOrders.type = row.order_type.name_translation_key,
+                    this.selectedOrders.orders.push(row);
+                    this.$emit('orderAdded',row.id)
+                }
+                else{
+                    if(row.order_type.name_translation_key == this.selectedOrders.type)
+                    {
+                        this.selectedOrders.orders.push(row);
+                        this.$emit('orderAdded',row.id)
+                    }
+                    else{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('orders_must_be_of_the_type')})
+                    }
+                }
+            }
+            else{
+                if(this.selectedOrders.orders.length == 1)
+                {
+                    this.selectedOrders.type = "";
+                    this.selectedOrders.orders = [];
+                }
+                else{
+                    this.selectedOrders.orders = this.selectedOrders.orders.filter(x=>x.id!=row.id);
+                }
+                this.$emit('orderRemoved',row.id);
+            }
+            
+        },
+        cancelCreatingBatch(){
+            this.selectedOrders={
+                type:'',
+                orders:[]
             }
         }
         

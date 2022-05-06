@@ -18,7 +18,7 @@ export default {
     },
     methods:{
         returnColor:function() {
-            if(this.type=='info'|| this.type=='default')
+            /*if(this.type=='info'|| this.type=='default')
             {
                 return 'color:#8898aa'
             }
@@ -33,7 +33,8 @@ export default {
             if(this.type=='confirm')
             {
                 return 'color:#2dce89'
-            }
+            }*/
+            return 'color:#8898aa'
         },
         returnIconName:function()
         {
