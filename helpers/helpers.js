@@ -148,4 +148,16 @@ export function isPhoneNumber(phone)
     phone = String(phone).replace(' ','').replace('+','');
     return !isNaN(phone);
 }
+export function getMonthName(monthNumber)
+{
+    const i18nKey = 'i18n_redirected'
+    const defaultLocale = 'en'
+    const Cookie = process.client ? require('js-cookie') : undefined;
+    const locale    = Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale;
+    var objDate = new Date();
+    objDate.setDate(1);
+    objDate.setMonth(monthNumber-1);
+    const month = objDate.toLocaleString(locale, { month: "long" });
+    return month;
+}
 

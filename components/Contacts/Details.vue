@@ -53,7 +53,7 @@ import DepotList from "@/components/Depots/List";
 import LatestTransactions from "@/components/Contacts/LatestTransactions"
 import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
-import AggregatedClaims from '@/components/Contacts/Claims/AggregatedClaims';
+import AggregatedClaims from '@/components/Claims/AggregatedClaims';
 
 export default {
     components: {

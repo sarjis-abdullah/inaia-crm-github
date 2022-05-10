@@ -375,5 +375,18 @@ export default {
     download_csv:'Download CSV',
     cant_open_batch_because_it_is_in_progress:"We can't open this batch process because it is beeing processed",
     privacy_policy: "Datenschutz-Bestimmungen",
-    imprint: "Impressum"
+    imprint: "Impressum",
+    Download_yearly_report:'Download yearly report',
+    select_year:'Select year',
+    paid: 'Paid',
+    mark_many_as_paid:'Mark many as paid',
+    pending_amount:'Pending Amount',
+    aggregated_claims:'Aggregated claims',
+    paid_amount:'Paid Amount',
+    gold_delivery_charge:'Gold delivery charge',
+    sepa_out_fee:'Sepa out fee',
+    price_monthly:'Monthly price',
+    marking_many_as_paid: 'We are processing the request, it might take a while',
+    mark_many_as_paid_successfully:'Aggregated claims were marked payed successfully',
+    mark_many_as_paid_unsuccessfully:"We couldn't mark aggregated claims as paid, please try again later"
 }

@@ -4,11 +4,23 @@
     <div class="row align-items-center mb-3">
       <div class="col-8">
         <h5 class="h2 mb-0">{{ $t("claims_details") }}</h5>
+        <p class="mt-3 mb-0 text-sm" v-if="account_id!=-1">
+                  <UserInfo  :accountId="account_id"></UserInfo>
+                </p>
       </div>
       <div class="col-4 text-right">
-        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm">
+        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="isPending() && !confirming" @click="confirming=true">
           <span class="btn-inner--icon"><i class="fas fa-check"></i></span><span class="btn-inner--text">{{$t('mark_as_paid')}}</span>
         </button>
+        <div class="d-flex justify-content-end" v-else-if="confirming">
+                <base-button size="sm" type="neutral" @click="confirming=false">
+                    {{$t('cancel')}}
+                </base-button>
+                <base-button size="sm" type="neutral" @click="completeAsPaid" :disabled="isSubmitting">
+                    {{$t('mark_as_paid')}}
+                </base-button>
+                
+            </div>
       </div>
     </div>
 
@@ -77,21 +89,31 @@
 import { Table, TableColumn } from "element-ui";
 import Status from "@/components/Depots/Status";
 import { mapGetters } from "vuex";
+import UserInfo from '@/components/Contacts/UserInfo';
+import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
 export default {
   props: {
     aggregated_id: {
       type: Number,
       default: -1,
     },
+    account_id:{
+      type:Number,
+      default:-1
+    },
+    aggregated_status:{
+      type: String
+    }
   },
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     Status,
+    UserInfo
   },
   computed: {
     ...mapGetters({
-      aggregatedClaims: "clients/claims",
+      aggregatedClaims: "claims/claims",
     }),
     searchQuery() {
       return `&aggregated_claim_id=${this.aggregated_id}&page=${
@@ -117,19 +139,39 @@ export default {
       totalTableData: 1,
       isLoading: false,
       loadingError: null,
+      confirming:false,
+      isSubmitting: false
     };
   },
   methods: {
     fetchClaims() {
-      if (this.aggregated_id > 1) {
+      if (this.aggregated_id > -1) {
         this.isLoading = true;
         this.$store
-          .dispatch("clients/getClientClaims", this.searchQuery)
+          .dispatch("claims/getClientClaims", this.searchQuery)
           .then((res) => (this.totalTableData = res.meta.total))
           .catch((err) => (this.loadingError = this.$t("cant_load_list")))
           .finally(() => (this.isLoading = false));
       }
     },
+    isPending(){
+      return this.aggregated_status == PAYMENT_PENDING;
+    },
+    completeAsPaid()
+    {
+      this.isSubmitting = true;
+      let data = [];
+      data.push(this.aggregated_id);
+      this.$store.dispatch('claims/markManyAspaid',data).then(()=>{
+        this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
+        this.$emit("markedAsPaid");
+        this.confirming = false;
+      }).catch(()=>{
+        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).finally(()=>{
+        this.isSubmitting = false;
+      })
+    }
   },
 };
 </script>

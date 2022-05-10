@@ -172,7 +172,7 @@
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Claims', path: '/claims' }"/>
+          <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }"/>
         </sidebar-item>
 
         <sidebar-item
