@@ -10,11 +10,11 @@
               <h2 class="card-title mt-3 mb-0 title">{{$t('gold_gift')}}</h2>
             </div>
             <div class="mt-4 list-group list-group-flush" v-if="!isLoading && error==null && currentPrice!=null">
-              <detail-list-item :title="$t('gold_price')"><div slot="value">{{$n(currentPrice.au_avg)}} €</div></detail-list-item>
+              <detail-list-item :title="$t('gold_price')"><div slot="value">{{$n(currentPrice.fixing_gram_eur)}} €</div></detail-list-item>
               <!--
               <detail-list-item :title="$t('gold_price_sell')"><div slot="value">{{$n(currentPrice.au_bid)}} €</div></detail-list-item>
               <detail-list-item :title="$t('gold_price_buy')"><div slot="value">{{$n(currentPrice.au_ask)}} €</div></detail-list-item>
-              <detail-list-item :title="$t('gold_price_average')"><div slot="value">{{$n(currentPrice.au_avg)}} €</div></detail-list-item>
+              <detail-list-item :title="$t('gold_price_average')"><div slot="value">{{$n(currentPrice.fixing_gram_eur)}} €</div></detail-list-item>
               -->
             </div>
             <div class="mt-4">

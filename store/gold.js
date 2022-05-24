@@ -123,9 +123,9 @@ export const actions = {
                 let mappedData  = []
                 if (response && response.data.data) {
                     if (process.env.quandlApiOn) {
-                        mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.au_avg])
+                        mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram_eur])
                     } else {
-                        mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.au_avg])
+                        mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.fixing_gram_eur])
                     }
                 }
                 context.commit('prices', mappedData)
