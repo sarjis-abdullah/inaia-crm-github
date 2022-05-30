@@ -33,8 +33,8 @@
                         <template v-slot="{row}">
                             <div class="media align-items-center">
                                 <div class="media-body">
-                                    <div class="font-weight-300 name" v-if="createNewBatch" >
-                                    <Checkbox :value="shouldCheck(row)" :label="row.id" @change="(value)=>addOrder(value,row)" :disabled="selectedOrders.type!='' && selectedOrders.type!=row.order_type.name_translation_key">
+                                    <div class="font-weight-300 name" v-if="createNewBatch && allowAddToOrderProcess(row)" >
+                                    <Checkbox :value="shouldCheck(row)" :label="row.id" @change="(value)=>addOrder(value,row)" :disabled="(selectedOrders.type!='' && selectedOrders.type!=row.order_type.name_translation_key) || row.order_process_id">
                                         
                                     </Checkbox>
                                     </div>
@@ -133,6 +133,7 @@ import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
+import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale } from '../../helpers/order';
 export default {
     components: {
         [Table.name]: Table,
@@ -355,6 +356,10 @@ export default {
                 type:'',
                 orders:[]
             }
+        },
+        allowAddToOrderProcess(order)
+        {
+            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order));
         }
         
     }

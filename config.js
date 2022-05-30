@@ -79,8 +79,8 @@ export default {
             // s3BucketUri: 'https://staging-storage.inaia.cloud.s3.amazonaws.com/',
 
             productApiUrl: 'https://core-staging.inaia.cloud/api/v1',
-            golddinarApiUrl: 'https://golddinar-api-staging.inaia.cloud/api/v1',
-            //golddinarApiUrl: 'localhost:8080/api/v1',
+            //golddinarApiUrl: 'https://golddinar-api-staging.inaia.cloud/api/v1',
+            golddinarApiUrl: 'http://localhost:8080/api/v1',
             paymentsApiUrl: 'https://payments-api-staging.inaia.cloud/api/v1',
             bankingApiUrl: 'https://banking-staging.inaia.cloud/api/v1',
             entryPoints: {

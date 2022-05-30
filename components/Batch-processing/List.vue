@@ -48,7 +48,9 @@
                                     >
                         <template v-slot="{row}">
                             <div class="d-flex align-items-center">
-                                
+                                <span href="#!" class="avatar mr-3 removeImageBorder">
+                                  <img v-bind:src="row.logo"/>
+                                </span>
                                 <div>
                                   <span class="orderType text-body"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
                                   
@@ -68,31 +70,36 @@
                             <span class="amount">
                                 <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
                             </span>
-                            <div class="dateStyle">{{ $n(row.gold_amount/1000) }} g</div>
                         </template>
                     </el-table-column>
-                    <el-table-column v-bind:label="$t('trading_gold_price')"
-                                    prop="gold_price_trading"
+                    <el-table-column v-bind:label="$t('gold_amount')"
+                                    prop="gold_amount"
                                     min-width="160px"
                                     align="right"
                                     sortable>
                         <template v-slot="{row}">
                             <span class="amount">
-                                <i18n-n :value="parseInt(row.gold_price_trading)/100"></i18n-n> €
+                                <i18n-n :value="parseInt(row.gold_amount)/1000"></i18n-n> g
                             </span>
-                            <div class="dateStyle">{{ $d(new Date(row.gold_price_date),'short') }}</div>
                         </template>
                     </el-table-column>
-                    <el-table-column v-bind:label="$t('total_order_count')"
+                    <el-table-column v-bind:label="$t('progress')"
                                     prop="total_orders_count"
                                     min-width="160px"
                                     align="left"
                                     sortable>
                         <template v-slot="{row}">
-                            <span class="amount">
-                                {{row.total_orders_count}}
-                            </span>
-                            <div class="dateStyle">{{ $t('completed') }}: {{row.completed_orders_count}}</div>
+                            <Progress :percentage="Math.floor((row.completed_orders_count/row.total_orders_count) * 100)" color="#2dce89"></Progress>
+                            <div class="dateStyle">{{row.completed_orders_count}}/{{row.total_orders_count}}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column v-bind:label="$t('processing_date')"
+                                    prop="processing_date"
+                                    min-width="160px"
+                                    align="left"
+                                    sortable>
+                        <template v-slot="{row}">
+                            <div>{{$d(new Date(row.processing_date), 'short')}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column v-bind:label="$t('status')"
@@ -108,6 +115,7 @@
                         <template v-slot="{row}">
                             <icon-button type="info" @click="() => $router.push('/orders/batch-processing/details/'+row.id)" v-if="row.order_process_status && row.order_process_status.name_translation_key!='in_progress'"></icon-button>
                             <icon-button type="confirm" @click="() => confirmMarkAsComplete(row)"  v-if="row.order_process_status && row.order_process_status.name_translation_key=='pending'"></icon-button>
+                            <icon-button type="redo"  @click="confirmRetryComplete(row)"  v-if="row.order_process_status && row.order_process_status.name_translation_key=='failed'"></icon-button>
                         </template>
                     </el-table-column>
 
@@ -124,17 +132,19 @@
 
     </div>
     <Complete :showConfirmComplete="showConfirmComplete" :selectedOrderProcess="selectedOrderProcess" @canceled="cancelConfirmComplete"/>
+    <RetryComplete :showConfirmComplete="showConfirmRetryComplete" :selectedOrderProcess="selectedOrderProcess" @canceled="cancelConfirmComplete"/>
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown, Progress } from 'element-ui'
 
 import Status from '@/components/Batch-processing/Status';
 import IconButton from '@/components/common/Buttons/IconButton';
 
 import BachFilter from '@/components/Batch-processing/Filter';
 import Complete from '@/components/Batch-processing/Complete';
+import RetryComplete from '@/components/Batch-processing/RetryComplete';
 export default {
     components: {
         [Table.name]: Table,
@@ -145,7 +155,9 @@ export default {
         Status,
         IconButton,
         BachFilter,
-        Complete
+        Complete,
+        Progress,
+        RetryComplete
     },
     data() {
         return {
@@ -162,7 +174,8 @@ export default {
             orderProcessSearch:null,
             showConfirmComplete: false,
             selectedOrderProcess: null,
-            isSubmitting : false
+            isSubmitting : false,
+            showConfirmRetryComplete:false
         }
     },
     computed: {
@@ -231,11 +244,16 @@ export default {
         },
         cancelConfirmComplete(){
             this.showConfirmComplete = false;
+            this.showConfirmRetryComplete = false;
             this.selectedOrderProcess = null;
         },
         confirmMarkAsComplete(resource){
             this.selectedOrderProcess = resource;
             this.showConfirmComplete = true;
+        },
+        confirmRetryComplete(resource){
+            this.selectedOrderProcess = resource;
+            this.showConfirmRetryComplete = true;
         }
     }
 }

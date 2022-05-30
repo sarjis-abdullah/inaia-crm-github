@@ -1,153 +1,371 @@
 <template>
-    <div>
-        <base-header class="pb-6">
+  <div>
+    <base-header class="pb-6">
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">
-            {{ $t("order_batch_process") + ' : '+processId}}
+            {{ $t("order_batch_process") + " : " + processId }}
           </h6>
         </div>
       </div>
     </base-header>
     <div class="container-fluid mt--6" v-if="batchProcess && !isInProgress">
-    <div class="row" >
-          <div class="col-xl-4 col-md-6">
-            <div class="card border-0">
-              <div class="card-body">
-                  <div class="row">
-                      <div class="col-9">
-                <h5 class="card-title text-uppercase text-muted mb-0">{{$t('type')}}</h5>
-                <span class="h2 font-weight-bold mb-0">{{$t(batchProcess.order_type.name_translation_key) }}</span>
+      <div class="row">
+        <div class="col-xl-4 col-md-6">
+          <div class="card border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <h5 class="card-title text-uppercase text-muted mb-0">
+                    {{ $t("type") }}
+                  </h5>
+
+                  <span class="h2 font-weight-bold mb-0">{{
+                    $t(batchProcess.order_type.name_translation_key)
+                  }}</span>
+                  <div class="text-sm">
+                    {{ $t("processing_date") }} :
+                    {{ $d(new Date(batchProcess.processing_date), "short") }}
+                  </div>
                 </div>
                 <div class="col-3">
-                    <div class="float-right">
+                  <div class="float-right">
                     <base-dropdown
                       title-classes="btn btn-sm btn-link mr-0"
                       menu-on-right
                       :has-toggle="false"
-                      v-if="batchProcess.order_process_status.name_translation_key=='pending'"
+                      v-if="
+                        shouldShowCsv()
+                      "
                     >
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
-                      <a class="dropdown-item" @click.prevent="confirmMarkAsComplete"><i class="fa fa-check" ></i>{{$t("complete_batch")}}</a>
-                      <a class="dropdown-item" ><i class="fa fa-upload"></i>{{$t("upload_csv")}}</a>
-                       <a class="dropdown-item" ><i class="fa fa-download"></i>{{$t("download_csv")}}</a>
+                      <a
+                        class="dropdown-item"
+                        v-if="!isBeforeProcessingDate()"
+                        @click="uploadCsvFile()"
+                        ><i class="fa fa-upload"></i>{{ $t("upload_csv") }}</a
+                      >
+                      <a class="dropdown-item" @click="showDownloadCSVDialog()"
+                        ><i class="fa fa-download"></i
+                        >{{ $t("download_csv") }}</a
+                      >
+                      <a class="dropdown-item" @click="openCsvFilesList()"
+                        ><i class="fa fa-list"></i>{{ $t("csv_list") }}</a
+                      >
                     </base-dropdown>
                   </div>
                   <div class="float-right mt-2">
-                    <Status v-bind:status='batchProcess.order_process_status.name_translation_key'>{{batchProcess.order_process_status ? $t(batchProcess.order_process_status.name_translation_key) : batchProcess.order_process_status_id}}</Status>
-                    </div>
-                </div>
-                </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <div class="text-nowrap">
-                      {{$t('completed')}} / {{$t('total_order_count')}}
-
-                  </div>
-                    <div>{{batchProcess.completed_orders_count}} / {{batchProcess.total_orders_count}}</div>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-md-6">
-            <div class="card border-0">
-              <div class="card-body">
-                
-                  
-                    <h5 class="card-title text-uppercase text-muted mb-0">
-                      {{$t('total_gold_amount')}}
-                    </h5>
-                    <span class="h2 font-weight-bold mb-0"
-                      ><i18n-n :value="batchProcess.gold_amount/1000"></i18n-n> g</span
+                    <Status
+                      v-bind:status="
+                        batchProcess.order_process_status.name_translation_key
+                      "
+                      >{{
+                        batchProcess.order_process_status
+                          ? $t(
+                              batchProcess.order_process_status
+                                .name_translation_key
+                            )
+                          : batchProcess.order_process_status_id
+                      }}</Status
                     >
-                  
-                  
-                
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap">{{$t('amount')}}: <i18n-n :value="batchProcess.money_amount/100"></i18n-n> €</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-md-6">
-            <div class="card border-0">
-              <div class="card-body">
-                
-                    <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
-                      {{$t('trading_gold_price')}}
-                       
-                    </h5>
-                     <span class="h2 font-weight-bold mb-0">
-                         {{ $n(batchProcess.gold_price_trading/100) }} €
-                     </span>
-                
-                <div class="mt-3 mb-0 text-sm">
-                  <div>{{$t('gold_price_date')}}: {{ $d(new Date(batchProcess.gold_price_date),'short') }}</div>
-                  <div>{{$t('gold_price')}}: {{ $n(batchProcess.gold_price_raw/100) }} €</div>
+                  </div>
                 </div>
-              
+              </div>
             </div>
           </div>
         </div>
-    </div>
-    <List :order_process_id="processId"/>
-    <Complete :showConfirmComplete="showConfirmComplete" :selectedOrderProcess="batchProcess" @canceled="cancelConfirmComplete"/>
+
+        <div class="col-xl-4 col-md-6">
+          <div class="card border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-9">
+                  <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
+                    {{ $t("progress") }}
+                  </h5>
+                  <div>
+                    {{ $t("total_order_count") }}:
+                    {{ batchProcess.total_orders_count }}
+                  </div>
+                  <div>
+                    {{ $t("completed") }}:
+                    {{ batchProcess.completed_orders_count }}
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="float-right">
+                    <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                      v-if="
+                        shouldDisplayProgressActions()
+                      "
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+                      <a
+                        class="dropdown-item"
+                        v-if="
+                        shouldDisplayRetry()
+                        "
+                        @click.prevent="confirmRetryComplete"
+                        ><i class="lnir lnir-reload"></i
+                        >{{ $t("retry_complete") }}</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        v-if="
+                          shouldDisplayComplete()
+                        "
+                        @click.prevent="confirmMarkAsComplete"
+                        ><i class="fa fa-check"></i
+                        >{{ $t("complete_batch") }}</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        v-if="
+                          shouldDisplayExecutePayment()
+                        "
+                        @click="displayExecutePayment()"
+                        ><i class="fa fa-credit-card"></i
+                        >{{ $t("execute_payment") }}</a
+                      >
+                    </base-dropdown>
+                    <div class="text-sm"></div>
+                  </div>
+                  <div class="float-right mt-2">
+                    <Progress
+                      type="dashboard"
+                      :percentage="progressPercentage"
+                      color="#2dce89"
+                      :width="80"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-4 col-md-6">
+          <div class="card border-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">
+                    {{ $t("total_gold_amount") }}
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0"
+                    ><i18n-n :value="batchProcess.gold_amount / 1000"></i18n-n>
+                    g</span
+                  >
+                </div>
+                <div class="col">
+                  <h5 class="card-title text-uppercase text-muted mb-0">
+                    {{ $t("amount") }}
+                  </h5>
+                  <span class="h2 font-weight-bold mb-0"
+                    ><i18n-n :value="batchProcess.money_amount / 100"></i18n-n>
+                    €</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <List :order_process_id="processId" v-if="!isBeforeProcessingDate()" />
+      <Complete
+        v-if="!isBeforeProcessingDate()"
+        :showConfirmComplete="showConfirmComplete"
+        :selectedOrderProcess="batchProcess"
+        @canceled="cancelConfirmComplete"
+      />
+      <RetryComplete
+        v-if="
+          !isBeforeProcessingDate() &&
+          batchProcess.order_process_status.name_translation_key == 'failed'
+        "
+        :showConfirmComplete="showConfirmRetryComplete"
+        :selectedOrderProcess="batchProcess"
+        @canceled="cancelConfirmComplete"
+      />
+      <ExecutePayment
+        v-if="
+          !isBeforeProcessingDate()
+        "
+        :showConfirmExecute="showExecutePayment"
+        :selectedOrderProcess="batchProcess"
+        @canceled="cancelExecutePayment"
+      />
+      <DownloadCsv
+        :selectedOrderProcess="batchProcess"
+        :showDownloadDialog="showDownloadCsv"
+        @canceled="cancelShowDownloadCSVDialog"
+        @downloaded="checkCsvFileList"
+      />
+      <CsvList
+        :showCsvList="showFilesList"
+        :selectedOrderProcess="batchProcess"
+        @closed="closeCSVList"
+      />
+      <UploadCsv
+        :showUploadDialog="showUploadCsv"
+        @canceled="()=>{showUploadCsv = true}"
+      />
     </div>
     <div class="mt-4 ml-4" v-else-if="isInProgress">
-      {{$t('cant_open_batch_because_it_is_in_progress')}}
+      {{ $t("cant_open_batch_because_it_is_in_progress") }}
     </div>
-    </div>
+  </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import Status from "@/components/Batch-processing/Status";
 import List from "@/components/Orders/List";
-import Complete from '@/components/Batch-processing/Complete';
+import Complete from "@/components/Batch-processing/Complete";
+import { Progress } from "element-ui";
+import moment from "moment";
+import RetryComplete from "@/components/Batch-processing/RetryComplete";
+import DownloadCsv from "@/components/Csv-file/DownloadCsv";
+import CsvList from "@/components/Csv-file/CsvList";
+import UploadCsv from "@/components/Csv-file/Uploadcsv";
+import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
+import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
+import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
 export default {
   layout: "DashboardLayout",
   components: {
     Status,
     List,
-    Complete
+    Complete,
+    Progress,
+    RetryComplete,
+    DownloadCsv,
+    CsvList,
+    UploadCsv,
+    ExecutePayment
   },
   data() {
     return {
       processId: this.$route.params.id,
       isLoading: false,
-      showConfirmComplete:false,
-      isInProgress:false
+      showConfirmComplete: false,
+      isInProgress: false,
+      showConfirmRetryComplete: false,
+      showDownloadCsv: false,
+      showFilesList: false,
+      showUploadCsv: false,
+      showExecutePayment: false
     };
   },
   computed: {
     ...mapGetters({
       batchProcess: "batch-processing/batchProcess",
     }),
+    progressPercentage() {
+      return Math.floor(
+        (this.batchProcess.completed_orders_count /
+          this.batchProcess.total_orders_count) *
+          100
+      );
+    },
   },
   mounted() {
     this.isLoading = true;
     this.$store
       .dispatch("batch-processing/fetchOrderProcessDetails", this.processId)
-      .then(res=>{
-        if(res.order_process_status && res.order_process_status.name_translation_key=="in_progress")
-        {
+      .then((res) => {
+        if (
+          res.order_process_status &&
+          res.order_process_status.name_translation_key == ORDER_PROCESS_STATUS_INPROGRESS
+        ) {
           this.isInProgress = true;
         }
       })
       .catch((err) => console.log(err))
       .finally(() => (this.isLoading = false));
   },
-  methods:{
-      cancelConfirmComplete(){
-            this.showConfirmComplete = false;
-            
-        },
-        confirmMarkAsComplete(){
-            this.showConfirmComplete = true;
+  methods: {
+    cancelConfirmComplete() {
+      this.showConfirmComplete = false;
+      this.showConfirmRetryComplete = false;
+    },
+    confirmMarkAsComplete() {
+      this.showConfirmComplete = true;
+    },
+    confirmRetryComplete() {
+      this.showConfirmRetryComplete = true;
+    },
+    isBeforeProcessingDate() {
+      if (this.batchProcess.processing_date) {
+        const now = moment();
+        const processingDate = moment(this.batchProcess.processing_date);
+        return now.isBefore(processingDate);
+      } else {
+        return false;
+      }
+    },
+    showDownloadCSVDialog() {
+      this.showDownloadCsv = true;
+    },
+    openCsvFilesList() {
+      this.showFilesList = true;
+    },
+    closeCSVList() {
+      this.showFilesList = false;
+    },
+    cancelShowDownloadCSVDialog() {
+      this.showDownloadCsv = false;
+    },
+    uploadCsvFile() {
+      this.showUploadCsv = true;
+    },
+    checkCsvFileList() {
+      let count = 0;
+      const recurrentFuntion = (count) => {
+        count++;
+        const payload = "order_process_id=" + this.batchProcess.id;
+        this.$store
+          .dispatch("csv-file/fetchList", payload)
+        if (count < 6) {
+          setTimeout(() => recurrentFuntion(count), 5000);
         }
+      };
+      setTimeout(() => recurrentFuntion(count), 5000);
+    },
+  shouldShowCsv()
+  {
+    return ((isOrderGoldPurchase(this.batchProcess) || isOrderGoldPurchaseInterval(this.batchProcess)) && this.batchProcess.order_process_status.name_translation_key == ORDER_PROCESS_STATUS_PENDING);
+  },
+  shouldDisplayProgressActions(){
+    return (this.batchProcess.order_process_status
+                          .name_translation_key == ORDER_PROCESS_STATUS_PENDING ||
+                          this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED) &&
+                        !this.isBeforeProcessingDate();
+  },
+  shouldDisplayRetry(){
+    return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED;
+  },
+  shouldDisplayComplete(){
+    return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING;
+  },
+  shouldDisplayExecutePayment(){
+    return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING;
+  },
+  cancelExecutePayment(){
+    this.showExecutePayment = false;
+  },
+  displayExecutePayment(){
+    this.showExecutePayment = true;
+  }
   }
 };
 </script>

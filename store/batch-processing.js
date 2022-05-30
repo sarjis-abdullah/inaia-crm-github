@@ -22,7 +22,8 @@ export const mutations = {
     update(state,process)
     {
         let currentP = state.batchProcesses.find(x=>x.id==process.id);
-        Object.assign(currentP,process);
+        if(currentP)
+            Object.assign(currentP,process);
         if(state.batchProcess.id == process.id)
         {
             Object.assign(state.batchProcess,process);
@@ -49,7 +50,7 @@ export const actions = {
     },
     markAsComplete(context,payload)
     {
-        return this.$axios.post(`${ process.env.golddinarApiUrl }/order-processes/${payload}/complete?include=${includes}`)
+        return this.$axios.post(`${ process.env.golddinarApiUrl }/order-processes/complete?include=${includes}`,payload)
                 .then(res => {
                     context.commit('update', res.data.data)
                     return res
@@ -63,12 +64,8 @@ export const actions = {
                 })
     },
     previewNewBatch(context,payload){
-        let orderIds = '';
-        for (let index = 0; index < payload.order_ids.length; index++) {
-            orderIds+=`order_ids[${index}]=${payload.order_ids[index]}&`;
-            
-        }
-        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/preview?gold_price_date=${payload.gold_price_date}&${orderIds}`,payload)
+        
+        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/preview?order_process_id=${payload.order_process_id}&gold_price_date=${payload.gold_price_date}&order_type=${payload.order_type}`,payload)
                 .then(res=>{
                     return res.data.data;
                 })
@@ -78,6 +75,20 @@ export const actions = {
                 .then(res => {
                     context.commit('batchProcess', res.data.data[0]);
                     return res.data.data[0];
+                })
+    },
+    retryComplete(context,payload){
+        return this.$axios.put(`${ process.env.golddinarApiUrl }/order-processes/${payload}/complete/retry?include=${includes}`)
+                .then(res => {
+                    context.commit('update', res.data.data)
+                    return res
+                })
+    },
+    retryPayment(context,payload){
+        return this.$axios.put(`${ process.env.golddinarApiUrl }/order-processes/retry-payment?include=${includes}`,payload)
+                .then(res => {
+                    context.commit('update', res.data.data)
+                    return res
                 })
     }
 }
