@@ -27,6 +27,22 @@
                 <form class="needs-validation" @submit.prevent="handleSubmit(validate)">
 
                   <div v-if="failed" class="text-center text-danger">{{ failed }}</div>
+                  <div v-if="errors" class="text-center text-danger">
+                    <li v-for="(error) in errors">
+                      {{ error[0] }}
+                    </li>
+                  </div>
+
+                  <base-input
+                    alternative
+                    class="mb-3"
+                    prepend-icon="ni ni-lock-circle-open"
+                    placeholder="Current Password"
+                    type="password"
+                    name="Current password"
+                    rules="required"
+                    v-model="old_password"
+                  />
 
                   <base-input
                     alternative
@@ -35,9 +51,10 @@
                     placeholder="Password"
                     type="password"
                     name="Password"
-                    rules="required|min:5"
-                    v-model="customer.account.password"
+                    rules="required|min:6"
+                    v-model="password"
                   />
+                  <p>Password must contain at least one uppercase letter, one special character and one number</p>
 
                   <base-input
                     alternative
@@ -46,7 +63,7 @@
                     placeholder="Confirm Password"
                     type="password"
                     name="Confirmation"
-                    :rules="customer.account.password ? 'required|confirmed:Password' : ''"
+                    :rules="password ? 'required|confirmed:Password' : ''"
                     v-model="password_confirmation"
                   />
 
@@ -82,86 +99,54 @@ import { mapGetters } from "vuex"
 export default {
     data() {
         return {
-          customer: {
-            account: {
-                type_id: 0,
-                is_active: 0,
-            },
-          },
           password_confirmation: '',
+          password: null,
+          old_password: null,
           failed: '',
-          isRequesting: false
+          isRequesting: false,
+          errors: null,
         }
     },
     computed: {
       ...mapGetters({
         auth: "auth/auth",
         account: "auth/user",
-        singleClientData: "clients/singleClientData"
       }),
-      updatedClientData() {
-        return {
-          id: this.customer.id,
-          customer: {
-            contact: {
-              id: this.customer.id,
-              name: this.customer.name,
-              type_id: this.customer.type_id,
-              is_active: this.customer.is_active
-            },
-            account: {
-              ...this.customer.account,
-              contact_id: this.customer.id,
-              username: this.customer.account.account_number
-            }
-          }
-        }
-      }
     },
     watch: {
-      singleClientData: {
-        handler(value) {
-          if (this.singleClientData) {
-            Object.keys(value).forEach(key => {
-              if (this[key] !== undefined) {
-                this.$set(this, key, JSON.parse(JSON.stringify(value[key])))
-              }
-            })
-          }
-        },
-        immediate: true
-      },
     },
     mounted() {
       if (!this.auth || !this.account) {
         this.$router.push('/logout')
       }
-      this.initClientData()
     },
     methods: {
-      initClientData() {
-        this.$store.dispatch("clients/clientDetailsData", this.account.id)
-      },
       async validate() {
-        const isValid       = await this.$refs.observer.validate()
+        const isValid = await this.$refs.observer.validate()
         if (isValid && !this.isRequesting) {
-          this.submitClient(this.updatedClientData)
+          this.changePassword(this.updatedClientData)
         } else {
-          console.log('invalid request')
-          this.isRequesting   = false
+          this.isRequesting = false
         }
       },
-      submitClient(data) {
+      changePassword() {
         this.isRequesting   = true
-
         this.$store
-          .dispatch("clients/submitClient", data)
+          .dispatch("clients/changePassword", {
+            "old_password": this.old_password,
+            "password": this.password,
+            "password_confirmation": this.password_confirmation
+          })
           .then(response => {
             this.$router.push('/profile')
             this.$notify({type: 'success', timeout: 5000, message: 'Password changed successfully!'})
           }).catch( err => {
+            console.log(err.response.data)
             this.failed = err.response.data.message
-            this.$refs.observer.setErrors(err.response.data.errors)
+            if (err.response.data.errors) {
+              this.errors =  err.response.data.errors
+              this.$refs.observer.setErrors(err.response.data.errors)
+            }
             this.isRequesting   = false
           }).finally(() => {
           })

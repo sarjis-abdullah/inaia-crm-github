@@ -63,7 +63,7 @@ export const mutations = {
     },
     updateAddress(state,address)
     {
-        
+
         state.singleClientData.customer.address = address;
     },
     updateChannels(state,channels)
@@ -128,6 +128,13 @@ export const actions = {
                 return Promise.reject(error)
             })
         }
+    },
+    changePassword(context, payload) {
+      return this.$axios.post('/password-update', payload).then(response => {
+        return Promise.resolve(response)
+      }).catch(error => {
+        return Promise.reject(error)
+      })
     },
     saveAvatar(context, payload) {
         const id = payload.id
@@ -259,9 +266,9 @@ export const actions = {
         return this.$axios
             .get(`/accounts/${payload}?include=person_data,address,country,channels`)
             .then(response => {
-                
+
                 return response.data.data;
             })
     }
-    
+
 }
