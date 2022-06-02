@@ -90,5 +90,20 @@ export const actions = {
                     context.commit('update', res.data.data)
                     return res
                 })
-    }
+    },
+    sellGoldPreview(context,payload)
+    {
+        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/sell/preview?order_process_id=${payload.order_process_id}&gold_price_date=${payload.gold_price_date}&order_type=${payload.order_type}`)
+                .then(res=>{
+                    return res.data.data;
+                })
+    },
+    sellGold(context,payload)
+    {
+        return this.$axios.put(`${ process.env.golddinarApiUrl }/order-processes/sell?include=${includes}`,payload)
+                .then(res => {
+                    context.commit('update', res.data.data)
+                    return res
+                })
+    },
 }

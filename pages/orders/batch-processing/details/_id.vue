@@ -116,6 +116,7 @@
                         ><i class="lnir lnir-reload"></i
                         >{{ $t("retry_complete") }}</a
                       >
+                      
                       <a
                         class="dropdown-item"
                         v-if="
@@ -133,6 +134,15 @@
                         @click="displayExecutePayment()"
                         ><i class="fa fa-credit-card"></i
                         >{{ $t("execute_payment") }}</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        v-if="
+                          isOrderGoldSale(batchProcess)
+                        "
+                        @click.prevent="displaySellGoldModal"
+                        ><i class="fa fa-check"></i
+                        >{{ $t("sell_gold") }}</a
                       >
                     </base-dropdown>
                     <div class="text-sm"></div>
@@ -216,6 +226,12 @@
         :showUploadDialog="showUploadCsv"
         @canceled="()=>{showUploadCsv = true}"
       />
+      <SellGold
+        v-if="batchProcess && isOrderGoldSale(batchProcess)"
+        :showConfirmSell="showSellGold"
+        :selectedOrderProcess="batchProcess"
+        @canceled="cancelSellGold"
+      />
     </div>
     <div class="mt-4 ml-4" v-else-if="isInProgress">
       {{ $t("cant_open_batch_because_it_is_in_progress") }}
@@ -234,6 +250,7 @@ import DownloadCsv from "@/components/Csv-file/DownloadCsv";
 import CsvList from "@/components/Csv-file/CsvList";
 import UploadCsv from "@/components/Csv-file/Uploadcsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
+import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
 export default {
@@ -247,7 +264,8 @@ export default {
     DownloadCsv,
     CsvList,
     UploadCsv,
-    ExecutePayment
+    ExecutePayment,
+    SellGold
   },
   data() {
     return {
@@ -259,7 +277,8 @@ export default {
       showDownloadCsv: false,
       showFilesList: false,
       showUploadCsv: false,
-      showExecutePayment: false
+      showExecutePayment: false,
+      showSellGold : false
     };
   },
   computed: {
@@ -290,6 +309,7 @@ export default {
       .finally(() => (this.isLoading = false));
   },
   methods: {
+    isOrderGoldSale,
     cancelConfirmComplete() {
       this.showConfirmComplete = false;
       this.showConfirmRetryComplete = false;
@@ -358,13 +378,19 @@ export default {
   },
   shouldDisplayExecutePayment(){
     return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING;
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess);
   },
   cancelExecutePayment(){
     this.showExecutePayment = false;
   },
   displayExecutePayment(){
     this.showExecutePayment = true;
+  },
+  displaySellGoldModal (){
+    this.showSellGold = true;
+  },
+  cancelSellGold(){
+    this.showSellGold = false;
   }
   }
 };

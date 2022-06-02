@@ -70,7 +70,7 @@
       <base-button
         type="primary"
         @click="() => markAsComplete()"
-        :disabled="isSubmitting || !batchProcessPreview || batchProcessPreview.total_orders_count == 0"
+        :disabled="shouldDisableMarkAsComplete()"
       >
         {{ $t("mark_as_complete") }}
       </base-button>
@@ -142,6 +142,10 @@ export default {
     },
     markAsComplete() {
       this.isSubmitting = true;
+      if(isOrderGoldSale(this.selectedOrderProcess))
+      {
+        this.selectedDate = new Date();
+      }
       const data = {
           order_process_id:this.selectedOrderProcess.id,
           gold_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
@@ -172,6 +176,15 @@ export default {
           this.isSubmitting = false;
         });
     },
+    shouldDisableMarkAsComplete(){
+      if(this.selectedOrderProcess && isOrderGoldSale(this.selectedOrderProcess))
+      {
+        return this.isSubmitting;
+      }
+      else{
+        return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0;
+      }
+    }
   },
 };
 </script>
