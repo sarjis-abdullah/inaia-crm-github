@@ -112,6 +112,7 @@
                         :showPopup="showPopup"
                         @onClose="onDetailClosed"
                         @orderDeleted="onOrderDeleted"
+                        @orderUpdated="onOrderUpdated"
                 />
 
             </div>
@@ -360,6 +361,10 @@ export default {
         allowAddToOrderProcess(order)
         {
             return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order));
+        },
+        onOrderUpdated(order)
+        {
+            this.$emit('orderUpdated',order);
         }
         
     }

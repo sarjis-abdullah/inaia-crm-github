@@ -9,7 +9,7 @@
         </div>
       </div>
     </base-header>
-    <div class="container-fluid mt--6" v-if="batchProcess && !isInProgress">
+    <div class="container-fluid mt--6" v-if="shouldShowDetails()">
       <div class="row">
         <div class="col-xl-4 col-md-6">
           <div class="card border-0">
@@ -114,7 +114,7 @@
                         "
                         @click.prevent="confirmRetryComplete"
                         ><i class="lnir lnir-reload"></i
-                        >{{ $t("retry_complete") }}</a
+                        >{{ $t("retry_last_failed") }}</a
                       >
                       
                       <a
@@ -187,14 +187,14 @@
           </div>
         </div>
       </div>
-      <List :order_process_id="processId" v-if="!isBeforeProcessingDate()" />
+      <List :order_process_id="processId" v-if="!isBeforeProcessingDate()" @orderUpdated="onOrderUpdated"/>
       <Complete
         v-if="!isBeforeProcessingDate()"
         :showConfirmComplete="showConfirmComplete"
         :selectedOrderProcess="batchProcess"
         @canceled="cancelConfirmComplete"
       />
-      <RetryComplete
+      <RetryFailed
         v-if="
           !isBeforeProcessingDate() &&
           batchProcess.order_process_status.name_translation_key == 'failed'
@@ -233,19 +233,19 @@
         @canceled="cancelSellGold"
       />
     </div>
-    <div class="mt-4 ml-4" v-else-if="isInProgress">
+    <div class="mt-4 ml-4" v-if="isInProgress()">
       {{ $t("cant_open_batch_because_it_is_in_progress") }}
     </div>
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters,mapMutations } from "vuex";
 import Status from "@/components/Batch-processing/Status";
 import List from "@/components/Orders/List";
 import Complete from "@/components/Batch-processing/Complete";
 import { Progress } from "element-ui";
 import moment from "moment";
-import RetryComplete from "@/components/Batch-processing/RetryComplete";
+import RetryFailed from "@/components/Batch-processing/RetryFailed";
 import DownloadCsv from "@/components/Csv-file/DownloadCsv";
 import CsvList from "@/components/Csv-file/CsvList";
 import UploadCsv from "@/components/Csv-file/Uploadcsv";
@@ -260,7 +260,7 @@ export default {
     List,
     Complete,
     Progress,
-    RetryComplete,
+    RetryFailed,
     DownloadCsv,
     CsvList,
     UploadCsv,
@@ -272,7 +272,6 @@ export default {
       processId: this.$route.params.id,
       isLoading: false,
       showConfirmComplete: false,
-      isInProgress: false,
       showConfirmRetryComplete: false,
       showDownloadCsv: false,
       showFilesList: false,
@@ -293,20 +292,12 @@ export default {
       );
     },
   },
+  destroyed(){
+    this.$store.commit('batch-processing/batchProcess',null);
+  },
   mounted() {
     this.isLoading = true;
-    this.$store
-      .dispatch("batch-processing/fetchOrderProcessDetails", this.processId)
-      .then((res) => {
-        if (
-          res.order_process_status &&
-          res.order_process_status.name_translation_key == ORDER_PROCESS_STATUS_INPROGRESS
-        ) {
-          this.isInProgress = true;
-        }
-      })
-      .catch((err) => console.log(err))
-      .finally(() => (this.isLoading = false));
+    this.getBatchProcess();
   },
   methods: {
     isOrderGoldSale,
@@ -391,6 +382,32 @@ export default {
   },
   cancelSellGold(){
     this.showSellGold = false;
+  },
+  shouldShowDetails()
+  {
+    return this.batchProcess && this.batchProcess.order_process_status
+                            .name_translation_key != ORDER_PROCESS_STATUS_INPROGRESS;
+  },
+  isInProgress()
+  {
+    return this.batchProcess && this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_INPROGRESS;
+  },
+  getBatchProcess()
+  {
+    this.$store
+      .dispatch("batch-processing/fetchOrderProcessDetails", this.processId)
+      .then((res) => {
+      })
+      .catch((err) => console.log(err))
+      .finally(() => (this.isLoading = false));
+  },
+  onOrderUpdated(order)
+  {
+    if(order.order_process_id)
+    {
+      this.getBatchProcess();
+    }
   }
   }
 };

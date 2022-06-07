@@ -25,8 +25,9 @@
           isOrderGoldPurchaseInterval(selectedOrderProcess))
       "
     >
-      <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview"/>
-      <div class="list-group list-group-flush mt-3" v-if="batchProcessPreview">
+      <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview" :placeholder="$t('select_price_date')"/>
+      <Loader v-if="isLoading" class="mt-3"/>
+      <div class="list-group list-group-flush mt-3" v-if="batchProcessPreview && !isLoading">
         <detail-list-item :title="$t('gold_price_date')"
           ><div slot="value">
             {{ $d(new Date(batchProcessPreview.gold_price_date), "short") }}
@@ -86,10 +87,12 @@ import {
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
 import DetailListItem from "@/components/common/DetailListItem.vue";
+import Loader from '@/components/common/Loader/Loader';
 export default {
   components: {
     DatePicker,
-    DetailListItem
+    DetailListItem,
+    Loader
   },
   props: {
     showConfirmComplete: {
@@ -106,6 +109,7 @@ export default {
       isSubmitting: false,
       selectedDate: null,
       batchProcessPreview: null,
+      isLoading: false
     };
   },
   methods: {
@@ -119,6 +123,7 @@ export default {
     },
     getBatchProcessPreview() {
       this.isSubmitting = true;
+      this.isLoading = true;
       const data = {
         gold_price_date: formatDateToApiFormat(this.selectedDate),
         order_process_id: this.selectedOrderProcess.id,
@@ -138,6 +143,7 @@ export default {
         })
         .finally(() => {
           this.isSubmitting = false;
+          this.isLoading = false;
         });
     },
     markAsComplete() {

@@ -1,4 +1,5 @@
 <template>
+<div>
   <div
     class="
       d-flex
@@ -51,6 +52,10 @@
     >
       {{ $t("save_new_batch") }}
     </base-button>
+  </div>
+  <div class="mt-1 text-light">
+    {{$t('check_orders_all_select_all')}}
+  </div>
   </div>
 </template>
 <script>

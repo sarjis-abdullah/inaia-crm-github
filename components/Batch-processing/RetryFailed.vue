@@ -26,7 +26,7 @@
         @click="() => retryComplete()"
         :disabled="isSubmitting"
       >
-        {{ $t("retry_complete") }}
+        {{ $t("retry_last_failed") }}
       </base-button>
     </template>
   </modal>
@@ -72,7 +72,7 @@ export default {
       }
       this.$store
         .dispatch(
-          "batch-processing/retryComplete",
+          "batch-processing/retryFailed",
           this.selectedOrderProcess.id
         )
         .then(() => {

@@ -400,7 +400,7 @@ export default {
     retry_confirm_batch_complete_text: 'Are you sure you want to retry complete order process of id',
     retry_order_batch_completed_successfully:'Retry complete order process has started successfully',
     retry_order_batch_completed_unsuccessfully:"We couldn't start retrying complete order successfully",
-    retry_complete:'Rery complete order process',
+    retry_last_failed:'Rery last failed operation',
     download_csv_file:'Download CSV file',
     download:'Download',
     download_csv_file_text:'Creating csv file might take a while, by clicking download we receive your request, when csv file is availble will be added to csv file list, please check the list periodically',
@@ -421,5 +421,7 @@ export default {
     execute_payments_started_unsuccessfully:"We couldn't start execute payments",
     confirm_batch_sell_title:'Sell gold for batch orders',
     order_batch_gold_successfully:'Batch orders gold sold successfully',
-    order_batch_gold_unsuccessfully:"Batch orders can't be sold"
+    order_batch_gold_unsuccessfully:"Batch orders can't be sold",
+    select_price_date:'Select price date',
+    check_orders_all_select_all:'Create new patch process by checking orders or by search criteria'
 }

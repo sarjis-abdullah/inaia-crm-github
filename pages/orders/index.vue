@@ -84,6 +84,7 @@ export default {
           this.createNewBatch = false;
           this.selectedOrders = [];
           this.$refs.list.cancelCreatingBatch();
+          this.$refs.list.applyFilter("");
       },
       onOrderAdded(order){
         this.selectedOrders.push(order);
@@ -105,7 +106,8 @@ export default {
         if(this.selectedOrders.length>0)
         {
           data = {
-            "order_ids": this.selectedOrders
+            "order_ids": this.selectedOrders,
+            "order_type_id": this.newBatchSelectedCriteria.selectedType
           }
         }
         else{

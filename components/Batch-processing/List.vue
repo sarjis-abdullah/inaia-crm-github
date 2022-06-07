@@ -132,7 +132,7 @@
 
     </div>
     <Complete :showConfirmComplete="showConfirmComplete" :selectedOrderProcess="selectedOrderProcess" @canceled="cancelConfirmComplete"/>
-    <RetryComplete :showConfirmComplete="showConfirmRetryComplete" :selectedOrderProcess="selectedOrderProcess" @canceled="cancelConfirmComplete"/>
+    <RetryFailed :showConfirmComplete="showConfirmRetryComplete" :selectedOrderProcess="selectedOrderProcess" @canceled="cancelConfirmComplete"/>
   </div>
 </template>
 <script>
@@ -144,7 +144,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 
 import BachFilter from '@/components/Batch-processing/Filter';
 import Complete from '@/components/Batch-processing/Complete';
-import RetryComplete from '@/components/Batch-processing/RetryComplete';
+import RetryFailed from '@/components/Batch-processing/RetryFailed';
 export default {
     components: {
         [Table.name]: Table,
@@ -157,7 +157,7 @@ export default {
         BachFilter,
         Complete,
         Progress,
-        RetryComplete
+        RetryFailed
     },
     data() {
         return {

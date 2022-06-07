@@ -121,6 +121,7 @@ export default {
                     .then( () => {
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_deleted_successfully')})
                         this.$emit('orderDeleted');
+                        this.$emit('orderUpdated',resource);
                         this.showPopup = false;
                         this.onDetailClose();
                     }).catch((err)=>{console.error(err);this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
@@ -144,6 +145,7 @@ export default {
                     .dispatch('orders/cancel', data)
                     .then( res => {
                         this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
                     }).catch(()=>{
@@ -226,6 +228,7 @@ export default {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
                     this.selectedResource = null;
                     this.showPopup = false;
+                    this.$emit('orderUpdated',resource);
                     this.onDetailClose();
 
                 }).catch(err=>{
@@ -245,6 +248,7 @@ export default {
                     .dispatch('orders/paid', resource.id)
                     .then( res => {
                         this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                         // console.error('order->', res.data.data)
@@ -271,6 +275,7 @@ export default {
                     .dispatch('orders/refund', data)
                     .then( res => {
                         this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
                     }).catch(()=>{
@@ -358,7 +363,7 @@ export default {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
                     this.selectedResource = null;
                     this.showPopup = false;
-                    
+                    this.$emit('orderUpdated',resource);
                     this.onDetailClose();
 
                 }).catch(err=>{

@@ -77,8 +77,8 @@ export const actions = {
                     return res.data.data[0];
                 })
     },
-    retryComplete(context,payload){
-        return this.$axios.put(`${ process.env.golddinarApiUrl }/order-processes/${payload}/complete/retry?include=${includes}`)
+    retryFailed(context,payload){
+        return this.$axios.put(`${ process.env.golddinarApiUrl }/order-processes/${payload}/failed/retry?include=${includes}`)
                 .then(res => {
                     context.commit('update', res.data.data)
                     return res
