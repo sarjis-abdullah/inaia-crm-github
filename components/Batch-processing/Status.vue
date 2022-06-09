@@ -1,6 +1,6 @@
 <template>
-    
-    <Badge type="primary" v-if="status=='pending'"><slot></slot></Badge>
+    <Badge type="danger" v-if="status=='failed'"><slot></slot></Badge>
+    <Badge type="primary" v-else-if="status=='pending'"><slot></slot></Badge>
     <Badge type="success" v-else-if="status=='completed'"><slot></slot></Badge>
     <Badge type="info" v-else-if="status=='in_progress'"><slot></slot></Badge>
     <Badge type="default" v-else><slot></slot></Badge>

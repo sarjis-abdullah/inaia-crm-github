@@ -1,89 +1,65 @@
 <template>
   <modal
-    :show.sync="showConfirmComplete"
+    :show.sync="showConfirmSell"
     headerClasses=""
     bodyClasses="pt-0"
     footerClasses="border-top bg-secondary"
-    @close="cancelConfirmComplete"
+    @close="cancelConfirmSell"
     :allowOutSideClose="false"
   >
     <template slot="header" class="pb-0">
-      <h5 class="modal-title">{{ $t("confirm_batch_complete_title") }}</h5>
+      <h5 class="modal-title">{{ $t("confirm_batch_sell_title") }}</h5>
       <span></span>
     </template>
     <div
-      class="d-flex align-align-items-center justify-content-center"
-      v-if="selectedOrderProcess && isOrderGoldSale(selectedOrderProcess)"
-    >
-      {{ $t("confirm_batch_complete_text") + selectedOrderProcess.id + " ?" }}
-    </div>
-    <div
       class="d-flex flex-column align-align-items-center justify-content-center"
-      v-if="
-        selectedOrderProcess &&
-        (isOrderGoldPurchase(selectedOrderProcess) ||
-          isOrderGoldPurchaseInterval(selectedOrderProcess))
-      "
     >
-      <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview" :placeholder="$t('select_price_date')"/>
+      <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessSellPreview" :placeholder="$t('select_price_date')"/>
       <Loader v-if="isLoading" class="mt-3"/>
-      <div class="list-group list-group-flush mt-3" v-if="batchProcessPreview && !isLoading">
+      <div class="list-group list-group-flush mt-3" v-if="batchProcessSellPreview">
         <detail-list-item :title="$t('gold_price_date')"
           ><div slot="value">
-            {{ $d(new Date(batchProcessPreview.gold_price_date), "short") }}
+            {{ $d(new Date(batchProcessSellPreview.gold_price_date), "short") }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_price')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.gold_price_raw / 100"></i18n-n>
-            €
-          </div></detail-list-item
-        >
-        <detail-list-item :title="$t('trading_gold_price')"
-          ><div slot="value">
-            <i18n-n
-              :value="batchProcessPreview.gold_price_trading / 100"
-            ></i18n-n>
+            <i18n-n :value="batchProcessSellPreview.gold_price_raw / 100"></i18n-n>
             €
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.gold_amount / 1000"></i18n-n> g
+            <i18n-n :value="batchProcessSellPreview.gold_amount / 1000"></i18n-n> g
           </div></detail-list-item
         >
         <detail-list-item :title="$t('money_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.money_amount / 100"></i18n-n> €
+            <i18n-n :value="batchProcessSellPreview.money_amount / 100"></i18n-n> €
           </div></detail-list-item
         >
         <detail-list-item :title="$t('number_of_order')"
           ><div slot="value">
-            {{ batchProcessPreview.total_orders_count }}
+            {{ batchProcessSellPreview.total_orders_count }}
           </div></detail-list-item
         >
       </div>
     </div>
     <template slot="footer">
-      <base-button type="link" class="ml-auto" @click="cancelConfirmComplete()">
+      <base-button type="link" class="ml-auto" @click="cancelConfirmSell()">
         {{ $t("cancel") }}
       </base-button>
       <base-button
         type="primary"
-        @click="() => markAsComplete()"
-        :disabled="shouldDisableMarkAsComplete()"
+        @click="() => sellGold()"
+        :disabled="isSubmitting || !batchProcessSellPreview || batchProcessSellPreview.total_orders_count == 0"
       >
-        {{ $t("mark_as_complete") }}
+        {{ $t("sell_gold") }}
       </base-button>
     </template>
   </modal>
 </template>
 <script>
-import {
-  isOrderGoldPurchase,
-  isOrderGoldPurchaseInterval,
-  isOrderGoldSale,
-} from "../../helpers/order";
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
 import DetailListItem from "@/components/common/DetailListItem.vue";
@@ -95,7 +71,7 @@ export default {
     Loader
   },
   props: {
-    showConfirmComplete: {
+    showConfirmSell: {
       type: Boolean,
       default: false,
     },
@@ -108,20 +84,17 @@ export default {
     return {
       isSubmitting: false,
       selectedDate: null,
-      batchProcessPreview: null,
-      isLoading: false
+      batchProcessSellPreview: null,
+      isLoading: false,
     };
   },
   methods: {
-    isOrderGoldPurchase,
-    isOrderGoldPurchaseInterval,
-    isOrderGoldSale,
-    cancelConfirmComplete() {
-      this.showConfirmComplete = false;
+    cancelConfirmSell() {
+      this.showConfirmSell = false;
       this.selectedOrderProcess = null;
       this.$emit("canceled");
     },
-    getBatchProcessPreview() {
+    getBatchProcessSellPreview() {
       this.isSubmitting = true;
       this.isLoading = true;
       const data = {
@@ -130,9 +103,9 @@ export default {
         order_type: this.selectedOrderProcess.order_type.name_translation_key
       };
       this.$store
-        .dispatch("batch-processing/previewNewBatch", data)
+        .dispatch("batch-processing/sellGoldPreview", data)
         .then((res) => {
-          this.batchProcessPreview = res;
+          this.batchProcessSellPreview = res;
         })
         .catch((err) => {
           this.$notify({
@@ -146,51 +119,37 @@ export default {
           this.isLoading = false;
         });
     },
-    markAsComplete() {
+    sellGold() {
       this.isSubmitting = true;
-      if(isOrderGoldSale(this.selectedOrderProcess))
-      {
-        this.selectedDate = new Date();
-      }
       const data = {
           order_process_id:this.selectedOrderProcess.id,
           gold_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
-          order_type: this.selectedOrderProcess.order_type.name_translation_key
       }
       this.$store
         .dispatch(
-          "batch-processing/markAsComplete",
+          "batch-processing/sellGold",
           data
         )
         .then(() => {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("order_batch_completed_successfully"),
+            message: this.$t("order_batch_gold_successfully"),
           });
-          this.cancelConfirmComplete();
+          this.cancelConfirmSell();
           this.$emit("completed");
         })
         .catch(() => {
           this.$notify({
             type: "danger",
             timeout: 5000,
-            message: this.$t("order_batch_completed_unsuccessfully"),
+            message: this.$t("order_batch_gold_unsuccessfully"),
           });
         })
         .finally(() => {
           this.isSubmitting = false;
         });
     },
-    shouldDisableMarkAsComplete(){
-      if(this.selectedOrderProcess && isOrderGoldSale(this.selectedOrderProcess))
-      {
-        return this.isSubmitting;
-      }
-      else{
-        return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0;
-      }
-    }
   },
 };
 </script>

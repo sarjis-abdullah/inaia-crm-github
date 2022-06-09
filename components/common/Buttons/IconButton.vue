@@ -54,6 +54,10 @@ export default {
             {
                 return 'fa fa-check'
             }
+            if(this.type=='redo')
+            {
+                return 'lnir lnir-reload'
+            }
         },
         onClick:function(){
             this.$emit('click');
