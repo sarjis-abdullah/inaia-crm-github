@@ -46,10 +46,12 @@
     <div class="card-header border-0 border-top" v-if="filterIsActive">
       <Badge type="secondary" size="md" style="margin-right:15px" v-if = "selectedStatus">{{$t(getStatusName(selectedStatus))}}<a class="badgeIcon" @click.prevent="removeStatus(stat)"><i class="fas fa-window-close"></i></a></Badge>
       <Badge type="secondary" size="md" style="margin-right:15px" v-if = "selectedType">{{$t(getTypeName(selectedType))}}<a class="badgeIcon" @click.prevent="removeType(type)"><i class="fas fa-window-close"></i></a></Badge>
+      <ClearFilter @cleared="clearFilter"/>
     </div>
     </div>
 </template>
 <script>
+import ClearFilter from '@/components/common/ClearFilter';
 import {Badge} from '@/components/argon-core';
 import {Select,Option,Form} from 'element-ui';
 import { mapGetters } from "vuex";
@@ -64,7 +66,8 @@ export default {
     Badge,
     Select,
     Option,
-    Form
+    Form,
+    ClearFilter,
   },
   data:function(){
     return {
@@ -143,7 +146,13 @@ export default {
       removeType(id){
           this.selectedType = null;
           this.applyFilter();
-      }
+      },
+      clearFilter(){
+      this.selectedStatus = null;
+      this.selectedType = null;
+      this.filterIsActive = false;
+      this.$emit('filter','');
+    }
   }
 }
 </script>

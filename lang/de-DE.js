@@ -419,5 +419,6 @@ export default {
     order_batch_gold_successfully:'Batch orders gold sold successfully',
     order_batch_gold_unsuccessfully:"Batch orders can't be sold",
     select_price_date:'Select price date',
-    check_orders_all_select_all:'Create new patch process by checking orders or by search criteria'
+    check_orders_all_select_all:'Create new patch process by checking orders or by search criteria',
+    clear_filter: "Clear filter"
 }
