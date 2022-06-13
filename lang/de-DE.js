@@ -420,5 +420,6 @@ export default {
     order_batch_gold_unsuccessfully:"Batch orders can't be sold",
     select_price_date:'Select price date',
     check_orders_all_select_all:'Create new patch process by checking orders or by search criteria',
-    batch_process_will_be_updated:'After updating an order, batch process takes sometime to be updated, the app will update the batch process very soon'
+    batch_process_will_be_updated:'After updating an order, batch process takes sometime to be updated, the app will update the batch process very soon',
+    clear_filter: "Clear filter"
 }
