@@ -248,7 +248,7 @@ import moment from "moment";
 import RetryFailed from "@/components/Batch-processing/RetryFailed";
 import DownloadCsv from "@/components/Csv-file/DownloadCsv";
 import CsvList from "@/components/Csv-file/CsvList";
-import UploadCsv from "@/components/Csv-file/Uploadcsv";
+import UploadCsv from "@/components/Csv-file/UploadCsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
 import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
