@@ -48,7 +48,7 @@
       size="sm"
       type="neutral"
       @click="saveNewBatchOrderProcess"
-      :disabled="!selectedOrderType"
+      :disabled="!selectedOrderType || selectedOrders.length == 0"
     >
       {{ $t("save_new_batch") }}
     </base-button>
@@ -68,6 +68,16 @@ export default {
     Select,
     Option,
     DatePicker,
+  },
+  props:{
+    selectedOrders:{
+      type:Array,
+      default: []
+    },
+    selectedType:{
+      type: String,
+      default:null
+    }
   },
   computed: {
     ...mapGetters("orderTypes", {

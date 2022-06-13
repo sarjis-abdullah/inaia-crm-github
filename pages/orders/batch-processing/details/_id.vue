@@ -406,7 +406,15 @@ export default {
   {
     if(order.order_process_id)
     {
-      this.getBatchProcess();
+      this.$notify({
+            type: "info",
+            timeout: 5000,
+            message: this.$t("batch_process_will_be_updated"),
+          });
+      setTimeout(() => {
+        this.getBatchProcess();
+      }, 10000);
+      
     }
   }
   }

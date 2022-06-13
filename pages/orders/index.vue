@@ -16,14 +16,21 @@
                     {{$t('new_batch_process')}}
                 </base-button>
           </div>
-              <NewBatch @saved="saveNewBatchOrderProcess" @canceled="cancelCreatingNewBatch" v-if="createNewBatch" @changed="onBatchCreatingFilterChange"/>
+              <NewBatch 
+                @saved="saveNewBatchOrderProcess" 
+                @canceled="cancelCreatingNewBatch" 
+                v-if="createNewBatch" 
+                @changed="onBatchCreatingFilterChange"
+                :selectedOrders="selectedOrders"
+                :selectedType="selectedOrderType"
+                />
           
         </div>
       </div>
     </base-header>
 
     <div class="container-fluid mt--6">
-      <List :createNewBatch="createNewBatch" ref="list" @orderAdded="onOrderAdded" @orderRemoved="onOrderRemoved"/>
+      <List :createNewBatch="activateSelection" ref="list" @orderAdded="onOrderAdded" @orderRemoved="onOrderRemoved"/>
     </div>
     <modal :show.sync="showPopupDate" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="cancelSavingNewBatchOrderProcess" :allowOutSideClose="false">
                     <template slot="header" class="pb-0">
@@ -66,7 +73,9 @@ export default {
           showPopupDate:false,
           orderProcessDate:null,
           isSubmitting:false,
-          newBatchSelectedCriteria:null
+          newBatchSelectedCriteria:null,
+          selectedOrderType:null,
+          activateSelection:false
       }
   },
   methods:{
@@ -85,6 +94,7 @@ export default {
           this.selectedOrders = [];
           this.$refs.list.cancelCreatingBatch();
           this.$refs.list.applyFilter("");
+          this.activateSelection = false;
       },
       onOrderAdded(order){
         this.selectedOrders.push(order);
@@ -133,6 +143,13 @@ export default {
       },
       onBatchCreatingFilterChange(query)
       {
+        if(query.includes('order_type_ids'))
+        {
+          this.activateSelection = true;
+        }
+        else{
+          this.activateSelection = false;
+        }
         this.$refs.list.applyFilter(query);
       }
 
