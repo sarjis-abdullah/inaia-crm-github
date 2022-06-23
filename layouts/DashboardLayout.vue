@@ -137,6 +137,7 @@
           }"
         >
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
+          <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }"/>
         </sidebar-item>
 
         <sidebar-item

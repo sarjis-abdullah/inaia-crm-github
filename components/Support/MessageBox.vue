@@ -1,0 +1,265 @@
+<template>
+    <div class="card" v-if="ticket">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-4 text-truncate">
+                    <div><small>{{$t('client')}}</small></div>
+                    <h4 class="mt--1">{{name}}</h4>
+                </div>
+                <div class="col-4 text-truncate mx-auto text-center">
+                    <h4 class="mb-0">{{ticket.subject}}</h4>
+                    <div class="badge badge-light">{{$t('created_at')}} {{$d(new Date(ticket.created_at), 'short')}}</div>
+                </div>
+                <div class="col-4 my-auto">
+                    <div class="float-right">
+                        <Status v-bind:status='ticket.support_status.name_translation_key' class="mr-2">{{ticket.support_status ? $t(ticket.support_status.name_translation_key) : ticket.support_status_id}}</Status>
+                     <base-dropdown
+            title-classes="btn btn-sm mr-0"
+            menu-on-right
+            :has-toggle="false"
+            v-if="shouldShowMessageBoxAndCloseTicket()"
+            
+          >
+            <template slot="title">
+              <i class="fas fa-ellipsis-v"></i>
+            </template>
+
+            <a class="dropdown-item"  @click.prevent="confirmClosing">
+                <div class="row" style="min-width:350px">
+                    <div class="col-1 my-auto">
+                        <img src="/img/icons/support/CloseTicket_Icon.png"/>
+                    </div>
+                    <div class="col-10  ml-2">
+                        <h4 class="mb-0">{{ $t("close_ticket") }}</h4>
+                        <div class="text-wrap"><small>{{$t('close_ticket_message')}}</small></div>
+                    </div>
+                </div>
+            </a>
+          </base-dropdown>
+          </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-header">
+            <div class="message-area" id="message-area">
+            <div v-for="m in groupedMessages" :key="m.id" class="mx-auto">
+                <div class="d-flex justify-content-center align-items-center">
+                <div class="badge badge-light">{{displayDate(m.date)}}</div>
+                </div>
+                <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message"></MessageElement>
+                
+                
+            </div>
+            </div>
+            <div class="write-aria" v-if="shouldShowMessageBoxAndCloseTicket()">
+            <textarea type="text" class="chat-input mt-3" placeholder="type.." rows="5" v-model="messageText">
+                
+            </textarea>
+            <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">Send<span class="btn-inner--icon"><i class="fa fa-arrow-right"></i></span></base-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import {Badge} from '@/components/argon-core';
+import moment from 'moment';
+import MessageElement from '@/components/Support/MessageElement';
+import Status from '@/components/Support/Status';
+import { mapGetters } from "vuex";
+ import {  MessageBox } from 'element-ui'
+export default {
+    props:{
+        ticket:{
+            type: Object,
+            default: null
+        }
+    },
+    components:{
+        Badge,
+        MessageElement,
+        Status
+    },
+    data(){
+        return{
+            groupedMessages:[],
+            messageText:null,
+            isSending:false,
+            refresher:null
+        }
+    },
+    destroyed(){
+        if(this.refresher)
+        {
+            clearInterval(this.refresher);
+        }
+    },
+    mounted(){
+        this.$confirm = MessageBox.confirm
+        if(this.ticket && this.ticket.messages.length > 0 )
+        {
+            this.groupMessages();
+            var messageArea = this.$el.querySelector("#message-area");
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+        if(this.ticket && this.ticket.support_status.name_translation_key != 'closed')
+        {
+            this.refresher = setInterval(()=>{
+                this.$store.dispatch('support/getDetails',this.ticket.id).then(()=>{
+                    this.groupedMessages = [];
+                    this.groupMessages();
+                    
+                })
+            },5000);
+            if(this.statuses.length == 0){
+                this.$store.dispatch('support/fetchStatuses');
+            }
+            
+        }
+    },
+    computed:{
+        ...mapGetters({
+            data: "support/latestList",
+            statuses: "support/statuses"
+        }),
+        name(){
+            if(this.ticket && this.ticket.account && this.ticket.account.contact)
+            {
+                let name = this.ticket.account.contact.name;
+                if(this.ticket.account.contact.person_data)
+                {
+                    name+=' '+this.ticket.account.contact.person_data.surname;
+                }
+                return name;
+            }
+            else
+            {
+                return '';
+            }
+        },
+    },
+    methods:{
+        groupMessages()
+        {
+            if(this.ticket && this.ticket.messages.length > 0 )
+            {
+                this.ticket.messages.forEach((element,index)=>{
+                    const creationDate = moment(element.created_at);
+                    const pureDate = moment({year:creationDate.get('year'),month:creationDate.get('month'),date:creationDate.get('date')});
+                    let goupMessage = this.groupedMessages.find(x=>pureDate.isSame(x.date));
+                    if(goupMessage)
+                    {
+                        goupMessage.messages.push(element);
+                    }
+                    else
+                    {
+                        this.groupedMessages.push({
+                            id:index,
+                            date:pureDate,
+                            messages:[element]
+                        })
+                    }
+                })
+            }
+        },
+        displayDate(date)
+        {
+            const today = moment();
+            if(date.get('year') == today.get('year') && date.get('month') == today.get('month') && date.get('date') == today.get('date'))
+            {
+                return this.$t('today')
+            }
+            else
+            {
+                return this.$d(date);
+            }
+        },
+        shouldShowMessageBoxAndCloseTicket()
+        {
+            return this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed';
+        },
+        sendMessage(){
+            const user = this.$store.getters["auth/user"];
+            let data ={
+            "created_by": user.account.id,
+            "message": this.messageText,
+            "support_ticket_id": this.ticket.id
+            };
+            this.isSending = true;
+            this.$store.dispatch('support/sendMessage',data).then(()=>{
+                this.groupedMessages = [];
+                this.groupMessages();
+                this.messageText = null;
+                var messageArea = this.$el.querySelector("#message-area");
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }).catch(()=>{
+                this.$notify({type:'error',message:this.$t('cant_send_message'),duration:5000})
+            }).finally(()=>{
+                this.isSending = false;
+            })
+        },
+        closeTicket(){
+            if(this.statuses.length>0)
+            {
+                const closedStatus = this.statuses.find(x=>x.name_translation_key == 'closed');
+                if(closedStatus)
+                {
+                    const payload = {
+                        id:this.ticket.id,
+                        data:{
+                            support_status_id : closedStatus.id
+                        }
+                    }
+                    this.isSending = true;
+                    this.$store.dispatch('support/updateTicket',payload).then(()=>{
+                        this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
+                    }).catch(()=>{
+                        this.$notify({type:'danger',message:this.$t('ticket_closed_unsuccessfully'),duration:5000});
+                    }).finally(()=>{
+                        this.isSending = false
+                    })
+                }
+            }
+        },
+        confirmClosing() {
+        this.$confirm(this.$t('are_you_sure_you_want_to_close_ticket'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.closeTicket();
+        });
+        
+      }
+    }
+}
+</script>
+<style scoped>
+.chat-input {
+
+  background-color : #F5F5F5; 
+  width: 100%;
+    border: white 0 solid;
+    padding: 10px;
+}
+.chat-icon{
+    position: absolute;
+    width: 20px;
+    right: 45px;
+    bottom: 35px
+}
+.message-area{
+    max-height: 75vh;
+    overflow-x: hidden;
+
+  width: 100%;
+  max-height: 70vh;
+  margin: 0 auto;
+}
+.write-aria {
+     margin: 0 auto;
+  position: relative;
+  bottom: 0;
+  height: auto;
+  width: 100%;
+}
+</style>
