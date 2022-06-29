@@ -121,11 +121,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Product Class"
-                                    name="Product Class"
+                                    label="Plans"
+                                    name="Plans"
                                 >
-                                    <el-select v-model="resource.product_class_id" placeholder="Select product class">
-                                        <el-option v-for="(i, idx) in filteredProductClasses" :key="idx" :value="i.id" :label="$t(i.name_translation_key)" />
+                                    <el-select v-model="resource.plan_id" placeholder="Select a plan">
+                                        <el-option v-for="(i, idx) in plans" :key="idx" :value="i.id" :label="$t(i.name)" />
                                     </el-select>
                                 </base-input>
                             </div>
@@ -192,14 +192,8 @@ export default {
         ...mapGetters({
             feeds: "news-feeds/feeds",
             products: "products/list",
-            productClasses: "product-classes/list"
+            plans: "plans/list"
         }),
-        filteredProductClasses() {
-            if (this.resource.product_id && this.productClasses) {
-                return this.productClasses.filter(pc => pc.product_id === this.resource.product_id)
-            }
-            return this.productClasses
-        }
     },
     data: () => ({
         resource: {
@@ -209,7 +203,7 @@ export default {
             start_at: null,
             end_at: null,
             product_id: null,
-            product_class_id: null,
+            plan_id: null,
             is_active: 0,
         },
         locales: [
@@ -230,18 +224,10 @@ export default {
         isRequesting: false
     }),
     watch: {
-        'resource.product_id': function (newVal, oldVal) {
-            if (oldVal && newVal) {
-                this.resource.product_class_id  = null
-            }
-        }
     },
     async mounted() {
         let products = await this.$store.dispatch('products/fetchList', '')
-        let productClasses = await this.$store.dispatch('product-classes/fetchList', '')
-        if (products.data.data && Array.isArray(products.data.data)) {
-            // let productClasses = await this.$store.dispatch('product-classes/fetchList', '&product_id='+ products.data.data[0].id)
-        }
+        let plans = await this.$store.dispatch('plans/fetchList')
         let feed = this.feeds && this.feeds.find(f => f.id === parseInt(this.$route.params.id))
         if (feed) {
             this.feed   = feed
@@ -253,7 +239,7 @@ export default {
                 image: feed.image,
                 image_thumbnail: feed.image_thumbnail,
                 product_id: feed.product_id,
-                product_class_id: feed.product_class_id,
+                plan_id: feed.plan_id,
                 target_url: feed.target_url,
                 action: feed.action,
                 start_at: feed.start_at.substring(0, 10),
@@ -291,7 +277,7 @@ export default {
                         this.$notify({type: 'success', timeout: 10000, message: 'News Feed information saved successfully!'})
                     }).catch( err => {
                         this.failed = err.response.data.message
-                        this.$refs.observer.setErrors(err.response.data.errors)          
+                        this.$refs.observer.setErrors(err.response.data.errors)
                     }).finally(() => {
                         this.isRequesting   = false
                     })
@@ -303,7 +289,7 @@ export default {
                         this.$notify({type: 'success', timeout: 10000, message: 'News Feed information saved successfully!'})
                     }).catch( err => {
                         this.failed = err.response.data.message
-                        this.$refs.observer.setErrors(err.response.data.errors)          
+                        this.$refs.observer.setErrors(err.response.data.errors)
                     }).finally(() => {
                         this.isRequesting   = false
                     })
