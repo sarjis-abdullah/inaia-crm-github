@@ -105,7 +105,12 @@ export default {
           else return false;
         },
         getProductClass() {
-          if (this.info.account) return this.info.account_products[0];
+          if (this.info.account)
+          {
+
+            return {...this.info.account.plan,payment_period:this.info.account.payment_cycle,next_billing_date:this.info.account.next_billing_date};
+          }
+           
           else return false;
         },
         bankingAccountBalance() {

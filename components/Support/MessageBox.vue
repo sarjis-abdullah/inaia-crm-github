@@ -1,5 +1,5 @@
 <template>
-    <div class="card" v-if="ticket">
+    <div v-if="ticket" >
         <div class="card-header">
             <div class="row">
                 <div class="col-4 text-truncate">
@@ -40,24 +40,29 @@
                 </div>
             </div>
         </div>
-        <div class="card-header">
+        <div class="p-3">
             <div class="message-area" id="message-area">
             <div v-for="m in groupedMessages" :key="m.id" class="mx-auto">
                 <div class="d-flex justify-content-center align-items-center">
                 <div class="badge badge-light">{{displayDate(m.date)}}</div>
                 </div>
-                <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message"></MessageElement>
+                <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id"></MessageElement>
                 
                 
             </div>
+            <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
             </div>
             <div class="write-aria" v-if="shouldShowMessageBoxAndCloseTicket()">
-            <textarea type="text" class="chat-input mt-3" placeholder="type.." rows="5" v-model="messageText">
+            <textarea type="text" class="chat-input mt-3" :placeholder="$t('type')" rows="5" v-model="messageText">
                 
             </textarea>
             <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">Send<span class="btn-inner--icon"><i class="fa fa-arrow-right"></i></span></base-button>
             </div>
         </div>
+        
+    </div>
+    <div v-else class="d-flex flex-fill justify-content-center align-items-center">
+            <div>{{$t('select_ticket')}}</div>
     </div>
 </template>
 <script>
@@ -103,16 +108,12 @@ export default {
         }
         if(this.ticket && this.ticket.support_status.name_translation_key != 'closed')
         {
-            this.refresher = setInterval(()=>{
-                this.$store.dispatch('support/getDetails',this.ticket.id).then(()=>{
-                    this.groupedMessages = [];
-                    this.groupMessages();
-                    
-                })
+            /*this.refresher = setInterval(()=>{
+                this.fetchDetails();
             },5000);
             if(this.statuses.length == 0){
                 this.$store.dispatch('support/fetchStatuses');
-            }
+            }*/
             
         }
     },
@@ -136,6 +137,26 @@ export default {
                 return '';
             }
         },
+    },
+    watch:{
+        ticket:{
+            handler(newval, oldval){
+                if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
+                {
+                    this.fetchDetails(newval.id)
+                }
+            },immediate:true
+        }
+    },
+    updated(){
+        if(this.ticket && this.ticket.messages && this.ticket.messages.length>0)
+        {
+            let lastMessage = this.ticket.messages[this.ticket.messages.length-1]
+            var messageArea = this.$el.querySelector("#message-"+lastMessage.id.toString());
+            if(messageArea)
+                messageArea.scrollIntoView();
+        }
+        
     },
     methods:{
         groupMessages()
@@ -185,12 +206,10 @@ export default {
             "support_ticket_id": this.ticket.id
             };
             this.isSending = true;
-            this.$store.dispatch('support/sendMessage',data).then(()=>{
+            this.$store.dispatch('support/sendMessage',data).then((data)=>{
                 this.groupedMessages = [];
                 this.groupMessages();
                 this.messageText = null;
-                var messageArea = this.$el.querySelector("#message-area");
-                messageArea.scrollTop = messageArea.scrollHeight;
             }).catch(()=>{
                 this.$notify({type:'error',message:this.$t('cant_send_message'),duration:5000})
             }).finally(()=>{
@@ -229,7 +248,38 @@ export default {
           this.closeTicket();
         });
         
-      }
+      },
+      fetchDetails(id){
+        if(this.ticket)
+        {
+            this.$store.dispatch('support/getDetails',id).then((data)=>{
+                    this.ticket = data;
+                    this.groupedMessages = [];
+                    this.groupMessages();
+                    
+                    
+                })
+        }
+        
+      },
+      displayClosedBy()
+        {
+            return this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key=="close" && this.ticket.updatedBy && this.ticket.updated_at;
+        },
+        formatTextClosedBy()
+        {
+            if(this.ticket && this.ticket.updatedBy && this.ticket.updated_at && this.ticket.updatedBy.contact)
+            {
+                let name = this.ticket.updatedBy.contact.name;
+                if(this.ticket.updatedBy.contact.person_data)
+                {
+                    name+=' '+this.ticket.updatedBy.contact.person_data;
+                }
+                let updatedAt = this.$d(new Date(this.ticket.updated_at),'short');
+                return this.$t('ticket_closed_by')+'<strong>'+name+'</strong>'+this.$t('at')+'<strong>'+updatedAt+'</strong>'
+            }
+             
+        }
     }
 }
 </script>
@@ -248,11 +298,11 @@ export default {
     bottom: 35px
 }
 .message-area{
-    max-height: 75vh;
     overflow-x: hidden;
-
+    height: 40vh;
+    max-height: 40vh;
   width: 100%;
-  max-height: 70vh;
+  
   margin: 0 auto;
 }
 .write-aria {

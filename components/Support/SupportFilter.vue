@@ -1,17 +1,15 @@
 <template>
   <div>
-    <form class="card-header border-0" v-if="showFilter">
+    <div v-if="showFilter">
       <div class="row">
         <div
-          class="col-md displayFlex flex-column align-content-center"
-          v-if="!isDepotSet"
+          class="col-6"
         >
           <Select
             v-model="selectedCustomer"
             remote
             filterable
             reserve-keyword
-            class="filterElement"
             :placeholder="$t('customer_filter_placeholder')"
             :loading="loadingCustomers"
             :remote-method="loadCustomers"
@@ -27,6 +25,10 @@
             >
             </Option>
           </Select>
+        </div>
+          <div
+          class="col-6"
+        >
             <Select
             :placeholder="$t('status')"
             v-model="selectedStatus"
@@ -44,26 +46,10 @@
             >
             </Option>
           </Select>
+          </div>
           
         </div>
-        <div class="col-md displayFlex flex-column align-content-center">
-          <date-picker
-            size="large"
-            class="filterElement"
-            v-model="startDate"
-            type="date"
-            :placeholder="$t('select_start_date_placeholder')"
-          >
-          </date-picker>
-          <date-picker
-            class="filterElement"
-            v-model="endDate"
-            type="date"
-            :placeholder="$t('select_end_date_placeholder')"
-          >
-          </date-picker>
-        </div>
-      </div>
+      
       <div
         class="
           applyContainer
@@ -78,7 +64,7 @@
           $t("apply_filter")
         }}</base-button>
       </div>
-    </form>
+    </div>
 
     <div class="card-header border-0 border-top" v-if="filterIsActive">
       <Badge
@@ -133,7 +119,7 @@ export default {
     showFilter: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   components: {
     Badge,
@@ -155,13 +141,12 @@ export default {
       filterIsActive: false,
       selectedCustomerInfo: null,
       timer: null,
-      lastRequest:null,
+      lastRequest: null,
       customerQuery: "",
     };
   },
   mounted() {
-    if(this.status.length == 0)
-        this.$store.dispatch("support/fetchStatuses");
+    if (this.status.length == 0) this.$store.dispatch("support/fetchStatuses");
   },
   computed: {
     ...mapGetters("support", {
@@ -271,7 +256,7 @@ export default {
       let stat = this.status.find((x) => x.id == id);
       return stat.name_translation_key;
     },
-   
+
     removeStatus: function (id) {
       this.selectedStatus = this.selectedStatus.filter((sta) => sta != id);
       const query = this.quiryBuilder();

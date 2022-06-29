@@ -116,7 +116,7 @@ export const actions = {
     },
     productClasses(context) {
         return this.$axios
-            .get(`/products/gloddinar/pricing`,{headers:{'X-localization':locale}})
+            .get(`/pricing`,{headers:{'X-localization':locale}})
             .then(response => {
 
                 context.commit('productClasses', Object.values(response.data.data))

@@ -440,5 +440,10 @@ export default {
     cant_send_message:"Enable to send your message due to an error",
     ticket_closed_successfully:'This ticket was closed successfully',
     ticket_closed_unsuccessfully:"We couldn't close this ticket due to an error",
-    are_you_sure_you_want_to_close_ticket:'Are you sure you want to close this ticket?'
+    are_you_sure_you_want_to_close_ticket:'Are you sure you want to close this ticket?',
+    ticket_list:'Ticket list',
+    select_ticket:"Please select a ticket to see description",
+    type:'type...',
+    ticket_closed_by:'This ticket was closed by ',
+    at:' at '
 }

@@ -70,7 +70,7 @@ export const actions = {
         return this.$axios.get(`/support-tickets/${ payload }?include=${detailsIncludes}`)
                 .then(res => {
                     context.commit('details', res.data.data)
-                    return res.data;
+                    return res.data.data;
                 }).catch(err => {
                     return Promise.reject(err)
                 })
@@ -94,7 +94,7 @@ export const actions = {
         return this.$axios.put(`/support-tickets/${ payload.id }?include=${detailsIncludes}`,payload.data)
         .then(res => {
             context.commit('details', res.data.data)
-            return res.data;
+            return res.data.data;
         }).catch(err => {
             return Promise.reject(err)
         })

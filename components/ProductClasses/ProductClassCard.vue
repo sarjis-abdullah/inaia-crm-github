@@ -6,7 +6,7 @@
         <div class="col">
             <h5 class="card-title text-uppercase text-muted mb-0">{{ $t('product_class') }}</h5>
             <div v-if="productClassDetails">
-              <h2 class="mb-0"><i class="lnir" :class="productClassDetails.product_class.name_translation_key == 'product_class_premium' ? 'lnir-crown' : 'lnir-star'"></i> {{ $t(productClassDetails.product_class.name_translation_key) }}</h2>
+              <h2 class="mb-0"><i class="lnir" :class="productClassDetails.name == 'premuim' ? 'lnir-crown' : 'lnir-star'"></i> {{ $t(productClassDetails.name) }}</h2>
             </div>
             <div v-else><Loader :width="24" :height="24"></Loader></div>
         </div>
@@ -25,14 +25,14 @@
       </div>
       <div class="mt-2 mb-0 text-sm text-center">
         <div class="display-2 d-flex align-items-center justify-content-center">5 € <span class="text-sm ml-2">/ {{ $t(productClassDetails.payment_period) }}</span></div>
-        <div>{{$t('next_billing_date')}}: {{ $d(new Date(productClassDetails.next_billing_date),'narrow') }}</div>
+        <div v-if="productClassDetails.next_billing_date">{{$t('next_billing_date')}}: {{ $d(new Date(productClassDetails.next_billing_date),'narrow') }}</div>
       </div>
     </div>
     <modal :show.sync="showProductSpec" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
       <template slot="header">
           <h5 class="modal-title" id="confirmModal">{{$t('product_class_specs')}}</h5>
       </template>
-      <ProductClassSpecification :account_product_spec="productClassDetails.account_product_class_specs" :product_class_id="productClassDetails.product_class.id"/>
+      <ProductClassSpecification  :product_class_id="productClassDetails.id"/>
     </modal>
   </div>
 </template>

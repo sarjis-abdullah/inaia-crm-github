@@ -1,6 +1,6 @@
 <template>
-    <a @click.prevent="() => $router.push('/support-tickets/details/'+ticket.id)">
-    <div class="row item-container border-bottom p-3" v-if="ticket">
+    <a @click.prevent="() =>selectTicket()">
+    <div class="row item-container border-top p-3" v-if="ticket">
         <div class="col-2 my-auto">
             <div class="rounded-circle avatar" v-if="ticket.account && ticket.account.contact">
                 <img :src="avatar"/>
@@ -9,7 +9,7 @@
         <div class="col-7 my-auto text-truncate">
             <div class="text-muted"><small>{{name}}</small></div>
             <div class="h3 mt--1" :style="selectedStyle">{{ticket.subject}}</div>
-            <div class="text-muted mt--2"><small># {{ticket.id}}</small></div>
+            <div class="text-muted mt--3"><small># {{ticket.id}}</small></div>
         </div>
         <div class="col-3  my-auto">
             <Status v-bind:status='ticket.support_status.name_translation_key' class="float-right">{{ticket.support_status ? $t(ticket.support_status.name_translation_key) : ticket.support_status_id}}</Status>
@@ -65,6 +65,13 @@ export default {
             return{
                 color:this.isSelected ? '#0074d9' : '#000'
             }
+        },
+        
+    },
+    methods:{
+        selectTicket()
+        {
+            this.$emit('ticketSelected',this.ticket);
         }
     }
 }

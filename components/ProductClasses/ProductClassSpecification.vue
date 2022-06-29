@@ -4,18 +4,21 @@
                 <img :src="productLogo" class="img"/>
                 <h3>{{productName}}</h3>
         </div>
-        <div class="row mb-2" v-for="item in productSpec" :key="item.id">
-            <div class="col-1">
+        <div class="row mb-2" v-for="item in productSpec" :key="item?item.id:-1">
+             
+            <div class="col-1" v-if="item">
                 <i class ="fas" :class="item.active?'fa-check':'fa-close'"></i>
             </div>
-            <div class="col-8">
+            <div class="col-8" v-if="item">
                 {{item.verbose}}
             </div>
+            
         </div>
         <div class="mb-2 d-flex flex-column align-items-center justify-content-center" v-if="account_product_spec.length>0">
                 <h3>{{$t('customer_product_spec')}}</h3>
         </div>
-        <div class="row mb-2" v-for="item in account_product_spec" :key="item.id">
+        <div class="row mb-2" v-for="item in account_product_spec" :key="item?item.id:-1">
+            
             <div class="col-1">
                 <i class ="fas fa-user"></i>
             </div>
@@ -25,6 +28,7 @@
             <div class="col-3" v-if="item.value">
                 {{$n(item.value/100)}} {{getUnit(item.unit)}}
             </div>
+            
         </div>
     </div>
 </template>
