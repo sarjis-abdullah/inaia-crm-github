@@ -114,9 +114,13 @@ export const actions = {
                 return Promise.reject(err)
             })
     },
-    productClasses(context) {
+    productClasses(context, payload=null) {
+        let queryString = null;
+        if (payload) {
+          queryString = Object.keys(payload).map(key => key + '=' + payload[key]).join('&');
+        }
         return this.$axios
-            .get(`/pricing`,{headers:{'X-localization':locale}})
+            .get(`/pricing?${queryString}`,{headers:{'X-localization':locale}})
             .then(response => {
 
                 context.commit('productClasses', Object.values(response.data.data))

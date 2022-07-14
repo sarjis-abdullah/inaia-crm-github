@@ -32,7 +32,7 @@
       <template slot="header">
           <h5 class="modal-title" id="confirmModal">{{$t('product_class_specs')}}</h5>
       </template>
-      <ProductClassSpecification  :product_class_id="productClassDetails.id"/>
+      <ProductClassSpecification  :product_class_id="productClassDetails.id" :accountId="accountId" />
     </modal>
   </div>
 </template>
@@ -49,6 +49,10 @@ export default {
   props:{
     productClassDetails:{
       type:Object
+    },
+    accountId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
