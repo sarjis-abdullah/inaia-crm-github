@@ -445,5 +445,20 @@ export default {
     select_ticket:"Please select a ticket to see description",
     type:'type...',
     ticket_closed_by:'This ticket was closed by ',
-    at:' at '
+    at:' at ',
+    new_inbox_message:'New inbox message',
+    is_read:'Read',
+    is_draft:'Draft',
+    inbox_messages:'Inbox messages',
+    message_text:'Message text',
+    document_title:'Document title',
+    upload_document:'Upload document',
+    send_message:'Send message',
+    save_as_draft:'Save as draft',
+    title:'Title',
+    summary:'Summary',
+    message_sent_successfully:'Your message was sent successfully',
+    message_sent_unsuccessfully:"We couldn't send your message please try again later",
+    message_deleted_successfully:'The message was deleted successfully',
+    message_deleted_unsuccessfully:"We couldn't delete the message please try again later"
 }

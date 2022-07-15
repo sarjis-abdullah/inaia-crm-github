@@ -120,6 +120,7 @@
       show(val) {
         let documentClasses = document.body.classList;
         if (val) {
+          this.$emit("show");
           documentClasses.add("modal-open");
         } else {
           documentClasses.remove("modal-open");

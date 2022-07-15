@@ -80,6 +80,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    'vue2-editor/nuxt'
   ],
   /*
   ** Axios module configuration

@@ -38,6 +38,7 @@
       <DepotList  v-if="resource && resource.customer && resource.customer.account" :accountId="getAccoundId"/>
       <LatestTransactions v-if="resource" :account_id="getAccoundId" />
       <AggregatedClaims v-if="resource" :account_id="getAccoundId" />
+      <InboxMessageList v-if="resource" :account="info.account" />
     </div>
 
   </div>
@@ -54,7 +55,7 @@ import LatestTransactions from "@/components/Contacts/LatestTransactions"
 import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
-
+import InboxMessageList from '@/components/InboxMessage/List'
 export default {
     components: {
         Loader,
@@ -66,6 +67,7 @@ export default {
         BankingAmountCard,
         ProductClassCard,
         AggregatedClaims,
+        InboxMessageList
     },
     props: {
         resource: {
