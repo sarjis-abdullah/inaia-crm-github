@@ -464,5 +464,15 @@ export default {
     message_sent_successfully:'Your message was sent successfully',
     message_sent_unsuccessfully:"We couldn't send your message please try again later",
     message_deleted_successfully:'The message was deleted successfully',
-    message_deleted_unsuccessfully:"We couldn't delete the message please try again later"
+    message_deleted_unsuccessfully:"We couldn't delete the message please try again later",
+    message_deleted_unsuccessfully:"We couldn't delete the message please try again later",
+    document_saved_successfully:'Document was saved successfully',
+    document_saved_unsuccessfully:"We couldn't save you document",
+    please_choose_document_title:"Document title is required",
+    plesae_select_file:"Plesae select a document",
+    add_new_document:'Add new document',
+    document_deleted_successfully:'Document was deleted successfully',
+    document_deleted_unsuccessfully:"We couldn't delete the document, plesae try again later",
+    update_as_draft:'Update as draft',
+    save_and_send:'Save and send'
 }

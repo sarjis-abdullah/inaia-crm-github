@@ -10,6 +10,10 @@ export default {
         type:{
             type: String,
             default: 'default'
+        },
+        disabled:{
+            type:Boolean,
+            default:false
         }
     },
     model:{
@@ -60,7 +64,8 @@ export default {
             }
         },
         onClick:function(){
-            this.$emit('click');
+            if(!this.disabled)
+                this.$emit('click');
         }
     }
 }

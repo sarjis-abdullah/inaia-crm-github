@@ -111,16 +111,16 @@ export const actions = {
         })
     },
     addnewLinkToInboxMessage(context,payload){
-        return this.$axios.post(`/inbox-link`,payload)
+        return this.$axios.post(`/inbox-document`,payload)
         .then(res => {
-            context.commit('inboxLinkAdded', res.data)
-            return res.data;
+            context.commit('inboxLinkAdded', res.data.data)
+            return res.data.data;
         }).catch(err => {
             return Promise.reject(err)
         })
     },
     deleteNewLinkFromInboxMessage(context,payload){
-        return this.$axios.delete(`/inbox-link/${payload}`)
+        return this.$axios.delete(`/inbox-document/${payload}`)
         .then(res => {
             context.commit('inboxLinkDeleted', payload)
             return res.data;

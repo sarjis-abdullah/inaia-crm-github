@@ -46,10 +46,13 @@
                 @deleted="deleteNewDocument"
                 @dataChanged="onDataChanged"
                 :document="doc.doc"
-                :isDraft="isDraft"/>
+                :isDraft="isDraft"
+                :inboxMessagesId="inboxMessage?inboxMessage.id:-1"
+                :contactId="account?account.contact_id:-1"
+                @documentAdded="onDocumentAdded"/>
             </div>
             <base-button class="my-3 w-100" type="link" @click="addNewDocument" v-if="isDraft">
-                {{$t('Add new document')}}
+                {{$t('add_new_document')}}
             </base-button>
         </div>
     </div>
@@ -76,22 +79,26 @@
       </base-button>
     </template>
     <template slot="footer" v-if="inboxMessage && isDraft">
-      <base-button type="link" class="ml-auto" @click="onDetailClose()">
-        {{ $t("cancel") }}
+     <base-button
+        type="danger"
+        @click="() => deleteMessageBox()"
+        :disabled="isSubmitting"
+      >
+        {{ $t("delete") }}
       </base-button>
       <base-button
         type="secondary"
-        @click="() => sendMessage(true)"
+        @click="() => updateMessage(true)"
         :disabled="isSubmitting || !shouldEnableSave()"
       >
-        {{ $t("save_as_draft") }}
+        {{ $t("update_as_draft") }}
       </base-button>
       <base-button
         type="primary"
-        @click="() => sendMessage(false)"
+        @click="() => updateMessage(false)"
         :disabled="isSubmitting || !shouldEnableSave()"
       >
-        {{ $t("send_message") }}
+        {{ $t("save_and_send") }}
       </base-button>
     </template>
     <template slot="footer" v-if="inboxMessage && !isDraft">
@@ -260,6 +267,36 @@ export default {
                 this.isSubmitting = false;
             })
         },
+        updateMessage(isDraft){
+            let newdata ={
+                title:this.title,
+                summary:this.summary,
+                message_text:this.text,
+                is_draft:isDraft
+            };
+            let data = {
+                id:this.inboxMessage.id,
+                data:newdata
+            }
+            this.isSubmitting = true;
+            this.$store.dispatch('inboxMessage/updateInboxMessage',data).then(res=>{
+                this.$notify({
+                    type:'success',
+                    message:this.$t('message_sent_successfully'),
+                    duration:5000
+                })
+                this.onDetailClose();
+            }).catch((err)=>{
+                console.log(err);
+                this.$notify({
+                    type:'error',
+                    message:this.$t('message_sent_unsuccessfully'),
+                    duration:5000
+                })
+            }).finally(()=>{
+                this.isSubmitting = false;
+            })
+        },
         loadMessageBox(){
             
             if(this.inboxMessage)
@@ -299,8 +336,18 @@ export default {
             }).finally(()=>{
                 this.isSubmitting = false;
             })
+        },
+        onDocumentAdded(data)
+        {
+            const deletedIndex = this.documents.findIndex(x=>x.key==data.key);
+            this.documents.splice(deletedIndex,1);
+            this.documents.push({
+                key:this.documents.length,
+                doc:data.document
+            })
         }
-    }
+    },
+    
 }
 </script>
 <style scoped>
