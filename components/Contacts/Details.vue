@@ -27,9 +27,9 @@
 
         <div class="col-lg-4">
 
-          <ProductClassCard :productClassDetails="getProductClass" />
+          <ProductClassCard :productClassDetails="getProductClass" :accountId="getAccountId" />
 
-          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="getAccoundId" />
+          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="getAccountId" />
 
         </div>
 
@@ -80,7 +80,7 @@ export default {
           type:Object
         },
         productClassDetails: {},
-        
+
       }
     },
 
@@ -102,9 +102,12 @@ export default {
           if (this.info.account) return this.info.account.account_number;
           else return false;
         },
-        getAccoundId() {
-          if (this.info.account) return this.info.account.id;
-          else return false;
+        getAccountId() {
+          if (this.info.account) {
+            return this.info.account.id;
+          } else {
+            return false;
+          }
         },
         getProductClass() {
           if (this.info.account)
@@ -112,7 +115,7 @@ export default {
 
             return {...this.info.account.plan,payment_period:this.info.account.payment_cycle,next_billing_date:this.info.account.next_billing_date};
           }
-           
+
           else return false;
         },
         bankingAccountBalance() {
