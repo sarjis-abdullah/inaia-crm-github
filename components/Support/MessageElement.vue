@@ -43,7 +43,17 @@ export default {
         formatTime(date)
         {
             let d = new Date(date);
-            return d.getHours()+":"+d.getMinutes();
+            let hours = d.getHours();
+            if(hours<10)
+            {
+                hours = "0"+hours;
+            }
+            let minutes = d.getMinutes();
+            if(minutes < 10 )
+            {
+                minutes = "0"+minutes;
+            }
+            return hours+":"+minutes;
         }
     }
 }
