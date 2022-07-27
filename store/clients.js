@@ -11,6 +11,7 @@ export const state = () => {
         latestTransactions:[],
         countryCodeList:[],
         loadedClients:[],
+        amlStatuses:[]
     }
 }
 
@@ -48,7 +49,8 @@ export const getters = {
     countryListLoaded:state=>state.countryListLoaded,
     orderFilterList:state=>state.orderFilterList,
     latestTransactions:state=>state.latestTransactions,
-    countryCodeList:state=>state.countryCodeList
+    countryCodeList:state=>state.countryCodeList,
+    amlStatuses: state=>state.amlStatuses
 }
 export const mutations = {
 
@@ -106,6 +108,10 @@ export const mutations = {
         } else {
             state.loadedClients.push(client);
         }
+    },
+    amlStatuses(state,list)
+    {
+        state.amlStatuses = list;
     }
 }
 export const actions = {
@@ -267,6 +273,14 @@ export const actions = {
             .get(`/accounts/${payload}?include=person_data,address,country,channels`)
             .then(response => {
 
+                return response.data.data;
+            })
+    },
+    getAmlStatuses(context,payload){
+        return this.$axios
+            .get('/aml-statuses')
+            .then(response=>{
+                context.commit('amlStatuses',response.data.data);
                 return response.data.data;
             })
     }

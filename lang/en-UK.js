@@ -474,5 +474,9 @@ export default {
     document_deleted_successfully:'Document was deleted successfully',
     document_deleted_unsuccessfully:"We couldn't delete the document, plesae try again later",
     update_as_draft:'Update as draft',
-    save_and_send:'Save and send'
+    save_and_send:'Save and send',
+    pending:'Pending',
+    verified:'Verified',
+    blocked:'Blocked',
+    new_update:'New update'
 }

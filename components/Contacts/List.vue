@@ -24,12 +24,34 @@
                 <div class="col">
                     <div class="card">
                         <div class="border-0 card-header">
-                          <el-input prefix-icon="el-icon-search" 
-                          :placeholder="$t('search_customer')" clearable 
-                          style="width: 500px" @change="onSearch" 
-                          v-model="searchWords"
-                          @clear="clearSearch"
-                          />
+                            <div class="row">
+                                <div class="col">
+                                    <el-input prefix-icon="el-icon-search" 
+                                    :placeholder="$t('search_customer')" clearable 
+                                    style="width: 500px" @change="onSearch" 
+                                    v-model="searchWords"
+                                    @clear="clearSearch"
+                                    />
+                                </div>
+                                <div class="col">
+                                    <Select
+                                        placeholder="AML"
+                                        v-model="selectedAmlStatus"
+                                        clearable
+                                        @clear="clearDepot"
+                                        :multiple="false"
+                                        class="float-right"
+                                    >
+                                        <Option
+                                        v-for="option in amlStatuses"
+                                        :value="option.id"
+                                        :label="$t(option.name)"
+                                        :key="option.id"
+                                        >
+                                        </Option>
+                                    </Select>
+                                </div>
+                          </div>
                         </div>
 
                         <el-table class="table-hover table-responsive table-flush"
@@ -57,9 +79,12 @@
                                         </div>
                                         <div class="media-body">
                                             <div class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</div>
-                                            <div class="name mb-0 text-xs text-muted">
-                                              <i class="fa mr-1" :class="`${row.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.is_verified ? $t('verified') : $t('not_verified') }}
-                                            </div>
+       
+                                                <div class="name mb-0 text-xs text-muted d-inline-block mr-2">
+                                                    <i class="fa mr-1" :class="`${row.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.is_verified ? $t('verified') : $t('not_verified') }}
+                                                </div>
+                                                <AmlStatus  class="d-inline-block" :amlStatus="row.aml_status.name"/>
+                                           
                                         </div>
                                     </div>
                                 </template>
@@ -183,11 +208,11 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
 import { isEmail,isPhoneNumber } from '../../helpers/helpers';
-
+import AmlStatus from '@/components/Contacts/AmlStatus';
 export default {
     components: {
         [Table.name]: Table,
@@ -196,7 +221,10 @@ export default {
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
         Details,
-        IconButton
+        IconButton,
+        AmlStatus,
+        Select,
+        Option
     },
     data() {
         return {
@@ -218,16 +246,22 @@ export default {
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
-            searchWords:null
+            searchWords:null,
+            selectedAmlStatus:null
         }
     },
+   
     computed: {
         ...mapGetters({
             types: "types/pairs"
         }),
+        ...mapGetters({
+            amlStatuses: "clients/amlStatuses"
+        }),
         searchQuery() {
             return (
                 (this.search ? '&' + this.search : '') +
+                ( this.selectedAmlStatus ? `&aml_status_id=${ this.selectedAmlStatus }`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
                 `&per_page=${this.perPage || 5}`
@@ -237,6 +271,12 @@ export default {
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
         },
+    },
+     mounted(){
+        if(this.amlStatuses.length == 0)
+        {
+            this.$store.dispatch('clients/getAmlStatuses')
+        }
     },
     watch: {
         searchQuery: {
