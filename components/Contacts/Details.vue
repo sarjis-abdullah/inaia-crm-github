@@ -27,18 +27,19 @@
 
         <div class="col-lg-4">
 
-          <ProductClassCard :productClassDetails="getProductClass" :accountId="getAccountId" />
+          <ProductClassCard :productClassDetails="getProductClass" :accountId="info.account.id" />
 
-          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="getAccountId" />
+          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" />
 
         </div>
 
       </div>
-
-      <DepotList  v-if="resource && resource.customer && resource.customer.account" :accountId="getAccoundId"/>
-      <LatestTransactions v-if="resource" :account_id="getAccoundId" />
-      <AggregatedClaims v-if="resource" :account_id="getAccoundId" />
-      <InboxMessageList v-if="resource" :account="info.account" />
+        <div v-if="resource && resource.customer && resource.customer.account">
+      <DepotList   :accountId="info.account.id"/>
+      <LatestTransactions :account_id="info.account.id" />
+      <AggregatedClaims :account_id="info.account.id" />
+      <InboxMessageList :account="info.account" />
+      </div>
     </div>
 
   </div>
@@ -104,6 +105,7 @@ export default {
         },
         getAccountId() {
           if (this.info.account) {
+            
             return this.info.account.id;
           } else {
             return false;
