@@ -30,6 +30,19 @@
                       </div>
                     </div>
                   </div>
+                  <div class="col-auto">
+                                        <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+
+                      <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
+                    </base-dropdown>
+                  </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo  :customerId="client.contact_id"></UserInfo>
@@ -215,9 +228,11 @@
             </template>
             <div>
               <DepotStatusHistory :depotStatus="depot.status_history"/>
+              
            </div>
 
         </modal>
+        <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
       </div>
     </div>
   </div>
@@ -234,6 +249,7 @@ import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
 import UserInfo from '@/components/Contacts/UserInfo';
+import CommentBox from '@/components/Comment/CommentBox';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -253,7 +269,8 @@ export default {
             isSubmitting:false,
             showCancelConfirm:false,
             showAgioTransaction:false,
-            showDepotStatusHistory:false
+            showDepotStatusHistory:false,
+            showComments:false
         }
     },
     components: {
@@ -265,7 +282,8 @@ export default {
         Status,
         AgioTransactions,
         DepotStatusHistory,
-        UserInfo
+        UserInfo,
+        CommentBox
     },
     computed:
         {
@@ -380,6 +398,12 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+        },
+        openComment(){
+          this.showComments = true;
+        },
+        closeComments(){
+          this.showComments = false;
         }
     }
 

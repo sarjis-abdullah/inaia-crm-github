@@ -32,6 +32,7 @@
             <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
+            <a class="dropdown-item" @click.prevent="displayComments">{{ $t("account_notes") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
             <div class="dropdown-divider"></div>
@@ -96,6 +97,7 @@
     <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
+    <CommentBox :displayModal="showComments" :account="info" @closed="closeComments"/>
   </div>
 </template>
 <script>
@@ -104,6 +106,7 @@ import EditAddress from '@/components/Contacts/EditAddress';
 import EditPhoneNumber from '@/components/Contacts/EditPhoneNumber';
 import EditEmail from '@/components/Contacts/EditEmail';
 import AccountSettings from '@/components/Contacts/AccountSettings';
+import CommentBox from '@/components/Comment/CommentBox';
 export default {
     props: {
         resource: {
@@ -114,7 +117,8 @@ export default {
       EditAddress,
       EditPhoneNumber,
       EditEmail,
-      AccountSettings
+      AccountSettings,
+      CommentBox
     },
     computed: {
         info() {
@@ -166,7 +170,8 @@ export default {
         showEditAddress:false,
         showEditPhoneNumber:false,
         showEditEmail: false,
-        showSettings: false
+        showSettings: false,
+        showComments: false
       }
       
     },
@@ -201,6 +206,12 @@ export default {
       },
       closeSettings(){
         this.showSettings = false;
+      },
+      displayComments(){
+        this.showComments = true;
+      },
+      closeComments(){
+        this.showComments = false;
       }
 
     }

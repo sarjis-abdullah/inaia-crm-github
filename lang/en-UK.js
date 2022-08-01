@@ -478,5 +478,9 @@ export default {
     pending:'Pending',
     verified:'Verified',
     blocked:'Blocked',
-    new_update:'New update'
+    new_update:'New update',
+    account_notes:'Account notes',
+    cant_create_new_note:"We can't create new note due to an error",
+    load_more:'Load more',
+    depot_comment:'Depot comment'
 }
