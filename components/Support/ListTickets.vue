@@ -126,7 +126,7 @@ export default {
     overflow-x: hidden;
 
   width: 100%;
-  max-height: 70vh;
+  max-height: 60vh;
   margin: 0 auto;
 }
 </style>

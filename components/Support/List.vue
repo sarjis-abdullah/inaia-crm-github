@@ -41,6 +41,8 @@ export default {
     background-color: #fff;
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, 0.05);
-    height:80vh
+    height:80vh;
+    z-index: 1000;
+    overflow: hidden;
 }
 </style>
