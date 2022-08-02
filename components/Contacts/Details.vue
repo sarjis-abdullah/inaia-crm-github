@@ -29,7 +29,7 @@
 
           <ProductClassCard :productClassDetails="getProductClass" :accountId="info.account.id" />
 
-          <BankingAmountCard  v-if="resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" />
+          <BankingAmountCard  v-if="hasBankingAcoount && resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" />
 
         </div>
 
@@ -95,7 +95,8 @@ export default {
         shouldLoadDepots:false,
         shouldLoadlastTransactions:false,
         shouldLoadAggregatedClaims:false,
-        shouldLoadInboxMessages:false
+        shouldLoadInboxMessages:false,
+        hasBankingAcoount:false
       }
     },
 
@@ -159,6 +160,7 @@ export default {
       initBankingAccountDetails() {
         this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
           this.bankingAccountDetails = res.data;
+          this.hasBankingAcoount = true;
         })
       },
       handleChange(val) {
