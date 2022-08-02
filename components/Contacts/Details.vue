@@ -34,12 +34,20 @@
         </div>
 
       </div>
-        <div v-if="resource && resource.customer && resource.customer.account">
-      <DepotList   :accountId="info.account.id"/>
-      <LatestTransactions :account_id="info.account.id" />
-      <AggregatedClaims :account_id="info.account.id" />
-      <InboxMessageList :account="info.account" />
-      </div>
+        <Collapse v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+          <CollapseItem :title="$t('depot')" name="depots">
+            <DepotList   :accountId="info.account.id" v-if="shouldLoadDepots"/>
+         </CollapseItem>
+          <CollapseItem :title="$t('recent_transactions')" name="lastTransactions">
+            <LatestTransactions :account_id="info.account.id" v-if="shouldLoadlastTransactions"/>
+          </CollapseItem>
+          <CollapseItem :title="$t('aggregated_claims')" name="aggregatedClaims">
+            <AggregatedClaims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims"/>
+          </CollapseItem>
+          <CollapseItem :title="$t('inbox_messages')" name="inboxMessages">
+            <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
+          </CollapseItem>
+        </Collapse>
     </div>
 
   </div>
@@ -56,7 +64,8 @@ import LatestTransactions from "@/components/Contacts/LatestTransactions"
 import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
-import InboxMessageList from '@/components/InboxMessage/List'
+import InboxMessageList from '@/components/InboxMessage/List';
+import {Collapse,CollapseItem} from 'element-ui';
 export default {
     components: {
         Loader,
@@ -68,7 +77,9 @@ export default {
         BankingAmountCard,
         ProductClassCard,
         AggregatedClaims,
-        InboxMessageList
+        InboxMessageList,
+        Collapse,
+        CollapseItem
     },
     props: {
         resource: {
@@ -81,7 +92,10 @@ export default {
           type:Object
         },
         productClassDetails: {},
-
+        shouldLoadDepots:false,
+        shouldLoadlastTransactions:false,
+        shouldLoadAggregatedClaims:false,
+        shouldLoadInboxMessages:false
       }
     },
 
@@ -146,6 +160,24 @@ export default {
         this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
           this.bankingAccountDetails = res.data;
         })
+      },
+      handleChange(val) {
+        console.log(val);
+        val.forEach(element => {
+          if(element == 'depots' && !this.shouldLoadDepots)
+          {
+            this.shouldLoadDepots = true;
+          }
+          if(element == "lastTransactions" && !this.shouldLoadlastTransactions){
+            this.shouldLoadlastTransactions = true;
+          }
+          if(element == "aggregatedClaims" && !this.shouldLoadAggregatedClaims){
+            this.shouldLoadAggregatedClaims = true;
+          }
+          if(element == "inboxMessages" && !this.shouldLoadInboxMessages){
+            this.shouldLoadInboxMessages = true;
+          }
+        });
       }
     }
 
