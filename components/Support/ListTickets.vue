@@ -1,35 +1,38 @@
 <template>
-    <div>
-        <div>
-            <div class="p-3">
-                <div class="row">
-                    <div class="col-8 ml-1 my-auto">
-                        <div>
-                            <img src="/img/icons/support/Chat.png" class="img-size"/>
-                            <h3 class="d-inline ml-1">{{$t('ticket_list')}}</h3>
-                        </div>
-                    </div>
-                    <div class="col my-auto">
-                        <button @click.prevent="toggleFilter()" type="button" class="float-right btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
-                      </button>
+    <div class="position-relative d-flex flex-column h-100">
+        <div class="search bg-white p-3 border-bottom w-100">
+            <div class="row">
+                <div class="col-8 ml-1 my-auto">
+                    <div>
+                        <i class="lnir lnir-comments"></i>
+                        <h3 class="d-inline ml-1">{{$t('ticket_list')}}</h3>
                     </div>
                 </div>
-                <div class="p-4">
-                 <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
-                 </div>
-                 <SupportFilter :showFilter="showFilter" @filter="applyFilter"/>
-            </div>
-            
-            <div class="list-area p-3">
-                
-                <TicketItem v-for="ticket in data" :key="ticket.id" :ticket="ticket" :isSelected="selectedTicket && ticket.id==selectedTicket.id" @ticketSelected="ticketSelected"/>
-            </div>
-            <div class="py-4 px-2 d-flex justify-content-end" v-if="totalPages > 1">
-                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                <div class="col my-auto">
+                    <button @click.prevent="toggleFilter()" type="button" class="float-right btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                    <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
+                  </button>
                 </div>
+            </div>
+
+            <SupportFilter :showFilter="showFilter" @filter="applyFilter"/>
+
+            <div class="pt-3 px-0 pb-0">
+              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
+            </div>
+        </div>
+
+        <div class="flex-fill overflow-auto">
+          <div class="list-area">
+              <TicketItem v-for="ticket in data" :key="ticket.id" :ticket="ticket" :isSelected="selectedTicket && ticket.id==selectedTicket.id" @ticketSelected="ticketSelected"/>
+          </div>
+
+          <div class="py-4 px-2 d-flex justify-content-end" v-if="totalPages > 1">
+            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+          </div>
 
         </div>
+
     </div>
 </template>
 <script>
@@ -56,7 +59,7 @@ export default {
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
         }
-        
+
     },
     watch: {
         searchQuery: {
@@ -80,7 +83,7 @@ export default {
         }
     },
     mounted(){
-       
+
     },
     methods:{
         doSearchBySubject(subject){
@@ -104,7 +107,7 @@ export default {
                     .dispatch("support/fetchList", this.searchQuery)
                     .then(data => {
                         this.totalTableData = data.meta.total
-                        
+
                     }).finally(() => {
                         this.isLoading = false
                     })
@@ -118,15 +121,15 @@ export default {
 }
 </script>
 <style scoped>
+.search {
+}
 .img-size{
     width: 25px;
     height: 25px;
 }
 .list-area{
-    overflow-x: hidden;
-
-  width: 100%;
-  max-height: 60vh;
-  margin: 0 auto;
+    overflow: hidden;
+    width: 100%;
+    margin: 0 auto;
 }
 </style>

@@ -1,11 +1,13 @@
 <template>
-    <div class="d-flex flex-fill">
-        <div class="the-box" style="width:40%">
+    <div class="card the-box">
+      <div class="d-flex h-100">
+        <div class="border-right pr-0 overflow-hidden" style="width:400px; min-width:400px;">
            <ListTickets :selctedTicket="selectedTicket" @onselectedTicket="onTicketSelected"/>
         </div>
-        <div class="the-box" style="width:60%">
+        <div class="flex-grow-1">
             <MessageBox :ticket="selectedTicket"></MessageBox>
         </div>
+      </div>
     </div>
 </template>
 <script>
@@ -19,7 +21,7 @@ export default {
     },
     data(){
         return {
-           
+
             selectedTicket:null
         }
     },
@@ -33,6 +35,7 @@ export default {
 </script>
 <style scoped>
 .the-box{
+    /*
     position: relative;
     display: flex;
     flex-direction: column;
@@ -43,6 +46,9 @@ export default {
     border: 1px solid rgba(0, 0, 0, 0.05);
     height:80vh;
     z-index: 1000;
+    */
     overflow: hidden;
+    height: calc(100vh - 185px);
+    min-height: 500px;
 }
 </style>

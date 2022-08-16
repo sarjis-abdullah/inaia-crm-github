@@ -1,10 +1,10 @@
 <template>
-    <div v-if="ticket" >
-        <div class="card-header">
+    <div v-if="ticket" class="ticket d-flex flex-column">
+        <div class="card-header p-3">
             <div class="row">
                 <div class="col-4 text-truncate">
                     <div><small>{{$t('client')}}</small></div>
-                    <h4 class="mt--1">{{name}}</h4>
+                    <h4 class="mt--1 mb-0">{{name}}</h4>
                 </div>
                 <div class="col-4 text-truncate mx-auto text-center">
                     <h4 class="mb-0">{{ticket.subject}}</h4>
@@ -18,18 +18,18 @@
             menu-on-right
             :has-toggle="false"
             v-if="shouldShowMessageBoxAndCloseTicket()"
-            
+
           >
             <template slot="title">
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
             <a class="dropdown-item"  @click.prevent="confirmClosing">
-                <div class="row" style="min-width:350px">
-                    <div class="col-1 my-auto">
-                        <img src="/img/icons/support/CloseTicket_Icon.png"/>
+                <div class="d-flex" style="min-width:200px">
+                    <div>
+                        <i class="lnir lnir-lock-alt"></i>
                     </div>
-                    <div class="col-10  ml-2">
+                    <div class="flex-fill ml-2">
                         <h4 class="mb-0">{{ $t("close_ticket") }}</h4>
                         <div class="text-wrap"><small>{{$t('close_ticket_message')}}</small></div>
                     </div>
@@ -40,29 +40,32 @@
                 </div>
             </div>
         </div>
-        <div class="p-3">
-            <div class="message-area" id="message-area">
+        <div class="post-box p-3 d-flex flex-column justify-content-between overflow-hidden">
+            <div class="message-area" id="message-area flex-grow-1">
             <div v-for="m in groupedMessages" :key="m.id" class="mx-auto">
-                <div class="d-flex justify-content-center align-items-center">
+
+              <div class="d-flex justify-content-center align-items-center">
                 <div class="badge badge-light">{{displayDate(m.date)}}</div>
-                </div>
-                <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id"></MessageElement>
-                
-                
+              </div>
+
+              <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id"></MessageElement>
+
             </div>
-            <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
+              <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
             </div>
+
             <div class="write-aria" v-if="shouldShowMessageBoxAndCloseTicket()">
-            <textarea type="text" class="chat-input mt-3" :placeholder="$t('type')" rows="5" v-model="messageText">
-                
-            </textarea>
-            <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">Send<span class="btn-inner--icon"><i class="fa fa-arrow-right"></i></span></base-button>
+              <textarea type="text" class="chat-input mt-3" :placeholder="$t('write_answer')" rows="5" v-model="messageText"></textarea>
+              <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">{{$t('send_message')}}<span class="btn-inner--icon ml-1"><i class="fa fa-paper-plane"></i></span></base-button>
             </div>
         </div>
-        
+
     </div>
-    <div v-else class="d-flex flex-fill justify-content-center align-items-center">
-            <div>{{$t('select_ticket')}}</div>
+    <div v-else class="d-flex flex-fill justify-content-center align-items-center h-100">
+      <div class="text-center">
+        <i class="lnir lnir-message-incoming lnir-32"></i>
+        <div>{{$t('select_ticket')}}</div>
+      </div>
     </div>
 </template>
 <script>
@@ -114,7 +117,7 @@ export default {
             if(this.statuses.length == 0){
                 this.$store.dispatch('support/fetchStatuses');
             }*/
-            
+
         }
     },
     computed:{
@@ -156,7 +159,7 @@ export default {
             if(messageArea)
                 messageArea.scrollIntoView();
         }
-        
+
     },
     methods:{
         groupMessages()
@@ -247,7 +250,7 @@ export default {
         }).then(() => {
           this.closeTicket();
         });
-        
+
       },
       fetchDetails(id){
         if(this.ticket)
@@ -256,11 +259,11 @@ export default {
                     this.ticket = data;
                     this.groupedMessages = [];
                     this.groupMessages();
-                    
-                    
+
+
                 })
         }
-        
+
       },
       displayClosedBy()
         {
@@ -278,7 +281,7 @@ export default {
                 let updatedAt = this.$d(new Date(this.ticket.updated_at),'short');
                 return this.$t('ticket_closed_by')+'<strong>'+name+'</strong>'+this.$t('at')+'<strong>'+updatedAt+'</strong>'
             }
-             
+
         }
     }
 }
@@ -286,7 +289,7 @@ export default {
 <style scoped>
 .chat-input {
 
-  background-color : #F5F5F5; 
+  background-color : #F5F5F5;
   width: 100%;
     border: white 0 solid;
     padding: 10px;
@@ -299,11 +302,14 @@ export default {
 }
 .message-area{
     overflow-x: hidden;
+  /*
     height: 40vh;
     max-height: 40vh;
-  width: 100%;
-  
-  margin: 0 auto;
+    */
+
+    width: 100%;
+
+    margin: 0 auto;
 }
 .write-aria {
      margin: 0 auto;
@@ -311,5 +317,13 @@ export default {
   bottom: 0;
   height: auto;
   width: 100%;
+}
+
+.ticket {
+  height: 100%;
+  max-height: 100%;
+}
+.post-box {
+  flex:1;
 }
 </style>
