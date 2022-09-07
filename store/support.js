@@ -17,10 +17,23 @@ export const getters = {
 }
 export const mutations = {
     list(state, list) {
-        state.list  = list
+        let page = list.meta.current_page;
+        if(page == 1)
+        {
+            state.list  = list.data
+        }
+        else{
+            state.list = state.list.concat(list.data);
+        }
+        
     },
     details(state, data) {
-        state.details   = data
+        state.details   = data;
+        let ticket = state.list.find(x=>x.id == data.id);
+        if(ticket)
+        {
+            Object.assign(ticket,data);
+        }
     },
     statuses(state,list){
         state.statuses = list;
@@ -44,7 +57,7 @@ export const actions = {
     fetchList(context,payload){
         return this.$axios.get(`/support-tickets?include=${includes}${ payload }`)
                 .then(res => {
-                    context.commit('list', res.data.data)
+                    context.commit('list', res.data)
                     return res.data;
                 }).catch(err => {
                     return Promise.reject(err)

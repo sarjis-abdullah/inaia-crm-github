@@ -9,16 +9,13 @@
                     </div>
                 </div>
                 <div class="col my-auto">
-                    <button @click.prevent="toggleFilter()" type="button" class="float-right btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                    <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
-                  </button>
+                    
                 </div>
             </div>
 
-            <SupportFilter :showFilter="showFilter" @filter="applyFilter"/>
 
             <div class="pt-3 px-0 pb-0">
-              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
+              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
             </div>
         </div>
 
@@ -27,8 +24,8 @@
               <TicketItem v-for="ticket in data" :key="ticket.id" :ticket="ticket" :isSelected="selectedTicket && ticket.id==selectedTicket.id" @ticketSelected="ticketSelected"/>
           </div>
 
-          <div class="py-4 px-2 d-flex justify-content-end" v-if="totalPages > 1">
-            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+          <div class="py-4 px-2 d-flex justify-content-end">
+            <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoadingMore" @click="loadMore"/>
           </div>
 
         </div>
@@ -39,19 +36,21 @@
 import { mapGetters } from "vuex";
 import TicketItem from '@/components/Support/TicketItem';
 import SupportFilter from '@/components/Support/SupportFilter';
-
+import LoadMore from "@/components/common/Loader/LoadMore";
 export default {
     components:{
         TicketItem,
-        SupportFilter
+        SupportFilter,
+        LoadMore
     },
     computed:{
         ...mapGetters({
             data: "support/list",
+            statuses: "support/statuses"
         }),
         searchQuery() {
             return (
-                `&page=${this.page}` +
+                '&order_by=updated_at' +
                 `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')+
                 (this.search ? `&search=${this.search}` : '')
             )
@@ -74,25 +73,44 @@ export default {
             showFilter:false,
             isLoading:false,
             page:1,
-            perPage:10,
+            perPage:25,
             totalTableData:0,
             filterQuery:'',
             search:null,
             supportTicketSearch:null,
-            selectedTicket:null
+            selectedTicket:null,
+            lastPage:0,
+            isLoadingMore:false,
+            includeClosed:false
         }
     },
     mounted(){
-
+        if(this.statuses.length == 0)
+        {
+            this.$store.dispatch("support/fetchStatuses");
+        }
     },
     methods:{
         doSearchBySubject(subject){
-            this.page = 1;
-            this.search = subject;
+            if(subject.length > 3)
+            {
+                this.page = 1;
+                this.search = subject;
+                this.includeClosed = true
+            }
+            else{
+                this.$notify({
+                    message:this.$t('at_least_four_caracters'),
+                    duration:2000,
+                    type:'warning'
+                })
+            }
+            
         },
         clearSearchBySubject(){
             this.page =1;
             this.search = null;
+            this.includeClosed = false;
         },
         toggleFilter(){
             this.showFilter = !this.showFilter
@@ -101,20 +119,50 @@ export default {
             this.page = 1;
             this.filterQuery = query;
         },
+        loadMore(){
+            this.isLoadingMore = true;
+            this.page = this.page + 1;
+            this.$store
+                    .dispatch("support/fetchList", this.searchQuery+'&page='+this.page+this.getClosedParam())
+                    .then(data => {
+                        this.lastPage = data.meta.last_page
+
+                    }).finally(() => {
+                        this.isLoadingMore = false;
+                    })
+        },
         fetchList(){
             this.isLoading = true;
             this.$store
-                    .dispatch("support/fetchList", this.searchQuery)
+                    .dispatch("support/fetchList", this.searchQuery+'&page='+this.page+this.getClosedParam())
                     .then(data => {
-                        this.totalTableData = data.meta.total
+                        this.lastPage = data.meta.last_page
 
                     }).finally(() => {
                         this.isLoading = false
+                        this.isLoadingMore = false;
                     })
         },
         ticketSelected(ticket){
             this.selectedTicket = ticket;
             this.$emit('onselectedTicket',ticket);
+        },
+        getClosedParam(){
+            if(this.statuses.length>0 && !this.includeClosed)
+            {
+                let closedStatus = null;
+                this.statuses.forEach(element => {
+                    if(element.name_translation_key == 'closed')
+                    {
+                        closedStatus = element;
+                    }
+                });
+                if(closedStatus){
+                    return '&excluded_support_status_ids='+closedStatus.id.toString();
+                }
+
+            }
+            return '';
         }
 
     }

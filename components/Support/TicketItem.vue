@@ -15,7 +15,7 @@
 
         <div class="text-right">
           <div><Status v-bind:status='ticket.support_status.name_translation_key'>{{ticket.support_status ? $t(ticket.support_status.name_translation_key) : ticket.support_status_id}}</Status></div>
-          <div class="text-muted"><small>{{$d(new Date(ticket.created_at), 'short')}}</small></div>
+          <div class="text-muted"><small>{{$d(new Date(ticket.updated_at), 'short')}}</small></div>
         </div>
       </div>
     </a>

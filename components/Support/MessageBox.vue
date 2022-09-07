@@ -17,14 +17,14 @@
             title-classes="btn btn-sm mr-0"
             menu-on-right
             :has-toggle="false"
-            v-if="shouldShowMessageBoxAndCloseTicket()"
+           
 
           >
             <template slot="title">
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item"  @click.prevent="confirmClosing">
+            <a class="dropdown-item"  @click.prevent="confirmClosing" v-if="shouldShowMessageBoxAndCloseTicket()">
                 <div class="d-flex" style="min-width:200px">
                     <div>
                         <i class="lnir lnir-lock-alt"></i>
@@ -32,6 +32,18 @@
                     <div class="flex-fill ml-2">
                         <h4 class="mb-0">{{ $t("close_ticket") }}</h4>
                         <div class="text-wrap"><small>{{$t('close_ticket_message')}}</small></div>
+                    </div>
+                </div>
+                
+            </a>
+            <a class="dropdown-item"  @click.prevent="confirmOpening" v-else>
+                <div class="d-flex" style="min-width:200px">
+                    <div>
+                        <i class="lnir lnir-unlock-alt"></i>
+                    </div>
+                    <div class="flex-fill ml-2">
+                        <h4 class="mb-0">{{ $t("open_ticket") }}</h4>
+                        <div class="text-wrap"><small>{{$t('open_ticket_message')}}</small></div>
                     </div>
                 </div>
             </a>
@@ -118,6 +130,10 @@ export default {
                 this.$store.dispatch('support/fetchStatuses');
             }*/
 
+        }
+        if(this.statuses.length == 0)
+        {
+            this.$store.dispatch("support/fetchStatuses");
         }
     },
     computed:{
@@ -232,7 +248,8 @@ export default {
                         }
                     }
                     this.isSending = true;
-                    this.$store.dispatch('support/updateTicket',payload).then(()=>{
+                    this.$store.dispatch('support/updateTicket',payload).then((data)=>{
+                        this.ticket = data;
                         this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
                     }).catch(()=>{
                         this.$notify({type:'danger',message:this.$t('ticket_closed_unsuccessfully'),duration:5000});
@@ -242,6 +259,40 @@ export default {
                 }
             }
         },
+        openTicket(){
+            if(this.statuses.length>0)
+            {
+                const openStatus = this.statuses.find(x=>x.name_translation_key == 'open');
+                if(openStatus)
+                {
+                    const payload = {
+                        id:this.ticket.id,
+                        data:{
+                            support_status_id : openStatus.id
+                        }
+                    }
+                    this.isSending = true;
+                    this.$store.dispatch('support/updateTicket',payload).then((data)=>{
+                        this.ticket = data;
+                        this.$notify({type:'success',message:this.$t('ticket_opened_successfully'),duration:5000});
+                    }).catch(()=>{
+                        this.$notify({type:'danger',message:this.$t('ticket_opened_unsuccessfully'),duration:5000});
+                    }).finally(()=>{
+                        this.isSending = false
+                    })
+                }
+            }
+        },
+        confirmOpening() {
+        this.$confirm(this.$t('are_you_sure_you_want_to_open_ticket'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.openTicket();
+        });
+
+      },
         confirmClosing() {
         this.$confirm(this.$t('are_you_sure_you_want_to_close_ticket'), 'Warning', {
           confirmButtonText: this.$t('ok'),

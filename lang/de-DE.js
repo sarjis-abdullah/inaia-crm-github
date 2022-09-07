@@ -422,7 +422,7 @@ export default {
     check_orders_all_select_all:'Create new patch process by checking orders or by search criteria',
     batch_process_will_be_updated:'After updating an order, batch process takes sometime to be updated, the app will update the batch process very soon',
     clear_filter: "Clear filter",
-    search_by_subject:'Suche',
+    search_by_subject_or_client_name:'Suche',
     new:'New',
     closed:'Closed',
     open:'open',
@@ -477,7 +477,14 @@ export default {
     account_notes:'Account notes',
     cant_create_new_note:"We can't create new note due to an error",
     load_more:'Load more',
-    depot_comment:'Depot comment'
+    depot_comment:'Depot comment',
+    at_least_four_caracters:'You need to enter at least four characters to start search',
+    open_ticket:'Open ticket',
+    open_ticket_message:'To restart the conversation you can re-open the ticket',
+    ticket_opened_successfully:'The ticket was re-opened successfully',
+    ticket_opened_unsuccessfully:"The ticket couldn't be closed successfully",
+    are_you_sure_you_want_to_open_ticket:'Are you sure you want to re-open this ticket?',
+    ok:'Ok'
 
 
 }
