@@ -73,7 +73,7 @@ export default {
             //baseURL: 'http://localhost/api/v1'
         },
         env: {
-            universalLogin: 'https://login-staging.inaia.cloud',
+            universalLogin: '/',
             dashboardPath: '/dashboard',
             quandlApiOn: true,
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/staging-storage.inaia.cloud/',
@@ -105,7 +105,7 @@ export default {
             baseURL: 'https://core.api.inaia.cloud/api/v1'
         },
         env: {
-            universalLogin: 'https://login.inaia.cloud',
+            universalLogin: '/',
             dashboardPath: '/dashboard',
             quandlApiOn: true,
             s3BucketUri: 'https://s3.eu-central-1.amazonaws.com/storage.inaia.cloud/',

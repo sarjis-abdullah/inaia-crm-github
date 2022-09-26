@@ -14,7 +14,8 @@ export default function({ store, $axios }) {
                     .then(res => {
                     }).catch(err => {
                     }).finally(() => {
-                        window.location.href    = process.env.universalLogin + '/logout'
+                        //window.location.href    = process.env.universalLogin + '/logout'
+                        this.$router.push('/logout')
                     })
             }
             return Promise.reject(error)

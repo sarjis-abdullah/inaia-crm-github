@@ -79,7 +79,8 @@ export async function logout(store) {
     return await store.dispatch('auth/logout')
         .catch(err => {})
         .finally(() => {
-            window.location.href    = process.env.universalLogin + '/logout'
+            //window.location.href    = process.env.universalLogin + '/logout'
+            this.$router.push('/logout')
         })
 }
 
