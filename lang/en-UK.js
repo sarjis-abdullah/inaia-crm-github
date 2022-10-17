@@ -488,5 +488,6 @@ export default {
     ticket_opened_successfully:'The ticket was re-opened successfully',
     ticket_opened_unsuccessfully:"The ticket couldn't be closed successfully",
     are_you_sure_you_want_to_open_ticket:'Are you sure you want to re-open this ticket?',
-    ok:'Ok'
+    ok:'Ok',
+    depot_status_applied_for_savings_plan:'Applied for saving plan'
 }

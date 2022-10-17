@@ -76,7 +76,7 @@
                                          min-width="160px"
                         >
                           <template v-slot="{row}">
-                            <span>{{$n(row.agio/100)}} €</span>
+                            <span>{{$n(row.agio)}} €</span>
                             <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
                           </template>
                         </el-table-column>

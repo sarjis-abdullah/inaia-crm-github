@@ -97,7 +97,7 @@
                     </h5>
 
                     <div>
-                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount/100) }} €</span>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount) }} €</span>
                       <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
                     </div>
                   </div>
@@ -127,7 +127,7 @@
                 </div>
                 <div class="mt-3 mb-0 text-sm">
                   <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
-                  <div>{{$t('agio')}}: {{ $n(depot.agio/100) }} €</div>
+                  <div>{{$t('agio')}}: {{ $n(depot.agio) }} €</div>
                 </div>
               </div>
             </div>

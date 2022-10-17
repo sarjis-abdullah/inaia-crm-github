@@ -44,6 +44,15 @@
             )
         }}
     </span>
+    <span class="badge badge-secondary" v-else-if="row.status && row.status.name_translation_key=='depot_status_applied_for_savings_plan'">
+        {{
+            $t(
+            row.status
+                ? row.status.name_translation_key
+                : row.depot_status_id
+            )
+        }}
+    </span>
 </template>
 <script>
     import {Badge} from '@/components/argon-core';

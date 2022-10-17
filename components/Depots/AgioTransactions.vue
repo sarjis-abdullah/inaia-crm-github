@@ -68,7 +68,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.amount)"></i18n-n> €
           </span>
         </template>
       </el-table-column>
@@ -79,7 +79,7 @@
       >
         <template v-slot="{ row }">
           <span class="status" v-if="row.agio_fee_rate">
-            <i18n-n :value="parseInt(row.agio_fee_rate) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_fee_rate) / 100"></i18n-n> %
           </span>
         </template>
       </el-table-column>
@@ -90,7 +90,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_before) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_before)"></i18n-n> €
           </span>
         </template>
       </el-table-column>
@@ -101,7 +101,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_after) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_after)"></i18n-n> €
           </span>
         </template>
       </el-table-column>
