@@ -28,28 +28,28 @@
       <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview" :placeholder="$t('select_price_date')"/>
       <Loader v-if="isLoading" class="mt-3"/>
       <div class="list-group list-group-flush mt-3" v-if="batchProcessPreview && !isLoading">
-        <detail-list-item :title="$t('gram_price_date')"
+        <detail-list-item :title="$t('gold_price_date')"
           ><div slot="value">
-            {{ $d(new Date(batchProcessPreview.gram_price_date), "short") }}
+            {{ $d(new Date(batchProcessPreview.gold_price_date), "short") }}
           </div></detail-list-item
         >
-        <detail-list-item :title="$t('gram_price')"
+        <detail-list-item :title="$t('gold_price')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.gram_price_raw / 100"></i18n-n>
+            <i18n-n :value="batchProcessPreview.gold_price_raw / 100"></i18n-n>
             €
           </div></detail-list-item
         >
         <detail-list-item :title="$t('trading_gold_price')"
           ><div slot="value">
             <i18n-n
-              :value="batchProcessPreview.gram_price_trading / 100"
+              :value="batchProcessPreview.gold_price_trading / 100"
             ></i18n-n>
             €
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.gram_amount / 1000"></i18n-n> g
+            <i18n-n :value="batchProcessPreview.gold_amount / 1000"></i18n-n> g
           </div></detail-list-item
         >
         <detail-list-item :title="$t('money_amount')"
@@ -125,7 +125,7 @@ export default {
       this.isSubmitting = true;
       this.isLoading = true;
       const data = {
-        gram_price_date: formatDateToApiFormat(this.selectedDate),
+        gold_price_date: formatDateToApiFormat(this.selectedDate),
         order_process_id: this.selectedOrderProcess.id,
         order_type: this.selectedOrderProcess.order_type.name_translation_key
       };
@@ -154,7 +154,7 @@ export default {
       }
       const data = {
           order_process_id:this.selectedOrderProcess.id,
-          gram_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
+          gold_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
           order_type: this.selectedOrderProcess.order_type.name_translation_key
       }
       this.$store
