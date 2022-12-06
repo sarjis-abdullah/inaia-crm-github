@@ -40,6 +40,21 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('depot_type')"
+            v-model="selectedDepotType"
+            clearable
+            class="filterElement"
+            @clear="removeDepotType"
+          >
+            <Option
+              v-for="option in depotTypes"
+              :value="option.id"
+              :label="$t(option.name_translation_key)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
@@ -110,6 +125,15 @@
         v-if="selectedCustomerInfo != null"
         >{{ formatClientTag()
         }}<a class="badgeIcon" @click.prevent="removeCustomer()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="selectedDepotType != null"
+        >{{ formatDepotType()
+        }}<a class="badgeIcon" @click.prevent="removeDepotType()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
       <Badge
@@ -196,6 +220,7 @@ export default {
       filterIsActive: false,
       lastRequest: null,
       selectedCustomerInfo: null,
+      selectedDepotType:null,
       timer: null,
       customerQuery: "",
       savinplans: [
@@ -208,10 +233,18 @@ export default {
       ],
     };
   },
-  mounted() {},
+  mounted() {
+    if(this.depotTypes.length == 0)
+    {
+      this.$store.dispatch('depots/getDepotTypes')
+    }
+  },
   computed: {
     ...mapGetters("clients", {
       customers: "orderFilterList",
+    }),
+    ...mapGetters("depots", {
+      depotTypes: "depotTypes",
     }),
   },
   methods: {
@@ -311,6 +344,9 @@ export default {
       if (this.selectedCustomer != null) {
         query += "&account_id=" + this.selectedCustomer;
       }
+      if (this.selectedDepotType != null) {
+        query += "&depot_type_id=" + this.selectedDepotType;
+      }
       if (this.selectedSavingPlan != null) {
         if (this.selectedSavingPlan) query += "&is_savings_plan=1";
         else query += "&is_savings_plan=0";
@@ -353,6 +389,13 @@ export default {
         this.$emit("filter", query);
       }
     },
+    removeDepotType: function (){
+      this.selectedDepotType = null;
+      if (this.filterIsActive) {
+        const query = this.quiryBuilder();
+        this.$emit("filter", query);
+      }
+    },
     removeDate: function () {
       this.intervalstartDate = null;
       this.intervalendDate = null;
@@ -368,6 +411,17 @@ export default {
       this.selectedSavingPlan = null;
       if (this.filterIsActive) this.applyFilter();
     },
+    formatDepotType: function () {
+      const depotType = this.depotTypes.find(x=>x.id == this.selectedDepotType);
+      if(depotType)
+      {
+        return this.$t(depotType.name_translation_key);
+      }
+      else
+      {
+        return '';
+      }
+    },
     clearFilter() {
       this.selectedAgioPaymentPlan = null;
       this.selectedAgio = null;
@@ -376,6 +430,7 @@ export default {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
       this.selectedSavingPlan = null;
+      this.selectedDepotType = null;
       this.filterIsActive = false;
       this.$emit("filter", "");
     },

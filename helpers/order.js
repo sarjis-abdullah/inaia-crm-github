@@ -9,6 +9,10 @@ export const GOLD_PURCHASE_TYPE = "gold_purchase";
 export const GOLD_SELL_TYPE = "gold_sell";
 export const GOLD_PURCHASE_INTERVAL_TYPE = "gold_purchase_interval";
 export const GOLD_DELIVERY_TYPE = "gold_delivery";
+export const SILVER_PURCHASE_TYPE = "silver_purchase";
+export const SILVER_SELL_TYPE = "silver_sell";
+export const SILVER_PURCHASE_INTERVAL_TYPE = "silver_purchase_interval";
+export const SILVER_DELIVERY_TYPE = "silver_delivery";
 
 export function isOrderPending(order) {
     if (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_PENDING) {
@@ -47,6 +51,31 @@ export function isOrderGoldSale(order){
 export function isOrderOutstanding(order){
     return (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_OUTSTANDING)
 }
-export function isOrderDelivery(order) {
+export function isOrderGoldDelivery(order) {
     return order.order_type.name_translation_key==GOLD_DELIVERY_TYPE;
 }
+export function isOrderSilverPurchase(order){
+    return order.order_type.name_translation_key==SILVER_PURCHASE_TYPE;
+}
+export function isOrderSilverPurchaseInterval(order){
+    return order.order_type.name_translation_key==SILVER_PURCHASE_INTERVAL_TYPE;
+}
+export function isOrderSilverSale(order){
+    return order.order_type.name_translation_key==SILVER_SELL_TYPE;
+}
+export function isOrderSilverDelivery(order) {
+    return order.order_type.name_translation_key==SILVER_DELIVERY_TYPE;
+}
+export function isPurchaseOrder(order){
+    return isOrderGoldPurchase(order) || isOrderSilverPurchase(order)
+}
+export function isSellOrder(order){
+    return isOrderGoldSale(order) || isOrderSilverSale(order);
+}
+export function isIntervalPurchaseOrder(order){
+    return isOrderGoldPurchaseInterval(order) || isOrderSilverPurchaseInterval(order);
+}
+export function isDeliveryOrder(order){
+    return isOrderGoldDelivery(order) || isOrderSilverDelivery(order);
+}
+

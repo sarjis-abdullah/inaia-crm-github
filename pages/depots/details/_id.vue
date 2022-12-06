@@ -27,6 +27,7 @@
                       <div class="media-body">
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
                         <span class="h2 font-weight-bold mb-0">{{depot.name }}</span>
+                        <div class="font-weight-bold mb-0">{{$t(depot.depot_type.name_translation_key)}}</div>
                       </div>
                     </div>
                   </div>
@@ -60,7 +61,7 @@
                       {{$t('total_gold_amount')}}
                     </h5>
                     <span class="h2 font-weight-bold mb-0"
-                      ><i18n-n :value="depot.gold_amount/1000"></i18n-n> g</span
+                      ><i18n-n :value="depot.gram_amount/1000"></i18n-n> g</span
                     >
                   </div>
                   <div class="col-auto">
@@ -78,7 +79,7 @@
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="depot.gold_amount/1000*goldPrice"></i18n-n> €</span>
+                  <span class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> €</span>
                 </p>
               </div>
             </div>
@@ -120,6 +121,8 @@
                       <a class="dropdown-item" @click.prevent="confirmResume()"
                         v-if="depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled'"
                       ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmContractConfirm" v-if="depot.status.name_translation_key=='depot_status_applied_for_savings_plan'">
+                        <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">
                         <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
                     </base-dropdown>
@@ -250,6 +253,8 @@ import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
 import UserInfo from '@/components/Contacts/UserInfo';
 import CommentBox from '@/components/Comment/CommentBox';
+import {isSilverDepot,isGoldDepot} from "~/helpers/depots"
+import {MessageBox} from 'element-ui';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -289,16 +294,31 @@ export default {
         {
        ...mapGetters('depots',{
             depot:"details",
-            goldPrice:"getGoldPrice"
+            goldPrice:"getGoldPrice",
+            silverPrice:'silverPrice'
         }),
     },
      mounted () {
+      if(isGoldDepot(this.depot))
+      {
         if(this.goldPrice==0)
         {
             this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
                 this.goldPrice = res;
             })
         }
+      }
+      if(isSilverDepot(this.depot))
+      {
+        if(this.silverPrice==0)
+        {
+            this.$store.dispatch('depots/getCurrentSilverPrice').then(res=>{
+                this.silverPrice = res;
+            })
+        }
+      }
+        
+       this.$confirm = MessageBox.confirm
 
     },
     watch: {
@@ -384,6 +404,27 @@ export default {
         confirmCancel(){
           this.showCancelConfirm = true;
         },
+        confirmContractConfirm (){
+          this.$confirm(this.$t('do_you_want_to_confirm_contract','Warning',{
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          })).then(()=>{
+              const data = {
+              depot_id:this.depot.id,
+              account_id:this.depot.account_id
+            };
+            this.isSubmitting = true;
+            this.$store.dispatch('depots/confirmSavingPlanContract',data).then(()=>{
+              this.$notify({type: 'success', timeout: 5000, message: this.$t('savingplan_activated_successfully')});
+              this.showCancelConfirm = false;
+            }).catch(()=>{
+              this.$notify({type: 'danger', timeout: 5000, message: this.$t('savinplan_activated_unsuccessfully')})
+            }).finally(()=>{
+              this.isSubmitting = false;
+            })
+          })
+        },
         cancelSavinPlan(){
           const data = {
             depot_id:this.depot.id,
@@ -404,6 +445,18 @@ export default {
         },
         closeComments(){
           this.showComments = false;
+        },
+        calculateDepotValue(){
+          let value = 0;
+          if(isGoldDepot(this.depot))
+          {
+            value = this.depot.gram_amount/1000*this.goldPrice;
+          }
+          if(isSilverDepot(this.depot))
+          {
+            value = this.depot.gram_amount/1000*this.silverPrice;
+          }
+          return value;
         }
     }
 

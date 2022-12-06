@@ -44,17 +44,18 @@
                                     </div>
                                     <div class="d-flex align-items-center text-body">
                                       <span><strong>{{row.name}}</strong></span>
+                                     
                                     </div>
                                 </div>
                             </template>
                         </el-table-column>
 
                         <el-table-column :label="$t('total_gold_amount')"
-                                        prop="gold_amount"
+                                        prop="gram_amount"
                                         min-width="160px"
                                         sortable>
                             <template v-slot="{row}">
-                                <span class="status">{{$n(row.gold_amount/1000)}} g</span>
+                                <span class="status">{{$n(row.gram_amount/1000)}} g</span>
                             </template>
                         </el-table-column>
 
@@ -80,7 +81,14 @@
                             <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
                           </template>
                         </el-table-column>
-
+                        <el-table-column :label="$t('depot_type')"
+                                        
+                                         min-width="160px"
+                        >
+                          <template v-slot="{row}">
+                             <span>{{$t(row.depot_type.name_translation_key)}}</span>
+                          </template>
+                        </el-table-column>
                         <el-table-column :label="$t('status')"
                                         prop="status.name_translation_key"
                                         min-width="160px"
