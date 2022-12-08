@@ -73,6 +73,7 @@ import { mapGetters } from "vuex";
 import {Select,Option} from 'element-ui';
 import SelectPaymentAccount from './SelectPaymentAccount.vue';
 import { isOrderPending,isOrderPaymentFailed} from '~/helpers/order';
+import {formatDateToApiFormat} from '~/helpers/helpers';
 export default {
     name:'payment-method',
     components:{
@@ -129,6 +130,7 @@ export default {
         }
     },
    mounted:function(){
+    console.log(this.paymentAccount);
        if(!this.isNew)
        {
            this.initView();
@@ -255,19 +257,43 @@ export default {
         shouldDisplayExecutePayment(){
             
             return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
-            (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps") &&
+            (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
             !this.editActive && !this.isNew;
         },
         executePayment(){
-            this.isSubmitting = true
-            this.$store.dispatch('orders/retryPayment',this.order.id).then((res)=>{
-                this.$notify({type: 'success', timeout: 5000, message: this.$t('payment_initiated_successfully')})
-                this.$emit('paymentAccountUpdated',res);
-            }).catch((err)=>{
-                this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
-            }).finally(()=>{
-                this.isSubmitting = false;
-            })
+            if(this.paymentAccount && this.paymentAccount.payment_method)
+            {
+                this.isSubmitting = true;
+                if(this.paymentAccount.payment_method.name_translation_key=="pps")
+                {
+                    this.$store.dispatch('orders/retryPayment',this.order.id).then((res)=>{
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('payment_initiated_successfully')})
+                        this.$emit('paymentAccountUpdated',res);
+                    }).catch((err)=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                    }).finally(()=>{
+                        this.isSubmitting = false;
+                    })
+                }
+                if(this.paymentAccount.payment_method.name_translation_key=="bank_account")
+                {
+                    const payload = {
+                        order_ids:[this.order.id],
+                        execution_date:formatDateToApiFormat(new Date())
+                    }
+                    
+                    this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
+                       window.open(res,'_blank');
+                    }).catch((err)=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                    }).finally(()=>{
+                        this.isSubmitting = false;
+                    })
+                }
+            }
+            
+
+            
         },
         cancelEdit (){
             this.editActive = false;

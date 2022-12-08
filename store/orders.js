@@ -201,5 +201,13 @@ export const actions = {
             context.commit('updateShippment', {data:res.data.data,order_id:payload.order_id})
             return res.data.data;
         })
+    },
+    executeBankPayment(context,payload){
+        
+        return this.$axios
+        .post(`${ process.env.golddinarApiUrl }/generate-batch-direct-debit-form`,payload)
+        .then(res => {
+            return res.data.message.data.url;
+        })
     }
 }
