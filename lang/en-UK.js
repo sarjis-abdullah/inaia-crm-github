@@ -118,7 +118,7 @@ export default {
     order_status_refund:'refund',
     order_status_rejected:'rejected',
     order_status_executed:'executed',
-    order_status_payment_outstanding:'outstanding',
+    order_status_payment_outstanding:'Payment outstanding',
 
     customer_filter_placeholder:'Please enter customer name',
     apply_filter:'Apply filter',
