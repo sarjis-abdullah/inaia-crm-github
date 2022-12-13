@@ -30,9 +30,11 @@ export const state = () => ({
     loading: false,
     orderFilterList:[],
     goldPrice:0,
+    silverPrice:0,
     depotStatuses:[],
     agioTransactions: [],
-    agioTransactionTypes: []
+    agioTransactionTypes: [],
+    depotTypes:[]
 })
 
 const initialState  = state()
@@ -50,7 +52,9 @@ export const getters = {
     getGoldPrice:state=>state.goldPrice,
     depotStatuses:state=>state.depotStatuses,
     agioTransactions: state=>state.agioTransactions,
-    agioTransactionTypes: state=>state.agioTransactionTypes
+    agioTransactionTypes: state=>state.agioTransactionTypes,
+    depotTypes: state=>state.depotTypes,
+    silverPrice: state => state.silverPrice
 }
 
 export const mutations = {
@@ -95,6 +99,14 @@ export const mutations = {
     {
         let index = state.agioTransactions.findIndex(x=>x.id==id);
         state.agioTransactions.splice(index, 1);
+    },
+    depotTypes(state,list)
+    {
+        state.depotTypes = list;
+    },
+    silverPrice(state,price)
+    {
+        state.silverPrice  = price;
     }
 }
 
@@ -191,6 +203,17 @@ export const actions = {
                     return Promise.reject(err)
                 })
     },
+    getCurrentSilverPrice(context)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/current-silver-price`)
+                .then(res => {
+                    context.commit('silverPrice',res.data.data.fixing_gram_eur);
+                    return res.data.data.fixing_gram_eur;
+                }).catch(err => {
+                    // console.error('axios error during fetching roles', err)
+                    return Promise.reject(err)
+                })
+    },
     getGoldPriceByDate(context,payload)
     {
         return this.$axios.get(`${process.env.golddinarApiUrl}/historical-price?date=${payload}`)
@@ -223,6 +246,23 @@ export const actions = {
         }
         else{
             const status_id = getStatusId(status,'depot_status_paused');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    confirmSavingPlanContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_active');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_active');
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
     },
@@ -295,6 +335,17 @@ export const actions = {
         return this.$axios.delete(`${process.env.golddinarApiUrl}/agio-transaction/${ payload }`)
             .then(res => {
                 context.commit('deleteAgioTransaction',payload)
+                return true
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
+    },
+    getDepotTypes(context,payload)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/depot-types`)
+            .then(res => {
+                console.log(res.data.data);
+                context.commit('depotTypes',res.data.data)
                 return true
             }).catch(err=>{
                 return Promise.reject(err)

@@ -73,13 +73,13 @@
                         </template>
                     </el-table-column>
                     <el-table-column v-bind:label="$t('gold_amount')"
-                                    prop="gold_amount"
+                                    prop="gram_amount"
                                     min-width="160px"
                                     align="right"
                                     sortable>
                         <template v-slot="{row}">
                             <span class="amount">
-                                <i18n-n :value="parseInt(row.gold_amount)/1000"></i18n-n> g
+                                <i18n-n :value="parseInt(row.gram_amount)/1000"></i18n-n> g
                             </span>
                         </template>
                     </el-table-column>

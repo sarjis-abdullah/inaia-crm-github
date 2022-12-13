@@ -62,7 +62,7 @@
 <script>
 import {orderDetailScreens} from '../../helpers/constans';
 import DetailsInfo from '@/components/Orders/DetailsInfo';
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isOrderGoldPurchase,isOrderCompleted,isOrderGoldPurchaseInterval,isOrderOutstanding,isOrderGoldSale,isOrderDelivery } from '~/helpers/order'
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order'
 export default {
     props:{
         showPopup:{
@@ -189,7 +189,7 @@ export default {
         },
         shouldDisplayOrderCompleteButton(resource)
         {
-            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isOrderDelivery(resource))) 
+            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isDeliveryOrder(resource))) 
             && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
@@ -205,11 +205,11 @@ export default {
                 let data ={
                     id:resource.id,
                 }
-                if(isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
+                if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
                     data.data = {price_date:this.completeOrderInfo.date}
                 }
-                if(isOrderDelivery(resource))
+                if(isDeliveryOrder(resource))
                 {
                     data.data = {charge_delivery_cost:this.chargeShippmentFee};
                     if(this.shippmentDetails){
@@ -291,14 +291,14 @@ export default {
         shouldDisableCompleteButton(){
             if(this.selectedResourceScreen == orderDetailScreens.complete)
             {
-                if(isOrderGoldPurchase(this.selectedResource) || isOrderGoldPurchaseInterval(this.selectedResource))
+                if(isPurchaseOrder(this.selectedResource) || isIntervalPurchaseOrder(this.selectedResource))
                 {
                     if(!this.completeOrderInfo || !this.completeOrderInfo.date)
                     {
                         return true;
                     }
                 }
-                if(isOrderDelivery(this.selectedResource))
+                if(isDeliveryOrder(this.selectedResource))
                 {
                     if(this.shippmentDetails)
                     {
@@ -316,19 +316,19 @@ export default {
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return isOrderPending(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource));
+            return isOrderPending(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource));
         },
         setCancelPaymentAccount(account)
         {
             this.selectedCancelPaymentAccount = account;
         },
         shouldDisplayRefundButton(resource){
-            return isOrderCompleted(resource) && (isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource))
+            return isOrderCompleted(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
         },
         shouldDisplaySellGoldButton(resource){
             return isOrderPending(resource) &&
                 (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.sell) &&
-                isOrderGoldSale(resource)
+                isSellOrder(resource)
         },
         setRefundPaymentAccount(account)
         {
@@ -339,6 +339,7 @@ export default {
             this.enableDeleting = value;
         },
         sellGold (resource){
+            debugger;
             if(this.selectedResourceScreen != orderDetailScreens.sell)
             {
                 this.selectedResourceScreen = orderDetailScreens.sell;

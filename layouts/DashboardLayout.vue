@@ -155,7 +155,7 @@
         <sidebar-item
           v-if="accountingAccess"
           :link="{
-            name: 'Gold',
+            name: 'Assets',
             icon: 'lnir lnir-gold-bar text-primary',
             collapsed: true
           }"

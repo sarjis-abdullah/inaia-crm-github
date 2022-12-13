@@ -169,7 +169,7 @@
                     {{ $t("total_gold_amount") }}
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    ><i18n-n :value="batchProcess.gold_amount / 1000"></i18n-n>
+                    ><i18n-n :value="batchProcess.gram_amount / 1000"></i18n-n>
                     g</span
                   >
                 </div>

@@ -5,20 +5,20 @@
             <h2 class="card-title mt-3 mb-0 title">{{resource.order_type ? $t(resource.order_type.name_translation_key) : resource.order_type_id}}</h2>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.detail || selectedScreen==orderDetailScreens.delete || selectedScreen==orderDetailScreens.cancel">
-            <GoldSale :order="resource" v-if="resource.order_type.name_translation_key=='gold_sell'"></GoldSale>
-            <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key=='gold_purchase' || resource.order_type.name_translation_key=='gold_purchase_interval'"></GoldPurchase>
-            <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key=='gold_delivery'"></GoldDelivery>
-            <GoldGift :order="resource" v-if="resource.order_type.name_translation_key=='gold_gift'"></GoldGift>
-            <GoldTransfer :order="resource" v-if="resource.order_type.name_translation_key=='gold_transfer_in' || resource.order_type.name_translation_key=='gold_transfer_out'"></GoldTransfer>
-            <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key=='gold_withdrawal'"></GoldWithdrawal>
+            <GoldSale :order="resource" v-if="resource.order_type.name_translation_key.includes('sell')"></GoldSale>
+            <GoldPurchase :order="resource" v-if="resource.order_type.name_translation_key.includes('purchase') || resource.order_type.name_translation_key.includes('purchase_interval')"></GoldPurchase>
+            <GoldDelivery :order="resource" v-if="resource.order_type.name_translation_key.includes('delivery')"></GoldDelivery>
+            <GoldGift :order="resource" v-if="resource.order_type.name_translation_key.includes('gift')"></GoldGift>
+            <GoldTransfer :order="resource" v-if="resource.order_type.name_translation_key.includes('transfer_in') || resource.order_type.name_translation_key.includes('transfer_out')"></GoldTransfer>
+            <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key.includes('withdrawal')"></GoldWithdrawal>
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
                 <CompleteOrderDetail :order="resource"
                     @dateselected="onCompleteDateSelected"
-                    v-if="isOrderGoldPurchase(resource) || isOrderGoldPurchaseInterval(resource)"
+                    v-if="isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource)"
                 />
-                <span v-if="isOrderGoldSale(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
-                <CompleteGoldDelivery v-if="isOrderDelivery(resource)"
+                <span v-if="isSellOrder(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
+                <CompleteGoldDelivery v-if="isDeliveryOrder(resource)"
                     @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
                     @shippmentDetailsChanged="onShippmentDetailsChanged"
                 
@@ -66,7 +66,7 @@ import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
 import GoldGift from '@/components/Orders/goldDetails/GoldGift';
 import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
 import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
-import { isOrderPending, isOrderPaid,isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale,isOrderDelivery } from '~/helpers/order';
+import { isOrderPending, isOrderPaid,isPurchaseOrder,isIntervalPurchaseOrder,isSellOrder,isDeliveryOrder } from '~/helpers/order';
 import VueSlickCarousel from 'vue-slick-carousel';
 import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
 import CompleteGoldDelivery from '@/components/Orders/goldDetails/CompleteGoldDelivery';
@@ -123,10 +123,10 @@ export default {
     {
         isOrderPending,
         isOrderPaid,
-        isOrderGoldPurchase,
-        isOrderGoldPurchaseInterval,
-        isOrderGoldSale,
-        isOrderDelivery,
+        isPurchaseOrder,
+        isIntervalPurchaseOrder,
+        isSellOrder,
+        isDeliveryOrder,
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);
