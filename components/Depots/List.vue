@@ -7,7 +7,7 @@
                     <div class="card-header">
                       <div class="row align-items-center">
                         <div class="col-8">
-                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
+                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('depot_name')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
                           <h5 v-else class="h3 mb-0">{{ $t('depots') }}</h5>
                         </div>
                         <div class="col-4 text-right">
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="d-flex align-items-center text-body">
                                       <span><strong>{{row.name}}</strong></span>
-                                     
+
                                     </div>
                                 </div>
                             </template>
@@ -66,7 +66,7 @@
                                 <template v-slot="{row}">
                                     <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
                                     <div v-if="row.is_savings_plan==1">
-                                        <div>{{$n(row.interval_amount)}} €</div>
+                                        <div>{{$n(row.interval_amount / 100)}} €</div>
                                         <div class="dateStyle">{{$d(new Date(row.interval_startdate))}} - {{$d(new Date(row.interval_enddate))}}</div>
                                     </div>
                                 </template>
@@ -77,12 +77,12 @@
                                          min-width="160px"
                         >
                           <template v-slot="{row}">
-                            <span>{{$n(row.agio)}} €</span>
+                            <span>{{$n(row.agio/100)}} €</span>
                             <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
                           </template>
                         </el-table-column>
                         <el-table-column :label="$t('depot_type')"
-                                        
+
                                          min-width="160px"
                         >
                           <template v-slot="{row}">

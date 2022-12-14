@@ -28,6 +28,10 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
+          <ExternalBankAmountCard />
+        </div>
+
+        <div class="col-xl-4 col-md-6">
           <MasterAmountCard />
         </div>
 
@@ -323,10 +327,12 @@
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
+  import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
 
   export default {
     layout: 'DashboardLayout',
     components: {
+      ExternalBankAmountCard,
       ActivityFeed,
       LineChart,
       BarChart,

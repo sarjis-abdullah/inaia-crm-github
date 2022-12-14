@@ -46,7 +46,7 @@
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
-                  <UserInfo  :customerId="client.contact_id"></UserInfo>
+                  <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
               </div>
             </div>
@@ -98,7 +98,7 @@
                     </h5>
 
                     <div>
-                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount) }} €</span>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} €</span>
                       <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
                     </div>
                   </div>
@@ -231,7 +231,7 @@
             </template>
             <div>
               <DepotStatusHistory :depotStatus="depot.status_history"/>
-              
+
            </div>
 
         </modal>
@@ -317,7 +317,7 @@ export default {
             })
         }
       }
-        
+
        this.$confirm = MessageBox.confirm
 
     },
