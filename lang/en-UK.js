@@ -503,5 +503,7 @@ export default {
     silver_delivery:'Silver delivery',
     silver_transfer_in:'Silver transfer in',
     silver_transfer_out:'Silver transfer out',
-    silver_gift:'Silver gift'
+    silver_gift:'Silver gift',
+    silver_price_per_gram:'Silver price per gram',
+    order_status_payment_inprogress:'Payment in progress'
 }

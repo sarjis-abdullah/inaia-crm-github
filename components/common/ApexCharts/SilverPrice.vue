@@ -2,7 +2,7 @@
     <card header-classes="bg-transparent _shadow-none border-bottom-0 pb-0">
         <div slot="header" class="row">
             <div class="col">
-                <h6 class="surtitle">{{ $t('gold_price_per_gram') }}</h6>
+                <h6 class="surtitle">{{ $t('silver_price_per_gram') }}</h6>
                 <h5 class="h1 mb-0 text-nowrap">
                     <!-- {{ $n(goldPrice) }} € -->
                     <i18n-n :value="goldPrice">
@@ -32,6 +32,7 @@
                 <chart-timelines
                     @update-timeline="updateTimeline"
                     @update-timeline-data="refreshChart"
+                    assetType="silver"
                 />
             </div>
         </div>
@@ -53,10 +54,10 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import ChartTimelines from '@/components/common/ApexCharts/ChartTimelines'
-import ApexChartMixin from '~/mixins/ApexChartMixin'
+import SilverApexChartMixin from '~/mixins/SilverApexChartMixin'
 
 export default {
-    mixins: [ApexChartMixin],
+    mixins: [SilverApexChartMixin],
     components: {
         apexchart: VueApexCharts,
         ChartTimelines
@@ -68,7 +69,7 @@ export default {
         }
     },
     mounted() {
-        this.$root.$on('goldPriceUpdated', () => {
+        this.$root.$on('silverPriceUpdated', () => {
             setTimeout(() => this.indicatedData(), 100)
         })
     }
@@ -81,15 +82,15 @@ export default {
     .apexcharts-xaxistooltip-bottom {
         margin-top: 4px !important;
         padding: 4px 5px !important;
-        border-color: #DAB518 !important;
-        background: #DAB518 !important;
+        border-color: #8F9FB3 !important;
+        background: #8F9FB3 !important;
         color:#fff !important;
     }
     .apexcharts-xaxistooltip-bottom:before {
         display: none !important;
     }
     .apexcharts-xaxistooltip-bottom:after {
-        border-bottom-color: #DAB518     !important;
+        border-bottom-color: #0074d9 !important;
     }
 
     .img-container {

@@ -3,9 +3,6 @@ export const state = () => {
     return {
         prices: [],
         currentPrice: null,
-        currentBuyPrice: null,
-        currentSellPrice: null,
-        currency: null,
         timestamp: null,
         historyType: '',
         HMApiDowned: false,
@@ -21,15 +18,6 @@ export const getters = {
     },
     currentPrice(state) {
         return state.currentPrice
-    },
-    currentBuyPrice(state) {
-        return state.currentBuyPrice
-    },
-    currentSellPrice(state) {
-        return state.currentSellPrice
-    },
-    currency(state) {
-        return state.currency
     },
     timestamp(state) {
         return state.timestamp
@@ -48,15 +36,6 @@ export const mutations = {
     },
     currentPrice(state, price) {
         state.currentPrice = price
-    },
-    currentBuyPrice(state, price) {
-        state.currentBuyPrice = price
-    },
-    currentSellPrice(state, price) {
-        state.currentSellPrice = price
-    },
-    currency(state, currency) {
-        state.currency = currency
     },
     timestamp(state, timestamp) {
         state.timestamp = timestamp
@@ -82,14 +61,10 @@ export const actions = {
         }
         commit('loading', true)
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/current-gold-price`)
+            .get(`${process.env.golddinarApiUrl}/current-silver-price`)
             .then(response => {
                 if (response && response.data.data) {
-                    commit('currentPrice', parseFloat(response.data.data.currentGoldPrice))
-                    commit('currentBuyPrice', parseFloat(response.data.data.currentGoldBuyPrice))
-                    commit('currentSellPrice', parseFloat(response.data.data.currentGoldSellPrice))
-                    commit('currency', response.data.data.currency)
-                    commit('timestamp', response.data.data.timestamp)
+                    commit('currentPrice', parseFloat(response.data.data.fixing_gram_eur))
                     commit('HMApiDowned', false)
                 }
                 return Promise.resolve(response)
@@ -97,12 +72,8 @@ export const actions = {
                 if (state.prices.length) {
                     let currentPrice = state.prices[0][1]
                     commit('currentPrice', currentPrice)
-                    commit('currentBuyPrice', currentPrice + 0.2)
-                    commit('currentSellPrice', currentPrice - 0.2)
                 } else {
                     commit('currentPrice', 0)
-                    commit('currentBuyPrice', 0)
-                    commit('currentSellPrice', 0)
                 }
                 commit('currency', 'euro')
                 commit('timestamp', Math.round(Date.now() / 1000))
@@ -118,15 +89,11 @@ export const actions = {
             return Promise.resolve(context.state.prices)
         }
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/historical-price?type=${ payload.type }${ payload.start ? '&start='+payload.start : ''}`)
+            .get(`${process.env.golddinarApiUrl}/silver-price-historical?period=${ payload.type }${ payload.start ? '&start='+payload.start : ''}`)
             .then(response => {
                 let mappedData  = [];
                 if (response && response.data.data) {
-                    if (process.env.quandlApiOn) {
-                        mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram_eur])
-                    } else {
-                        mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.fixing_gram_eur])
-                    }
+                    mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram_eur])
                 }
                 console.log(mappedData);
                 context.commit('prices', mappedData)
@@ -135,8 +102,6 @@ export const actions = {
                 if (context.state.HMApiDowned && mappedData.length) {
                     let currentPrice = mappedData[0][1]
                     context.commit('currentPrice', currentPrice)
-                    context.commit('currentBuyPrice', currentPrice + 0.2)
-                    context.commit('currentSellPrice', currentPrice - 0.2)
                 }
 
                 return Promise.resolve(mappedData)
@@ -145,4 +110,3 @@ export const actions = {
             })
     },
 }
-

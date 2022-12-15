@@ -66,6 +66,7 @@ export default {
                     },
 
                 },
+                colors: [ '#8F9FB3'],
                 tooltip: {
                     x: {
                         show: false,
@@ -110,7 +111,6 @@ export default {
                         }
                     }
                 },
-                colors: [ '#DAB518'],
                 grid: {
                     xaxis: {
                         lines: {
@@ -135,7 +135,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            currentGoldPrice: "gold/currentPrice",
+            currentGoldPrice: "silver/currentPrice",
         }),
         refPrice() {
             if (!this.series[0].data || !Array.isArray(this.series[0].data) || !this.series[0].data.length) {
@@ -165,22 +165,23 @@ export default {
         paddingFractionTo3,
 
         updateTimeline: function (timeline) {
+            console.log(timeline);
             this.selection = timeline;
         },
 
         refreshChart(dt) {
-            // console.error('prices', dt)
+             console.error(this.chartOptions.xaxis)
             setTimeout(() => this.series = [{
-                name: "Goldpreis / g",
+                name: "Silverpreis / g",
                 data: dt
             }]);
-
+            console.log(dt[0][0]);
             setTimeout(() => this.chartOptions   = {
                 ...this.chartOptions,
                 xaxis: {
                     ...this.chartOptions.xaxis,
-                    min: dt.length ? dt[dt.length - 1][0] : 0,
-                    max: dt.length ? dt[0][0] : 0
+                    max: dt.length ? dt[dt.length - 1][0] : 0,
+                    min: dt.length ? dt[0][0] : 0
                 },
                 tooltip: {
                     ...this.chartOptions.tooltip,
@@ -189,7 +190,7 @@ export default {
                         format: this.updateTooltip(),
                     }
                 }
-            });
+            },100);
 
             setTimeout(() => {
                 if (dt.length) {
@@ -245,49 +246,6 @@ export default {
             this.priceChanged   = parseFixed( Math.abs((this.goldPrice - this.refPrice) * 100 / (this.refPrice || 100)) )
             this.priceUp        = this.goldPrice >= parseFixed(this.refPrice)
         },
-
-        getDateRange() {
-            let queryStr    = '';
-            switch (this.selection) {
-                case 'one_day':
-                    queryStr    = 'start='+this.getOldDate(1)+'&end='+this.getOldDate(0);
-                    break;
-                case 'one_week':
-                    queryStr    = 'start='+this.getOldDate(7)+'&end='+this.getOldDate(0);
-                    break;
-                case 'one_month':
-                    queryStr    = 'start='+this.getOldDate(30)+'&end='+this.getOldDate(0);
-                    break;
-                case 'six_months':
-                    queryStr    = 'start='+this.getOldDate(182)+'&end='+this.getOldDate(0);
-                    break;
-                case 'one_year':
-                    queryStr    = 'start='+this.getOldDate(365)+'&end='+this.getOldDate(0);
-                    break;
-                case 'ytd':
-                    this.chartOptions = {
-                        xaxis: {
-                            min: new Date('01 Jan'+(new Date()).getUTCFullYear()).getTime(),
-                            max: new Date(this.getOldDate(0)).getTime(),
-                        }
-                    }
-                    queryStr    = 'start='+(new Date()).getUTCFullYear()+'-01-01&end='+this.getOldDate(0);
-                    break;
-                case 'all':
-                    this.chartOptions = {
-                        xaxis: {
-                            min: undefined,
-                            max: undefined,
-                        }
-                    }
-                    queryStr    = 'start='+this.getOldDate(24)+'&end='+this.getOldDate(0);
-                    break;
-                default:
-
-            }
-            return queryStr ? '?'+queryStr : '';
-        },
-
         getOldDate(days) {
             let d = new Date();
             d.setDate(d.getUTCDate() - days);
@@ -296,6 +254,7 @@ export default {
 
         updateTimeLine: function () {
             let op  = {};
+            console.log(this.selection);
             switch (this.selection) {
                 case 'one_day':
                     op = {

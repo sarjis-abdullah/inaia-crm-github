@@ -24,6 +24,12 @@
 
 <script>
 export default {
+    props:{
+        assetType:{
+            type:String,
+            default:'gold'
+        }
+    },
     data() {
         return {
             showOneDay: !process.env.quandlApiOn,
@@ -51,8 +57,14 @@ export default {
         },
 
         async fetchTimelineData() {
-            let balanceHistory = null, prices = null, payload = {"type": this.list[this.timeline]}
-            prices  = await this.$store.dispatch('gold/prices', payload)
+            console.log(this.assetType);
+            let balanceHistory = null, prices = null, payload = {"type": this.list[this.timeline]};
+            let action = 'gold/prices';
+            if(this.assetType == 'silver')
+            {
+                action = 'silver/prices';
+            }
+            prices  = await this.$store.dispatch(action, payload)
                 .then(res => {
                     // console.error('price-history', res)
                     this.$emit('update-timeline-data', res);
