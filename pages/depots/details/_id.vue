@@ -298,28 +298,8 @@ export default {
             silverPrice:'silverPrice'
         }),
     },
-     mounted () {
-      if(isGoldDepot(this.depot))
-      {
-        if(this.goldPrice==0)
-        {
-            this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                this.goldPrice = res;
-            })
-        }
-      }
-      if(isSilverDepot(this.depot))
-      {
-        if(this.silverPrice==0)
-        {
-            this.$store.dispatch('depots/getCurrentSilverPrice').then(res=>{
-                this.silverPrice = res;
-            })
-        }
-      }
-        
+     mounted () {  
        this.$confirm = MessageBox.confirm
-
     },
     watch: {
         depotId: {
@@ -335,12 +315,32 @@ export default {
         getCustomerName(client) {
           return client.username;
         },
+        initPrices(){
+            if(isGoldDepot(this.depot))
+            {
+              if(this.goldPrice==0)
+              {
+                  this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
+                      this.goldPrice = res;
+                  })
+              }
+            }
+            if(isSilverDepot(this.depot))
+            {
+              if(this.silverPrice==0)
+              {
+                  this.$store.dispatch('depots/getCurrentSilverPrice').then(res=>{
+                      this.silverPrice = res;
+                  })
+              }
+            }
+        },
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then(()=>{
+                this.initPrices()
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
-                  console.log(res);
                       this.client = res;
                   })
             }).
