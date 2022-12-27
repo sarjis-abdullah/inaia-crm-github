@@ -252,7 +252,7 @@ export const actions = {
     },
     clientDetailsData(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs,nationality_details`)
             .then(response => {
                 const singleClientData = response.data.data
                 context.commit('singleClientData', singleClientData);

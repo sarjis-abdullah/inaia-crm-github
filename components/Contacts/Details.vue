@@ -105,7 +105,6 @@ export default {
             types: "types/pairs",
         }),
         info() {
-            console.log('resource', this.resource)
             return this.resource && this.resource.customer;
         },
         getType() {
@@ -120,7 +119,7 @@ export default {
         },
         getAccountId() {
           if (this.info.account) {
-            
+
             return this.info.account.id;
           } else {
             return false;
@@ -164,7 +163,6 @@ export default {
         })
       },
       handleChange(val) {
-        console.log(val);
         val.forEach(element => {
           if(element == 'depots' && !this.shouldLoadDepots)
           {
