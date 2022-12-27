@@ -52,7 +52,7 @@
                 <badge :type="`${info.is_active ? 'success' : 'danger'}`" class="ml-1">{{info.is_active ? $t('active') : $t('inactive')}}</badge>
                 <badge v-if="info.is_locked" type="danger" class="ml-1"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
               </div>
-              <div>{{$t('created_at')}}: {{info.account.created_at ? info.account.created_at : ''}}</div>
+              <div>{{$t('created_at')}}: {{info.account.created_at ? $d(new Date(info.account.created_at),'narrow') : ''}}</div>
               <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
               <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
             </div>
