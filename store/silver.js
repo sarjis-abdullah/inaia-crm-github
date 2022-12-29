@@ -109,4 +109,20 @@ export const actions = {
                 return Promise.reject(err)
             })
     },
+    getFixingPrice(context, payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/silver-price-historical?date=${ payload }`)
+            .then(response => {
+                let firstEntry = response.data.data[0];
+                if(firstEntry)
+                {
+                    return firstEntry.fixing_gram_eur;
+                }
+                else{
+                    return -1;
+                }
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+    },
 }

@@ -118,7 +118,7 @@ export const actions = {
             return Promise.resolve(context.state.prices)
         }
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/historical-price?type=${ payload.type }${ payload.start ? '&start='+payload.start : ''}`)
+            .get(`${process.env.golddinarApiUrl}/historical-price?type=${ payload.type }${ payload.start ? '&start='+payload.start : ''}${ payload.date ? '&date='+payload.date : ''}`)
             .then(response => {
                 let mappedData  = [];
                 if (response && response.data.data) {
@@ -140,6 +140,22 @@ export const actions = {
                 }
 
                 return Promise.resolve(mappedData)
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+    },
+    getFixingPrice(context, payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/historical-price?date=${ payload }`)
+            .then(response => {
+                let firstEntry = response.data.data[0];
+                if(firstEntry)
+                {
+                    return firstEntry.fixing_gram_eur;
+                }
+                else{
+                    return -1;
+                }
             }).catch(err => {
                 return Promise.reject(err)
             })
