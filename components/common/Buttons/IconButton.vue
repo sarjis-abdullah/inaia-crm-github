@@ -62,6 +62,14 @@ export default {
             {
                 return 'lnir lnir-reload'
             }
+            if(this.type=='add')
+            {
+                return 'fa fa-plus'
+            }
+            if(this.type=='edit')
+            {
+                return 'fa fa-edit'
+            }
         },
         onClick:function(){
             if(!this.disabled)
@@ -77,5 +85,8 @@ export default {
     margin-left:3px;
     font-size:17px;
     color:#f6f9fc;
+}
+.actionBtnStyle:active{
+    opacity: 0.5;
 }
 </style>
