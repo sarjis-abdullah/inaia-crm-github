@@ -1,4 +1,4 @@
-const includes = "order_type,order_process_status";
+const includes = "order_type,order_process_status,orders_count";
 export const state = () => {
     return {
         batchProcesses : [],
@@ -71,10 +71,10 @@ export const actions = {
                 })
     },
     fetchOrderProcessDetails(context,payload){
-        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes?include=${includes}&id=${ payload }`)
+        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/${ payload }?include=${includes}`)
                 .then(res => {
-                    context.commit('batchProcess', res.data.data[0]);
-                    return res.data.data[0];
+                    context.commit('batchProcess', res.data.data);
+                    return res.data.data;
                 })
     },
     retryFailed(context,payload){
