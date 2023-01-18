@@ -17,6 +17,7 @@
                         @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
                         @shippmentDetailsChanged="onShippmentDetailsChanged"
                         @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
+                        @isMoneyRefunded="setIsMoneyRefunded"
                         />
                     </div>
                     <template slot="footer">
@@ -89,6 +90,7 @@ export default {
             chargeShippmentFee:true,
             isSubmitting: false,
             selectedResourceScreen:orderDetailScreens.detail,
+            isMoneyRefunded: 0
         }
     },
      created (){
@@ -114,7 +116,7 @@ export default {
             }
             else
             {
-                
+
                 this.isSubmitting = true;
                 this.$store
                     .dispatch('orders/remove', resource.id)
@@ -165,6 +167,10 @@ export default {
         {
             this.sellGoldDate = date;
         },
+       setIsMoneyRefunded(isMoneyRefunded)
+       {
+          this.isMoneyRefunded = isMoneyRefunded;
+       },
         onDetailClose ()
         {
             this.selectedResourceScreen = orderDetailScreens.detail;
@@ -174,6 +180,7 @@ export default {
             this.selectedRefundPaymentAccount=null;
             this.sellGoldDate = null;
             this.selectedSellingPaymentAccount = null;
+            this.isMoneyRefunded = 0;
         },
         shouldDisplayOrderDeleteButton(resource)
         {
@@ -189,7 +196,7 @@ export default {
         },
         shouldDisplayOrderCompleteButton(resource)
         {
-            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isDeliveryOrder(resource))) 
+            return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isDeliveryOrder(resource)))
             && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
@@ -267,7 +274,8 @@ export default {
                 let data = {
                     id:resource.id,
                     data:{
-                        payment_account_id:this.selectedRefundPaymentAccount
+                        payment_account_id:this.selectedRefundPaymentAccount,
+                        is_money_refunded: this.isMoneyRefunded
                     }
                 }
                 this.isSubmitting = true;
@@ -380,7 +388,7 @@ export default {
         onShippmentDetailsChanged(value)
         {
             this.shippmentDetails = value;
-            
+
         },
         onSellingPaymentAccountSelected(account){
             this.selectedSellingPaymentAccount = account;

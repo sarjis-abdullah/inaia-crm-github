@@ -21,7 +21,7 @@
                 <CompleteGoldDelivery v-if="isDeliveryOrder(resource)"
                     @shippmentFeeChargeChanged="onShippmentFeeChargeChanged"
                     @shippmentDetailsChanged="onShippmentDetailsChanged"
-                
+
                 />
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.sell">
@@ -55,6 +55,14 @@
                 @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
             />
             {{$t('confirm_refund_order')}} "{{ resource ? resource.id : '' }}"?
+        </div>
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
+          <h4>Did you already pay back the customer?</h4>
+          <input type="radio"  value="1" v-model="isMoneyRefunded" />
+          <label for="yes">Yes</label>
+
+          <input type="radio" value="0" v-model="isMoneyRefunded" />
+          <label for="no">No</label>
         </div>
     </div>
 </template>
@@ -100,7 +108,8 @@ export default {
     },
     data:function(){
         return {
-            deleteOrderId:''
+            deleteOrderId:'',
+            isMoneyRefunded: 0
         }
     },
     created (){
@@ -117,6 +126,11 @@ export default {
                     this.$emit("shouldEnableDelete",false);
                 }
             }
+        },
+        isMoneyRefunded: {
+          handler (){
+            this.$emit('isMoneyRefunded', this.isMoneyRefunded);
+          }
         }
     },
     methods:
@@ -149,7 +163,7 @@ export default {
         },
         onSellingPaymentAccountSelected (account) {
             this.$emit('sellingPaymentAccountSelected',account);
-        }
+        },
 
     }
 
