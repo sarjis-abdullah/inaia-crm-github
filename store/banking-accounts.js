@@ -72,6 +72,23 @@ export const actions={
                 .then(res=>{
                     return res.data.data;
                 })
+    },
+    getExternalBankSummary(){
+      return this.$axios
+                .get(process.env.bankingApiUrl +`/banking-accounts/inaia/summary`)
+                .then(res=>{
+                    return res.data.data.bank_account;
+                })
+    },
+    syncWithFinApi(){
+      return this.$axios
+                .post(process.env.paymentsApiUrl +`/finapi/bank-connection/1756110/update`)
+                .then(res=>{
+                  if(res.data.data.payload.webForm)
+                    return res.data.data.payload.webForm.url;
+                  else
+                    return null;
+                })
     }
 
 }

@@ -550,5 +550,10 @@ export default {
     execute_pps_payment:"Execute PPS payments",
     execute_bank_payment:'Execute bank payments',
     choose_date_to_execute_payment:'Choose a date for payment execution',
-    select_payment_date:'Select payment date'
+    select_payment_date:'Select payment date',
+    refresh_data:'Refresh data',
+    sync_with_FinApi:'Update bank connection',
+    bank_connection_done_succesfully:'Bank connection synced successfully',
+    bank_connection_unsuccessfully:"Couldn't sync bank connection please try again later",
+    inaia_banking_account:'Inaia banking account'
 }

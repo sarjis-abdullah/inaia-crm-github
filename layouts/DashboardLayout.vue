@@ -174,6 +174,7 @@
             collapsed: true
           }"
         >
+        <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }"/>
           <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }"/>
         </sidebar-item>
 
