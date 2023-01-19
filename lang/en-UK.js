@@ -555,5 +555,7 @@ export default {
     sync_with_FinApi:'Update bank connection',
     bank_connection_done_succesfully:'Bank connection synced successfully',
     bank_connection_unsuccessfully:"Couldn't sync bank connection please try again later",
-    inaia_banking_account:'Inaia banking account'
+    inaia_banking_account:'Inaia banking account',
+    payment_failed:'Payment failed',
+    no_claim_data_available:'No data available for the year'
 }

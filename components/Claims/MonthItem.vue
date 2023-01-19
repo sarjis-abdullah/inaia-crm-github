@@ -14,14 +14,11 @@
       <div
         class="d-flex flex-column align-items-center justify-content-center p-3"
       >
-      <div>
+      <div class="mb-3">
           <i class="fa fa-file" style="font-size:35px;color:#0074d9"></i>
       </div>
-        <div class="d-inline m-3">
-          <Status :status="item.status" />
-          <span v-if="item.unpaid_sum > 0" class="text-sm">
-            ({{ $n(item.unpaid_sum / 100) }} €)</span
-          >
+        <div class="d-inline mb-1" v-for="status in item.status" :key="status.claim_status">
+          <Status :status="status.claim_status" :amount="status.total_amount"/>
         </div>
         
       </div>

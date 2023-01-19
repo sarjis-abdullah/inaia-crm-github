@@ -30,8 +30,8 @@
               </div>
             </div>
           </div>
-          <div class="crad-body pt-2">
-            <div class="row p-2" v-for="month in months" :key="month.month">
+          <div class="crad-body pt-2" v-if="months && months.length > 0">
+            <div class="row p-2" v-for="month in months" :key="month.month" >
               <div class="col">
                 <MonthItem v-if="month[0]" :item="month[0]" :year="selectedYear"/>
               </div>
@@ -42,6 +42,9 @@
                 <MonthItem v-if="month[2]" :item="month[2]" :year="selectedYear"/>
               </div>
             </div>
+          </div>
+          <div class="crad-body p-3" v-else>
+            <span class=" text-center">{{ $t('no_claim_data_available') }} {{ selectedYear }}</span>
           </div>
         </div>
       </div>
@@ -73,8 +76,15 @@ export default {
       let raw = JSON.parse(JSON.stringify(this.summaries(this.selectedYear)));
       if (raw) {
         let data = [];
-        while (raw.length > 0) {
-          data.push(raw.splice(0, 3));
+        let rawData = [];
+        for (const [key, value] of Object.entries(raw.months)) {
+          rawData.push({
+            month:key,
+            status:value
+          })
+        }
+        while (rawData.length > 0) {
+          data.push(rawData.splice(0, 3));
         }
         return data;
       } else return null;
