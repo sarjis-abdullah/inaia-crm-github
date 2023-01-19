@@ -255,10 +255,15 @@ export default {
             this.selectedPaymentAccount = paymentAccount;
         },
         shouldDisplayExecutePayment(){
+            if(this.paymentAccount)
+            {
+                return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
+                (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
+                !this.editActive && !this.isNew;
+            }
+            else
+            return false;
             
-            return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
-            (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
-            !this.editActive && !this.isNew;
         },
         executePayment(){
             if(this.paymentAccount && this.paymentAccount.payment_method)
