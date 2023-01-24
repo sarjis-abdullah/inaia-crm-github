@@ -75,9 +75,9 @@ export default {
                         execution_date:formatDateToApiFormat(this.selectedDate),
                         no_of_orders:orderNumber
                     }
-            
+
             this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
-                window.open(res,'_self');
+                window.open(res,'_blank');
             }).catch((err)=>{
                 this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
             }).finally(()=>{
