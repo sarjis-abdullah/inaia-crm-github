@@ -26,7 +26,7 @@
                             </template>
                         </el-table-column>
                         <el-table-column label="value"
-                                        
+
                                         prop="id"
                                         >
                             <template v-slot="{row}">
@@ -75,7 +75,7 @@ export default {
             this.$store.dispatch('depots/getDepotTypes');
         }
         this.getAmounts();
-        
+
     },
     computed:{
         ...mapGetters({
@@ -100,7 +100,7 @@ export default {
             {
                 chartData.datasets = [
                     {
-                       
+
                         data:[this.inaiaGoldSock/1000,this.operationGoldSock/1000],
                         backgroundColor:['#0065D3','#4DA1FF']
                     }
@@ -153,7 +153,7 @@ export default {
             }
             if(this.stockType == assetTypes.silver)
             {
-                
+
             }
             return degree;
         },
@@ -162,9 +162,9 @@ export default {
                         console.log(err);
                     }).finally(
                         ()=>{
-                            
+
                                 this.isLoading = false;
-                            
+
                         }
                     )
         },
@@ -202,7 +202,7 @@ export default {
         },
         gotoDetails(row){
             let depotType =  this.depotTypes.find(x=>x.name_translation_key == this.stockType)
-            if(depotType)this.$router.push('stocks/transactions?depot_type='+depotType.id+'&stock_type='+row.target);
+            if(depotType)this.$router.push('/stocks/transactions?depot_type='+depotType.id+'&stock_type='+row.target);
         },
         addStock(row){
             this.selectedTarget = row.target;
@@ -223,13 +223,13 @@ export default {
    display: inline-block;
     border: 6px solid #DAB518;
     border-radius: 6px;
- 
+
 }
 .circle-silver {
     display: inline-block;
     border: 6px solid #8F9FB3;
     border-radius: 6px;
- 
+
 }
 .circle-inaia {
     display: inline-block;
