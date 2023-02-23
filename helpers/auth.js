@@ -79,6 +79,79 @@ export async function logout(store) {
     return await store.dispatch('auth/logout')
         .catch(err => {})
         .finally(() => {
-            window.location.href    = process.env.universalLogin + '/logout'
+            //window.location.href    = process.env.universalLogin + '/logout'
+            this.$router.push('/logout')
         })
+}
+
+export function holdingActivePermissionIds(holdingPermissionIds, availablePermissions) {
+    let holdingActivePermissionIds = []
+    if (Array.isArray(holdingPermissionIds) && Array.isArray(availablePermissions)) {
+        holdingPermissionIds.forEach( pid => {
+            if (availablePermissions.find( p => p.id === pid )) {
+                holdingActivePermissionIds.push(pid)
+            }
+        })
+    }
+    return holdingActivePermissionIds
+}
+
+export function holdingActiveRoleIds(holdingRoleIds, availableRoles) {
+    let holdingActiveRoleIds = []
+    if (Array.isArray(holdingRoleIds) && Array.isArray(availableRoles)) {
+        holdingRoleIds.forEach( rid => {
+            if (availableRoles.find( r => r.id === rid )) {
+                holdingActiveRoleIds.push(rid)
+            }
+        })
+    }
+    return holdingActiveRoleIds
+}
+
+export function getEmployeeTypeId(types) {
+    return types['employee']
+}
+
+export function redirectPost(url, data) {
+    var form = document.createElement('form');
+    document.body.appendChild(form);
+    form.method = 'post';
+    form.action = url;
+    for (var name in data) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = data[name];
+        form.appendChild(input);
+    }
+    form.submit();
+}
+
+export function anonymousUserAvatar(gender = null) {
+    if (gender === 'female' || gender === 'f') {
+        return process.env.femaleAvatar
+    }
+    return process.env.maleAvatar
+}
+
+export function avatar(loggedInUser = null) {
+    let gender = null
+    if (loggedInUser) {
+        if (loggedInUser.avatar) {
+            return loggedInUser.avatar
+            // return process.env.s3BucketUri + loggedInUser.avatar
+        } else if (loggedInUser.person_data) {
+            gender = loggedInUser.person_data.gender.toLowerCase()
+        }
+    }
+    return anonymousUserAvatar(gender)
+}
+
+export function notifyError(err, notify) {
+    let response = err.response
+    if (response.status === 403) {
+        notify({type: 'danger', timeout: 7000, message: response.data.message })
+    } else {
+        notify({type: 'danger', timeout: 7000, message: err.message })
+    }
 }

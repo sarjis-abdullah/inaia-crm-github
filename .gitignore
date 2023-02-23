@@ -94,3 +94,5 @@ sw.*
 *-x
 *-x.js
 *-x.json
+
+package-lock.json

@@ -1,4 +1,3 @@
-
 /*!
 
 =========================================================
@@ -69,6 +68,7 @@ module.exports = {
     '~/plugins/dashboard/dashboard-plugin',
     '~/plugins/dashboard/full-calendar',
     '~/plugins/dashboard/world-map',
+    '~/plugins/slickCarousel'
     // {src: '~/plugins/dashboard/full-calendar', ssr: false },
     // {src: '~/plugins/dashboard/world-map', ssr: false },
   ],
@@ -80,6 +80,7 @@ module.exports = {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    'vue2-editor/nuxt'
   ],
   /*
   ** Axios module configuration

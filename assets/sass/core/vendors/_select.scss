@@ -45,6 +45,10 @@
 
 .el-select .el-select__tags {
   padding-left: 10px;
+
+  & .el-select__input {
+    margin-left: 5px;
+  }
 }
 
 .el-select .el-select__tags .el-tag {

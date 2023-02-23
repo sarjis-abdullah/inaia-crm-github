@@ -6,18 +6,14 @@ export default function({ store, $axios }) {
 		return config
 	})
 
-    $axios.interceptors.response.use(
-        response => response,
-        error => {
-            if (error.response && error.response.status === 401) {
-                store.dispatch('auth/logout')
-                    .then(res => {
-                    }).catch(err => {
-                    }).finally(() => {
-                        window.location.href    = process.env.universalLogin + '/logout'
-                    })
-            }
-            return Promise.reject(error)
-        }
-    )
+  $axios.interceptors.response.use(
+    response => response,
+    error => {
+      if (error.response && error.response.status === 401) {
+        store.dispatch('auth/unauthorize');
+        window.location.href = '/'
+      }
+      return Promise.reject(error)
+    }
+  )
 }

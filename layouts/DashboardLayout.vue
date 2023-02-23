@@ -124,70 +124,80 @@
           :link="{
             name: 'Dashboard',
             path: '/dashboard',
-            icon: 'fas fa-chart-pie text-primary',
+            icon: 'lnir lnir-pie-chart text-primary',
           }"
         />
 
-        <!--
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'CRM',
+            icon: 'lnir lnir-users text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
+          <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'PPS',
+            icon: 'lnir lnir-credit-cards text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: 'Master', path: '/banking-master' }"/>
+          <sidebar-item :link="{ name: 'Accounts', path: '/banking-accounts' }"/>
+        </sidebar-item>
+
+        <sidebar-item
+          v-if="accountingAccess"
+          :link="{
+            name: 'Assets',
+            icon: 'lnir lnir-gold-bar text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
+          <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
+          <sidebar-item :link="{ name: $t('batch_processing'), path: '/orders/batch-processing' }"/>
+          <sidebar-item :link="{ name: $t('stocks'), path: '/stocks' }"/>
+        </sidebar-item>
+
         <sidebar-item
           v-if="accountingAccess"
           :link="{
             name: 'Accounting',
-            icon: 'fas fa-calculator text-primary',
+            icon: 'lnir lnir-calculator text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Users', icon: 'ni ni-circle-08 text-primary', path: '/users' }"/>
-          <sidebar-item :link="{ name: 'Roles', icon: 'ni ni-circle-08 text-primary', path: '/roles' }"/>
-          <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
-
-          <sidebar-item :link="{ name: 'Products', icon: 'ni ni-ungroup text-orange', collapsed: true }">
-            <sidebar-item :link="{ name: 'Prodcuts', path: '/products' }"/>
-            <sidebar-item :link="{ name: 'Product Classes', path: '/product-classes' }"/>
-            <sidebar-item :link="{ name: 'Product Specs', path: '/product-specs' }"/>
-          </sidebar-item>
-        </sidebar-item>
-        -->
-
-        <sidebar-item :link="{ name: 'Customers', icon: 'fas fa-user-friends text-primary', path: '/customers' }"/>
-        <!--
-        <sidebar-item :link="{ name: 'Leads', icon: 'fas fa-user-tag text-primary', path: '/leads' }"/>
-        <sidebar-item :link="{ name: 'Sales Partners', icon: 'fas fa-user-tie text-primary', path: '/sales-partners' }"/>
-        -->
-
-        <sidebar-item
-          v-if="goldAdminAccess"
-          :link="{
-            name: 'Gold',
-            icon: 'icon-gold text-lg text-primary',
-            collapsed: true
-          }"
-        >
-          <sidebar-item :link="{ name: 'Depots', icon: 'icon-safe-mechanical text-lg text-primary',  path: '/depots' }"/>
-          <sidebar-item :link="{ name: 'Orders', icon: 'fa fa-shopping-cart text-primary', path: '/orders' }"/>
-          <!--<sidebar-item :link="{ name: 'Transactions', icon: 'ni ni-money-coins text-primary', path: '/transactions' }"/>-->
+        <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }"/>
+          <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }"/>
         </sidebar-item>
 
         <sidebar-item
           :link="{
-            name: 'Marketing Tools',
-            icon: 'fas fa-bullseye text-primary',
+            name: 'Marketing',
+            icon: 'lnir lnir-bullhorn text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Newsfeed', icon: 'fa fa-bullhorn text-primary', path: '/news-feeds' }"/>
+          <sidebar-item :link="{ name: 'Newsfeed', path: '/news-feeds' }"/>
         </sidebar-item>
 
         <sidebar-item
           v-if="adminAccess"
           :link="{
             name: 'Admin',
-            icon: 'fas fa-cog text-primary',
+            icon: 'lnir lnir-cog text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: 'Users', icon: 'fa fa-users text-primary', path: '/users' }"/>
-          <sidebar-item :link="{ name: 'Roles', icon: 'fa fa-user-tag text-primary', path: '/roles' }"/>
+          <sidebar-item :link="{ name: 'Users', path: '/users' }"/>
+          <sidebar-item :link="{ name: 'Roles', path: '/roles' }"/>
           <!--
           <sidebar-item :link="{ name: 'Permissions', icon: 'ni ni-circle-08 text-primary', path: '/permissions' }"/>
           -->

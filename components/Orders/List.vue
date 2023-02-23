@@ -1,188 +1,140 @@
 <template>
-    <div>
+  <div>
 
-        <base-header class="pb-6">
-            <div class="row align-items-center py-4">
-                <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{this.pageTitle}}</h6>
-                    <!--
-                    <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                        <route-breadcrumb/>
-                    </nav>
-                    -->
-                </div>
-                <div class="col-lg-6 col-5 text-right">
-                    <!-- <base-button size="sm" type="neutral">New</base-button> -->
-                </div>
-            </div>
-        </base-header>
-
-        <div class="container-fluid mt--6">
-            <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="border-0 card-header">
-                            <h3 class="mb-0">Order List</h3>
-                        </div>
-
-                        <el-table class="table-responsive table-flush"
-                                header-row-class-name="thead-light"
-                                :data="data">
-                            <el-table-column label="ID"
-                                            min-width="310px"
-                                            prop="id"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="Depot ID"
-                                            prop="depot_id"
-                                            min-width="140px"
-                                            sortable>
-                            </el-table-column>
-
-                            <el-table-column label="Type"
-                                            prop="order_type_id"
-                                            min-width="140px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status">{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</span>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column label="Bank Account"
-                                            prop="banking_account_id"
-                                            min-width="140px"
-                                            sortable>
-                            </el-table-column>
-
-                            <el-table-column label="Amount"
-                                            prop="amount"
-                                            min-width="140px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status" v-if="row.unit === 'gram'">
-                                        <i18n-n :value="row.amount/1000">
-                                            <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
-                                            <template v-slot:group="slotProps">{{ slotProps.group }}</template>
-                                            <template v-slot:decimal="slotProps">{{ slotProps.decimal }}</template>
-                                            <template v-slot:fraction="slotProps">
-                                                <span class="superscript">{{ paddingFractionTo3(slotProps.fraction) }}</span>
-                                            </template>
-                                        </i18n-n> g
-                                    </span>
-                                    <span class="status" v-else>
-                                        <i18n-n :value="row.amount/100">
-                                            <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
-                                            <template v-slot:group="slotProps">{{ slotProps.group }}</template>
-                                            <template v-slot:decimal="slotProps">{{ slotProps.decimal }}</template>
-                                            <template v-slot:fraction="slotProps">
-                                                <span class="superscript">{{ paddingFractionTo3(slotProps.fraction) }}</span>
-                                            </template>
-                                        </i18n-n> €
-                                    </span>
-                                    <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column label="Status"
-                                            prop="order_status_id"
-                                            min-width="140px"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status">{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</span>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column min-width="180px">
-                                <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => completeOrderConfirm(row)" href="#" v-if="isOrderPending(row) || isOrderPaid(row)">{{ $t('complete') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => cancelOrderConfirm(row)" href="#" v-if="isOrderPending(row) || isOrderPaid(row)">{{ $t('cancel') }}</a>
-                                            <!-- <a class="dropdown-item" @click.prevent="() => removeOrderConfirm(row)" href="#">Delete</a> -->
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-
-                        <div class="card-footer py-4 d-flex justify-content-end">
-                            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
-                        </div>
-
-                        <modal :show.sync="showPopup">
-                            <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Order details</h5>
-                            </template>
-                            <div>
-                                <Details :resource="selectedResource" v-if="showPopup" />
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showPopup = false">Close</base-button>
-                            </template>
-                        </modal>
-
-                        <modal :show.sync="showConfirm">
-                            <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
-                            </template>
-                            <div>
-                                Are you sure to delete order with id "{{ selectedResource ? selectedResource.id : '' }}"?
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showConfirm = false">Close</base-button>
-                                <base-button type="danger" @click="removeOrder(selectedResource)">Remove</base-button>
-                            </template>
-                        </modal>
-
-                        <modal :show.sync="showOrderConfirm">
-                            <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
-                            </template>
-                            <div>
-                                Are you sure to complete the order with id "{{ selectedResource ? selectedResource.id : '' }}"?
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showOrderConfirm = false">Close</base-button>
-                                <base-button type="primary" @click="completeOrder(selectedResource)">Complete Order</base-button>
-                            </template>
-                        </modal>
-
-                        <modal :show.sync="showOrderCancelConfirm">
-                            <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
-                            </template>
-                            <div>
-                                Are you sure to cancel the order with id "{{ selectedResource ? selectedResource.id : '' }}"?
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showOrderCancelConfirm = false">Close</base-button>
-                                <base-button type="danger" @click="cancelOrder(selectedResource)">Cancel Order</base-button>
-                            </template>
-                        </modal>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                  <div class="row align-items-center">
+                    <div class="col-8">
+                      <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: ID`" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
                     </div>
+                    <div class="col-4 text-right">
+                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                      </button>
+                    </div>
+                  </div>
+
+
                 </div>
+
+                <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
+
+                <el-table class="table-hover table-responsive table-flush"
+                        header-row-class-name="thead-light"
+                        :empty-text="$t('no_data')"
+                        v-loading="isLoading"
+                        :data="data">
+                    <el-table-column label="#"
+                                   min-width="100px"
+                                    prop="id"
+                                    >
+                        <template v-slot="{row}">
+                            <div class="media align-items-center">
+                                <div class="media-body">
+                                    <div class="font-weight-300 name" v-if="createNewBatch && allowAddToOrderProcess(row)" >
+                                    <Checkbox :value="shouldCheck(row)" :label="row.id" @change="(value)=>addOrder(value,row)" :disabled="(selectedOrders.type!='' && selectedOrders.type!=row.order_type.name_translation_key) || row.order_process_id">
+
+                                    </Checkbox>
+                                    </div>
+                                    <div class="font-weight-300 name" v-else>{{row.id}}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column v-bind:label="$t('type')"
+                                    prop="order_type_id"
+                                    min-width="180px"
+                                    >
+                        <template v-slot="{row}">
+                            <div class="d-flex align-items-center">
+                                <span href="#!" class="avatar mr-3 removeImageBorder">
+                                  <img v-bind:src="row.logo"/>
+                                </span>
+                                <div>
+                                  <span class="orderType text-body"><strong>{{row.order_type ? $t(row.order_type.name_translation_key) : row.order_type_id}}</strong></span>
+                                  <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column v-bind:label="$t('depot')"
+                                    prop="depotName"
+                                    min-width="180"
+                                    >
+                                    <template v-slot="{row}">
+                                        <span>{{row.depotName}}</span>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.id : ''}}</div>
+                                    </template>
+                    </el-table-column>
+
+                    <el-table-column v-bind:label="$t('amount')"
+                                    prop="amount"
+                                    min-width="140px"
+                                    align="right"
+                                    sortable>
+                        <template v-slot="{row}">
+                            <span class="amount" v-if="row.unit === 'gram'">
+                                <i18n-n :value="row.amount/1000"></i18n-n> g
+                            </span>
+                            <span class="amount" v-else>
+                                <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
+                            </span>
+                            <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column v-bind:label="$t('status')"
+                                    prop="order_status_id"
+                                    min-width="140px"
+                                    >
+                        <template v-slot="{row}">
+                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}} {{row.comment ? '('+row.comment+')' : null}}</Status>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column>
+                        <template v-slot="{row}">
+                            <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                        </template>
+                    </el-table-column>
+
+                </el-table>
+
+                <div class="card-footer py-4 d-flex justify-content-end">
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                </div>
+                <Details
+                        :selectedResource="selectedResource"
+                        :showPopup="showPopup"
+                        @onClose="onDetailClosed"
+                        @orderDeleted="onOrderDeleted"
+                        @orderUpdated="onOrderUpdated"
+                />
+
             </div>
+
         </div>
+
     </div>
+
+  </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Checkbox } from 'element-ui'
 import Details from '@/components/Orders/Details'
-import { paddingFractionTo3 } from '~/helpers/helpers'
-import { isOrderPending, isOrderPaid } from '~/helpers/order'
+import Status from '@/components/Orders/Status';
+import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
 
+import {BaseButton} from '@/components/argon-core';
+import IconButton from '@/components/common/Buttons/IconButton';
+import OrderFilter from '@/components/Orders/OrderFilter';
+import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
+import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale } from '../../helpers/order';
 export default {
     components: {
         [Table.name]: Table,
@@ -190,7 +142,30 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        Status,
+        IconButton,
+        OrderFilter,
+        SelectPaymentAccount,
+        Checkbox
+    },
+    props:{
+        isDepotSet:{
+            type:Boolean,
+            default:false,
+        },
+        depotSetId:{
+            type:Number,
+            default:0
+        },
+        createNewBatch:{
+            type:Boolean,
+            default:false,
+        },
+        order_process_id:{
+            type:Number,
+            default:-1
+        }
     },
     data() {
         return {
@@ -205,23 +180,29 @@ export default {
             debounced: null,
             selectedResource: null,
             showPopup: false,
-            showConfirm: false,
-            showOrderConfirm: false,
-            showOrderCancelConfirm: false,
             pageTitle: 'Orders',
             perPage: 10,
             page: 1,
             totalTableData: 0,
-            sortedBy: { customer: "asc" }
+            sortedBy: { customer: "asc" },
+            isLoading:true,
+            showFilter: false,
+            filterQuery:null,
+            orderId:"",
+            selectedOrders:{
+                type:'',
+                orders:[]
+            }
         }
     },
     computed: {
         searchQuery() {
             return (
+                (this.order_process_id!=-1 ? '&order_process_id=' + this.order_process_id :'')+
                 (this.search ? '&search=' + this.search : '') +
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
-                `&per_page=${this.perPage}`
+                `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
         totalPages() {
@@ -238,8 +219,34 @@ export default {
     },
     methods: {
         paddingFractionTo3,
-        isOrderPending,
-        isOrderPaid,
+        paddingFractionTo2,
+        doSearchById(value) {
+           if(value)
+           {
+               let query = "&id="+this.orderId;
+               if(this.isDepotSet && this.depotSetId!=0)
+                {
+                    query+='&depot_ids='+this.depotSetId;
+                }
+               this.$store
+                    .dispatch("orders/fetchList", query)
+                    .then(response => {
+                        this.data = response.data.data
+
+                        this.totalTableData = response.data.meta.total
+                    }).catch(() => {
+                        this.data = [];
+                    })
+           }
+           else
+           {
+               this.clearSearchById();
+           }
+
+        },
+        clearSearchById() {
+               this.fetchList(this.searchQuery);
+        },
         popupDetails(resource) {
             this.selectedResource   = resource
             this.showPopup          = true
@@ -247,12 +254,22 @@ export default {
         fetchList(pageQuery) {
             if (!this.initiated) {
                 this.initiated  = true
+                if(this.isDepotSet && this.depotSetId!=0)
+                {
+                    if(!pageQuery.includes('&depot_ids='))
+                    {
+                        pageQuery+='&depot_ids='+this.depotSetId;
+                    }
+                }
                 this.$store
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {
                         // console.error('data', response.data)
                         this.data = response.data.data
+
                         this.totalTableData = response.data.meta.total
+
+                        this.isLoading = false
                     }).finally(() => {
                         this.initiated  = false
                     })
@@ -260,49 +277,6 @@ export default {
         },
         newDepot() {
             this.$router.push('/orders/add')
-        },
-        removeOrderConfirm(resource) {
-            this.selectedResource   = resource
-            this.showConfirm        = true
-        },
-        completeOrderConfirm(resource) {
-            this.selectedResource   = resource
-            this.showOrderConfirm   = true
-        },
-        cancelOrderConfirm(resource) {
-            this.selectedResource       = resource
-            this.showOrderCancelConfirm = true
-        },
-        removeOrder(resource) {
-            this.showConfirm        = false
-            this.$store
-                .dispatch('orders/remove', resource.id)
-                .then( () => {
-                    this.$notify({type: 'warning', timeout: 5000, message: 'Order removed successfully!'})
-                    if (!this.data.length && this.page > 1) {
-                        this.page = this.page - 1;
-                    } else {
-                        this.fetchList(this.searchQuery)
-                    }
-                })
-        },
-        completeOrder(resource) {
-            this.showOrderConfirm   = false
-            this.$store
-                .dispatch('orders/complete', resource.id)
-                .then( res => {
-                    this.$notify({type: 'success', timeout: 5000, message: 'Order completed successfully!'})
-                    // console.error('order->', res.data.data)
-                })
-        },
-        cancelOrder(resource) {
-            this.showOrderCancelConfirm = false
-            this.$store
-                .dispatch('orders/cancel', resource.id)
-                .then( res => {
-                    this.$notify({type: 'warning', timeout: 5000, message: 'Order canceled successfully!'})
-                    // console.error('order->', res.data.data)
-                })
         },
         handleSearch(search) {
             if (this.debounced) {
@@ -320,7 +294,79 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
+        },
+        toggleFilter: function() {
+          this.showFilter=!this.showFilter;
+        },
+        applyFilter: function(query)
+        {
+
+            this.page = 1;
+            this.filterQuery = query;
+        },
+        onDetailClosed(){
+            this.showPopup = false;
+            this.selectedResource = null;
+        },
+        onOrderDeleted(){
+            if (!this.data.length && this.page > 1) {
+                this.page = this.page - 1;
+            } else {
+                this.fetchList(this.searchQuery)
+            }
+        },
+        shouldCheck(row){
+            const result = this.selectedOrders.orders.find(x=>x.id==row.id);
+            return result!=null;
+        },
+        addOrder(value,row){
+            if(value)
+            {
+                if(this.selectedOrders.orders.length == 0)
+                {
+                    this.selectedOrders.type = row.order_type.name_translation_key,
+                    this.selectedOrders.orders.push(row);
+                    this.$emit('orderAdded',row.id)
+                }
+                else{
+                    if(row.order_type.name_translation_key == this.selectedOrders.type)
+                    {
+                        this.selectedOrders.orders.push(row);
+                        this.$emit('orderAdded',row.id)
+                    }
+                    else{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('orders_must_be_of_the_type')})
+                    }
+                }
+            }
+            else{
+                if(this.selectedOrders.orders.length == 1)
+                {
+                    this.selectedOrders.type = "";
+                    this.selectedOrders.orders = [];
+                }
+                else{
+                    this.selectedOrders.orders = this.selectedOrders.orders.filter(x=>x.id!=row.id);
+                }
+                this.$emit('orderRemoved',row.id);
+            }
+
+        },
+        cancelCreatingBatch(){
+            this.selectedOrders={
+                type:'',
+                orders:[]
+            }
+        },
+        allowAddToOrderProcess(order)
+        {
+            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order));
+        },
+        onOrderUpdated(order)
+        {
+            this.$emit('orderUpdated',order);
         }
+
     }
 }
 </script>
@@ -329,11 +375,29 @@ export default {
 .capitalize {
     text-transform: capitalize
 }
-
 .mdi-10 {
     font-size: 18px;
 }
 .superscript {
     position: relative; top: -0.5em; font-size: 60%;
+}
+.orderType {
+  white-space: nowrap;
+}
+.avatar, .avatar img {
+  height: 44px;
+  width: 44px;
+}
+.dateStyle {
+  color:#b5bacc;
+  font-size:0.85em;
+  margin-top:-0.5em;
+  white-space: nowrap;
+}
+.removeImageBorder {
+    background-color: transparent !important
+}
+.actionBtnStyle {
+    color:#8898aa;
 }
 </style>

@@ -43,4 +43,7 @@ export default {
     depot_status_active: 'Vivo',
     depot_status_pending: 'Pendiente',
     depot_status_canceled: 'Cancelado',
+
+    privacy_policy: "Política de privacidad",
+    imprint: "Imprimir",
 }

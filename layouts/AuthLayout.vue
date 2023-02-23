@@ -11,7 +11,7 @@
     >
       <div slot="brand" class="navbar-wrapper">
         <nuxt-link class="navbar-brand" to="/">
-          <img src="/logo_contrast.png" alt="Logo white">
+          <img src="/logo_contrast.png" alt="INAIA">
         </nuxt-link>
       </div>
 
@@ -20,7 +20,7 @@
          <div class="row">
            <div class="col-6 collapse-brand">
              <nuxt-link to="/">
-               <img src="/logo_contrast.png" alt="Logo green">
+               <img src="/logo.png" alt="INAIA">
              </nuxt-link>
            </div>
            <div class="col-6 collapse-close">
@@ -31,70 +31,6 @@
            </div>
          </div>
        </div>
-
-       <!-- <ul class="navbar-nav mr-auto">
-         <li class="nav-item">
-           <nuxt-link to="/dashboard" class="nav-link">
-             <span class="nav-link-inner--text">Dashboard</span>
-           </nuxt-link>
-         </li>
-         <li class="nav-item">
-           <nuxt-link to="/pricing" class="nav-link">
-             <span class="nav-link-inner--text">Pricing</span>
-           </nuxt-link>
-         </li>
-         <li class="nav-item">
-           <nuxt-link to="/login" class="nav-link">
-             <span class="nav-link-inner--text">Login</span>
-           </nuxt-link>
-         </li>
-         <li class="nav-item">
-           <nuxt-link to="/register" class="nav-link">
-             <span class="nav-link-inner--text">Register</span>
-           </nuxt-link>
-         </li>
-         <li class="nav-item">
-           <nuxt-link to="/lock" class="nav-link">
-             <span class="nav-link-inner--text">Lock</span>
-           </nuxt-link>
-         </li>
-       </ul>
-       <hr class="d-lg-none">
-       <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-         <li class="nav-item">
-           <a class="nav-link nav-link-icon" href="https://www.facebook.com/creativetim" target="_blank" rel="noopener" aria-label="Facebook">
-             <i class="fab fa-facebook-square"></i>
-             <span class="nav-link-inner--text d-lg-none">Facebook</span>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a class="nav-link nav-link-icon" href="https://www.instagram.com/creativetimofficial" target="_blank" rel="noopener" aria-label="Instagram">
-             <i class="fab fa-instagram"></i>
-             <span class="nav-link-inner--text d-lg-none">Instagram</span>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a class="nav-link nav-link-icon" href="https://twitter.com/creativetim" target="_blank" rel="noopener" aria-label="Twitter">
-             <i class="fab fa-twitter-square"></i>
-             <span class="nav-link-inner--text d-lg-none">Twitter</span>
-           </a>
-         </li>
-         <li class="nav-item">
-           <a class="nav-link nav-link-icon" href="https://github.com/creativetimofficial" target="_blank" rel="noopener" aria-label="Github">
-             <i class="fab fa-github"></i>
-             <span class="nav-link-inner--text d-lg-none">Github</span>
-           </a>
-         </li>
-         <li class="nav-item d-none d-lg-block ml-lg-4">
-           <a href="https://www.creative-tim.com/product/nuxt-argon-dashboard-pro" target="_blank"
-              class="btn btn-neutral btn-icon" rel="noopener" aria-label="Purchase now">
-              <span class="btn-inner--icon">
-                <i class="fas fa-shopping-cart mr-2"></i>
-              </span>
-             <span class="nav-link-inner--text">Purchase now</span>
-           </a>
-         </li>
-       </ul> -->
      </template>
     </base-nav>
 
@@ -102,7 +38,7 @@
       <nuxt></nuxt>
     </div>
 
-    <footer class="py-5" id="footer-main">
+    <footer class="pb-5" id="footer-main">
       <div class="container">
         <div class="row align-items-center justify-content-xl-between">
           <div class="col-xl-6">
@@ -111,12 +47,12 @@
             </div>
           </div>
           <div class="col-xl-6">
-            <ul class="nav nav-footer justify-content-center justify-content-xl-end">
+            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
               <li class="nav-item">
-                <a href="" class="nav-link" target="_blank" rel="noopener">Privacy Policy</a>
+                <a href="" class="nav-link" target="_blank" rel="noopener">{{ $t('privacy_policy') }}</a>
               </li>
               <li class="nav-item">
-                <a href="" class="nav-link" target="_blank" rel="noopener">Imprint</a>
+                <a href="" class="nav-link" target="_blank" rel="noopener">{{ $t('imprint') }}</a>
               </li>
             </ul>
           </div>
@@ -132,7 +68,6 @@
     components: {
       BaseNav,
     },
-    middleware: ['auth'],
     props: {
       backgroundColor: {
         type: String,
@@ -152,11 +87,12 @@
         return `${this.$route.name} Page`;
       },
       layoutClass() {
-        let exceptions = ['index', 'home']
+        let exceptions = ['profile', 'profile-edit', 'profile-reset-password']
+        // let exceptions = ['index', 'home']
         if (!exceptions.includes(this.$route.name)) {
           return 'bg-default'
         } else {
-          return ''
+          return 'bg-secondary'
         }
       }
     },

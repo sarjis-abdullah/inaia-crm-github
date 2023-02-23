@@ -1,3 +1,5 @@
+import {hasAdminLoginAccess, getAppsAccess} from '~/helpers/auth'
+
 const userToken = 'inaiaUserToken'
 const authToken = 'inaiaAuthToken'
 const i18nKey = 'i18n_redirected'
@@ -78,6 +80,11 @@ export const mutations = {
 		state.authorized    = false
     },
 
+    avatar(state, payload) {
+        state.user.avatar    = payload
+		localStorage.setItem(userToken, JSON.stringify(state.user))
+    },
+
     authorize(state, bool) {
         state.authorized = bool
     },
@@ -88,6 +95,18 @@ export const mutations = {
 }
 
 export const actions = {
+    setLocale(context, payload) {
+        return this.$axios.put('account-settings/' + payload.accountId, {locale: payload.locale})
+            .then(res => {
+                context.commit('setLocale', payload.locale)
+                payload.vm.$i18n.locale = payload.locale
+                return res
+            }).catch(err => {
+                // return err
+                return Promise.reject(err)
+            }).finally(() => {
+            })
+    },
     fetchLoggedIn(context) {
         context.commit('loading', 1)
     
@@ -106,6 +125,7 @@ export const actions = {
                 } else if (!lc && ad && ad.country) {
                     context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
                 }
+                context.commit('clients/loadedClients', {customer: dt}, { root: true })
                 return response
             })
             .catch(error => {
@@ -116,19 +136,55 @@ export const actions = {
                 context.commit('loading', 2)
             })
     },
-    
+
+	postLogin(context, payload) {
+		return this.$axios
+			.post('/authenticate?for=admin', payload)
+			.then(response => {
+                let dt  = response.data.success
+                if (dt && hasAdminLoginAccess(dt.account.account)) {
+                    let st  = dt.account.account.settings,
+                        ad  = dt.account.address,
+                        lc  = st && st.find(s => s.name_translation_key == 'locale')
+
+                    context.commit('setAuth', dt.accessToken)
+                    context.commit('user', dt.account)
+                    if (lc && lc.value != context.state.locale) {
+                        context.commit('setLocale', lc.value)
+                    } else if (!lc && ad && ad.country) {
+                        context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
+                    }
+                } else {
+                    throw "Unauthorized"
+                }
+				return response
+			})
+			.catch(error => {
+				return Promise.reject(error)
+			})
+	},
+
+    refreshAvatar(context, payload) {
+        return this.$axios
+            .get('/refresh-s3-file?file=' + payload)
+            .then(response => {
+                context.commit('avatar', response.data.url)
+                return Promise.resolve(response)
+            }).catch(error => {
+                return Promise.reject(error)
+            })
+    },
+
     logout(context) {
-        // return this.$axios
-        //     .get('/logout')
-        //     .then(response => {
-        //         return Promise.resolve(response)
-        //     }).catch(error => {
-        //         return Promise.reject(error)
-        //     }).finally(() => {
-        //         resetState(context.commit)
-        //     })
-        resetState(context.commit)
-        return Promise.resolve()
+        return this.$axios
+            .get('/logout')
+            .then(response => {
+                return Promise.resolve(response)
+            }).catch(error => {
+                return Promise.reject(error)
+            }).finally(() => {
+                resetState(context.commit)
+            })
     },
 
     unauthorize(context) {
@@ -137,12 +193,7 @@ export const actions = {
 }
 
 function resetState(commit) {
-    if (!process.env.devMode) {
-        // at localhost, cookie and localStorage are not "port" specific
-        // so no need to purge sevice specific. In this case,
-        // universal-login will purge the common cookie and localStorage after logout.
-        commit('purgeAuth')
-    }
+    commit('purgeAuth')
     commit('clients/resetState', null, { root: true })
     commit('types/resetState', null, { root: true })
 }

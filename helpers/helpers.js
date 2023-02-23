@@ -40,7 +40,43 @@ export function mapCountriesNationalities(list) {
     })
     return {countryList, nationalityList}
 }
+export function mapCountryCode(list){
+    let countyList = [];
+    list.forEach(item=>{
+        if(item.allow){
+            countyList.push({
+                id:item.id,
+                value:item.calling_code.replace('00','+'),
+                text:item.country+" ( "+ item.calling_code.replace('00','+') + " )"
+            })
+        }
+    })
+    return countyList;
+}
+export function extractCountryCode(phone,list)
+{
+    let phoneNumber = '';
+    let countryCode = '';
+    list.forEach(item=>{
+        if(phone.startsWith(item.value))
+        {
+            countryCode = item.value;
+            phoneNumber = phone.replace(item.value,'');
+        }
+    })
+    return {phoneNumber,countryCode}
+}
+export function formatWithSpaces(str, n) {
+    let ret = [];
+    let i;
+    let len;
 
+    for(i = 0, len = str.length; i < len; i += n) {
+       ret.push(str.substr(i, n))
+    }
+
+    return ret.join(' ')
+};
 export function notifyError(err, notify) {
     let response = err.response
     if (response.status === 403) {
@@ -50,6 +86,9 @@ export function notifyError(err, notify) {
     }
 }
 
+export function parseFixed(num, fractionDigits=2) {
+    return parseFloat(parseFloat(num).toFixed(fractionDigits))
+}
 
 export function paddingFractionTo2(n) {
     let l = n ? n.toString().length : 0
@@ -75,5 +114,50 @@ export function paddingFractionTo3(n) {
         return n.toString().substr(0, 3)
     }
     return n;
+}
+export function getOrderTypeTitle(order_type_translation_key) {
+
+}
+export function formatDateToApiFormat(date)
+{
+    if(!date)
+        return null;
+    let month = date.getMonth()+1;
+    if(month<10)
+    {
+        month ="0"+month;
+    }
+    let day = date.getDate();
+    if(day<10)
+    {
+        day = "0"+day;
+    }
+    return date.getFullYear()+"-"+month+"-"+day;
+}
+export function validURL(str) {
+    var pattern = new RegExp('(?:(?:https?|ftp|file):\/\/)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+export function isEmail(email)
+{
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+export function isPhoneNumber(phone)
+{
+    phone = String(phone).replace(' ','').replace('+','');
+    return !isNaN(phone);
+}
+export function getMonthName(monthNumber)
+{
+    const i18nKey = 'i18n_redirected'
+    const defaultLocale = 'en'
+    const Cookie = process.client ? require('js-cookie') : undefined;
+    const locale    = Cookie ? (Cookie.get(i18nKey) ? Cookie.get(i18nKey) : defaultLocale) : defaultLocale;
+    var objDate = new Date();
+    objDate.setDate(1);
+    objDate.setMonth(monthNumber-1);
+    const month = objDate.toLocaleString(locale, { month: "long" });
+    return month;
 }
 

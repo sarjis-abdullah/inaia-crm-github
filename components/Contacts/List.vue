@@ -4,16 +4,18 @@
         <base-header class="pb-6">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{ pageTitle }}</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{{ $t('customers') }}</h6>
                     <!--
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <route-breadcrumb/>
                     </nav>
                     -->
                 </div>
+                <!--
                 <div class="col-lg-6 col-5 text-right">
                     <base-button size="sm" type="neutral" @click="newCustomer">New Customer</base-button>
                 </div>
+                -->
             </div>
         </base-header>
 
@@ -22,10 +24,37 @@
                 <div class="col">
                     <div class="card">
                         <div class="border-0 card-header">
-                            <h3 class="mb-0">{{ tableTitle }}</h3>
+                            <div class="row">
+                                <div class="col">
+                                    <el-input prefix-icon="el-icon-search" 
+                                    :placeholder="$t('search_customer')" clearable 
+                                    style="width: 500px" @change="onSearch" 
+                                    v-model="searchWords"
+                                    @clear="clearSearch"
+                                    />
+                                </div>
+                                <div class="col">
+                                    <Select
+                                        placeholder="AML"
+                                        v-model="selectedAmlStatus"
+                                        clearable
+                                        @clear="clearDepot"
+                                        :multiple="false"
+                                        class="float-right"
+                                    >
+                                        <Option
+                                        v-for="option in amlStatuses"
+                                        :value="option.id"
+                                        :label="$t(option.name)"
+                                        :key="option.id"
+                                        >
+                                        </Option>
+                                    </Select>
+                                </div>
+                          </div>
                         </div>
 
-                        <el-table class="table-responsive table-flush"
+                        <el-table class="table-hover table-responsive table-flush"
                                 header-row-class-name="thead-light"
                                 :data="data">
                             <!-- <el-table-column label="ID"
@@ -42,48 +71,69 @@
                             </el-table-column> -->
 
                             <el-table-column label="Name"
-                                            min-width="300px">
+                                            min-width="260px">
                                 <template v-slot="{row}">
-                                    <a href="#" @click.prevent="() => $router.push('/customers/details/'+row.id)" class="media align-items-center">
-                                        <span class="avatar rounded-circle mr-3">
-                                            <img alt="Im" :src="avatar(row)">
-                                        </span>
-                                        <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</span>
+                                    <div class="media align-items-center">
+                                        <div class="avatar mr-3">
+                                            <img v-bind:src="avatar(row)" alt="" />
                                         </div>
-                                    </a>
+                                        <div class="media-body">
+                                            <div class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</div>
+       
+                                                <div class="name mb-0 text-xs text-muted d-inline-block mr-2">
+                                                    <i class="fa mr-1" :class="`${row.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.is_verified ? $t('verified') : $t('not_verified') }}
+                                                </div>
+                                                <AmlStatus  class="d-inline-block" :amlStatus="row.aml_status.name"/>
+                                           
+                                        </div>
+                                    </div>
                                 </template>
                             </el-table-column>
 
-                            <!-- <el-table-column label="Account No."
-                                            min-width="190px">
+                            <el-table-column label="Account No."
+                                            min-width="160px"
+                                            prop="row.account.account_number"
+                                            sortable>
                                 <template v-slot="{row}">
                                     <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
                                 </template>
-                            </el-table-column> -->
+                            </el-table-column>
 
-                            <el-table-column label="Contact"
-                                            min-width="210px"
+                            <el-table-column :label="$t('mobile')"
+                                            min-width="160px"
                                             >
                                 <template v-slot="{row}">
-                                    <span>{{getChannelInfo(row.channels, 'mobile') || getChannelInfo(row.channels, 'tel') || 'N/A'}}</span>
-                                    <template v-if="getChannelInfo(row.channels, 'email')">
-                                        <br />
-                                        <span>{{getChannelInfo(row.channels, 'email')}}</span>
-                                    </template>
+                                    <div v-if="getChannelInfo(row.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.channels, 'mobile')}}</div>
                                 </template>
                             </el-table-column>
 
+                            <el-table-column :label="$t('email')"
+                                             min-width="160px">
+                              <template v-slot="{row}">
+                                <div v-if="getChannelInfo(row.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.channels, 'email')}}</div>
+                              </template>
+                            </el-table-column>
+
+                            <!--
+                            <el-table-column :label="$t('address')"
+                                             min-width="160px">
+                              <template v-slot="{row}">
+                                <div>{{row.address ? row.address.line1 : ''}}</div>
+                                <div>{{row.address ? row.address.country.name_translation_key : ''}}</div>
+                              </template>
+                            </el-table-column>
+                            -->
+
                             <el-table-column label="Status"
-                                            min-width="170px"
+                                            min-width="160px"
                                             prop="is_active"
                                             sortable
                                             >
                                 <template v-slot="{row}">
-                                    <badge class="badge-dot mr-4" type="">
-                                        <i :class="`bg-${row.is_active ? 'success' : 'danger'}`"></i>
-                                        <span class="status">{{row.is_active ? 'active' : 'inactive'}}</span>
-                                    </badge>
+                                  <badge :type="`${row.is_active ? 'success' : 'danger'}`">{{row.is_active ? $t('active') : $t('inactive')}}</badge>
+
+                                  <badge v-if="row.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
+
                                 </template>
                             </el-table-column>
 
@@ -94,21 +144,32 @@
                                 </template>
                             </el-table-column> -->
 
-                            <el-table-column min-width="180px" >
+
+                            <el-table-column>
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown ml-2">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a> -->
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+
+                                  <icon-button type="info" @click="gotoDetails(row)"></icon-button>
+
                                 </template>
                             </el-table-column>
+
+                          <!--
+                          <el-table-column min-width="180px" >
+                              <template v-slot="{row}">
+                                  <el-dropdown trigger="click" class="dropdown ml-2">
+                                      <span class="btn btn-sm btn-icon-only text-light">
+                                          <i class="fas fa-ellipsis-v mt-2"></i>
+                                      </span>
+                                      <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
+                                          <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
+                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
+                                          <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
+                                      </el-dropdown-menu>
+                                  </el-dropdown>
+                              </template>
+                          </el-table-column>
+                          -->
                         </el-table>
 
                         <div class="card-footer py-4 d-flex justify-content-end">
@@ -147,9 +208,11 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
+import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
-
+import { isEmail,isPhoneNumber } from '../../helpers/helpers';
+import AmlStatus from '@/components/Contacts/AmlStatus';
 export default {
     components: {
         [Table.name]: Table,
@@ -157,15 +220,16 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        IconButton,
+        AmlStatus,
+        Select,
+        Option
     },
     data() {
         return {
-            pageTitle: 'Customers',
-            tableTitle: 'Customer List',
-            data: [
-            ],
-            search: '',
+            data: [],
+            search: null,
             sort: 'id',
             order: 'desc',
             selected: [],
@@ -181,16 +245,23 @@ export default {
             perPage: 10,
             page: 1,
             totalTableData: 0,
-            sortedBy: { customer: "asc" }
+            sortedBy: { customer: "asc" },
+            searchWords:null,
+            selectedAmlStatus:null
         }
     },
+   
     computed: {
         ...mapGetters({
             types: "types/pairs"
         }),
+        ...mapGetters({
+            amlStatuses: "clients/amlStatuses"
+        }),
         searchQuery() {
             return (
-                (this.search ? '&search=' + this.search : '') +
+                (this.search ? '&' + this.search : '') +
+                ( this.selectedAmlStatus ? `&aml_status_id=${ this.selectedAmlStatus }`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
                 `&per_page=${this.perPage || 5}`
@@ -199,6 +270,12 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
+        },
+    },
+     mounted(){
+        if(this.amlStatuses.length == 0)
+        {
+            this.$store.dispatch('clients/getAmlStatuses')
         }
     },
     watch: {
@@ -219,6 +296,9 @@ export default {
         popupDetails(resource) {
             this.selectedResource= resource
             this.showPopup      = true
+        },
+        gotoDetails(resource) {
+          this.$router.push('/customers/details/'+resource.id)
         },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {
@@ -266,13 +346,14 @@ export default {
             return null
         },
         avatar(resource) {
-            if (resource && resource.person_data) {
-                let gender    = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
-                if (gender == 'female' || gender == 'f') {
-                    return '/img/theme/avatar_f.png'
-                }
-            }
-            return '/img/theme/avatar_m.png'
+          if (resource && resource.avatar) return resource.avatar;
+          else if (resource && resource.person_data) {
+              let gender = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
+              if (gender == 'female' || gender == 'f') {
+                  return '/img/theme/avatar_f.png'
+              }
+          }
+          return '/img/theme/avatar_m.png'
         },
         handleSearch(search) {
             if (this.debouced) {
@@ -290,6 +371,22 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
+        },
+        onSearch(value){
+            if(value!="")
+            {
+                this.search = "name="+value;
+                this.page = 1;
+            }
+            else{
+                this.clearSearch();
+            }
+            
+        },
+        clearSearch()
+        {
+            this.search = "";
+            this.page = 1;
         }
     }
 }
@@ -302,5 +399,13 @@ export default {
 
 .mdi-10 {
     font-size: 18px;
+}
+.avatar {
+  border-radius: 100%;
+  overflow: hidden;
+  align-items: unset;
+}
+.avatar img {
+  object-fit: cover;
 }
 </style>

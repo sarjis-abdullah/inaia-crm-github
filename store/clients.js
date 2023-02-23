@@ -1,11 +1,17 @@
+import { mapCountryCode } from '../helpers/helpers';
 export const state = () => {
     return {
         clientData: [],
-        singleClientData: {},
+        singleClientData: null,
         // leadData: [],
         // singleLeadData: {},
         countryList: [],
-        countryListLoaded: 0
+        countryListLoaded: 0,
+        orderFilterList:[],
+        latestTransactions:[],
+        countryCodeList:[],
+        loadedClients:[],
+        amlStatuses:[]
     }
 }
 
@@ -13,24 +19,38 @@ const initialState  = state()
 
 export const getters = {
 
-    clientData(state) {
-        return state.clientData
+    clientData:state=>state.clientData,
+    singleClientData:(state)=>(contactId,accountId)=> {
+        if(contactId && contactId!=-1)
+        {
+            let client = state.loadedClients.find(
+                 x => contactId == x.customer.id
+            );
+            if(client)
+            {
+                return client;
+            }
+        }
+        if(accountId && accountId!=-1)
+        {
+            let client = state.loadedClients.find(
+                x => x.customer.account && accountId == x.customer.account.id
+            );
+            if(client)
+            {
+                return client;
+            }
+        }
+        return null;
     },
-    singleClientData(state) {
-        return state.singleClientData
-    },
-    // leadData(state) {
-    //     return state.leadData
-    // },
-    // singleLeadData(state) {
-    //     return state.singleLeadData
-    // },
-    countryList(state) {
-        return state.countryList
-    },
-    countryListLoaded(state) {
-        return state.countryListLoaded
-    }
+    // leadData:state=>state.leadData,
+    // singleLeadData:state=>state.singleLeadData,
+    countryList:state=>state.countryList,
+    countryListLoaded:state=>state.countryListLoaded,
+    orderFilterList:state=>state.orderFilterList,
+    latestTransactions:state=>state.latestTransactions,
+    countryCodeList:state=>state.countryCodeList,
+    amlStatuses: state=>state.amlStatuses
 }
 export const mutations = {
 
@@ -42,6 +62,15 @@ export const mutations = {
     },
     singleClientData(state, singleClientData) {
         state.singleClientData = singleClientData
+    },
+    updateAddress(state,address)
+    {
+
+        state.singleClientData.customer.address = address;
+    },
+    updateChannels(state,channels)
+    {
+        state.singleClientData.customer.channels = channels;
     },
     // initLeadData(state, leadData) {
     //     state.leadData = leadData
@@ -60,11 +89,33 @@ export const mutations = {
     },
     resetState(state) {
         Object.assign(state, initialState)
+    },
+    orderFilterList(state,list) {
+        state.orderFilterList = list;
+    },
+    latestTransactions(state,list) {
+        state.latestTransactions = list;
+    },
+    countryCodeList(state,list)
+    {
+        state.countryCodeList = list
+    },
+    loadedClients(state, client)
+    {
+        let existingClient  = state.loadedClients.find( x => client.customer.id == x.customer.id  )
+        if (existingClient) {
+            Object.assign(existingClient, client)
+        } else {
+            state.loadedClients.push(client);
+        }
+    },
+    amlStatuses(state,list)
+    {
+        state.amlStatuses = list;
     }
 }
 export const actions = {
     submitClient(context, payload) {
-
         if (!payload.id) {
             // console.log(payload)
             return this.$axios.post('/contacts/store-with-relations', payload).then(response => {
@@ -84,6 +135,23 @@ export const actions = {
             })
         }
     },
+    changePassword(context, payload) {
+      return this.$axios.post('/password-update', payload).then(response => {
+        return Promise.resolve(response)
+      }).catch(error => {
+        return Promise.reject(error)
+      })
+    },
+    saveAvatar(context, payload) {
+        const id = payload.id
+        delete payload.id
+        return this.$axios.put('/contacts/update-avatar/' + id, payload).then(response => {
+            context.commit('auth/avatar', response.data.data.avatar, { root: true })
+            return Promise.resolve(response)
+        }).catch(error => {
+            return Promise.reject(error)
+        })
+    },
     initClientData(context, payload) {
         return this.$axios
             .get(`/contacts/customers?include=account,type,person_data,address,country,channels${ payload }`)
@@ -102,12 +170,13 @@ export const actions = {
                 return response
             })
     },
-    clientDetailsData(context, payload) {
+    getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer`)
             .then(response => {
-                const singleClientData = response.data.data
-                context.commit('singleClientData', singleClientData)
+                const clientData = response.data.data;
+                console.log(clientData);
+                context.commit('orderFilterList', clientData)
                 return response
             })
     },
@@ -173,11 +242,47 @@ export const actions = {
         return this.$axios
             .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
-                const countryList = response.data.data
+                const countryList = response.data
                 // console.log('country-list loaded')
                 context.commit('initCountryList', countryList)
-                context.commit('countryListLoaded', 2)
+                context.commit('countryListLoaded', 2);
+                context.commit('countryCodeList',mapCountryCode(countryList));
                 return response
             })
     },
+    clientDetailsData(context, payload) {
+        return this.$axios
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs,nationality_details`)
+            .then(response => {
+                const singleClientData = response.data.data
+                context.commit('singleClientData', singleClientData);
+                context.commit('loadedClients', singleClientData)
+                return response
+            })
+    },
+    getClientLatestTransactions(context,payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=order_transactions,orders_payment_transactions&${payload}`)
+            .then(res=>{
+                context.commit('latestTransactions',res.data.data);
+                return res.data;
+            })
+    },
+    clientAccountDetails(context,payload){
+        return this.$axios
+            .get(`/accounts/${payload}?include=person_data,address,country,channels`)
+            .then(response => {
+
+                return response.data.data;
+            })
+    },
+    getAmlStatuses(context,payload){
+        return this.$axios
+            .get('/aml-statuses')
+            .then(response=>{
+                context.commit('amlStatuses',response.data.data);
+                return response.data.data;
+            })
+    }
+
 }
