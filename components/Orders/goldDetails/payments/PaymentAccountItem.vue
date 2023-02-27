@@ -3,19 +3,19 @@
         <div v-if="!editActive && !isNew">
             <detail-list-item  :title="$t('bank')">
                 <div slot="value">
-                    
+
                         {{bank}}
                     </div>
             </detail-list-item>
             <detail-list-item :title="$t('iban')">
                 <div slot="value">
-                    
+
                         {{iban}}
                     </div>
             </detail-list-item>
             <detail-list-item :title="$t('account_holder')">
                 <div slot="value">
-                    
+
                         {{accountHolder}}
                     </div>
             </detail-list-item>
@@ -39,10 +39,10 @@
                             :key="option.id">
                     </Option>
                 </Select>
-               <select-payment-account 
-                    :account_id="account_id" 
-                    :paymentMethod="paymentMethodName" 
-                    v-if="shouldDisplayPaymentAccout" 
+               <select-payment-account
+                    :account_id="account_id"
+                    :paymentMethod="paymentMethodName"
+                    v-if="shouldDisplayPaymentAccout"
                     @paymentaccountselected="onPaymentAccountSelected"
                     :initialValue="paymentAccountInitialData"
                />
@@ -84,7 +84,7 @@ export default {
         Select,
         Option,
         SelectPaymentAccount,
-        
+
     },
     props: {
         paymentAccount: {
@@ -138,13 +138,13 @@ export default {
        else{
            this.initForm();
        }
-        
+
     },
     methods:{
         initView(){
             if(this.paymentAccount && this.paymentAccount.payment_account_specs && this.paymentAccount.payment_account_specs.length>0)
             {
-            
+
                 this.paymentAccount.payment_account_specs.forEach((element)=>{
                     if(element.name == 'bank_name')
                     {
@@ -209,11 +209,11 @@ export default {
                         id:this.order.id,
                         data:data
                     }).then((res)=>{
-                    
+
                         this.$emit('paymentAccountUpdated',res);
                         this.editActive = false;
                         this.reference = null;
-                        
+
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
                     }).catch((err)=>{
                         this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_payment_changed_unsuccessfully')})
@@ -241,7 +241,7 @@ export default {
                             this.paymentAccountInitialData = -1;
                         }
                     }
-                
+
                     this.shouldDisplayPaymentAccout = true;
                 }
                 else
@@ -255,15 +255,10 @@ export default {
             this.selectedPaymentAccount = paymentAccount;
         },
         shouldDisplayExecutePayment(){
-            if(this.paymentAccount)
-            {
-                return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) && 
-                (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
-                !this.editActive && !this.isNew;
-            }
-            else
-            return false;
-            
+
+            return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) &&
+            (this.paymentAccount && this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
+            !this.editActive && !this.isNew;
         },
         executePayment(){
             if(this.paymentAccount && this.paymentAccount.payment_method)
@@ -286,9 +281,9 @@ export default {
                         order_ids:[this.order.id],
                         execution_date:formatDateToApiFormat(new Date())
                     }
-                    
+
                     this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
-                       window.open(res,'_self');
+                       window.open(res,'_blank');
                     }).catch((err)=>{
                         this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
                     }).finally(()=>{
@@ -296,9 +291,9 @@ export default {
                     })
                 }
             }
-            
 
-            
+
+
         },
         cancelEdit (){
             this.editActive = false;
