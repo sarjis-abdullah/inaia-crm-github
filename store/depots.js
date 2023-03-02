@@ -196,8 +196,8 @@ export const actions = {
     {
         return this.$axios.get(`${process.env.golddinarApiUrl}/current-gold-price`)
                 .then(res => {
-                    context.commit('setGoldPrice',res.data.data.currentGoldPrice);
-                    return res.data.data.currentGoldPrice;
+                    context.commit('setGoldPrice',res.data.data.fixing_gram_eur);
+                    return res.data.data.fixing_gram_eur;
                 }).catch(err => {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
@@ -229,7 +229,7 @@ export const actions = {
         .then(res => {
             context.commit('depotStatuses',res.data.data);
             return res.data.data;
-            
+
         })
     },
     pauseSavingPlan(context,payload)
