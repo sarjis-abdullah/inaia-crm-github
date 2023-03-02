@@ -199,7 +199,7 @@
       avatar() {
         if (this.loggedin) {
           if (!this.loggedin.avatar && this.loggedin.person_data) {
-            let gender    = this.loggedin.person_data.gender.toLowerCase()
+            let gender = this.loggedin?.person_data?.gender?.toLowerCase() ?? null;
             if (gender == 'female' || gender == 'f') {
               return '/img/theme/avatar_f.png'
             }
