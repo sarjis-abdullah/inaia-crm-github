@@ -177,6 +177,15 @@
         <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }"/>
           <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }"/>
         </sidebar-item>
+        <sidebar-item
+          v-if="hasSalesCommissionAccess"
+          :link="{
+            name: $t('sales_commission'),
+            icon: 'lnir lnir-calculator text-primary',
+            path:'/sales-commission'
+          }"
+        >
+        </sidebar-item>
 
         <sidebar-item
           :link="{
@@ -307,7 +316,7 @@
   import DashboardNavbar from '~/components/layouts/argon/DashboardNavbar.vue';
   import ContentFooter from '~/components/layouts/argon/ContentFooter.vue';
   import DashboardContent from '~/components/layouts/argon/Content.vue';
-  import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
+  import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
 
   export default {
@@ -345,6 +354,9 @@
       },
       adminAccess() {
         return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+      },
+      hasSalesCommissionAccess(){
+        return this.user && (hasMaxAccess(this.user.account) || isSalesAdvisor(this.user.account));
       }
     },
     methods: {

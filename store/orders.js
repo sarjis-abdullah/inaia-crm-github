@@ -9,9 +9,7 @@ export const state = () => ({
 const initialState  = state()
 
 export const getters = {
-    list(state) {
-        state.list
-    },
+    list:state=>state.list,
     details(state) {
         state.details
     },
