@@ -248,7 +248,7 @@ export default {
         remove(resource) {
             this.showConfirm        = false
             this.$store
-                .dispatch('roles/remove', resource.id)
+                .dispatch('news-feeds/remove', resource.id)
                 .then( () => {
                     if (!this.data.length && this.page > 1) {
                         this.page = this.page - 1;
