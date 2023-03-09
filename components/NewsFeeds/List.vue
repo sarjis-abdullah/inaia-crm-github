@@ -144,7 +144,7 @@
                                 <h5 class="modal-title" id="confirmModal">Confirmation</h5>
                             </template>
                             <div>
-                                Are you sure to delete roles with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                                Are you sure to delete the news feed with id "{{ selectedResource ? selectedResource.id : '' }}"?
                             </div>
                             <template slot="footer">
                                 <base-button type="secondary" @click="showConfirm = false">Close</base-button>
@@ -248,7 +248,7 @@ export default {
         remove(resource) {
             this.showConfirm        = false
             this.$store
-                .dispatch('roles/remove', resource.id)
+                .dispatch('news-feeds/remove', resource.id)
                 .then( () => {
                     if (!this.data.length && this.page > 1) {
                         this.page = this.page - 1;

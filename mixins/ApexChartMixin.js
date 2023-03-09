@@ -110,6 +110,7 @@ export default {
                         }
                     }
                 },
+                colors: [ '#DAB518'],
                 grid: {
                     xaxis: {
                         lines: {

@@ -1,20 +1,7 @@
 <template>
     <div class="position-relative d-flex flex-column h-100">
         <div class="search bg-white p-3 border-bottom w-100">
-            <div class="row">
-                <div class="col-8 ml-1 my-auto">
-                    <div>
-                        <i class="lnir lnir-comments"></i>
-                        <h3 class="d-inline ml-1">{{$t('ticket_list')}}</h3>
-                    </div>
-                </div>
-                <div class="col my-auto">
-                    
-                </div>
-            </div>
-
-
-            <div class="pt-3 px-0 pb-0">
+            <div class="px-0 pt-1 pb-0">
               <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
             </div>
         </div>
@@ -105,7 +92,7 @@ export default {
                     type:'warning'
                 })
             }
-            
+
         },
         clearSearchBySubject(){
             this.page =1;

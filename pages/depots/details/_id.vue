@@ -46,7 +46,7 @@
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
-                  <UserInfo  :customerId="client.contact_id"></UserInfo>
+                  <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
               </div>
             </div>
@@ -98,7 +98,7 @@
                     </h5>
 
                     <div>
-                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount) }} €</span>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} €</span>
                       <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
                     </div>
                   </div>
@@ -231,7 +231,7 @@
             </template>
             <div>
               <DepotStatusHistory :depotStatus="depot.status_history"/>
-              
+
            </div>
 
         </modal>
@@ -264,7 +264,7 @@ export default {
     },
     data() {
         return {
-            depotId: this.$route.params.id,
+            depotId: parseInt(this.$route.params.id),
             loaded:false,
             loadedWithError:false,
             client:null,
@@ -299,27 +299,7 @@ export default {
         }),
     },
      mounted () {
-      if(isGoldDepot(this.depot))
-      {
-        if(this.goldPrice==0)
-        {
-            this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                this.goldPrice = res;
-            })
-        }
-      }
-      if(isSilverDepot(this.depot))
-      {
-        if(this.silverPrice==0)
-        {
-            this.$store.dispatch('depots/getCurrentSilverPrice').then(res=>{
-                this.silverPrice = res;
-            })
-        }
-      }
-        
        this.$confirm = MessageBox.confirm
-
     },
     watch: {
         depotId: {
@@ -335,12 +315,32 @@ export default {
         getCustomerName(client) {
           return client.username;
         },
+        initPrices(){
+            if(isGoldDepot(this.depot))
+            {
+              if(this.goldPrice==0)
+              {
+                  this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
+                      this.goldPrice = res;
+                  })
+              }
+            }
+            if(isSilverDepot(this.depot))
+            {
+              if(this.silverPrice==0)
+              {
+                  this.$store.dispatch('depots/getCurrentSilverPrice').then(res=>{
+                      this.silverPrice = res;
+                  })
+              }
+            }
+        },
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then(()=>{
+                this.initPrices()
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
-                  console.log(res);
                       this.client = res;
                   })
             }).

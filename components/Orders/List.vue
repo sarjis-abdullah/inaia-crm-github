@@ -7,7 +7,7 @@
                 <div class="card-header">
                   <div class="row align-items-center">
                     <div class="col-8">
-                      <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
+                      <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: ID`" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
                     </div>
                     <div class="col-4 text-right">
                       <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
@@ -35,7 +35,7 @@
                                 <div class="media-body">
                                     <div class="font-weight-300 name" v-if="createNewBatch && allowAddToOrderProcess(row)" >
                                     <Checkbox :value="shouldCheck(row)" :label="row.id" @change="(value)=>addOrder(value,row)" :disabled="(selectedOrders.type!='' && selectedOrders.type!=row.order_type.name_translation_key) || row.order_process_id">
-                                        
+
                                     </Checkbox>
                                     </div>
                                     <div class="font-weight-300 name" v-else>{{row.id}}</div>
@@ -92,7 +92,7 @@
                                     min-width="140px"
                                     >
                         <template v-slot="{row}">
-                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
+                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}} {{row.comment ? '('+row.comment+')' : null}}</Status>
                         </template>
                     </el-table-column>
 
@@ -350,7 +350,7 @@ export default {
                 }
                 this.$emit('orderRemoved',row.id);
             }
-            
+
         },
         cancelCreatingBatch(){
             this.selectedOrders={
@@ -366,7 +366,7 @@ export default {
         {
             this.$emit('orderUpdated',order);
         }
-        
+
     }
 }
 </script>

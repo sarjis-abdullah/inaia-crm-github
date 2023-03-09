@@ -172,7 +172,7 @@ export const actions = {
     },
     getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=500`)
             .then(response => {
                 const clientData = response.data.data;
                 console.log(clientData);
@@ -252,7 +252,7 @@ export const actions = {
     },
     clientDetailsData(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs`)
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs,nationality_details`)
             .then(response => {
                 const singleClientData = response.data.data
                 context.commit('singleClientData', singleClientData);

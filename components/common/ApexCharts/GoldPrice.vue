@@ -81,15 +81,15 @@ export default {
     .apexcharts-xaxistooltip-bottom {
         margin-top: 4px !important;
         padding: 4px 5px !important;
-        border-color: #0074d9 !important;
-        background: #0074d9 !important;
+        border-color: #DAB518 !important;
+        background: #DAB518 !important;
         color:#fff !important;
     }
     .apexcharts-xaxistooltip-bottom:before {
         display: none !important;
     }
     .apexcharts-xaxistooltip-bottom:after {
-        border-bottom-color: #0074d9 !important;
+        border-bottom-color: #DAB518     !important;
     }
 
     .img-container {

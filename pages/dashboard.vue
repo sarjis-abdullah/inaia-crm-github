@@ -28,6 +28,10 @@
       <div class="row">
 
         <div class="col-xl-4 col-md-6">
+          <ExternalBankAmountCard />
+        </div>
+
+        <div class="col-xl-4 col-md-6">
           <MasterAmountCard />
         </div>
 
@@ -106,30 +110,14 @@
 
       <div class="row">
 
-        <div class="col-lg-8">
+        <div class="col-lg-6">
           <gold-price />
         </div>
-
-        <div class="col-lg-4">
-          <card header-classes="bg-transparent">
-            <div slot="header" class="row align-items-center">
-              <div class="col">
-                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                <h5 class="h3 mb-0">Total orders</h5>
-              </div>
-              <div class="col-auto">
-                <!--<button type="button" class="btn btn-sm btn-primary">{{$t('details')}}</button>-->
-              </div>
-            </div>
-
-            <bar-chart
-              :height="350"
-              ref="barChart"
-              :chart-data="redBarChart.chartData"
-            >
-            </bar-chart>
-          </card>
+        <div class="col-lg-6">
+          <silver-price />
         </div>
+
+        
 
 
         <!-- <div class="col-xl-8">
@@ -295,6 +283,28 @@
         -->
         <!--End tables-->
       </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <card header-classes="bg-transparent">
+            <div slot="header" class="row align-items-center">
+              <div class="col">
+                <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
+                <h5 class="h3 mb-0">Total orders</h5>
+              </div>
+              <div class="col-auto">
+                <!--<button type="button" class="btn btn-sm btn-primary">{{$t('details')}}</button>-->
+              </div>
+            </div>
+
+            <bar-chart
+              :height="350"
+              ref="barChart"
+              :chart-data="redBarChart.chartData"
+            >
+            </bar-chart>
+          </card>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -323,10 +333,13 @@
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
+  import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
+  import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
 
   export default {
     layout: 'DashboardLayout',
     components: {
+      ExternalBankAmountCard,
       ActivityFeed,
       LineChart,
       BarChart,
@@ -340,7 +353,8 @@
       UserList,
       ProgressTrackList,
       GoldPrice,
-      MasterAmountCard
+      MasterAmountCard,
+      SilverPrice
     },
     data() {
       return {

@@ -129,11 +129,20 @@
                       <a
                         class="dropdown-item"
                         v-if="
-                          shouldDisplayExecutePayment()
+                          shouldDisplayPPsExecutePayment()
                         "
                         @click="displayExecutePayment()"
                         ><i class="fa fa-credit-card"></i
-                        >{{ $t("execute_payment") }}</a
+                        >{{ $t("execute_pps_payment") }} ( {{pendingPPSOrders}} )</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        v-if="
+                          shouldDisplayBankExecutePayment()
+                        "
+                        @click="displayExecuteBankPayment()"
+                        ><i class="fa fa-credit-card"></i
+                        >{{ $t("execute_bank_payment") }} ( {{pendingBankAccountOrders}} )</a
                       >
                       <a
                         class="dropdown-item"
@@ -211,6 +220,15 @@
         :selectedOrderProcess="batchProcess"
         @canceled="cancelExecutePayment"
       />
+      <ExecuteBankPayment
+      v-if="
+          !isBeforeProcessingDate()
+        "
+        :showExecuteBankPayment="showExecuteBankPayment"
+        :selectedOrderProcess="batchProcess"
+        :totalNumber="pendingBankAccountOrders"
+        @canceled="cancelExecuteBankPayment"
+      />
       <DownloadCsv
         :selectedOrderProcess="batchProcess"
         :showDownloadDialog="showDownloadCsv"
@@ -232,6 +250,7 @@
         :selectedOrderProcess="batchProcess"
         @canceled="cancelSellGold"
       />
+      
     </div>
     <div class="mt-4 ml-4" v-if="isInProgress()">
       {{ $t("cant_open_batch_because_it_is_in_progress") }}
@@ -243,6 +262,7 @@ import { mapGetters,mapMutations } from "vuex";
 import Status from "@/components/Batch-processing/Status";
 import List from "@/components/Orders/List";
 import Complete from "@/components/Batch-processing/Complete";
+import ExecuteBankPayment from "@/components/Batch-processing/ExecuteBankPayment";
 import { Progress } from "element-ui";
 import moment from "moment";
 import RetryFailed from "@/components/Batch-processing/RetryFailed";
@@ -265,7 +285,8 @@ export default {
     CsvList,
     UploadCsv,
     ExecutePayment,
-    SellGold
+    SellGold,
+    ExecuteBankPayment
   },
   data() {
     return {
@@ -277,7 +298,8 @@ export default {
       showFilesList: false,
       showUploadCsv: false,
       showExecutePayment: false,
-      showSellGold : false
+      showSellGold : false,
+      showExecuteBankPayment:false
     };
   },
   computed: {
@@ -291,6 +313,24 @@ export default {
           100
       );
     },
+    pendingBankAccountOrders(){
+      if(this.batchProcess && this.batchProcess.payment_methods && this.batchProcess.payment_methods.bank_account)
+      {
+        return this.batchProcess.payment_methods.bank_account.pending
+      }
+      else{
+        return 0;
+      }
+    },
+    pendingPPSOrders(){
+      if(this.batchProcess && this.batchProcess.payment_methods && this.batchProcess.payment_methods.pps)
+      {
+        return this.batchProcess.payment_methods.pps.pending
+      }
+      else{
+        return 0;
+      }
+    }
   },
   destroyed(){
     this.$store.commit('batch-processing/batchProcess',null);
@@ -367,9 +407,13 @@ export default {
     return this.batchProcess.order_process_status
                             .name_translation_key == ORDER_PROCESS_STATUS_PENDING;
   },
-  shouldDisplayExecutePayment(){
+  shouldDisplayPPsExecutePayment(){
     return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess);
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingPPSOrders > 0;
+  },
+  shouldDisplayBankExecutePayment(){
+    return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingBankAccountOrders > 0;
   },
   cancelExecutePayment(){
     this.showExecutePayment = false;
@@ -401,6 +445,13 @@ export default {
       })
       .catch((err) => console.log(err))
       .finally(() => (this.isLoading = false));
+  },
+  cancelExecuteBankPayment(){
+    this.showExecuteBankPayment = false;
+  },
+  displayExecuteBankPayment(){
+    debugger;
+    this.showExecuteBankPayment = true;
   },
   onOrderUpdated(order)
   {

@@ -6,3 +6,7 @@ export function isGoldDepot(depot)
 {
     return depot && depot.depot_type && depot.depot_type.name_translation_key == "Gold";
 }
+export const assetTypes = {
+    gold : 'Gold',
+    silver : 'Silver'
+}

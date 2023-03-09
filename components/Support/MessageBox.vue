@@ -1,6 +1,6 @@
 <template>
     <div v-if="ticket" class="ticket d-flex flex-column">
-        <div class="card-header p-3">
+        <div class="card-header p-3" style="height: 77px;">
             <div class="row">
                 <div class="col-4 text-truncate">
                     <div><small>{{$t('client')}}</small></div>
@@ -17,7 +17,7 @@
             title-classes="btn btn-sm mr-0"
             menu-on-right
             :has-toggle="false"
-           
+
 
           >
             <template slot="title">
@@ -34,7 +34,7 @@
                         <div class="text-wrap"><small>{{$t('close_ticket_message')}}</small></div>
                     </div>
                 </div>
-                
+
             </a>
             <a class="dropdown-item"  @click.prevent="confirmOpening" v-else>
                 <div class="d-flex" style="min-width:200px">

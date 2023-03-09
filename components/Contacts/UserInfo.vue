@@ -1,35 +1,34 @@
 
 <template>
   <div>
-    {{ $t("client") }}: 
+    {{ $t("client") }}:
       <el-popover
       v-if="info && info.account"
     placement="bottom"
-    :title="$t('client_number')+': '+info.account.account_number"
     width="400"
     trigger="click"
     >
     <div>
-     
+
         <div class="row">
           <div class="col-sm-6 _col-xl-3" v-if="info.account">
 
-            <div class="account_data text-sm mt-3">
+            <div class="account_data text-sm mt-1">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('account_data')}}</div>
+              <div>{{$t('name')}}:
+                <a href="" v-if="singleClientData && singleClientData.customer" @click.prevent="$router.push('/customers/details/' + singleClientData.customer.id)">{{getName}}</a>
+              </div>
               <div>{{$t('status')}}:
                 <badge :type="`${info.is_active ? 'success' : 'danger'}`" class="ml-1">{{info.is_active ? $t('active') : $t('inactive')}}</badge>
                 <badge v-if="info.is_locked" type="danger" class="ml-1"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
               </div>
-              <div>{{$t('name')}}:
-               {{getName}}
-              </div>
             </div>
-            
+
 
           </div>
           <div class="col-sm-6 _col-xl-3" v-if="info.person_data">
 
-            <div class="person_data text-sm mt-3">
+            <div class="person_data text-sm mt-1">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('person_data')}}</div>
               <div>{{$t('gender')}}: <i v-if="info.person_data" class="lnir ml-1" :class="`${info.person_data.gender == 'male' ? 'lnir-male rotate-45' : 'lnir-female lnir-rotate-180'}`" /></div>
               <div>{{$t('birthdate')}}: {{$d(new Date(info.person_data.birthdate),'narrow')}}</div>
@@ -37,7 +36,7 @@
             </div>
 
           </div>
-          
+
           <div class="col-sm-6 _col-xl-3" v-if="info.channels">
             <div class="contact text-sm mt-3">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('contact_data')}}</div>
@@ -45,22 +44,18 @@
               <div class="text-nowrap"><i class="lnir lnir-envelope mr-2 text-muted" />{{ getChannelInfo('email') }}</div>
             </div>
           </div>
+
         </div>
-        <div class="mt-2 d-flex align-content-center justify-content-center">
-        <a v-if="singleClientData && singleClientData.customer" href=""
-      @click.prevent="$router.push('/customers/details/' + singleClientData.customer.id)"
-      >{{ $t('see_more') }}</a
-    >
+
     </div>
-    </div>
-    <a slot="reference">{{ singleClientData.customer.account.account_number }}</a>
+    <a href="#" slot="reference">{{ singleClientData.customer.account.account_number }}</a>
   </el-popover>
   </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 /*
-* This component can get user info either by passing to it contact_id or accountId 
+* This component can get user info either by passing to it contact_id or accountId
 * We had to add this component because most of client information can be got by contact Id
 * But most of the operations uses the accountId
 * To reduce the api calls we are stroring all the client data that we loaded before so we load it one time
@@ -121,7 +116,7 @@ export default {
             this.$store.dispatch("clients/clientDetailsData", this.customerId);
         }
     }
-      
+
   },
   methods: {
     getChannelInfo(type) {

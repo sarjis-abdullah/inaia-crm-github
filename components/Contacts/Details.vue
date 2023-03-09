@@ -125,7 +125,6 @@ export default {
             types: "types/pairs",
         }),
         info() {
-            console.log('resource', this.resource)
             return this.resource && this.resource.customer;
         },
         getType() {
@@ -184,7 +183,6 @@ export default {
         })
       },
       handleChange(val) {
-        console.log(val);
         val.forEach(element => {
           if(element == 'depots' && !this.shouldLoadDepots)
           {
