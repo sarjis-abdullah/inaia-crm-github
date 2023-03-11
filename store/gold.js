@@ -85,12 +85,12 @@ export const actions = {
             .get(`${process.env.golddinarApiUrl}/current-gold-price`)
             .then(response => {
                 if (response && response.data.data) {
-                    commit('currentPrice', parseFloat(response.data.data.currentGoldPrice))
-                    commit('currentBuyPrice', parseFloat(response.data.data.currentGoldBuyPrice))
-                    commit('currentSellPrice', parseFloat(response.data.data.currentGoldSellPrice))
-                    commit('currency', response.data.data.currency)
-                    commit('timestamp', response.data.data.timestamp)
-                    commit('HMApiDowned', false)
+                    commit('currentPrice', parseFloat(response.data.data.fixing_gram_eur))
+                    commit('currentBuyPrice', parseFloat(response.data.data.fixing_gram_eur))
+                    commit('currentSellPrice', parseFloat(response.data.data.fixing_gram_eur))
+                    //commit('currency', response.data.data.currency)
+                    //commit('timestamp', response.data.data.timestamp)
+                    //commit('HMApiDowned', false)
                 }
                 return Promise.resolve(response)
             }).catch(err => {

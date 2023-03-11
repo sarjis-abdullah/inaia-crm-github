@@ -264,7 +264,7 @@ export default {
     },
     data() {
         return {
-            depotId: this.$route.params.id,
+            depotId: parseInt(this.$route.params.id),
             loaded:false,
             loadedWithError:false,
             client:null,
@@ -298,7 +298,7 @@ export default {
             silverPrice:'silverPrice'
         }),
     },
-     mounted () {  
+     mounted () {
        this.$confirm = MessageBox.confirm
     },
     watch: {
