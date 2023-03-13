@@ -196,7 +196,7 @@
           </div>
         </div>
       </div>
-      <List :order_process_id="processId" v-if="!isBeforeProcessingDate()" @orderUpdated="onOrderUpdated"/>
+      <List :order_process_id="processId"  @orderUpdated="onOrderUpdated"/>
       <Complete
         v-if="!isBeforeProcessingDate()"
         :showConfirmComplete="showConfirmComplete"
@@ -221,9 +221,6 @@
         @canceled="cancelExecutePayment"
       />
       <ExecuteBankPayment
-      v-if="
-          !isBeforeProcessingDate()
-        "
         :showExecuteBankPayment="showExecuteBankPayment"
         :selectedOrderProcess="batchProcess"
         :totalNumber="pendingBankAccountOrders"
@@ -396,8 +393,7 @@ export default {
     return (this.batchProcess.order_process_status
                           .name_translation_key == ORDER_PROCESS_STATUS_PENDING ||
                           this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED) &&
-                        !this.isBeforeProcessingDate();
+                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED);
   },
   shouldDisplayRetry(){
     return this.batchProcess.order_process_status
@@ -405,11 +401,11 @@ export default {
   },
   shouldDisplayComplete(){
     return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING;
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !this.isBeforeProcessingDate();
   },
   shouldDisplayPPsExecutePayment(){
     return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingPPSOrders > 0;
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingPPSOrders > 0 && !this.isBeforeProcessingDate();;
   },
   shouldDisplayBankExecutePayment(){
     return this.batchProcess.order_process_status
