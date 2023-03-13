@@ -5,64 +5,85 @@
                 <h5 class="modal-title" v-else>{{$t('edit_commission')}}</h5>
         </template>
         <form>
-            <div class="row" v-if="!hideStaticElements">
-                <div class="col-md d-flex flex-row justify-content-center">
-                    <Select v-model="selectedCustomer" remote filterable reserve-keyword
-                        :placeholder="$t('customer_filter_placeholder')" :loading="loadingCustomers"
-                        :remote-method="loadCustomers" @change="customerSelected" @clear="clearCustomer" clearable>
-                        <Option v-for="option in customers" :value="option.id" :label="formatClientLabel(option)"
-                            :key="option.id">
-                        </Option>
-                    </Select>
-                </div>
-                <div class="col-md d-flex flex-row justify-content-center">
-                    <Select :placeholder="$t('depots')" v-model="selectedDepots" filterable clearable @clear="clearDepot"
-                        :disabled="selectedCustomer == null">
-                        <Option v-for="option in depots" :value="option.id" :label="option.name" :key="option.id">
-                        </Option>
-                    </Select>
-                </div>
-                <div class="col-md d-flex flex-row justify-content-center">
-                    <Select :placeholder="$t('orders')+' (optional)'" v-model="selectedOrder" filterable clearable @clear="clearOrder"
-                        :disabled="selectedDepots == null">
-                        <Option v-for="option in orders" :value="option.id" :label="formatOrderLabel(option)" :key="option.id">
-                        </Option>
-                    </Select>
+            <div v-if="!hideStaticElements">
+                <div class="mb-3">Purchase information</div>
+                <div class="row pl-3" >
+                    
+                    <div class="col-md d-flex flex-row justify-content-center">
+                        <div>
+                            <label>Customer</label>
+                            <Select v-model="selectedCustomer" remote filterable reserve-keyword
+                                :placeholder="$t('customer_filter_placeholder')" :loading="loadingCustomers"
+                                :remote-method="loadCustomers" @change="customerSelected" @clear="clearCustomer" clearable>
+                                <Option v-for="option in customers" :value="option.id" :label="formatClientLabel(option)"
+                                    :key="option.id">
+                                </Option>
+                            </Select>
+                        </div>
+                    </div>
+                    <div class="col-md d-flex flex-row justify-content-center">
+                        <div>
+                            <label>Depot</label>
+                            <Select :placeholder="$t('depots')" v-model="selectedDepots" filterable clearable @clear="clearDepot"
+                                :disabled="selectedCustomer == null">
+                                <Option v-for="option in depots" :value="option.id" :label="option.name" :key="option.id">
+                                </Option>
+                            </Select>
+                        </div>
+                    </div>
+                    <div class="col-md d-flex flex-row justify-content-center">
+                        <div>
+                            <label>Order (optional)</label>
+                        <Select :placeholder="$t('orders')+' (optional)'" v-model="selectedOrder" filterable clearable @clear="clearOrder"
+                            :disabled="selectedDepots == null">
+                            <Option v-for="option in orders" :value="option.id" :label="formatOrderLabel(option)" :key="option.id">
+                            </Option>
+                        </Select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <div class="col-md">
-                    <Input :placeholder="$t('rate')" v-model="rate" type="number"/>
-                </div>
-                <div class="col-md">
-                    <Input :placeholder="$t('amount')" v-model="amount" type="number"/>
-                </div>
-                <div class="col-md">
-                    <Input :placeholder="$t('target_amount')" v-model="target_amount" type="number"/>
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-md d-flex flex-row justify-content-center" v-if="salesAdvisorId == -1 && !hideStaticElements">
-                    <Select :placeholder="$t('sales_advisors')" v-model="selectedAdvisor" filterable clearable
-                        @clear="clearAdvisor">
-                        <Option v-for="option in salesAdvisors" :value="option.id" :label="formatClientLabel(option)"
-                            :key="option.id">
-                        </Option>
-                    </Select>
-                </div>
-                <div class="col-md d-flex flex-row justify-content-center">
+            <div class="mt-3">
+                <div class="mb-3">Commission information</div>
+                <div class="row pl-3">
+                    <div class="col-md d-flex flex-row justify-content-center">
+                        <div>
+                            <label>Direction</label>
                     <Select :placeholder="$t('direction')" v-model="selectedDirection">
                         <Option v-for="option in directions" :value="option.name" :label="$t(option.name)" :key="option.id">
                         </Option>
                     </Select>
                 </div>
-                <div class="col-md d-flex flex-row justify-content-center">
+                </div>
+                    
+                    
+                    <div class="col-md d-flex flex-row justify-content-center">
+                        <div>
+                            <label>Reason</label>
                     <Select :placeholder="$t('reason')" v-model="selectedReason">
                         <Option v-for="option in reasons" :value="option.name" :label="$t(option.name)" :key="option.id">
                         </Option>
                     </Select>
                 </div>
+                </div>
+                    <div class="col-md">
+                        <div>
+                            <label>{{$t('target_amount')}}</label>
+                        <Input :placeholder="$t('target_amount')" v-model="target_amount" type="number" :disabled="true"/>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="mt-3">
+                <div>Sales advisors</div>
+                    <div v-for="(advisor) in advisors" :key="advisor.index" class="pl-3 mt-3 d-flex justify-content-center align-items-center">
+                        <AddSaleAdvisorItem  :salesAdvisors="salesAdvisors" :index="advisor.index" @change="onAdvisorChange" :totalAmount="remainingAmount"/>
+                        <IconButton type="add" class="ml-2" @click="()=>addNewSaleAdvisor(advisor.index)" v-if="advisor.index == advisors.length-1"/>
+                            
+                        <IconButton type="delete" class="ml-2" @click="()=>removeSaleAdvisor(advisor.index)" v-if="advisor.index < advisors.length-1"/>
+                    </div>
+                    <p class="text-center mt-2 text-danger">The maximum available amount {{ $n(this.remainingAmount/100) }} €</p>
+                </div>
         </form>
         <template slot="footer">
             <base-button type="link" @click="onClose" >{{$t('cancel')}}</base-button>
@@ -74,12 +95,15 @@
 import BaseButton from '../argon-core/BaseButton.vue';
 import {Form,Select,
     Option,
-    Autocomplete,Input} from 'element-ui';
+    Autocomplete,Input,FormItem} from 'element-ui';
 import { mapGetters } from "vuex";
 import moment from "moment";
 import { formatDateToApiFormat } from '../../helpers/helpers';
+import AddSaleAdvisorItem from '@/components/SalesCommission/AddSaleAdvisorItem';
+import IconButton from '@/components/common/Buttons/IconButton';
+
 export default{
-  components: { BaseButton,Form,Select,Option,Input },
+  components: { BaseButton,Form,Select,Option,Input,FormItem,AddSaleAdvisorItem,IconButton },
     props:{
         showPopup:{
             type:Boolean,
@@ -124,12 +148,39 @@ export default{
             reasons:[{id:1,name:'new_contract'},{id:2,name:'contract_canceled'}],
             selectedReason:null,
             isSubmitting:false,
-            hideStaticElements:false
+            hideStaticElements:false,
+            advisors:[{index:0,data:{
+                sales_advisor_id:-1,
+                rate:0,
+                target_amount:0,
+                amount:0
+            }}],
         }
     },
     computed:{
+        activateButton(){
+            let shouldActivate = false;
+            if(this.salesAdvisorId>-1 && this.selectedDepots && this.amount > 0 && this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" ){
+                shouldActivate = true;
+            }
+            return true;
+        },
+        remainingAmount(){
+           
+            let sum = 0;
+            if(this.advisors.length > 0){
+                this.advisors.forEach(element=>{
+                    if(element.data && element.data.target_amount>0){
+                        sum+=parseInt(element.data.target_amount*100);
+                    }
+                })
+            }
+            console.log(this.target_amount - sum);
+            return (this.target_amount*100) - sum;
+        },
         ...mapGetters("depots", {
             depots: "orderFilterList",
+
         }),
         ...mapGetters("clients", {
             customers: "orderFilterList",
@@ -146,13 +197,7 @@ export default{
         ...mapGetters("orders", {
             orders: "list",
         }),
-        activateButton(){
-            let shouldActivate = false;
-            if(this.salesAdvisorId>-1 && this.selectedDepots && this.amount > 0 && this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" ){
-                shouldActivate = true;
-            }
-            return true;
-        }
+        
     },
     watch: {
         selectedCustomer: {
@@ -171,7 +216,7 @@ export default{
                     const depot = this.depots.find(d=>d.id==this.selectedDepots);
                     if(depot){
                         if(parseInt(depot.target_amount) > 0){
-                            this.target_amount = parseInt(depot.target_amount)/100
+                            this.target_amount = parseFloat(depot.target_amount/100);
                         }
                     }
                     const stat = this.status.find(s=>s.name_translation_key.indexOf('completed')!=-1);
@@ -204,6 +249,7 @@ export default{
             this.selectedReason = null;
             this.rate = null;
             this.hideStaticElements=false;
+            this.advisors = [];
             this.$emit('closed');
         },
         loadCustomers: function (query) {
@@ -270,9 +316,6 @@ export default{
         },
         clearOrder(){
             this.selectedOrder = null;
-        },
-        clearAdvisor(){
-            this.selectedAdvisor = null;
         },
         formatOrderLabel(order){
             if(order){
@@ -343,6 +386,27 @@ export default{
                 this.amount = this.oldCommission.amount/100;
                 this.target_amount = this.oldCommission.target_amount/100;
                 this.selectedReason = this.oldCommission.reason;
+            }
+        },
+        addNewSaleAdvisor(index){
+
+            this.advisors.push({index:index+1,data:{
+                sales_advisor_id:-1,
+                rate:0,
+                target_amount:0,
+                amount:0
+            }})
+        },
+        removeSaleAdvisor(index){
+            for (let i = index; i < this.advisors.length; i++) {
+                const element = this.advisors[i];
+                element.index --;
+            }
+            this.advisors.splice(index,1);
+        },
+        onAdvisorChange(value){
+            if(value.data && value.data.target_amount >0 && value.data.target_amount<this.remainingAmount){
+                this.advisors[value.index].data = value.data;
             }
         }
     }
