@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-                    <div class="col-md d-flex flex-row justify-content-center">
+    <div class="row d-flex flex-row justify-content-center align-items-center">
+                    <div class="col-4">
                         <div>
                             <label>Advisor</label>
                         <Select :placeholder="$t('sales_advisors')" v-model="selectedAdvisor" filterable clearable
@@ -11,18 +11,28 @@
                         </Select>
                         </div>
                     </div>
-                    <div class="col-md">
+                    <div class="col-3">
                         <div>
                             <label>Rate</label>
                             <Input :placeholder="$t('rate')" v-model="rate" type="number" @change="dataChanged"/>
                         </div>
                         </div>
-                        <div class="col-md">
+                        <div class="col-4">
                             <div>
-                            <label>Target amount</label>
+                            <label class="text-nowrap">Target amount</label>
                             <Input :placeholder="$t('amount')" v-model="amount" type="number" @change="dataChanged" :class="wrongAmount?'border border-danger':''"/>
                             
                             </div>
+                        </div>
+                        <div class="col-1">
+                            <div class="d-flex justify-content-center">
+                            <IconButton type="confirm" class="ml-2" @click="()=>saveInfo()"  :disabled="!enableSaving"/>
+                            <span v-if="isSaved">
+                                <IconButton type="add"  @click="()=>addNewSaleAdvisor()" v-if="displayAdd"/>
+                                <IconButton type="delete" @click="()=>removeSaleAdvisor()" v-else/>
+                                </span>
+                            </div>
+                            
                         </div>
                 </div>
 </template>
@@ -30,6 +40,7 @@
 import {Select,
     Option,
     Input} from 'element-ui';
+import IconButton from '@/components/common/Buttons/IconButton';
 export default({
     props:{
         salesAdvisors:{
@@ -46,12 +57,17 @@ export default({
         data:{
             type:Object,
             default:null
+        },
+        displayAdd:{
+            type:Boolean,
+            default:false
         }
     },
     components:{
         Select,
         Option,
-        Input
+        Input,
+        IconButton
     },
     data(){
         return{
@@ -59,6 +75,12 @@ export default({
             rate:null,
             amount:null,
             wrongAmount:false,
+            isSaved:false,
+        }
+    },
+    computed:{
+        enableSaving(){
+            return (this.selectedAdvisor>=0 && this.rate > 0 && !this.wrongAmount && this.amount > 0);
         }
     },
     watch: {
@@ -66,7 +88,7 @@ export default({
             handler() {
                 if (this.data != null) {
                     if(this.data.sales_advisor_id > -1){
-                        this.selectedAdvisor = this.data.salesAdvisors;
+                        this.selectedAdvisor = this.data.sales_advisor_id;
                     }
                     if(this.data.rate > 0){
                         this.rate = this.data.rate;
@@ -108,19 +130,29 @@ export default({
             }
             else
             {
-                const amount = parseInt(((this.amount/100)*this.rate)*100);
+                
                 this.wrongAmount = false;
-                let data = {
+            }
+        },
+        saveInfo(){
+            const amount = parseInt(((this.amount/100)*this.rate)*100);
+            let data = {
                 sales_advisor_id:this.selectedAdvisor,
                 rate:this.rate,
                 target_amount:this.amount,
                 amount:amount
                 }
+                this.isSaved = true;
             this.$emit('change',{
                     index:this.index,
                     data:data
                 })
-            }
+        },
+        addNewSaleAdvisor(){
+            this.$emit('add',this.index);
+        },
+        removeSaleAdvisor(){
+            this.$emit('delete',this.index);
         }
     }
 })

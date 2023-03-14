@@ -81,12 +81,13 @@
                         @change="onAdvisorChange" 
                         :totalAmount="remainingAmount"
                         :data="advisor.data"
+                        :displayAdd="advisor.index==(advisors.length-1)"
+                        @add="addNewSaleAdvisor"
+                        @delete="removeSaleAdvisor"
                         />
-                        <IconButton type="add" class="ml-2" @click="()=>addNewSaleAdvisor(advisor.index)" v-if="advisor.index == advisors.length-1"/>
-                            
-                        <IconButton type="delete" class="ml-2" @click="()=>removeSaleAdvisor(advisor.index)" v-if="advisor.index < advisors.length-1"/>
+                        
                     </div>
-                    <p class="text-center mt-2 text-danger">The maximum available amount {{ $n(this.remainingAmount/100) }} €</p>
+                    <p class="text-center mt-2 text-danger" v-if="this.remainingAmount>=0">The maximum available amount {{ $n(this.remainingAmount/100) }} €</p>
                 </div>
         </form>
         <template slot="footer">
@@ -163,11 +164,7 @@ export default{
     },
     computed:{
         activateButton(){
-            let shouldActivate = false;
-            if(this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" ){
-                shouldActivate = true;
-            }
-            return shouldActivate;
+            return (this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" && this.remainingAmount==0)
         },
         remainingAmount(){
            
@@ -328,29 +325,40 @@ export default{
         createNewCommission(){
             if(!this.oldCommission)
             {
-                let data = {
-                    "sales_advisor_id":this.salesAdvisorId>-1?this.salesAdvisorId:this.selectedAdvisor,
-                    "depot_id":this.selectedDepots,
-                    "amount":this.amount*100,
-                    "target_amount":this.target_amount*100,
-                    "reason":this.selectedReason,
-                    "direction":this.selectedDirection
-                }
-                if(this.selectedOrder){
-                    data.order_id = this.selectedOrder;
-                }
-                if(this.rate){
-                    data.rate = this.rate*100;
-                }
-                this.isSubmitting = true;
-                this.$store.dispatch('salesCommission/addNew',data).then(res=>{
-                    this.$notify({type: 'success', timeout: 5000, message: this.$t('new_commission_created_successfully')});
-                    this.onClose();
-                }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('new_commission_created_unsuccessfully')})
-                }).finally(()=>{
-                    this.isSubmitting = false;
+                let commissions = [];
+                this.advisors.forEach(ad=>{
+                    let data ={
+                        "reason":this.selectedReason,
+                        "direction":this.selectedDirection,
+                        "depot_id":this.selectedDepots
+                    }
+                    if(this.selectedOrder){
+                        data.order_id = this.selectedOrder;
+                    }
+                    if(ad.data.sales_advisor_id>-1 && ad.data.rate>0 && ad.data.amount > 0 && ad.data.target_amount > 0){
+                        data.sales_advisor_id = ad.data.sales_advisor_id;
+                        data.rate = ad.data.rate;
+                        data.amount = ad.data.amount;
+                        data.target_amount = ad.data.target_amount*100;
+                        commissions.push(data);
+                    }
                 })
+                this.isSubmitting = true;
+                commissions.forEach((element,index)=>{
+                    this.$store.dispatch('salesCommission/addNew',element).then(res=>{
+                        if(index == commissions.length-1)
+                        {
+                            this.$notify({type: 'success', timeout: 5000, message: this.$t('new_commission_created_successfully')});
+                            this.isSubmitting = false;
+                            this.onClose();
+                        }
+                        
+                    }).catch(err=>{
+                        this.isSubmitting = false;
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('new_commission_created_unsuccessfully')})
+                    })
+                })
+                
             }
             else{
                 let data = {
@@ -409,9 +417,7 @@ export default{
             console.log(this.advisors);
         },
         onAdvisorChange(value){
-            if(value.data && value.data.target_amount >0 && value.data.target_amount<this.remainingAmount){
-                this.advisors[value.index].data = value.data;
-            }
+            this.advisors[value.index].data = value.data;
         }
     }
 }
