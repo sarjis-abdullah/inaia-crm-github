@@ -48,7 +48,7 @@
 
       <el-table-column v-bind:label="$t('type')" min-width="180px" prop="type">
         <template v-slot="{ row }">
-          <div class="d-flex align-items-center">
+          <div class="align-items-center">
             <div>
               <span class="orderType text-body"
                 >{{
@@ -57,6 +57,7 @@
               >
 
             </div>
+            <div class="text-muted text-sm">{{ $d(new Date(row.created_at)) }}</div>
           </div>
         </template>
       </el-table-column>
