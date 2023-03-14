@@ -105,6 +105,15 @@
           </span>
         </template>
       </el-table-column>
+      <el-table-column
+        v-bind:label="$t('comment')"
+        min-width="150px"
+        prop="comment"
+      >
+        <template v-slot="{ row }">
+          {{ row.comment }}
+        </template>
+      </el-table-column>
       <el-table-column>
         <template v-slot="{row}">
           <icon-button type="delete" v-if="displayDelete(row) && !showDeleteTransaction" @click="deleteAgioTransaction(row)"></icon-button>
