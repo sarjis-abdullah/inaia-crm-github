@@ -42,6 +42,10 @@ export default({
         index:{
             type:Number,
             default:-1
+        },
+        data:{
+            type:Object,
+            default:null
         }
     },
     components:{
@@ -55,6 +59,25 @@ export default({
             rate:null,
             amount:null,
             wrongAmount:false,
+        }
+    },
+    watch: {
+        data:{
+            handler() {
+                if (this.data != null) {
+                    if(this.data.sales_advisor_id > -1){
+                        this.selectedAdvisor = this.data.salesAdvisors;
+                    }
+                    if(this.data.rate > 0){
+                        this.rate = this.data.rate;
+                    }
+                    if(this.data.target_amount> 0){
+                        this.amount = this.data.target_amount;
+                    }
+                    
+                }
+            },
+            immediate: true,
         }
     },
     methods:{
@@ -85,12 +108,13 @@ export default({
             }
             else
             {
+                const amount = parseInt(((this.amount/100)*this.rate)*100);
                 this.wrongAmount = false;
                 let data = {
                 sales_advisor_id:this.selectedAdvisor,
                 rate:this.rate,
                 target_amount:this.amount,
-                amount:0
+                amount:amount
                 }
             this.$emit('change',{
                     index:this.index,

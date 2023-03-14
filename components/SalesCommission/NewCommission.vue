@@ -77,7 +77,11 @@
             <div class="mt-3">
                 <div>Sales advisors</div>
                     <div v-for="(advisor) in advisors" :key="advisor.index" class="pl-3 mt-3 d-flex justify-content-center align-items-center">
-                        <AddSaleAdvisorItem  :salesAdvisors="salesAdvisors" :index="advisor.index" @change="onAdvisorChange" :totalAmount="remainingAmount"/>
+                        <AddSaleAdvisorItem  :salesAdvisors="salesAdvisors" :index="advisor.index" 
+                        @change="onAdvisorChange" 
+                        :totalAmount="remainingAmount"
+                        :data="advisor.data"
+                        />
                         <IconButton type="add" class="ml-2" @click="()=>addNewSaleAdvisor(advisor.index)" v-if="advisor.index == advisors.length-1"/>
                             
                         <IconButton type="delete" class="ml-2" @click="()=>removeSaleAdvisor(advisor.index)" v-if="advisor.index < advisors.length-1"/>
@@ -160,10 +164,10 @@ export default{
     computed:{
         activateButton(){
             let shouldActivate = false;
-            if(this.salesAdvisorId>-1 && this.selectedDepots && this.amount > 0 && this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" ){
+            if(this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" ){
                 shouldActivate = true;
             }
-            return true;
+            return shouldActivate;
         },
         remainingAmount(){
            
@@ -175,7 +179,6 @@ export default{
                     }
                 })
             }
-            console.log(this.target_amount - sum);
             return (this.target_amount*100) - sum;
         },
         ...mapGetters("depots", {
@@ -403,6 +406,7 @@ export default{
                 element.index --;
             }
             this.advisors.splice(index,1);
+            console.log(this.advisors);
         },
         onAdvisorChange(value){
             if(value.data && value.data.target_amount >0 && value.data.target_amount<this.remainingAmount){
