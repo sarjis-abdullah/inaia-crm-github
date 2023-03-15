@@ -581,5 +581,6 @@ export default {
     commission_information:'Commission information',
     purchase_information:'Purchase information',
     maximum_available_amount:'The maximum available amount',
-    advisor:'Advisor'
+    advisor:'Advisor',
+    silver_purchase_interval:'Silver purchase interval'
 }
