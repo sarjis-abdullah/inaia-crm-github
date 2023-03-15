@@ -6,12 +6,12 @@
         </template>
         <form>
             <div v-if="!hideStaticElements">
-                <div class="mb-3">Purchase information</div>
+                <div class="mb-3">{{ $t('purchase_information') }}</div>
                 <div class="row pl-3" >
                     
                     <div class="col-md d-flex flex-row justify-content-center">
                         <div>
-                            <label>Customer</label>
+                            <label>{{ $t('customer') }}</label>
                             <Select v-model="selectedCustomer" remote filterable reserve-keyword
                                 :placeholder="$t('customer_filter_placeholder')" :loading="loadingCustomers"
                                 :remote-method="loadCustomers" @change="customerSelected" @clear="clearCustomer" clearable>
@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-md d-flex flex-row justify-content-center">
                         <div>
-                            <label>Depot</label>
+                            <label>{{ $t('depot') }}</label>
                             <Select :placeholder="$t('depots')" v-model="selectedDepots" filterable clearable @clear="clearDepot"
                                 :disabled="selectedCustomer == null">
                                 <Option v-for="option in depots" :value="option.id" :label="option.name" :key="option.id">
@@ -33,8 +33,8 @@
                     </div>
                     <div class="col-md d-flex flex-row justify-content-center">
                         <div>
-                            <label>Order (optional)</label>
-                        <Select :placeholder="$t('orders')+' (optional)'" v-model="selectedOrder" filterable clearable @clear="clearOrder"
+                            <label class="text-nowrap">{{ $t('orders') }} ({{ $t('optional') }})</label>
+                        <Select :placeholder="$t('orders')+' ('+$t('optional')+')'" v-model="selectedOrder" filterable clearable @clear="clearOrder"
                             :disabled="selectedDepots == null">
                             <Option v-for="option in orders" :value="option.id" :label="formatOrderLabel(option)" :key="option.id">
                             </Option>
@@ -44,11 +44,11 @@
                 </div>
             </div>
             <div class="mt-3">
-                <div class="mb-3">Commission information</div>
+                <div class="mb-3">{{ $t('commission_information') }}</div>
                 <div class="row pl-3">
                     <div class="col-md d-flex flex-row justify-content-center">
                         <div>
-                            <label>Direction</label>
+                            <label>{{ $t('direction') }}</label>
                     <Select :placeholder="$t('direction')" v-model="selectedDirection">
                         <Option v-for="option in directions" :value="option.name" :label="$t(option.name)" :key="option.id">
                         </Option>
@@ -59,23 +59,30 @@
                     
                     <div class="col-md d-flex flex-row justify-content-center">
                         <div>
-                            <label>Reason</label>
+                            <label>{{ $t('reason') }}</label>
                     <Select :placeholder="$t('reason')" v-model="selectedReason">
                         <Option v-for="option in reasons" :value="option.name" :label="$t(option.name)" :key="option.id">
                         </Option>
                     </Select>
                 </div>
+                
+                </div>
+                <div class="col-md" v-if="hideStaticElements">
+                    <div>
+                            <label>{{ $t('rate') }}</label>
+                            <Input :placeholder="$t('rate')" v-model="rate" type="number"/>
+                        </div>
                 </div>
                     <div class="col-md">
                         <div>
-                            <label>{{$t('target_amount')}}</label>
+                            <label class="text-nowrap">{{$t('target_amount')}}</label>
                         <Input :placeholder="$t('target_amount')" v-model="target_amount" type="number" :disabled="true"/>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="mt-3">
-                <div>Sales advisors</div>
+            <div class="mt-3" v-if="!hideStaticElements">
+                <div>{{ $t('sales_advisors') }}</div>
                     <div v-for="(advisor) in advisors" :key="advisor.index" class="pl-3 mt-3 d-flex justify-content-center align-items-center">
                         <AddSaleAdvisorItem  :salesAdvisors="salesAdvisors" :index="advisor.index" 
                         @change="onAdvisorChange" 
@@ -87,7 +94,7 @@
                         />
                         
                     </div>
-                    <p class="text-center mt-2 text-danger" v-if="this.remainingAmount>=0">The maximum available amount {{ $n(this.remainingAmount/100) }} €</p>
+                    <p class="text-center mt-2 text-danger" v-if="this.remainingAmount>=0">{{ $t('maximum_available_amount') }} {{ $n(this.remainingAmount/100) }} €</p>
                 </div>
         </form>
         <template slot="footer">
@@ -164,7 +171,11 @@ export default{
     },
     computed:{
         activateButton(){
-            return (this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" && this.remainingAmount==0)
+            if(!this.oldCommission)
+                return (this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="" && this.remainingAmount==0)
+            else{
+                return (this.target_amount > 0 && this.selectedReason!="" && this.selectedDirection!="")
+            }
         },
         remainingAmount(){
            
@@ -176,7 +187,13 @@ export default{
                     }
                 })
             }
-            return (this.target_amount*100) - sum;
+            let amount = (this.target_amount*100) - sum;
+            if(amount>=0){
+                return amount;
+            }
+            else{
+                return this.target_amount*100
+            }
         },
         ...mapGetters("depots", {
             depots: "orderFilterList",
@@ -230,6 +247,20 @@ export default{
             },
             immediate:true
         },
+        selectedOrder:{
+            handler(){
+                if(this.selectedOrder)
+                {
+                    const order = this.orders.find(o=>o.id==this.selectedOrder);
+                    if(order){
+                        if(parseInt(order.amount)> 0){
+                            this.target_amount = parseFloat(order.amount/100);
+                        }
+                    }
+                }
+            },
+            immediate:true
+        },
         oldCommission:{
             handler(){
                 this._initOldCommission()
@@ -249,7 +280,12 @@ export default{
             this.selectedReason = null;
             this.rate = null;
             this.hideStaticElements=false;
-            this.advisors = [];
+            this.advisors = [{index:0,data:{
+                sales_advisor_id:-1,
+                rate:0,
+                target_amount:0,
+                amount:0
+            }}];
             this.$emit('closed');
         },
         loadCustomers: function (query) {
@@ -316,6 +352,7 @@ export default{
         },
         clearOrder(){
             this.selectedOrder = null;
+            this.target_amount = null;
         },
         formatOrderLabel(order){
             if(order){
@@ -365,7 +402,7 @@ export default{
                     "id":this.oldCommission.id,
                     "sales_advisor_id":this.oldCommission.sales_advisor_id,
                     "depot_id":this.oldCommission.depot_id,
-                    "amount":this.amount*100,
+                    "amount":this.target_amount*this.rate,
                     "target_amount":this.target_amount*100,
                     "reason":this.selectedReason,
                     "direction":this.selectedDirection
@@ -374,7 +411,7 @@ export default{
                     data.order_id = this.oldCommission.order_id;
                 }
                 if(this.rate){
-                    data.rate = this.rate*100;
+                    data.rate = this.rate;
                 }
                 this.isSubmitting = true;
                 this.$store.dispatch('salesCommission/edit',data).then(res=>{
@@ -393,7 +430,7 @@ export default{
             if(this.oldCommission){
                 this.hideStaticElements = true;
                 this.selectedDirection = this.oldCommission.direction;
-                this.rate = this.oldCommission.rate/100;
+                this.rate = this.oldCommission.rate;
                 this.amount = this.oldCommission.amount/100;
                 this.target_amount = this.oldCommission.target_amount/100;
                 this.selectedReason = this.oldCommission.reason;

@@ -2,7 +2,7 @@
     <div class="row d-flex flex-row justify-content-center align-items-center">
                     <div class="col-4">
                         <div>
-                            <label>Advisor</label>
+                            <label>{{ $t('advisor') }}</label>
                         <Select :placeholder="$t('sales_advisors')" v-model="selectedAdvisor" filterable clearable
                             @clear="clearAdvisor" @change="dataChanged">
                             <Option v-for="option in salesAdvisors" :value="option.id" :label="formatClientLabel(option)"
@@ -13,13 +13,13 @@
                     </div>
                     <div class="col-3">
                         <div>
-                            <label>Rate</label>
+                            <label>{{ $t('rate') }}</label>
                             <Input :placeholder="$t('rate')" v-model="rate" type="number" @change="dataChanged"/>
                         </div>
                         </div>
                         <div class="col-4">
                             <div>
-                            <label class="text-nowrap">Target amount</label>
+                            <label class="text-nowrap">{{ $t('target_amount') }}</label>
                             <Input :placeholder="$t('amount')" v-model="amount" type="number" @change="dataChanged" :class="wrongAmount?'border border-danger':''"/>
                             
                             </div>
