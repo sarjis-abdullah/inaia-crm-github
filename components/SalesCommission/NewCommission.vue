@@ -134,13 +134,6 @@ export default{
         if (this.salesAdvisors.length == 0 && this.salesAdvisorId==-1) {
             this.$store.dispatch("salesCommission/fetchSalesAdvisors")
         }
-        if(this.status.length == 0){
-            this.$store.dispatch("orderStatus/fetchList", "");
-        }
-        if(this.types.length == 0){
-            this.$store.dispatch("orderTypes/fetchOrderFilterList", "");
-        }
-        
     },
     data(){
         return {
@@ -205,14 +198,8 @@ export default{
         ...mapGetters("salesCommission", {
             salesAdvisors: "salesAdvisors",
         }),
-        ...mapGetters("orderStatus", {
-            status: "list",
-        }),
-        ...mapGetters("orderTypes", {
-            types: "orderFilterList",
-        }),
         ...mapGetters("orders", {
-            orders: "list",
+            orders: "commissionList",
         }),
         
     },
@@ -236,13 +223,8 @@ export default{
                             this.target_amount = parseFloat(depot.target_amount/100);
                         }
                     }
-                    const stat = this.status.find(s=>s.name_translation_key.indexOf('completed')!=-1);
-                    const types = this.types.filter(t=>(t.name_translation_key.indexOf('purchase')!=-1 && t.name_translation_key.indexOf('interval')==-1));
-                    const typesIds = types.map(t=>t.id);
-                    const payload = "per_page=100&depot_ids="+this.selectedDepots+
-                    "&order_type_ids="+typesIds.join(',')+
-                    "&order_status_ids="+stat.id;
-                    this.$store.dispatch('orders/fetchList',payload);
+                    const payload = "per_page=500&depot_ids="+this.selectedDepots+
+                    this.$store.dispatch('orders/fetchCommissionList',payload);
                 }
             },
             immediate:true
