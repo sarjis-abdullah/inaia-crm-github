@@ -19,18 +19,18 @@
       <div class="list-group list-group-flush mt-3" v-if="batchProcessSellPreview">
         <detail-list-item :title="$t('gold_price_date')"
           ><div slot="value">
-            {{ $d(new Date(batchProcessSellPreview.gold_price_date), "short") }}
+            {{ $d(new Date(batchProcessSellPreview.gram_price_date), "short") }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_price')"
           ><div slot="value">
-            <i18n-n :value="batchProcessSellPreview.gold_price_raw / 100"></i18n-n>
+            <i18n-n :value="batchProcessSellPreview.gram_price_raw / 100"></i18n-n>
             €
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessSellPreview.gold_amount / 1000"></i18n-n> g
+            <i18n-n :value="batchProcessSellPreview.gram_amount / 1000"></i18n-n> g
           </div></detail-list-item
         >
         <detail-list-item :title="$t('money_amount')"
