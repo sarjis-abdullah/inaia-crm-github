@@ -98,9 +98,8 @@ export default {
       this.isSubmitting = true;
       this.isLoading = true;
       const data = {
-        gold_price_date: formatDateToApiFormat(this.selectedDate),
-        order_process_id: this.selectedOrderProcess.id,
-        order_type: this.selectedOrderProcess.order_type.name_translation_key
+        gram_price_date: formatDateToApiFormat(this.selectedDate),
+        order_process_id: this.selectedOrderProcess.id
       };
       this.$store
         .dispatch("batch-processing/sellGoldPreview", data)
