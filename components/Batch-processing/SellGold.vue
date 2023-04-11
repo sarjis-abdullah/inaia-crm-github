@@ -122,7 +122,7 @@ export default {
       this.isSubmitting = true;
       const data = {
           order_process_id:this.selectedOrderProcess.id,
-          gold_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
+          gram_price_date: this.selectedDate?formatDateToApiFormat(this.selectedDate):formatDateToApiFormat(new Date()),
       }
       this.$store
         .dispatch(
