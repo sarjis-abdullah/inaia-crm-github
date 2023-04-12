@@ -194,10 +194,10 @@ export const actions = {
     },
     getCurrentGoldPrice(context)
     {
-        return this.$axios.get(`${process.env.golddinarApiUrl}/current-gold-price`)
+        return this.$axios.get(`${process.env.golddinarApiUrl}/current-gold-price?currency=EUR`)
                 .then(res => {
-                    context.commit('setGoldPrice',res.data.data.fixing_gram_eur);
-                    return res.data.data.fixing_gram_eur;
+                    context.commit('setGoldPrice',res.data.data.fixing_gram);
+                    return res.data.data.fixing_gram;
                 }).catch(err => {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
@@ -205,10 +205,10 @@ export const actions = {
     },
     getCurrentSilverPrice(context)
     {
-        return this.$axios.get(`${process.env.golddinarApiUrl}/current-silver-price`)
+        return this.$axios.get(`${process.env.golddinarApiUrl}/current-silver-price?currency=EUR`)
                 .then(res => {
-                    context.commit('silverPrice',res.data.data.fixing_gram_eur);
-                    return res.data.data.fixing_gram_eur;
+                    context.commit('silverPrice',res.data.data.fixing_gram);
+                    return res.data.data.fixing_gram;
                 }).catch(err => {
                     // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
@@ -216,7 +216,7 @@ export const actions = {
     },
     getGoldPriceByDate(context,payload)
     {
-        return this.$axios.get(`${process.env.golddinarApiUrl}/historical-price?date=${payload}`)
+        return this.$axios.get(`${process.env.golddinarApiUrl}/historical-price?currency=EUR&date=${payload}`)
                 .then(res => {
                     return res.data.data[0];
                 }).catch(err => {
