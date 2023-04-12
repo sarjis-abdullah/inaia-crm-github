@@ -64,7 +64,7 @@ export const actions = {
                 })
     },
     previewNewBatch(context,payload){
-        
+
         return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/preview?order_process_id=${payload.order_process_id}&gram_price_date=${payload.gram_price_date}`,payload)
                 .then(res=>{
                     return res.data.data;
@@ -93,7 +93,7 @@ export const actions = {
     },
     sellGoldPreview(context,payload)
     {
-        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/sell/preview?order_process_id=${payload.order_process_id}&gold_price_date=${payload.gold_price_date}&order_type=${payload.order_type}`)
+        return this.$axios.get(`${ process.env.golddinarApiUrl }/order-processes/sell/preview?order_process_id=${payload.order_process_id}&gram_price_date=${payload.gram_price_date}`)
                 .then(res=>{
                     return res.data.data;
                 })
