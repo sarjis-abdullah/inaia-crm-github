@@ -118,14 +118,14 @@ export const actions = {
             return Promise.resolve(context.state.prices)
         }
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/historical-price?type=${ payload.type }${ payload.start ? '&start='+payload.start : ''}${ payload.date ? '&date='+payload.date : ''}`)
+            .get(`${process.env.golddinarApiUrl}/historical-price?currency=EUR&type=${ payload.type }${ payload.start ? '&start='+payload.start : ''}${ payload.date ? '&date='+payload.date : ''}`)
             .then(response => {
                 let mappedData  = [];
                 if (response && response.data.data) {
                     if (process.env.quandlApiOn) {
-                        mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram_eur])
+                        mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram])
                     } else {
-                        mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.fixing_gram_eur])
+                        mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.fixing_gram])
                     }
                 }
                 console.log(mappedData);
@@ -146,12 +146,12 @@ export const actions = {
     },
     getFixingPrice(context, payload) {
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/historical-price?date=${ payload }`)
+            .get(`${process.env.golddinarApiUrl}/historical-price?currency=EUR&date=${ payload }`)
             .then(response => {
                 let firstEntry = response.data.data[0];
                 if(firstEntry)
                 {
-                    return firstEntry.fixing_gram_eur;
+                    return firstEntry.fixing_gram;
                 }
                 else{
                     return -1;

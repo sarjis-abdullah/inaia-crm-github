@@ -89,11 +89,11 @@ export const actions = {
             return Promise.resolve(context.state.prices)
         }
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/silver-price-historical?period=${ payload.type }${ payload.start ? '&start='+payload.start : ''}`)
+            .get(`${process.env.golddinarApiUrl}/silver-price-historical?currency=EUR&period=${ payload.type }${ payload.start ? '&start='+payload.start : ''}`)
             .then(response => {
                 let mappedData  = [];
                 if (response && response.data.data) {
-                    mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram_eur])
+                    mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram])
                 }
                 console.log(mappedData);
                 context.commit('prices', mappedData)
@@ -111,7 +111,7 @@ export const actions = {
     },
     getFixingPrice(context, payload) {
         return this.$axios
-            .get(`${process.env.golddinarApiUrl}/silver-price-historical?date=${ payload }`)
+            .get(`${process.env.golddinarApiUrl}/silver-price-historical?currency=EUR&date=${ payload }`)
             .then(response => {
                 let firstEntry = response.data.data[0];
                 if(firstEntry)
