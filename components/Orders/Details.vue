@@ -146,10 +146,18 @@ export default {
                 this.$store
                     .dispatch('orders/cancel', data)
                     .then( res => {
-                        this.showPopup = false;
-                        this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
-                        this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
+                        console.log(res);
+                        let data = res.data.data;
+                        if(data.fin_api_webform_url){
+                            window.location.href = data.fin_api_webform_url
+                        }
+                        else{
+                            this.showPopup = false;
+                            this.$emit('orderUpdated',resource);
+                            this.onDetailClose();
+                            this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
+                        }
+                        
                     }).catch(()=>{
                         this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
                     }).finally(()=>this.isSubmitting = false)
