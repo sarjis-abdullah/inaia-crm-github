@@ -78,12 +78,12 @@
                                             <img v-bind:src="avatar(row)" alt="" />
                                         </div>
                                         <div class="media-body">
-                                            <div class="font-weight-600 name mb-0 text-sm">{{ row.name + (row.person_data ? ' ' + row.person_data.surname : '') }}</div>
+                                            <div class="font-weight-600 name mb-0 text-sm">{{ row.contact.name + (row.contact.person_data ? ' ' + row.contact.person_data.surname : '') }}</div>
        
                                                 <div class="name mb-0 text-xs text-muted d-inline-block mr-2">
-                                                    <i class="fa mr-1" :class="`${row.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.is_verified ? $t('verified') : $t('not_verified') }}
+                                                    <i class="fa mr-1" :class="`${row.contact.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.contact.is_verified ? $t('verified') : $t('not_verified') }}
                                                 </div>
-                                                <AmlStatus  class="d-inline-block" :amlStatus="row.aml_status.name"/>
+                                                <AmlStatus  class="d-inline-block" :amlStatus="row.contact.aml_status.name"/>
                                            
                                         </div>
                                     </div>
@@ -95,7 +95,7 @@
                                             prop="row.account.account_number"
                                             sortable>
                                 <template v-slot="{row}">
-                                    <span class="status">{{ row.account ? row.account.account_number : 'N/A' }}</span>
+                                    <span class="status">{{ row.account_number ? row.account_number : 'N/A' }}</span>
                                 </template>
                             </el-table-column>
 
@@ -103,14 +103,14 @@
                                             min-width="160px"
                                             >
                                 <template v-slot="{row}">
-                                    <div v-if="getChannelInfo(row.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.channels, 'mobile')}}</div>
+                                    <div v-if="getChannelInfo(row.contact.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'mobile')}}</div>
                                 </template>
                             </el-table-column>
 
                             <el-table-column :label="$t('email')"
                                              min-width="160px">
                               <template v-slot="{row}">
-                                <div v-if="getChannelInfo(row.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.channels, 'email')}}</div>
+                                <div v-if="getChannelInfo(row.contact.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'email')}}</div>
                               </template>
                             </el-table-column>
 
@@ -130,9 +130,9 @@
                                             sortable
                                             >
                                 <template v-slot="{row}">
-                                  <badge :type="`${row.is_active ? 'success' : 'danger'}`">{{row.is_active ? $t('active') : $t('inactive')}}</badge>
+                                  <badge :type="`${row.contact.is_active ? 'success' : 'danger'}`">{{row.contact.is_active ? $t('active') : $t('inactive')}}</badge>
 
-                                  <badge v-if="row.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
+                                  <badge v-if="row.contact.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
 
                                 </template>
                             </el-table-column>
@@ -148,7 +148,7 @@
                             <el-table-column>
                                 <template v-slot="{row}">
 
-                                  <icon-button type="info" @click="gotoDetails(row)"></icon-button>
+                                  <icon-button type="info" @click="gotoDetails(row.contact)"></icon-button>
 
                                 </template>
                             </el-table-column>
@@ -346,9 +346,9 @@ export default {
             return null
         },
         avatar(resource) {
-          if (resource && resource.avatar) return resource.avatar;
-          else if (resource && resource.person_data) {
-              let gender = resource.person_data.gender ? resource.person_data.gender.toLowerCase() : ''
+          if (resource.contact && resource.contact.avatar) return resource.contact.avatar;
+          else if (resource.contact && resource.contact.person_data) {
+              let gender = resource.contact.person_data.gender ? resource.contact.person_data.gender.toLowerCase() : ''
               if (gender == 'female' || gender == 'f') {
                   return '/img/theme/avatar_f.png'
               }
