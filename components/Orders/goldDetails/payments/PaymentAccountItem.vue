@@ -19,6 +19,12 @@
                         {{accountHolder}}
                     </div>
             </detail-list-item>
+            <detail-list-item :title="$t('payment_date')" v-if="paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
+                <div slot="value">
+
+                       <DatePicker v-model="paymentDate"/>
+                    </div>
+            </detail-list-item>
         </div>
         <div v-if="editActive || isNew">
             <div class="mt-3 row d-flex justify-content-center" v-if="loadindPaymentInformation">
@@ -70,22 +76,23 @@ import BaseButton from '@/components/argon-core/BaseButton.vue';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError.vue';
 import { mapGetters } from "vuex";
-import {Select,Option} from 'element-ui';
+import {Select,Option, DatePicker} from 'element-ui';
 import SelectPaymentAccount from './SelectPaymentAccount.vue';
 import { isOrderPending,isOrderPaymentFailed} from '~/helpers/order';
 import {formatDateToApiFormat} from '~/helpers/helpers';
+import moment from "moment"
 export default {
     name:'payment-method',
     components:{
-        DetailListItem,
-        BaseButton,
-        Loader,
-        TextError,
-        Select,
-        Option,
-        SelectPaymentAccount,
-
-    },
+    DetailListItem,
+    BaseButton,
+    Loader,
+    TextError,
+    Select,
+    Option,
+    SelectPaymentAccount,
+    DatePicker
+},
     props: {
         paymentAccount: {
             type: Object
@@ -126,7 +133,8 @@ export default {
             reference:null,
             selectedPaymentAccount:null,
             paymentAccountInitialData:-1,
-            isSubmitting:false
+            isSubmitting:false,
+            paymentDate : (moment().add(1,'day')).toDate()
         }
     },
    mounted:function(){
@@ -269,9 +277,10 @@ export default {
         executePayment(){
             if(this.paymentAccount && this.paymentAccount.payment_method)
             {
-                this.isSubmitting = true;
+                
                 if(this.paymentAccount.payment_method.name_translation_key=="pps")
                 {
+                    this.isSubmitting = true;
                     this.$store.dispatch('orders/retryPayment',this.order.id).then((res)=>{
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('payment_initiated_successfully')})
                         this.$emit('paymentAccountUpdated',res);
@@ -283,18 +292,28 @@ export default {
                 }
                 if(this.paymentAccount.payment_method.name_translation_key=="bank_account")
                 {
-                    const payload = {
-                        order_ids:[this.order.id],
-                        execution_date:formatDateToApiFormat(new Date())
+                    const minimumDate = moment().add(1);
+                    const selectedDate = moment(this.paymentDate);
+                    if(selectedDate<minimumDate){
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('choose_proper_date')})
                     }
+                    else{
+                        this.isSubmitting = true;
+                        const payload = {
+                            order_ids:[this.order.id],
+                            execution_date:formatDateToApiFormat(this.paymentDate)
+                        }
 
-                    this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
-                       window.open(res,'_blank');
-                    }).catch((err)=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
-                    }).finally(()=>{
-                        this.isSubmitting = false;
-                    })
+                        this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
+                        //window.open(res,'_blank');
+                        window.location.href = res;
+                        }).catch((err)=>{
+                            this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                        }).finally(()=>{
+                            this.isSubmitting = false;
+                        })
+                    }
+                    
                 }
             }
 

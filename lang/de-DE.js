@@ -577,5 +577,7 @@ export default {
     purchase_information:'Purchase information',
     maximum_available_amount:'The maximum available amount',
     advisor:'Advisor',
-    silver_purchase_interval:'Silver purchase interval'
+    silver_purchase_interval:'Silver purchase interval',
+    payment_date:'Payment date',
+    choose_proper_date:'Please choose a proper date, the date must be at least 1 day after today'
 }
