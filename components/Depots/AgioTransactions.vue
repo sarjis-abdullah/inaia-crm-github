@@ -48,7 +48,7 @@
 
       <el-table-column v-bind:label="$t('type')" min-width="180px" prop="type">
         <template v-slot="{ row }">
-          <div class="d-flex align-items-center">
+          <div class="align-items-center">
             <div>
               <span class="orderType text-body"
                 >{{
@@ -57,6 +57,7 @@
               >
 
             </div>
+            <div class="text-muted text-sm">{{ $d(new Date(row.created_at)) }}</div>
           </div>
         </template>
       </el-table-column>
@@ -103,6 +104,15 @@
           <span class="status">
             <i18n-n :value="parseInt(row.agio_after)"></i18n-n> €
           </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('comment')"
+        min-width="150px"
+        prop="comment"
+      >
+        <template v-slot="{ row }">
+          {{ row.comment }}
         </template>
       </el-table-column>
       <el-table-column>

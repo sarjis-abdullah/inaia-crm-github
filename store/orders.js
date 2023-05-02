@@ -3,7 +3,8 @@ export const state = () => ({
     list: null,
     details: null,
     pairs: null,
-    loading: false
+    loading: false,
+    commissionList:[]
 })
 
 const initialState  = state()
@@ -15,7 +16,8 @@ export const getters = {
     },
     pairs(state) {
         state.pairs
-    }
+    },
+    commissionList:state=>state.commissionList
 }
 
 export const mutations = {
@@ -49,6 +51,9 @@ export const mutations = {
     },
     resetState(state) {
         Object.assign(state, initialState)
+    },
+    commissionList(state,list){
+        state.commissionList = list;
     }
 }
 
@@ -206,6 +211,11 @@ export const actions = {
         .post(`${ process.env.golddinarApiUrl }/generate-batch-direct-debit-form`,payload)
         .then(res => {
             return res.data.message.data.url;
+        })
+    },
+    fetchCommissionList(context,payload){
+        return this.$axios.get(`${ process.env.golddinarApiUrl }/sales-commission/orders?include=${includes}${ payload }`).then(res=>{
+            context.commit('commissionList',res.data.data)
         })
     }
 }

@@ -115,7 +115,7 @@ export default {
             productApiUrl: 'https://core.api.inaia.cloud/api/v1',
             golddinarApiUrl: 'https://golddinar.api.inaia.cloud/api/v1',
             bankingApiUrl: 'https://banking.api.inaia.cloud/api/v1',
-
+            paymentsApiUrl: 'https://payments.api.inaia.cloud/api/v1',
             entryPoints: {
                 crm: 'https://crm.inaia.cloud',
                 admin: 'https://admin.inaia.cloud',

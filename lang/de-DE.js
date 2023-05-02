@@ -571,5 +571,13 @@ export default {
     commission_deleted_unsuccessfully:"We couldn't delete the commission successfully, please try again later.",
     commission_edited_successfully:'Commission edited successfully',
     commission_edited_unsuccessfully:"We couldn't edit the commission please try agaian later",
-    edit_commission:'Edit commission'
+    edit_commission:'Edit commission',
+    optional:'optional',
+    commission_information:'Commission information',
+    purchase_information:'Purchase information',
+    maximum_available_amount:'The maximum available amount',
+    advisor:'Advisor',
+    silver_purchase_interval:'Silver purchase interval',
+    payment_date:'Payment date',
+    choose_proper_date:'Please choose a proper date, the date must be at least 1 day after today'
 }
