@@ -130,7 +130,7 @@
                 </div>
                 <div class="mt-3 mb-0 text-sm">
                   <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
-                  <div>{{$t('agio')}}: {{ $n(depot.agio) }} €</div>
+                  <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} €</div>
                 </div>
               </div>
             </div>
