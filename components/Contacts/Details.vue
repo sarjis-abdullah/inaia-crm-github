@@ -34,6 +34,25 @@
         </div>
 
       </div>
+
+
+      <div class="card">
+        <div class="card-body">
+          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+            <collapse-item :title="$t('depot')" name="depots" class="mycollapse">
+              <template v-slot:title class="headerClass">
+                <div>
+                  <h3>{{ $t('depots') }}</h3>
+                  <span class="tim-icons icon-minimal-down"></span>
+                </div>
+              </template>
+
+              <DepotList   :accountId="info.account.id" v-if="shouldLoadDepots"/>
+            </collapse-item>
+          </collapse>
+        </div>
+      </div>
+
         <Collapse v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
           <CollapseItem :title="$t('depot')" name="depots">
             <DepotList   :accountId="info.account.id" v-if="shouldLoadDepots"/>
@@ -66,6 +85,7 @@ import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
+
 export default {
     components: {
         Loader,
@@ -185,7 +205,8 @@ export default {
 </script>
 
 <style scoped>
-.capitalize {
-    text-transform: capitalize
+.el-collapse .el-icon-arrow-right:before,
+.mycollapse i:before {
+  display: none;
 }
 </style>
