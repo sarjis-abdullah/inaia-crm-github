@@ -3,9 +3,19 @@
     <div class="list-group list-group-flush">
         <detail-list-item :title="$t('status')" ><Status slot="value" v-bind:status='order.order_status.name_translation_key'>{{order.order_status ? $t(order.order_status.name_translation_key) : order.order_status_id}}</Status></detail-list-item>
         <detail-list-item :title="$t('date')"><div slot="value">{{$d(new Date(order.created_at),'long')}}</div></detail-list-item>
-      <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
+        <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
         <detail-list-item :title="$t('comment')" v-if="order.comment && order.comment!=''"><div slot="value">{{order.comment}}</div></detail-list-item>
-        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="order.amount/100"></i18n-n> €</div></detail-list-item>
+        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="displayAmount()/100"></i18n-n> €</div></detail-list-item>
+        <detail-list-item :title="$t('agio')" v-if="order && 
+            order.order_type.name_translation_key.includes('interval') && 
+            order.order_status && 
+            order.order_status.name_translation_key=='order_status_completed'&&
+            order.agio_amount>0"><div slot="value"> <i18n-n :value="order.agio_amount/100"></i18n-n> €</div></detail-list-item>
+          <detail-list-item :title="$t('storage_fee')" v-if="order && 
+            order.order_type.name_translation_key.includes('interval') && 
+            order.order_status && 
+            order.order_status.name_translation_key=='order_status_completed'&&
+            order.storage_fee>0"><div slot="value"> <i18n-n :value="order.storage_fee/100"></i18n-n> €</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
     <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
@@ -29,6 +39,25 @@ export default {
             type: Object
         }
     },
+    methods:{
+      displayAmount(){
+        if(this.order.order_status && this.order.order_status.name_translation_key=='order_status_completed'){
+            if(this.order.order_type && this.order.order_type.name_translation_key.includes('interval')){
+                return this.order.purchase_amount;
+            }
+            else{
+                if(this.order.transactions && this.order.transactions.length > 0){
+                    const latestTran = this.order.transactions[this.order.transactions.length-1];
+                    if(latestTran){
+                        return latestTran.money_amount;
+                    }
+                }
+            }
+        }
+        return this.order.amount;
+        
+   },
+    }
 }
 </script>
 <style scoped>

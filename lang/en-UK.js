@@ -584,5 +584,14 @@ export default {
     advisor:'Advisor',
     silver_purchase_interval:'Silver purchase interval',
     payment_date:'Payment date',
-    choose_proper_date:'Please choose a proper date, the date must be at least 1 day after today'
+    choose_proper_date:'Please choose a proper date, the date must be at least 1 day after today',
+    reset_pin:'Reset pin',
+    verify_identity:'Verify client identity',
+    documents:'Documents',
+    description:'Description',
+    file_is_too_big:'The selected file is too big',
+    title_must_be_at_least_five:'The minimum length of the document title must be 5 chars',
+    verify:'Verify',
+    client_verified_successfully:'The client was verified successfully',
+    client_verified_unsuccessfully:"We couldn't verify the client please try again later"
 }

@@ -11,7 +11,8 @@ export const state = () => {
         latestTransactions:[],
         countryCodeList:[],
         loadedClients:[],
-        amlStatuses:[]
+        amlStatuses:[],
+        kycDocuments:[]
     }
 }
 
@@ -50,7 +51,8 @@ export const getters = {
     orderFilterList:state=>state.orderFilterList,
     latestTransactions:state=>state.latestTransactions,
     countryCodeList:state=>state.countryCodeList,
-    amlStatuses: state=>state.amlStatuses
+    amlStatuses: state=>state.amlStatuses,
+    kycDocuments: state=>state.kycDocuments
 }
 export const mutations = {
 
@@ -112,6 +114,10 @@ export const mutations = {
     amlStatuses(state,list)
     {
         state.amlStatuses = list;
+    },
+    kycDocuments(state,list)
+    {
+        state.kycDocuments = list;
     }
 }
 export const actions = {
@@ -283,6 +289,14 @@ export const actions = {
                 context.commit('amlStatuses',response.data.data);
                 return response.data.data;
             })
-    }
+    },
+    getKycDocument(context,payload){
+        return this.$axios
+            .get(`/documents?account_id=${payload}&per_page=500`)
+            .then(response => {
+                context.commit('kycDocuments',response.data.data);
+                return response.data.data;
+            })
+    },
 
 }

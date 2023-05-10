@@ -19,7 +19,7 @@
                         {{accountHolder}}
                     </div>
             </detail-list-item>
-            <detail-list-item :title="$t('payment_date')" v-if="paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
+            <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
                 <div slot="value">
 
                        <DatePicker v-model="paymentDate"/>

@@ -30,11 +30,14 @@
             <a class="dropdown-item" @click.prevent="displayEditAddress">{{ $t("edit_address") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditPhoneNumber">{{ $t("edit_mobile") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
+            <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
             <a class="dropdown-item" @click.prevent="displayComments">{{ $t("account_notes") }}</a>
+            
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="#" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
             <a class="dropdown-item" href="#" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
@@ -98,6 +101,8 @@
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
     <CommentBox :displayModal="showComments" :account="info" @closed="closeComments"/>
+    <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
+    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
   </div>
 </template>
 <script>
@@ -107,6 +112,8 @@ import EditPhoneNumber from '@/components/Contacts/EditPhoneNumber';
 import EditEmail from '@/components/Contacts/EditEmail';
 import AccountSettings from '@/components/Contacts/AccountSettings';
 import CommentBox from '@/components/Comment/CommentBox';
+import KycDocumentList from "@/components/Contacts/KycDocumentList";
+import VerifyContact from '@/components/Contacts/VerifyContact';
 export default {
     props: {
         resource: {
@@ -118,7 +125,9 @@ export default {
       EditPhoneNumber,
       EditEmail,
       AccountSettings,
-      CommentBox
+      CommentBox,
+      KycDocumentList,
+      VerifyContact
     },
     computed: {
         info() {
@@ -171,7 +180,9 @@ export default {
         showEditPhoneNumber:false,
         showEditEmail: false,
         showSettings: false,
-        showComments: false
+        showComments: false,
+        showKycDocument: false,
+        showVerifyContact:false
       }
 
     },
@@ -212,6 +223,21 @@ export default {
       },
       closeComments(){
         this.showComments = false;
+      },
+      openKycDocument(){
+        this.showKycDocument = true;
+      },
+      closeKycDocument(){
+        this.showKycDocument = false;
+      },
+      verifyCustomerIdentity(){
+        this.showVerifyContact = true
+      },
+      closeCustomerIdentity(){
+        this.showVerifyContact = false
+      },
+      resetPin(){
+
       }
 
     }
