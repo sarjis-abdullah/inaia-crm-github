@@ -32,7 +32,7 @@
         </div>
 
         <div class="col-xl-4 col-md-6">
-          <MasterAmountCard />
+          
         </div>
 
         <!--
@@ -283,7 +283,7 @@
         -->
         <!--End tables-->
       </div>
-      <div class="row">
+      <!--div class="row">
         <div class="col-lg-4">
           <card header-classes="bg-transparent">
             <div slot="header" class="row align-items-center">
@@ -292,7 +292,7 @@
                 <h5 class="h3 mb-0">Total orders</h5>
               </div>
               <div class="col-auto">
-                <!--<button type="button" class="btn btn-sm btn-primary">{{$t('details')}}</button>-->
+                <button type="button" class="btn btn-sm btn-primary">{{$t('details')}}</button>
               </div>
             </div>
 
@@ -304,7 +304,7 @@
             </bar-chart>
           </card>
         </div>
-      </div>
+      </div>-->
 
     </div>
   </div>
