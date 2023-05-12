@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div class="card">
+    <div class="card" style="max-height: 30%;">
       <div class="card-body">
 
         <div class="media align-items-center border-bottom mb-2 pb-4">
@@ -33,7 +33,7 @@
             <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
-            <a class="dropdown-item" @click.prevent="displayComments">{{ $t("account_notes") }}</a>
+   
             
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
@@ -100,7 +100,7 @@
     <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
-    <CommentBox :displayModal="showComments" :account="info" @closed="closeComments"/>
+    
     <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
     <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
   </div>

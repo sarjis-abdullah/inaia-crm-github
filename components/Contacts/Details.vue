@@ -27,10 +27,11 @@
 
         <div class="col-lg-4">
 
-          <ProductClassCard :productClassDetails="getProductClass" :accountId="info.account.id" />
+          <!--ProductClassCard :productClassDetails="getProductClass" :accountId="info.account.id" />
 
-          <BankingAmountCard  v-if="hasBankingAcoount && resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" />
+          <BankingAmountCard  v-if="hasBankingAcoount && resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" -->
 
+            <UserComment :account="info"/>
         </div>
 
       </div>
@@ -40,7 +41,7 @@
         <div class="card-body">
           <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
             <collapse-item :title="$t('depot')" name="depots" class="mycollapse">
-              <template v-slot:title class="headerClass">
+              <template v-slot:title>
                 <div>
                   <h3>{{ $t('depots') }}</h3>
                   <span class="tim-icons icon-minimal-down"></span>
@@ -52,21 +53,54 @@
           </collapse>
         </div>
       </div>
+      <div class="card">
+        <div class="card-body">
+          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+            <collapse-item :title="$t('recent_transactions')" name="lastTransactions" class="mycollapse">
+              <template v-slot:title>
+                <div>
+                  <h3>{{ $t('recent_transactions') }}</h3>
+                  <span class="tim-icons icon-minimal-down"></span>
+                </div>
+              </template>
 
-        <Collapse v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-          <CollapseItem :title="$t('depot')" name="depots">
-            <DepotList   :accountId="info.account.id" v-if="shouldLoadDepots"/>
-         </CollapseItem>
-          <CollapseItem :title="$t('recent_transactions')" name="lastTransactions">
-            <LatestTransactions :account_id="info.account.id" v-if="shouldLoadlastTransactions"/>
-          </CollapseItem>
-          <CollapseItem :title="$t('aggregated_claims')" name="aggregatedClaims">
-            <AggregatedClaims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims"/>
-          </CollapseItem>
-          <CollapseItem :title="$t('inbox_messages')" name="inboxMessages">
-            <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
-          </CollapseItem>
-        </Collapse>
+              <LatestTransactions :account_id="info.account.id" v-if="shouldLoadlastTransactions"/>
+            </collapse-item>
+          </collapse>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+            <collapse-item ::title="$t('aggregated_claims')" name="aggregatedClaims" class="mycollapse">
+              <template v-slot:title>
+                <div>
+                  <h3>{{ $t('aggregated_claims') }}</h3>
+                  <span class="tim-icons icon-minimal-down"></span>
+                </div>
+              </template>
+
+              <AggregatedClaims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims" style="width: 100%;"/>
+            </collapse-item>
+          </collapse>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+            <collapse-item :title="$t('inbox_messages')" name="inboxMessages" class="mycollapse">
+              <template v-slot:title>
+                <div>
+                  <h3>{{ $t('inbox_messages') }}</h3>
+                  <span class="tim-icons icon-minimal-down"></span>
+                </div>
+              </template>
+
+              <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
+            </collapse-item>
+          </collapse>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -85,7 +119,7 @@ import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
-
+import UserComment from "@/components/Comment/UserComment";
 export default {
     components: {
         Loader,
@@ -99,7 +133,8 @@ export default {
         AggregatedClaims,
         InboxMessageList,
         Collapse,
-        CollapseItem
+        CollapseItem,
+        UserComment
     },
     props: {
         resource: {

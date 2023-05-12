@@ -26,12 +26,12 @@
                     :empty-text="$t('no_data')"
                     :data="data">
 
-            <el-table-column label="#"
-                             min-width="80px"
-                             prop="id"
+            <el-table-column :label="$t('date')"
+                             min-width="100px"
+                             prop="created_at"
             >
               <template v-slot="{row}">
-                  <div class="name" >{{row.id}}</div>
+                  <div class="name" >{{ $d(new Date(row.created_at), 'short') }}</div>
               </template>
             </el-table-column>
 
@@ -41,12 +41,9 @@
             >
               <template v-slot="{row}">
                   <div class="d-flex align-items-center">
-                    <span href="#!" class="avatar mr-3 bg-transparent">
-                      <img v-bind:src="row.logo"/>
-                    </span>
+                    
                     <div>
                         <span class="transactionType text-body"><strong>{{ $t(row.type) }}</strong></span>
-                        <div class="dateStyle">{{ $d(new Date(row.created_at), 'short') }}</div>
                     </div>
                 </div>
               </template>
@@ -57,7 +54,7 @@
                              min-width="180px"
                              sortable>
               <template v-slot="{row}">
-                    <span class="reason">
+                    <span class="d-inline-block text-truncate" style="max-width: 150px;">
                         {{ row.reason_text }}
                     </span>
               </template>
@@ -65,7 +62,7 @@
 
             <el-table-column v-bind:label="$t('amount')"
                              prop="amount"
-                             min-width="140px"
+                             min-width="120px"
                              header-align="right"
                              align="right"
                              sortable>
@@ -77,12 +74,15 @@
                 </template>
             </el-table-column>
 
-            <el-table-column v-bind:label="$t('status')"
-                             prop="order_status_id"
-                             min-width="140px"
+            <el-table-column v-bind:label="$t('sender')"
+                             prop="transfer_account_name"
+                             min-width="200px"
             >
               <template v-slot="{row}">
-                <Status :status='row.status' :lifecycle_status="row.lifecycle_status" />
+                  <div>
+                      <div class="text-body">{{ $t(row.transfer_account_name) }}</div>
+                      <div class="text-muted">{{ $t(row.transfer_account_iban) }}</div>
+                  </div>
               </template>
             </el-table-column>
 

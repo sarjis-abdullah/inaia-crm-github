@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-8">
-                             <h5 class="h3 mb-0">{{$t('inbox_messages')}}</h5>
+                             <h5 class="h3 mb-0" v-if="account_id==-1">{{$t('inbox_messages')}}</h5>
                         </div>
                         <div class="col-4">
                             <div  class="d-flex justify-content-end" v-if="!createNewBatch">
@@ -93,7 +93,7 @@ export default {
   props: {
     account: {
       type: Object,
-      default:null
+      default:-1
     },
   },
   components: {
