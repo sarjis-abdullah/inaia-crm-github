@@ -608,5 +608,14 @@ export default {
     select_product:'Select product',
     select_plan:'Select plan',
     drop_image_here:'Drop image here or',
-    drop_thumbnail_here:'Drop thumbnail image here or'
+    drop_thumbnail_here:'Drop thumbnail image here or',
+    are_you_sure_you_want_to_desactivate_account:'Are you sure you want to desactivate this account?',
+    account_desactivated_successfully:'Account is desactivated successfully',
+    account_desactivated_unsuccessfully:"We couldn't desactivate the account due to an error",
+    account_activated_successfully:'Account activated successfully',
+    account_activated_unsuccessfully:"We couldn't activate the account successfully",
+    are_you_sure_you_want_to_activate_account:'Are you sure you want to activate this account?',
+    are_you_sure_you_want_to_unlock_account:'Are you sure you want to unlock the account?',
+    account_unlock_successfully:'The account is unlocked successfully',
+    account_unlock_unsuccessfully:"We couldn't unlock the account successfully, please try again later"
 }

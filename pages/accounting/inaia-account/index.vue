@@ -22,11 +22,12 @@
             <ExternalBankAmountCard @loaded="onSummaryLoaded"/>
             </div>
         </div>
-        <div class="container-fluid" v-if="isSummryLoaded">
-            <BankingTransactionsList :bankingAccountId="accountId"/>
-        </div>
+        
 
     </div>
+    <div class="container-fluid" v-if="isSummryLoaded">
+            <BankingTransactionsList :bankingAccountId="accountId"/>
+        </div>
     </div>
 </template>
 <script>

@@ -118,6 +118,9 @@ export const mutations = {
     kycDocuments(state,list)
     {
         state.kycDocuments = list;
+    },
+    updateAccount(state,account){
+        state.singleClientData.account = account;
     }
 }
 export const actions = {
@@ -131,8 +134,7 @@ export const actions = {
             })
         } else {
             const id = payload.id
-            // console.log(id)
-            delete payload.id
+            delete payload.id;
             return this.$axios.put('/contacts/update-with-relations/' + id, payload).then(response => {
                 return Promise.resolve(response)
             }).catch(error => {
@@ -298,5 +300,14 @@ export const actions = {
                 return response.data.data;
             })
     },
+    updateAccountInformation(context,payload){
+        return this.$axios.put('/accounts/' + payload.id, payload.data).then(response => {
+            context.commit('updateAccount',response.data.data);
+            return response.data.data;
+        }).catch(error => {
+            payload.id  = id // for next submit
+            return Promise.reject(error)
+        })
+    }
 
 }

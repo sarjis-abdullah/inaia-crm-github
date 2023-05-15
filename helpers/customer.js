@@ -32,7 +32,7 @@ export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:customer.person_data.nationality?customer.person_data.nationality:[]
+                nationality:customer.person_data.nationality_details?[customer.person_data.nationality_details]:[]
             },
             address: newAddress,
             account: {
@@ -79,6 +79,30 @@ export function functionUpdateChannelAndGetObject(customer,channel,value){
                     : 0
             },
             channels: newChannels
+        }
+    }
+}
+export function functionUpdateAccountAndGetObject(customer,account){
+    return {
+        id: customer.id,
+        customer: {
+            contact: {
+                id: customer.id,
+                name: customer.name,
+                type_id: customer.type.id,
+                is_active: account.is_active
+            },
+            person_data: {
+                ...customer.person_data,
+                contact_id: customer.id,
+                nationality:customer.person_data.nationality_details?customer.person_data.nationality_details:null
+            },
+            address: {
+                ...customer.address,
+                contact_id: customer.id,
+            },
+            account: account,
+            channels: customer.channels
         }
     }
 }
