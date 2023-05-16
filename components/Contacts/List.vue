@@ -264,7 +264,7 @@ export default {
                 ( this.selectedAmlStatus ? `&aml_status_id=${ this.selectedAmlStatus }`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page || 1}` +
-                `&per_page=${this.perPage || 5}`
+                `&per_page=${this.perPage || 5}&type=customer`
                 // `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
             )
         },

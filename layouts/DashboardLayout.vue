@@ -139,7 +139,7 @@
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }"/>
         </sidebar-item>
-
+<!--
         <sidebar-item
           v-if="accountingAccess"
           :link="{
@@ -151,7 +151,7 @@
           <sidebar-item :link="{ name: 'Master', path: '/banking-master' }"/>
           <sidebar-item :link="{ name: 'Accounts', path: '/banking-accounts' }"/>
         </sidebar-item>
-
+-->
         <sidebar-item
           v-if="accountingAccess"
           :link="{
