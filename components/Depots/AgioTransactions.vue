@@ -22,7 +22,7 @@
         </div>
         <div class="row">
       <div class="col">
-        
+
         <Input :placeholder="$t('agio_transaction_id')" v-model="deletedAgioTransactionId"/>
       </div>
       <div class="col">
@@ -69,7 +69,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.amount)"></i18n-n> €
+            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
           </span>
         </template>
       </el-table-column>

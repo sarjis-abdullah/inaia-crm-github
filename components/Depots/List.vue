@@ -8,7 +8,7 @@
                       <div class="row align-items-center">
                         <div class="col-8">
                           <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('depot_name')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
-                          <h5 v-else class="h3 mb-0">{{ $t('depots') }}</h5>
+                          
                         </div>
                         <div class="col-4 text-right">
                           <button v-if="accountId==0" @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">

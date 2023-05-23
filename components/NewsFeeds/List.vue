@@ -4,7 +4,7 @@
         <base-header class="pb-6">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{this.pageTitle}}</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{{$t('news_feed')}}</h6>
                     <!--
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <route-breadcrumb/>
@@ -12,7 +12,7 @@
                     -->
                 </div>
                 <div class="col-lg-6 col-5 text-right">
-                    <base-button size="sm" type="neutral" @click="newFeed">Add News Feed</base-button>
+                    <base-button size="sm" type="neutral" @click="newFeed">{{ $t('add') }} {{$t('news_feed')}}</base-button>
                 </div>
             </div>
         </base-header>
@@ -23,32 +23,11 @@
                     <div class="card">
                         <div class="border-0 card-header">
                             <div class="row">
-                                <div class="col">
-                                    <h3 class="mb-0">News Feeds</h3>
+                                <div class="col-8">
+                                    
                                 </div>
-                                <div class="col">
-                                    <!-- <base-button
-                                        type="primary"
-                                        @click="() => $router.push('/news-feeds/add')"
-                                    >
-                                        <i class="ni ni-fat-add"></i>Add News Feed
-                                    </base-button> -->
-                                </div>
-                                <div class="col">
-                                    <form class="navbar-search form-inline mr-sm-3" id="navbar-search-main">
-                                        <div class="form-group mb-0">
-                                            <div class="input-group input-group-alternative input-group-merge">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                                </div>
-                                                <input class="form-control" placeholder="Search" type="text" @input="(e) => handleSearch(e.target.value)">
-                                            </div>
-                                        </div>
-                                        <button type="button" class="close" data-action="search-close" data-target="#navbar-search-main"
-                                                aria-label="Close">
-                                            <span aria-hidden="true">×</span>
-                                        </button>
-                                    </form>
+                                <div class="col-4">
+                                    <el-input prefix-icon="el-icon-search" :placeholder="$t('search')" clearable style="width: 200px" v-model="search" @clear="clearSearch" @change="handleSearch"/>
                                 </div>
                             </div>
                         </div>
@@ -61,7 +40,7 @@
                             @sort-change="sortChange"
                         >
                             <el-table-column
-                                label="Role ID"
+                                label="#"
                                 min-width="120px"
                                 prop="id"
                                 sortable="custom"
@@ -76,7 +55,7 @@
                             </el-table-column>
 
                             <el-table-column
-                                label="Title"
+                                :label="$t('title')"
                                 min-width="200px"
                                 prop="title"
                                 sortable="custom"
@@ -87,38 +66,33 @@
                             </el-table-column>
 
                             <el-table-column
-                                label="Message"
+                                :label="$t('message')"
                                 min-width="240px"
                                 prop="message"
                             >
                                 <template v-slot="{row}">
-                                    <span class="status">{{ row.message || '-' }}</span>
+                                    
+                                    <span class="d-inline-block text-truncate" style="max-width: 150px;">{{ row.message || '-' }}</span>
                                 </template>
                             </el-table-column>
 
                             <el-table-column
-                                label="Status"
+                                :label="$t('status')"
                                 min-width="120px"
                                 prop="is_active"
                                 sortable="custom"
                             >
                                 <template v-slot="{row}">
-                                    <span class="status">{{ row.is_active == 1 ? 'Active' : 'Inactive' }}</span>
+                                    <span class="status">{{ row.is_active == 1 ? $t('active') : $t('inactive') }}</span>
                                 </template>
                             </el-table-column>
 
                             <el-table-column min-width="180px">
                                 <template v-slot="{row}">
-                                    <el-dropdown trigger="click" class="dropdown">
-                                        <span class="btn btn-sm btn-icon-only text-light">
-                                            <i class="fas fa-ellipsis-v mt-2"></i>
-                                        </span>
-                                        <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => $router.push('/news-feeds/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
-                                            <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+                                    
+                                    <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
+                                    <icon-button type="edit" @click="() => $router.push('/news-feeds/edit/'+row.id)"></icon-button>
+                                    <icon-button type="delete" @click="() => removeConfirm(row)"></icon-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -161,7 +135,7 @@
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import Details from '@/components/NewsFeeds/Details'
-
+import IconButton from '@/components/common/Buttons/IconButton';
 export default {
     components: {
         [Table.name]: Table,
@@ -169,7 +143,8 @@ export default {
         [Dropdown.name]: Dropdown,
         [DropdownItem.name]: DropdownItem,
         [DropdownMenu.name]: DropdownMenu,
-        Details
+        Details,
+        IconButton
     },
     data() {
         return {
@@ -188,13 +163,13 @@ export default {
             showConfirm: false,
             perPage: 10,
             page: 1,
-            totalTableData: 0
+            totalTableData: 0,
         }
     },
     computed: {
         searchQuery() {
             return (
-                (this.search ? 'short_name=' + this.search + '&name_translation_key=' + this.search + '&' : '') +
+                ((this.search) ? 'short_name=' + this.search + '&name_translation_key=' + this.search + '&' : '') +
                 `order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.search ? 1 : this.page}` +
                 `&per_page=${this.perPage}`
@@ -257,18 +232,6 @@ export default {
                     }
                 })
         },
-        handleSearch(search) {
-            if (this.debouced) {
-                clearTimeout(this.debouced)
-            }
-            this.debouced   = setTimeout(() => {
-                if (search.length > 1) {
-                    this.search = search
-                } else if (this.search) {
-                    this.search = ''
-                }
-            }, 800)
-        },
         sortChange(s) {
             if (s.prop !== this.sort) {
                 this.sort   = s.prop
@@ -278,6 +241,12 @@ export default {
             } else if (s.order === 'descending' && this.order !== 'desc') {
                 this.order   = 'desc'
             }
+            this.fetchList(this.searchQuery)
+        },
+        clearSearch(){
+            this.search = '';
+        },
+        handleSearch(){
             this.fetchList(this.searchQuery)
         }
     }

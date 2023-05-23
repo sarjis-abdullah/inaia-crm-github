@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <div class="card">
+    <div class="card" style="max-height: 30%;">
       <div class="card-body">
 
         <div class="media align-items-center border-bottom mb-2 pb-4">
@@ -30,15 +30,18 @@
             <a class="dropdown-item" @click.prevent="displayEditAddress">{{ $t("edit_address") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditPhoneNumber">{{ $t("edit_mobile") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
+            <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
-            <a class="dropdown-item" @click.prevent="displayComments">{{ $t("account_notes") }}</a>
+   
+            
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
-            <a class="dropdown-item" href="#" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
-            <a class="dropdown-item" href="#" v-if="!info.is_active">{{ $t("activate_account") }}</a>
+            <a class="dropdown-item" @click.prevent="unLockAccount" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
+            <a class="dropdown-item"  @click.prevent="desactvateAccount" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
+            <a class="dropdown-item" @click.prevent="activateAccount" v-if="!info.is_active">{{ $t("activate_account") }}</a>
           </base-dropdown>
         </div>
 
@@ -97,7 +100,9 @@
     <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
-    <CommentBox :displayModal="showComments" :account="info" @closed="closeComments"/>
+    
+    <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
+    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
   </div>
 </template>
 <script>
@@ -107,6 +112,10 @@ import EditPhoneNumber from '@/components/Contacts/EditPhoneNumber';
 import EditEmail from '@/components/Contacts/EditEmail';
 import AccountSettings from '@/components/Contacts/AccountSettings';
 import CommentBox from '@/components/Comment/CommentBox';
+import KycDocumentList from "@/components/Contacts/KycDocumentList";
+import VerifyContact from '@/components/Contacts/VerifyContact';
+import {  MessageBox } from 'element-ui'
+import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
 export default {
     props: {
         resource: {
@@ -118,7 +127,12 @@ export default {
       EditPhoneNumber,
       EditEmail,
       AccountSettings,
-      CommentBox
+      CommentBox,
+      KycDocumentList,
+      VerifyContact
+    },
+    mounted(){
+      this.$confirm = MessageBox.confirm
     },
     computed: {
         info() {
@@ -171,7 +185,9 @@ export default {
         showEditPhoneNumber:false,
         showEditEmail: false,
         showSettings: false,
-        showComments: false
+        showComments: false,
+        showKycDocument: false,
+        showVerifyContact:false
       }
 
     },
@@ -212,7 +228,106 @@ export default {
       },
       closeComments(){
         this.showComments = false;
-      }
+      },
+      openKycDocument(){
+        this.showKycDocument = true;
+      },
+      closeKycDocument(){
+        this.showKycDocument = false;
+      },
+      verifyCustomerIdentity(){
+        this.showVerifyContact = true
+      },
+      closeCustomerIdentity(){
+        this.showVerifyContact = false
+      },
+      resetPin(){
+
+      },
+      desactvateAccount(){
+        this.$confirm(this.$t('are_you_sure_you_want_to_desactivate_account'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.confirmDesAccount();
+        });
+      },
+      confirmDesAccount(){
+        let newAccount = JSON.parse(JSON.stringify(this.info.account));
+        newAccount.is_active = 0;
+        const data = functionUpdateAccountAndGetObject(this.info,newAccount)
+        this.$store.dispatch('clients/submitClient',data).then((res)=>{
+          this.$store.dispatch("clients/clientDetailsData", this.info.id)
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('account_desactivated_successfully'),
+          });
+        }).catch(()=>{
+          this.$notify({
+            type: "error",
+            timeout: 5000,
+            message: this.$t('account_desactivated_unsuccessfully'),
+          });
+        });
+      },
+      activateAccount(){
+        this.$confirm(this.$t('are_you_sure_you_want_to_activate_account'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.confirmActAccount();
+        });
+      },
+      confirmActAccount(){
+        let newAccount = JSON.parse(JSON.stringify(this.info.account));
+        newAccount.is_active = 1;
+        const data = functionUpdateAccountAndGetObject(this.info,newAccount)
+        this.$store.dispatch('clients/submitClient',data).then((res)=>{
+          this.$store.dispatch("clients/clientDetailsData", this.info.id)
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('account_activated_successfully'),
+          });
+        }).catch(()=>{
+          this.$notify({
+            type: "error",
+            timeout: 5000,
+            message: this.$t('account_activated_unsuccessfully'),
+          });
+        });
+      },
+      unLockAccount(){
+        this.$confirm(this.$t('are_you_sure_you_want_to_unlock_account'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.confirmUnlockAccount();
+        });
+      },
+      confirmUnlockAccount(){
+        let newAccount = JSON.parse(JSON.stringify(this.info.account));
+        newAccount.is_locked = 0;
+        const data = functionUpdateAccountAndGetObject(this.info,newAccount)
+        this.$store.dispatch('clients/submitClient',data).then((res)=>{
+          this.$store.dispatch("clients/clientDetailsData", this.info.id)
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('account_unlock_successfully'),
+          });
+        }).catch(()=>{
+          this.$notify({
+            type: "error",
+            timeout: 5000,
+            message: this.$t('account_unlock_unsuccessfully'),
+          });
+        });
+      },
 
     }
 

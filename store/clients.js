@@ -11,7 +11,8 @@ export const state = () => {
         latestTransactions:[],
         countryCodeList:[],
         loadedClients:[],
-        amlStatuses:[]
+        amlStatuses:[],
+        kycDocuments:[]
     }
 }
 
@@ -50,7 +51,8 @@ export const getters = {
     orderFilterList:state=>state.orderFilterList,
     latestTransactions:state=>state.latestTransactions,
     countryCodeList:state=>state.countryCodeList,
-    amlStatuses: state=>state.amlStatuses
+    amlStatuses: state=>state.amlStatuses,
+    kycDocuments: state=>state.kycDocuments
 }
 export const mutations = {
 
@@ -112,6 +114,13 @@ export const mutations = {
     amlStatuses(state,list)
     {
         state.amlStatuses = list;
+    },
+    kycDocuments(state,list)
+    {
+        state.kycDocuments = list;
+    },
+    updateAccount(state,account){
+        state.singleClientData.account = account;
     }
 }
 export const actions = {
@@ -125,8 +134,7 @@ export const actions = {
             })
         } else {
             const id = payload.id
-            // console.log(id)
-            delete payload.id
+            delete payload.id;
             return this.$axios.put('/contacts/update-with-relations/' + id, payload).then(response => {
                 return Promise.resolve(response)
             }).catch(error => {
@@ -154,7 +162,7 @@ export const actions = {
     },
     initClientData(context, payload) {
         return this.$axios
-            .get(`/contacts/customers?include=account,type,person_data,address,country,channels${ payload }`)
+            .get(`/accounts?include=contacts,type,person_data,address,country,channels${ payload }`)
             .then(response => {
                 const clientData = response.data.data
                 context.commit('initClientData', clientData)
@@ -283,6 +291,23 @@ export const actions = {
                 context.commit('amlStatuses',response.data.data);
                 return response.data.data;
             })
+    },
+    getKycDocument(context,payload){
+        return this.$axios
+            .get(`/documents?account_id=${payload}&per_page=500`)
+            .then(response => {
+                context.commit('kycDocuments',response.data.data);
+                return response.data.data;
+            })
+    },
+    updateAccountInformation(context,payload){
+        return this.$axios.put('/accounts/' + payload.id, payload.data).then(response => {
+            context.commit('updateAccount',response.data.data);
+            return response.data.data;
+        }).catch(error => {
+            payload.id  = id // for next submit
+            return Promise.reject(error)
+        })
     }
 
 }

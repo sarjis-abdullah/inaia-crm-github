@@ -4,7 +4,7 @@
         <base-header class="pb-6">
             <div class="row align-items-center py-4">
                 <div class="col-lg-6 col-7">
-                    <h6 class="h2 text-white d-inline-block mb-0">{{ $route.params.id ? 'Edit' : 'New' }} News Feed</h6>
+                    <h6 class="h2 text-white d-inline-block mb-0">{{ $route.params.id ? $t('edit') : $t('add') }} {{ $t('news_feed') }}</h6>
                     <!--
                     <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                         <route-breadcrumb/>
@@ -27,32 +27,19 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Title"
+                                    :label="$t('title')"
                                     name="Title"
                                     v-model="resource.title"
-                                    placeholder="title"
+                                    :placeholder="$t('title')"
                                     rules="required"
                                 />
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Message"
-                                    name="Message"
-                                    v-model="resource.message"
-                                    placeholder="message"
-                                    rules="required"
-                                />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <base-input
-                                    label="Language"
+                                :label="$t('locale')"
                                     name="Language"
                                 >
-                                    <el-select v-model="resource.language" placeholder="Select language">
+                                    <el-select v-model="resource.language" :placeholder="$t('select_language')">
                                         <el-option v-for="(i, idx) in locales" :key="idx" :value="i.value" :label="$t(i.text)" />
                                     </el-select>
                                 </base-input>
@@ -61,46 +48,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Image"
-                                    name="Image"
-                                >
-
-                                    <file-input type="base64" :preview="feed && feed.image_url" @change="saveImage" />
-
-                                </base-input>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <base-input
-                                    label="Thumbnail Image"
-                                    name="Thumbnail image"
-                                >
-
-                                    <file-input type="base64" :preview="feed && feed.image_thumbnail_url" @change="saveImageThumbnail" />
-
-                                </base-input>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <base-input
-                                    label="Start at"
+                                    :label="$t('start_at')"
                                     name="Start at"
                                     v-model="resource.start_at"
-                                    placeholder="start at"
+                                    :placeholder="$t('start_at')"
                                     rules="required"
                                     type="date"
                                 />
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="End at"
+                                    :label="$t('end_at')"
                                     name="End at"
                                     v-model="resource.end_at"
-                                    placeholder="end at"
+                                    :placeholder="$t('end_at')"
                                     rules="required"
                                     type="date"
                                 />
@@ -109,22 +70,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Product"
+                                :label="$t('product')"
                                     name="Product"
                                 >
-                                    <el-select v-model="resource.product_id" placeholder="Select product">
+                                    <el-select v-model="resource.product_id" :placeholder="$t('select_product')">
                                         <el-option v-for="(i, idx) in products" :key="idx" :value="i.id" :label="$t(i.name_translation_key)" />
                                     </el-select>
                                 </base-input>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Plans"
+                                :label="$t('plans')"
                                     name="Plans"
                                 >
-                                    <el-select v-model="resource.plan_id" placeholder="Select a plan">
+                                    <el-select v-model="resource.plan_id" :placeholder="$t('select_plan')">
                                         <el-option v-for="(i, idx) in plans" :key="idx" :value="i.id" :label="$t(i.name)" />
                                     </el-select>
                                 </base-input>
@@ -133,39 +92,88 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <base-input
-                                    label="Target URL"
-                                    name="Target URL"
-                                    v-model="resource.target_url"
-                                    placeholder="target_url"
-                                />
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <base-input
-                                    label="Action"
+                                :label="$t('action')"
                                     name="Action"
                                     v-model="resource.action"
-                                    placeholder="action"
+                                    :placeholder="$t('action')"
+                                />
+                            </div>
+                            <div class="col-md-6">
+                                <base-input
+                                :label="$t('target_url')"
+                                    name="Target URL"
+                                    v-model="resource.target_url"
+                                    :placeholder="$t('target_url')"
                                 />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <base-input
-                                    label="Is active?"
-                                    name="Is active"
-                                >
-                                    <el-select v-model="resource.is_active" placeholder="Select product">
-                                        <el-option v-for="(p, idx) in statuses" :key="idx" :value="p.value" :label="$t(p.text)" />
-                                    </el-select>
-                                </base-input>
+                                <el-input
+                                :label="$t('message')"
+                                    name="Message"
+                                    type="textarea"
+                                    v-model="resource.message"
+                                    :placeholder="$t('message')"
+                                    rules="required"
+                                    :rows="3"
+                                />
+                            </div>
+                            <div class="col-md-6">
+                                <Checkbox v-model="resource.is_active" :value="resource.is_active==1">{{$t('is_active')}}?</Checkbox>
                             </div>
                         </div>
-                        <div class="row">
+                       <div class="row mt-4" v-if="feed && (feed.image_thumbnail_url || feed.image_url)">
                             <div class="col-md-6">
-                                <base-button type="primary" native-type="submit" :disabled="isRequesting">Submit</base-button>
-                                <base-button type="secondary" native-type="button" @click="() => $router.push('/news-feeds')">Cancel</base-button>
+                                <img :src="feed.image_thumbnail_url" alt="thumbnail" />
+                            </div>
+                            <div class="col-md-6">
+                                <img :src="feed.image_url" alt="image" />
+                            </div>
+                       </div>
+                            <div class="d-flex justify-content-center mt-4">
+                                <Upload
+                                    class="upload-demo mx-3"
+                                    drag
+                                    ref="imageUpload"
+                                    :auto-upload="false"
+                                    accept=".png,.jpeg,.jpg"
+                                    :limit="1"
+                                    :multiple="false"
+                                    
+                                    :disabled="isSubmitting"
+                                    :on-change="saveImage"
+                                >
+                                    <i class="el-icon-upload"></i>
+                                    <div class="el-upload__text">
+                                    {{ $t('drop_image_here') }} <em>{{ $t('click_to_upload') }}</em>
+                                    </div>
+                                    
+                                </Upload>
+                                <Upload
+                                    class="upload-demo mx-3"
+                                    drag
+                                    ref="imageUpload"
+                                    :auto-upload="false"
+                                    accept=".png,.jpeg,.jpg"
+                                    :limit="1"
+                                    :multiple="false"
+                                    
+                                    :disabled="isSubmitting"
+                                    :on-change="saveImageThumbnail"
+                                >
+                                    <i class="el-icon-upload"></i>
+                                    <div class="el-upload__text">
+                                    {{ $t('drop_thumbnail_here') }} <em>{{ $t('click_to_upload') }}</em>
+                                    </div>
+                                    
+                                </Upload>
+                            </div>
+                        <div class="row float-right">
+                            <div class="pr-3">
+                                <base-button type="secondary" native-type="button" @click="() => $router.push('/news-feeds')">{{ $t('cancel') }}</base-button>
+                                <base-button type="primary" native-type="submit" :disabled="isRequesting">{{ $t('submit') }}</base-button>
+                                
                             </div>
                         </div>
                     </validation-observer>
@@ -177,7 +185,7 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { Select, Option } from 'element-ui'
+import { Select, Option,Upload,Input,Checkbox } from 'element-ui'
 import PhotoModal from '@/components/common/PhotoModal'
 import FileInput from '@/components/common/Inputs/FileInput'
 
@@ -186,7 +194,10 @@ export default {
         [Select.name]: Select,
         [Option.name]: Option,
         PhotoModal,
-        FileInput
+        FileInput,
+        Upload,
+        Input,
+        Checkbox
     },
     computed: {
         ...mapGetters({
@@ -298,14 +309,21 @@ export default {
         saveImage(f) {
             // need to send BASE64 string of file
             // since php can't handle file in PUT method
-            console.error('image', f)
-            this.resource.image = f
-            // this.resource.image_thumbnail   = null
+            const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.resource.image   = reader.result
+                };
+            reader.readAsDataURL(f.raw);
         },
         saveImageThumbnail(f) {
             // need to send BASE64 string of file
             // since php can't handle file in PUT method
-            this.resource.image_thumbnail   = f
+            const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.resource.image_thumbnail   = reader.result
+                };
+            reader.readAsDataURL(f.raw);
+            
         }
     }
 }

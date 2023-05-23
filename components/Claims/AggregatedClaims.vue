@@ -7,7 +7,7 @@
         <div class="card-header">
           <div class="row align-items-center">
             <div class="col-8">
-              <h5 class="h3 mb-0">{{ $t("aggregated_claims") }}</h5>
+              <h5 class="h3 mb-0" v-if="account_id==-1">{{ $t("aggregated_claims") }}</h5>
             </div>
           </div>
           <div class="row mt-3">
@@ -176,7 +176,7 @@ export default {
   props: {
     account_id: {
       type: Number,
-      default: null,
+      default: -1,
     },
     month:{
       type:String

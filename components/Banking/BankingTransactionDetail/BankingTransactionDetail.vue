@@ -15,6 +15,15 @@
             <Sepa v-if="isPaymentOut(transaction.type)" :transaction="transaction"/>
             <Withdrawal v-if="isWithDrawal(transaction.type)" :transaction="transaction"/>
             <Redemption v-if="isRedemption(transaction.type)" :transaction="transaction"/>
+            
+            <div class="list-group list-group-flush" v-else>
+               
+                <detail-list-item :title="$t('sender')" ><div slot="value" >{{transaction.transfer_account_name}}</div></detail-list-item>
+                <detail-list-item title="IBAN"><div slot="value" >{{transaction.transfer_account_iban}}</div></detail-list-item>
+                <detail-list-item :title="$t('usage')" ><div slot="value" >{{transaction.reason_text}}</div></detail-list-item>
+                <detail-list-item :title="$t('amount')"><div slot="value" >{{ transaction.direction == 'DEBIT' ? '-' : '+' }} {{$n(transaction.money_amount/100)}} €</div></detail-list-item>
+            </div>
+            
         </div>
         </div>
     </modal>
@@ -25,6 +34,7 @@ import PaymentIn from '@/components/Banking/BankingTransactionDetail/PaymentIn';
 import Sepa from '@/components/Banking/BankingTransactionDetail/Sepa';
 import Withdrawal from '@/components/Banking/BankingTransactionDetail/Withdrawal';
 import Redemption from '@/components/Banking/BankingTransactionDetail/Redemption';
+import DetailListItem from '@/components/common/DetailListItem.vue';
 import {isFundTransfer,isPaymentIn,isPaymentOut,isWithDrawal,isRedemption} from '../../../helpers/bankingTransactions';
 export default {
     props:{
@@ -42,7 +52,8 @@ export default {
         PaymentIn,
         Sepa,
         Withdrawal,
-        Redemption
+        Redemption,
+        DetailListItem
     },
     methods:{
         isFundTransfer,
