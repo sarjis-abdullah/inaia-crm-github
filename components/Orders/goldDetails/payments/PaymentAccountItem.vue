@@ -1,30 +1,39 @@
 <template>
     <div>
         <div v-if="!editActive && !isNew">
-            <detail-list-item  :title="$t('bank')">
-                <div slot="value">
+            <detail-list-item  :title="$t('payment_method')">
+                    <div slot="value">
 
-                        {{bank}}
-                    </div>
-            </detail-list-item>
-            <detail-list-item :title="$t('iban')">
-                <div slot="value">
+                            {{$t(paymentMethod)}}
+                        </div>
+                </detail-list-item>
+            <div v-if="paymentMethod=='bank_account'">
+                <detail-list-item  :title="$t('bank')">
+                    <div slot="value">
 
-                        {{iban}}
-                    </div>
-            </detail-list-item>
-            <detail-list-item :title="$t('account_holder')">
-                <div slot="value">
+                            {{bank}}
+                        </div>
+                </detail-list-item>
+                <detail-list-item :title="$t('iban')">
+                    <div slot="value">
 
-                        {{accountHolder}}
-                    </div>
-            </detail-list-item>
-            <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
-                <div slot="value">
+                            {{iban}}
+                        </div>
+                </detail-list-item>
+                <detail-list-item :title="$t('account_holder')">
+                    <div slot="value">
 
-                       <DatePicker v-model="paymentDate"/>
-                    </div>
-            </detail-list-item>
+                            {{accountHolder}}
+                        </div>
+                </detail-list-item>
+                <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
+                    <div slot="value">
+
+                        <DatePicker v-model="paymentDate"/>
+                        </div>
+                </detail-list-item>
+            </div>
+           
         </div>
         <div v-if="editActive || isNew">
             <div class="mt-3 row d-flex justify-content-center" v-if="loadindPaymentInformation">
@@ -112,6 +121,10 @@ export default {
         isNew:{
             type:Object,
             default: false
+        },
+        paymentMethod:{
+            type: String,
+            default:'bank_account'
         }
     },
     computed:{

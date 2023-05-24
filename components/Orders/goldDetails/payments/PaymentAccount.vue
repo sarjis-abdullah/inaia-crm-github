@@ -20,6 +20,7 @@
                 <div class="list-group list-group-flush">
                     <PaymentAccountItem
                     :paymentAccount="account.payment_account"
+                    :paymentMethod="account && account.method && account.method.name_translation_key"
                     :isEditable="activateEdit"
                     :account_id="order.depot.account_id" :order="order"
                     @paymentAccountUpdated="onPaymentAccountUpdated"
