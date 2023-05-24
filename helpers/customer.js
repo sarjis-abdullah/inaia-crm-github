@@ -32,7 +32,7 @@ export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:customer.person_data.nationality_details?[customer.person_data.nationality_details]:[]
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details:20}
             },
             address: newAddress,
             account: {
@@ -64,7 +64,7 @@ export function functionUpdateChannelAndGetObject(customer,channel,value){
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:customer.person_data.nationality?customer.person_data.nationality:[]
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details:20}
             },
             address: {
                 ...customer.address,
@@ -95,7 +95,7 @@ export function functionUpdateAccountAndGetObject(customer,account){
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:customer.person_data.nationality_details?customer.person_data.nationality_details:null
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details:20}
             },
             address: {
                 ...customer.address,
