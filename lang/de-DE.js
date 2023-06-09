@@ -621,5 +621,10 @@ export default {
     payment_method:'Payment method',
     depot_status_blocked:'Depot blocked',
     mobile:'Mobile',
-    confirm:'Confirm'
+    confirm:'Confirm',
+    edit_salesadvisor:'Edit sales advisor',
+    sales_advisor:'Sales advisor',
+    not_assigned:'Not assigned',
+    salesadvisor_updated_successfully:'Sales advisor is updated successfully',
+    salesadvisor_updated_unsuccessfully:"We couldn't update the sales advisor"
 }
