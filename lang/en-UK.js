@@ -623,5 +623,8 @@ export default {
     are_you_sure_you_want_to_unlock_account:'Are you sure you want to unlock the account?',
     account_unlock_successfully:'The account is unlocked successfully',
     account_unlock_unsuccessfully:"We couldn't unlock the account successfully, please try again later",
-    payment_method:'Payment method'
+    payment_method:'Payment method',
+    depot_status_blocked:'Depot blocked',
+    mobile:'Mobile',
+    confirm:'Confirm'
 }

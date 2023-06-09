@@ -91,7 +91,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_before)"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_before) / 100"></i18n-n> €
           </span>
         </template>
       </el-table-column>
@@ -102,7 +102,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_after)"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_after) / 100"></i18n-n> €
           </span>
         </template>
       </el-table-column>

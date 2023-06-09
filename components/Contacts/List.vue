@@ -34,7 +34,7 @@
                                     />
                                 </div>
                                 <div class="col">
-                                    <Select
+                                   <!--  <Select
                                         placeholder="AML"
                                         v-model="selectedAmlStatus"
                                         clearable
@@ -49,7 +49,7 @@
                                         :key="option.id"
                                         >
                                         </Option>
-                                    </Select>
+                                    </Select> -->
                                 </div>
                           </div>
                         </div>
