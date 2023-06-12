@@ -30,6 +30,7 @@
             <a class="dropdown-item" @click.prevent="displayEditAddress">{{ $t("edit_address") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditPhoneNumber">{{ $t("edit_mobile") }}</a>
             <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
+            <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
             <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
@@ -58,6 +59,7 @@
               <div>{{$t('created_at')}}: {{info.account.created_at ? $d(new Date(info.account.created_at),'narrow') : ''}}</div>
               <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
               <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
+              <div>{{$t('sales_advisor')}}: {{info.account.sales_advisor?(info.account.sales_advisor.first_name  + ' '+info.account.sales_advisor.last_name):$t('not_assigned')}}</div>
             </div>
 
           </div>
@@ -97,6 +99,7 @@
 
     </div>
     <EditAddress :showModal="showEditAddress" :customer="this.info" @cancelEdit="cancelEditAddress"/>
+    <EditSalesAdvisor :showModal="showEditSalesAdvisor" :customer="this.info" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
     <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
@@ -110,6 +113,7 @@ import { mapGetters } from "vuex"
 import EditAddress from '@/components/Contacts/EditAddress';
 import EditPhoneNumber from '@/components/Contacts/EditPhoneNumber';
 import EditEmail from '@/components/Contacts/EditEmail';
+import EditSalesAdvisor from "@/components/Contacts/EditSalesAdvisor.vue";
 import AccountSettings from '@/components/Contacts/AccountSettings';
 import CommentBox from '@/components/Comment/CommentBox';
 import KycDocumentList from "@/components/Contacts/KycDocumentList";
@@ -129,7 +133,8 @@ export default {
       AccountSettings,
       CommentBox,
       KycDocumentList,
-      VerifyContact
+      VerifyContact,
+      EditSalesAdvisor
     },
     mounted(){
       this.$confirm = MessageBox.confirm
@@ -187,7 +192,8 @@ export default {
         showSettings: false,
         showComments: false,
         showKycDocument: false,
-        showVerifyContact:false
+        showVerifyContact:false,
+        showEditSalesAdvisor:false
       }
 
     },
@@ -328,6 +334,12 @@ export default {
           });
         });
       },
+      cancelEditSalesAdvisor(){
+        this.showEditSalesAdvisor = false;
+      },
+      editSalesAdvisor (){
+        this.showEditSalesAdvisor = true;
+      }
 
     }
 

@@ -29,9 +29,6 @@ export default {
     props: {
         resource: {
             type: Object
-        },
-        productClasses: {
-            type: Object
         }
     },
     computed:{
@@ -54,15 +51,6 @@ export default {
                 console.log(res);
                 this.goldPrice = res;
             })
-        }
-    },
-    methods: {
-        getProductClass(cid) {
-            if (this.productClasses) {
-                let c   = Object.keys(this.productClasses).find(cl => this.productClasses[cl] == cid)
-                return c || cid
-            }
-            return cid
         }
     }
 }

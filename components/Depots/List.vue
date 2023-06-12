@@ -112,7 +112,7 @@
 
                     </el-table>
 
-                    <div class="card-footer py-4 d-flex justify-content-end">
+                    <div class="card-footer py-4 d-flex justify-content-end" v-if="totalTableData> perPage">
                         <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                     </div>
 
@@ -191,8 +191,6 @@ export default {
             selectedResource: null,
             showPopup: false,
             showConfirm: false,
-            productClasses: null,
-            productClassesLoaded: false,
             pageTitle: 'Depots',
             perPage: 10,
             page: 1,
@@ -225,13 +223,6 @@ export default {
         }
     },
     mounted() {
-        this.$store
-            .dispatch('product-classes/pairs')
-            .then(res => {
-                // console.error('products', res.data.data)
-                console.log(res.data.data);
-                this.productClasses = res.data.data
-            })
     },
     methods: {
         popupDetails(resource) {
@@ -252,7 +243,6 @@ export default {
                     .then(response => {
                         // console.error('data', response.data)
                         this.data = response.data.data;
-                        console.log(this.data);
                         this.totalTableData = response.data.meta.total
                     }).finally(() => {
                         this.initiated  = false
@@ -296,14 +286,6 @@ export default {
             if (!order || !sort)    return
             this.sort   = sort
             this.order  = order
-        },
-        getProductClass(cid) {
-            if (this.productClasses) {
-                let c   = Object.values(this.productClasses).find(cl => cl == cid)
-                console.log(Object.values(this.productClasses))
-                return c;
-            }
-            return cid
         },
        doSearchById(value) {
            if(value)

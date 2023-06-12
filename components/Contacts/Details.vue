@@ -120,6 +120,7 @@ import AggregatedClaims from '@/components/Claims/AggregatedClaims';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
+
 export default {
     components: {
         Loader,
@@ -212,10 +213,10 @@ export default {
     },
     methods: {
       initBankingAccountDetails() {
-        this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
+        /*this.$store.dispatch("banking-accounts/getBankingAccountDetails", this.info.account.id).then(res=>{
           this.bankingAccountDetails = res.data;
           this.hasBankingAcoount = true;
-        })
+        })*/
       },
       handleChange(val) {
         val.forEach(element => {
