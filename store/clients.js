@@ -308,6 +308,9 @@ export const actions = {
             payload.id  = id // for next submit
             return Promise.reject(error)
         })
+    },
+    resetAccountPin(context,payload){
+        return this.$axios.get(`/accounts/${payload}/pin-reset-request-by-staff`);
     }
 
 }

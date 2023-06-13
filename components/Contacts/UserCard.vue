@@ -248,7 +248,28 @@ export default {
         this.showVerifyContact = false
       },
       resetPin(){
-
+        this.$confirm(this.$t('are_you_sure_you_want_to_reset_account_pin'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.confirmResetPin();
+        });
+      },
+      confirmResetPin(){
+        this.$store.dispatch('clients/resetAccountPin',this.info.account.id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('pin_account_reset_successfully'),
+          });
+        }).catch(()=>{
+          this.$notify({
+            type: "error",
+            timeout: 5000,
+            message: this.$t('pin_account_reset_unsuccessfully'),
+          });
+        })
       },
       desactvateAccount(){
         this.$confirm(this.$t('are_you_sure_you_want_to_desactivate_account'), 'Warning', {

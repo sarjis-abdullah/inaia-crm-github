@@ -626,5 +626,8 @@ export default {
     sales_advisor:'Sales advisor',
     not_assigned:'Not assigned',
     salesadvisor_updated_successfully:'Sales advisor is updated successfully',
-    salesadvisor_updated_unsuccessfully:"We couldn't update the sales advisor"
+    salesadvisor_updated_unsuccessfully:"We couldn't update the sales advisor",
+    are_you_sure_you_want_to_reset_account_pin:"Are you sure you want to reset the user pin?",
+    pin_account_reset_successfully:'Pin account was reset successfully',
+    pin_account_reset_unsuccessfully:"We couldn't reset the pin code"
 }
