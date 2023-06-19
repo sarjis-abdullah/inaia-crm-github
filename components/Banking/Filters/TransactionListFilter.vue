@@ -194,14 +194,13 @@ export default {
   computed: {},
   watch: {},
   methods: {
-    loadStatus: function () {
-      //console.log(this)
-      this.$store.dispatch("orderStatus/fetchList", "").then((data) => {
-        data.data.data.forEach((element) => {
-          console.log(element.name_translation_key);
-        });
-      });
-    },
+    // loadStatus: function () {
+    //   this.$store.dispatch("orderStatus/fetchList", "").then((data) => {
+    //     data.data.data.forEach((element) => {
+    //       console.log(element.name_translation_key);
+    //     });
+    //   });
+    // },
     quiryBuilder: function () {
       let query = "";
       if (this.selectedType.length > 0) {

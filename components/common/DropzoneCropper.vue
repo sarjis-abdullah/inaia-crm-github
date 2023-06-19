@@ -251,7 +251,7 @@ export default {
                         self.$emit('upload-failed');
                         // self.$notify({type: 'danger', timeout: 8000, message: 'Unfortunately profile picture upload failed! Please try again.'})
                         // self.$router.push('/profile')
-                        console.error('file upload S3 error:', data)
+                        console.error('file upload error')
                     });
 
                 },
@@ -259,7 +259,6 @@ export default {
             this.dropzone = new Dropzone(this.$el, finalOptions)
             preview.innerHTML = ''
             this.dropzone.on('processing', file => {
-                // console.error('setting upload url', this.uploadUrl)
                 this.dropzone.options.url = this.uploadUrl;
             })
         },
@@ -309,7 +308,6 @@ export default {
             });
             let self            = this;
             croppedCanvas.toBlob(blob => {
-                // console.error('files', self.files);
                 [ 
                     "name", "upload", "status", "previewElement", "previewTemplate", "accepted"
                 ].forEach((p, i) => {
@@ -326,7 +324,6 @@ export default {
         async fetchS3UploadUrl(file) {
             return await this.$axios.get('/s3-url?name=' + this.storagePath + file.upload.filename)
             .then(res => {
-                // console.error('fetched S3 url:', res.data.data);
                 return res.data.data.s3UploadUrl;
             })
         }

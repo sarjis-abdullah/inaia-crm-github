@@ -129,7 +129,7 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                console.log('error-fetch', error)
+                console.log('Error fetching logged in user data')
                 return Promise.reject(error)
             })
             .finally(() => {

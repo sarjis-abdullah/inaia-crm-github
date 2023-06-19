@@ -261,8 +261,6 @@ export default {
       }
     },
     shouldDisableMarkAsComplete(){
-      console.log((this.inaiaStockAmount*1000 + this.operationStockAmount*1000));
-      console.log(parseInt(this.batchProcessPreview?this.batchProcessPreview.gram_amount:null));
       if(this.selectedOrderProcess && isOrderGoldSale(this.selectedOrderProcess))
       {
         return this.isSubmitting;

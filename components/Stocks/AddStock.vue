@@ -269,7 +269,6 @@ export default {
         },
         onChange(file, fileList) {
             this.file = file;
-            console.log(file.raw);
         },
         submitNewStock(){
             this.isSubmitting = true;

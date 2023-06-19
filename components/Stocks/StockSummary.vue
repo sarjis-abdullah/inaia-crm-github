@@ -159,7 +159,7 @@ export default {
         },
         getAmounts() {
             this.$store.dispatch('stocks/getStocksBalance').catch(err=>{
-                        console.log(err);
+                        console.log('Error getting stocks balance');
                     }).finally(
                         ()=>{
 

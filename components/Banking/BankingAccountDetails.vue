@@ -153,7 +153,6 @@ export default {
     };
   },
   mounted() {
-    console.log(this.bankAccountnfo);
     this.$store
       .dispatch(
         "banking-accounts/getBankingAccountLimit",

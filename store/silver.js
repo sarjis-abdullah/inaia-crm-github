@@ -95,7 +95,6 @@ export const actions = {
                 if (response && response.data.data) {
                     mappedData  = response.data.data.map(p => [(new Date(p.price_date)).getTime(), p.fixing_gram])
                 }
-                console.log(mappedData);
                 context.commit('prices', mappedData)
                 context.commit('historyType', payload.type)
 
