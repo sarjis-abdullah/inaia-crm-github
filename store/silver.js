@@ -116,7 +116,7 @@ export const actions = {
                 let firstEntry = response.data.data[0];
                 if(firstEntry)
                 {
-                    return firstEntry.fixing_gram_eur;
+                    return firstEntry.fixing_gram;
                 }
                 else{
                     return -1;
