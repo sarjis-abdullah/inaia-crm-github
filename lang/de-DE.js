@@ -634,5 +634,6 @@ export default {
     stock_bought_amount:'The total amount of assets bougth in gram',
     stock_bought_amount_explanation:'The amount of assets in gram that is bought and will be added to the stock',
     buying_gram_price:'Unit price by gram in euros',
-    total_buying_amount:'Total buying amount in euros'
+    total_buying_amount:'Total buying amount in euros',
+    please_buy_assets:"There is not enough assets in the stocks to perform the operation, please buy more assets."
 }
