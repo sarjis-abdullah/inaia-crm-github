@@ -111,7 +111,6 @@ export default {
                     if (res.data && res.data.data) {
                         this.resource   = JSON.parse(JSON.stringify(res.data.data))
                     }
-                    // console.error('resorce', {...this.resource})
                 })
                 .finally(() => this.isFetchingDetails = false)
         }

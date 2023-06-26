@@ -296,7 +296,6 @@ export default {
             }
         },
         savePhoto(fileName) {
-            // console.error('fileName:', fileName)
             this.clicked        = false
            
             if (fileName) {
@@ -307,7 +306,6 @@ export default {
                     this.$notify({type: 'success', timeout: 5000, message: 'Profile picture saved successfully!'})
                     // this.$store.dispatch('auth/fetchLoggedIn').then(res => {
                     // })
-                    // console.error('response', res.data.data)
                 }).catch(err => {
                     this.notifyError(err, this.$notify)
                 }).finally(() => {

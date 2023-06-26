@@ -151,7 +151,6 @@ export default {
         }
     },
    mounted:function(){
-    console.log(this.paymentAccount);
        if(!this.isNew)
        {
            this.initView();
@@ -193,7 +192,6 @@ export default {
                     }
 
                 }).catch((err)=>{
-                    console.error(err);
                     this.error = this.$t('error_loading_payment_accounts');
                 }).finally(()=>{
                     this.loadindPaymentInformation = false;

@@ -60,7 +60,7 @@ export default {
         this.bankAccount = res;
         this.$emit('loaded',this.bankAccount.id)
       }).catch((err)=>{
-        console.log(err);
+        console.log('Error while loading bank account summary');
       }).finally(()=>{
         this.isLoading = false
       })

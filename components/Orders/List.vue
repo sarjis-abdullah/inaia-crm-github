@@ -264,7 +264,6 @@ export default {
                 this.$store
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {
-                        // console.error('data', response.data)
                         this.data = response.data.data
 
                         this.totalTableData = response.data.meta.total

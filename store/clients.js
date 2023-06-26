@@ -126,7 +126,6 @@ export const mutations = {
 export const actions = {
     submitClient(context, payload) {
         if (!payload.id) {
-            // console.log(payload)
             return this.$axios.post('/contacts/store-with-relations', payload).then(response => {
                 return Promise.resolve(response)
             }).catch(error => {
@@ -183,7 +182,6 @@ export const actions = {
             .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=500`)
             .then(response => {
                 const clientData = response.data.data;
-                console.log(clientData);
                 context.commit('orderFilterList', clientData)
                 return response
             })
@@ -251,7 +249,6 @@ export const actions = {
             .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
                 const countryList = response.data
-                // console.log('country-list loaded')
                 context.commit('initCountryList', countryList)
                 context.commit('countryListLoaded', 2);
                 context.commit('countryCodeList',mapCountryCode(countryList));

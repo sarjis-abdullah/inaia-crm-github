@@ -72,9 +72,7 @@ export default {
             {
                 this.order.orders_payment_transactions.forEach(trans=>{
                     this.$store.dispatch('orders/getPaymentMethod',trans.payment_transaction_id).then(res=>{
-                    console.log(res);
                     this.paymentAccounts.push(res);
-                    console.log(this.paymentAccounts);
 
                 }).finally(()=>{
                     this.loading = false;

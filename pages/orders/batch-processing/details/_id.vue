@@ -439,7 +439,7 @@ export default {
       .dispatch("batch-processing/fetchOrderProcessDetails", this.processId)
       .then((res) => {
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log("Error fetching batch process details"))
       .finally(() => (this.isLoading = false));
   },
   cancelExecuteBankPayment(){
