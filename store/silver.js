@@ -125,4 +125,20 @@ export const actions = {
                 return Promise.reject(err)
             })
     },
+    getFullFixingPrice(context, payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/silver-price-historical?currency=EUR&date=${ payload }`)
+            .then(response => {
+                let firstEntry = response.data.data[0];
+                if(firstEntry)
+                {
+                    return firstEntry;
+                }
+                else{
+                    return -1;
+                }
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+    },
 }
