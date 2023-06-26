@@ -84,7 +84,10 @@ export default {
             operationGoldSock:'stocks/operationGoldStock',
             operationSilverSock:'stocks/operationSilverStock',
             depotTypes : 'depots/depotTypes'
-        })
+        }),
+        totalAmount(){
+            return 
+        }
     },
     data(){
         return {
@@ -158,6 +161,7 @@ export default {
             return degree;
         },
         getAmounts() {
+            this.isLoading = true;
             this.$store.dispatch('stocks/getStocksBalance').catch(err=>{
                         console.log('Error getting stocks balance');
                     }).finally(

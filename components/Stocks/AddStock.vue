@@ -1,6 +1,6 @@
 <template>
      <modal :show.sync="show"  headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onClose" :allowOutSideClose="false">
-        <template slot="header" class="pb-0">
+        <template slot="header" >
             <h5 class="modal-title">{{$t('add_stocks')}}</h5>
         </template>
         <form>
@@ -50,7 +50,7 @@
                     <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
                         {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} €
                     </div>
-                    <div v-if="fixingPriceGram == -1 && fixingPriceOnce == -1" class="mt--1 mb-3 text-sm text-danger">
+                    <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
                         {{$t('this_date_has_not_goldprice')}}
                     </div>
                 </div>
@@ -160,20 +160,7 @@ export default {
         SelectSuppliers
     },
     mounted(){
-        if(this.depotTypes.length == 0)
-        {
-            this.loadingTypes =  true
-            this.$store.dispatch('depots/getDepotTypes').then(()=>{
-                this.initDepotType();
-            }).finally(()=>{
-                this.loadingTypes = false;
-            })
-        }
-        else{
-            this.initDepotType();
-        }
-        this.initDate();
-        this.initStockType();
+        
     },
     computed:{
         ...mapGetters({
@@ -186,8 +173,8 @@ export default {
             disableDepotType:false,
             loadingTypes:false,
             fixingDate:new Date(),
-            fixingPriceGram:0,
-            fixingPriceOunce:0,
+            fixingPriceGram:-1,
+            fixingPriceOunce:-1,
             stockTypesData:[{id:0,name_translation_key:stockTypes.inaiaStock.toString()},{id:1,name_translation_key:stockTypes.operationStock.toString()}],
             selectedStockType:null,
             disableStockType:false,
@@ -199,9 +186,7 @@ export default {
             isSubmitting:false,
             supplierId:null,
             totalMoneyAmount:null,
-            unitPrice:null
-
-
+            unitPrice:null,
         }
     },
     watch:{
@@ -234,7 +219,30 @@ export default {
                 
             },
             immediate: true
+        },
+        show:{
+            handler(){
+                if(this.show==true && this.fixingPriceGram == -1 && this.fixingPriceOunce == -1){
+                    
+                    if(this.depotTypes.length == 0)
+                    {
+                        this.loadingTypes =  true
+                        this.$store.dispatch('depots/getDepotTypes').then(()=>{
+                            this.initDepotType();
+                        }).finally(()=>{
+                            this.loadingTypes = false;
+                        })
+                    }
+                    else{
+                        this.initDepotType();
+                    }
+                    this.initDate();
+                    this.initStockType();
+                }
+            },
+            immediate: true
         }
+
     },
     methods:{
         onClose(){
@@ -270,6 +278,10 @@ export default {
                         this.fixingPriceGram = res.fixing_gram;
                         this.fixingPriceOunce = res.fixing_ounce;
                     }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
+                    }
                     
                 })
             }
@@ -279,6 +291,10 @@ export default {
                     if(res != -1){
                         this.fixingPrice = res.fixing_gram;
                         this.fixingPriceOunce = res.fixing_ounce;
+                    }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
                     }
                     
                 })
