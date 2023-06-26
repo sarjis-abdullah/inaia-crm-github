@@ -12,7 +12,7 @@ export default {
         this.$store.dispatch('auth/logout')
             .then(res => {
             }).catch(err => {
-                // console.error('logout exception', err)
+                console.log("Error logging out")
             }).finally(() => {
                 this.$nextTick(() => {
                     // window.location.href    = process.env.universalLogin + '/logout'

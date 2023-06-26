@@ -59,7 +59,6 @@ export const actions = {
                 return res
             })
             .catch(err => {
-                // console.log('axios error during fetching role-pairs', err)
                 return Promise.reject(err)
             })
     },

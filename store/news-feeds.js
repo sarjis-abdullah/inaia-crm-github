@@ -50,7 +50,6 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                console.log('error-fetch', error)
                 return Promise.reject(error)
             })
             .finally(() => {
@@ -64,7 +63,6 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                console.log('error-fetch', error)
                 return Promise.reject(error)
             })
     },
@@ -77,7 +75,6 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                console.log('error-fetch', error)
                 return Promise.reject(error)
             })
             .finally(() => {
@@ -94,7 +91,6 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                // console.log('error-fetch', error)
                 return Promise.reject(error)
             })
             .finally(() => {
@@ -114,7 +110,6 @@ export const actions = {
                 return response
             })
             .catch(error => {
-                // console.log('error-fetch', error)
                 return Promise.reject(error)
             })
             .finally(() => {

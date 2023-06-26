@@ -36,7 +36,6 @@ export const actions = {
                     context.commit('list', res.data.data)
                     return res
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 }).finally(() => {
                     context.commit('loading', false)

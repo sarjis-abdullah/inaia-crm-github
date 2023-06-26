@@ -141,7 +141,6 @@ export default {
     },
     computed: {
         info() {
-          //console.log('resource', this.resource)
           return this.resource && this.resource.customer;
         },
         getName() {

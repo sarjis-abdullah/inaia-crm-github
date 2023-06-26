@@ -400,7 +400,6 @@ export default{
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('commission_edited_successfully')});
                     this.onClose();
                 }).catch(err=>{
-                    console.error(err);
                     this.$notify({type: 'danger', timeout: 5000, message: this.$t('commission_edited_unsuccessfully')})
                 }).finally(()=>{
                     this.isSubmitting = false;
@@ -433,7 +432,6 @@ export default{
                 element.index --;
             }
             this.advisors.splice(index,1);
-            console.log(this.advisors);
         },
         onAdvisorChange(value){
             this.advisors[value.index].data = value.data;

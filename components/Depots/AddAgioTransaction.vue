@@ -63,7 +63,7 @@ export default ({
                 })
                 .catch(
                 (err)=>{
-                    console.error(err);
+                    console.error('cant load agio transactions types');
                     this.typesError = 'cant_load_agio_transactions_types'
                 }
             ).finally(()=>this.isLoadingTypes = false);

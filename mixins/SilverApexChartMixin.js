@@ -104,9 +104,6 @@ export default {
                     //height: '300px',
                     events: {
                         mouseMove: (e, chartContext, config) => {
-                            // console.error('event:', e)
-                            // console.error('pointer context:', chartContext)
-                            // console.error('pointed data:', this.series[0].data[config.dataPointIndex])
                             this.indicatedData(config.dataPointIndex)
                         }
                     }
@@ -165,17 +162,14 @@ export default {
         paddingFractionTo3,
 
         updateTimeline: function (timeline) {
-            console.log(timeline);
             this.selection = timeline;
         },
 
         refreshChart(dt) {
-             console.error(this.chartOptions.xaxis)
             setTimeout(() => this.series = [{
                 name: "Silverpreis / g",
                 data: dt
             }]);
-            console.log(dt[0][0]);
             setTimeout(() => this.chartOptions   = {
                 ...this.chartOptions,
                 xaxis: {
@@ -254,7 +248,6 @@ export default {
 
         updateTimeLine: function () {
             let op  = {};
-            console.log(this.selection);
             switch (this.selection) {
                 case 'one_day':
                     op = {

@@ -120,7 +120,6 @@
             this.note = null;
           })
           .catch((err) => {
-            console.log(err);
             this.$notify({
               message: this.$t("cant_create_new_note"),
               type: "error",

@@ -104,7 +104,6 @@ export const actions = {
         return this.$axios
             .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
-                // console.log('country-list loaded')
                 context.commit('initCountryList', response.data)
                 context.commit('countryListLoaded', 2)
                 return response

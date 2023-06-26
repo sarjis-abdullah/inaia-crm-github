@@ -37,10 +37,8 @@
       fileChange(evt) {
         let that = this
         let reader  = new FileReader()
-        // console.error('target', e.target.files[0].name)
         this.selected   = evt.target.files[0]
         reader.onload = function(ev) {
-            // console.error('target', ev.target.result)
             that.$refs.imagePreview.src = ev.target.result
             that.$emit('change', that.type === 'file' ? evt.target.files[0] : ev.target.result)
         }

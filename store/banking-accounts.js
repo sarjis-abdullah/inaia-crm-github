@@ -13,7 +13,6 @@ export const actions={
           return response.data
         })
         .catch(error => {
-          console.log('error-fetch', error)
           return Promise.reject(error)
         })
     },
@@ -25,7 +24,6 @@ export const actions={
           return response.data
         })
         .catch(error => {
-          console.log('error-fetch', error)
           return Promise.reject(error)
         })
     },
@@ -37,7 +35,6 @@ export const actions={
           return response.data
         })
         .catch(error => {
-          console.log('error-fetch', error)
           return Promise.reject(error)
         })
     },
@@ -61,7 +58,6 @@ export const actions={
       return this.$axios
                 .post(process.env.bankingApiUrl +`/cards/${payload}/resume`)
                 .then(res=>{
-                    console.log(res.data);
                     return res.data.data;
                 })
     },

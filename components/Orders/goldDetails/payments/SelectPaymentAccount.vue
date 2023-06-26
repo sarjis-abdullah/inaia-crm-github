@@ -117,7 +117,6 @@ export default {
                 }
                 this.$emit('paymentaccountselected',this.selectedPaymentAccount);
             }).catch((err)=>{
-                console.error(err);
                 this.error = this.$t('error_loading_payment_accounts');
             }).finally(()=>{
                 this.loading = false;

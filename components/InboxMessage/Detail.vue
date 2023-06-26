@@ -257,7 +257,6 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                console.log(err);
                 this.$notify({
                     type:'error',
                     message:this.$t('message_sent_unsuccessfully'),
@@ -287,7 +286,6 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                console.log(err);
                 this.$notify({
                     type:'error',
                     message:this.$t('message_sent_unsuccessfully'),
@@ -327,7 +325,6 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                console.log(err);
                 this.$notify({
                     type:'error',
                     message:this.$t('message_deleted_unsuccessfully'),
