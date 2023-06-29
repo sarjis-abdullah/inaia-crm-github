@@ -128,6 +128,7 @@ export const actions = {
         return this.$axios
             .get(`${process.env.golddinarApiUrl}/silver-price-historical?currency=EUR&date=${ payload }`)
             .then(response => {
+                
                 let firstEntry = response.data.data[0];
                 if(firstEntry)
                 {

@@ -16,6 +16,7 @@
             order.order_status && 
             order.order_status.name_translation_key=='order_status_completed'&&
             order.storage_fee>0"><div slot="value"> <i18n-n :value="order.storage_fee/100"></i18n-n> €</div></detail-list-item>
+            <detail-list-item v-if="order && order.depot" :title="$t('customer')"><UserInfo :accountId="order.depot.account_id" slot="value"></UserInfo></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
     <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
@@ -27,17 +28,22 @@ import Status from '@/components/Orders/Status';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
     components:{
         DetailListItem,
         Status,
         PaymentAccount,
-        Transactions
+        Transactions,
+        UserInfo
     },
     props: {
         order: {
             type: Object
         }
+    },
+    mounted(){
+        console.log()
     },
     methods:{
       displayAmount(){

@@ -289,7 +289,7 @@ export default {
             {
                 this.$store.dispatch('silver/getFullFixingPrice',dbDate).then(res=>{
                     if(res != -1){
-                        this.fixingPrice = res.fixing_gram;
+                        this.fixingPriceGram = res.fixing_gram;
                         this.fixingPriceOunce = res.fixing_ounce;
                     }
                     else{
