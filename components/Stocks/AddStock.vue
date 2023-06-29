@@ -360,7 +360,23 @@ export default {
                     stockType : this.selectedStockType
                 }
                 this.$store.dispatch('stocks/createNewStock',payload).then((res)=>{
-                    this.$emit('added');
+                    this.selectedDepotType=null;
+                    this.disableDepotType=false;
+                    this.loadingTypes=false;
+                    this.fixingDate=new Date();
+                    this.fixingPriceGram=-1;
+                    this.fixingPriceOunce=-1;
+                    this.selectedStockType=null;
+                    this.disableStockType=false;
+                    this.amount=null;
+                    this.selectedSource=REFINERY;
+                    this.reference=null;
+                    this.file=null,
+                    this.isSubmitting=false;
+                    this.supplierId=null;
+                    this.totalMoneyAmount=null;
+                    this.unitPrice=null;
+                this.$emit('added');
                     this.onClose();
                     this.$notify({
                     type:'success',
