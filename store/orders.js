@@ -150,6 +150,14 @@ export const actions = {
                 return res
             })
     },
+    revert(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/revert?include=${includes}`,payload.data)
+            .then(res => {
+                context.commit('update', res.data.data)
+                return res
+            })
+    },
     getPaymentMethod(context,payload) {
         return this.$axios
                 .get(`${ process.env.paymentsApiUrl }/payment-transactions/${payload}?include=payment_account`).then(res=>{

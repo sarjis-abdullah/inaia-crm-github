@@ -18,6 +18,7 @@
                         @shippmentDetailsChanged="onShippmentDetailsChanged"
                         @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
                         @isMoneyRefunded="setIsMoneyRefunded"
+                        @revertorderdateselected="setRevertDate"
                         />
                     </div>
                     <template slot="footer">
@@ -51,6 +52,12 @@
                             :disabled="(selectedRefundPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.refund) ||
                             isSubmitting">
                            <i class="lnir lnir-undo mr-1"></i><span>{{$t('order_refund')}}</span>
+                         </base-button>
+                         <base-button type="primary" @click="() => revertOrder(selectedResource)"
+                            v-if="selectedResource && shouldDisplayRevertButton(selectedResource)"
+                            :disabled="(revertDate==null && selectedResourceScreen==orderDetailsSceens.revert) ||
+                            isSubmitting">
+                           <i class="lnir lnir-undo mr-1"></i><span>{{$t('order_revert')}}</span>
                          </base-button>
                           <base-button type="primary" @click="() => sellGold(selectedResource)"
                             v-if="selectedResource && shouldDisplaySellGoldButton(selectedResource)"
@@ -90,7 +97,8 @@ export default {
             chargeShippmentFee:true,
             isSubmitting: false,
             selectedResourceScreen:orderDetailScreens.detail,
-            isMoneyRefunded: 0
+            isMoneyRefunded: 0,
+            revertDate:null
         }
     },
      created (){
@@ -339,7 +347,10 @@ export default {
             this.selectedCancelPaymentAccount = account;
         },
         shouldDisplayRefundButton(resource){
-            return isOrderCompleted(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
+            return this.selectedResourceScreen!=orderDetailScreens.revert && isOrderCompleted(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
+        },
+        shouldDisplayRevertButton(resource){
+            return this.selectedResourceScreen!=orderDetailScreens.refund && isOrderCompleted(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
         },
         shouldDisplaySellGoldButton(resource){
             return isOrderPending(resource) &&
@@ -355,7 +366,6 @@ export default {
             this.enableDeleting = value;
         },
         sellGold (resource){
-            debugger;
             if(this.selectedResourceScreen != orderDetailScreens.sell)
             {
                 this.selectedResourceScreen = orderDetailScreens.sell;
@@ -400,6 +410,36 @@ export default {
         },
         onSellingPaymentAccountSelected(account){
             this.selectedSellingPaymentAccount = account;
+        },
+        setRevertDate(date){
+            this.revertDate = date;
+        },
+        revertOrder(resource){
+            this.selectedResource = resource;
+            if(this.selectedResourceScreen != orderDetailScreens.revert)
+            {
+                this.selectedResourceScreen = orderDetailScreens.revert;
+            }
+            else{
+                debugger;
+                let data = {
+                    id:resource.id,
+                    data:{
+                        fixing_date:this.revertDate,
+                    }
+                }
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/revert', data)
+                    .then( res => {
+                        this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
+                        this.onDetailClose();
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('order_reverted_successfully')})
+                    }).catch(()=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_reverted_unsuccessfully')})
+                    }).finally(()=>this.isSubmitting = false)
+            }
         }
     }
 }
