@@ -143,7 +143,6 @@ export default {
                     done()
                     self.files.push(file);
                     self.$emit('change', self.selectedFileNames);
-                    // console.error('actual name:', file.name, '| new name:', file.upload.filename, '| files:', self.selectedFileNames);
                     self.resizeImg(file);
                     self.fetchS3UploadUrl(file)
                     .then(s3Url => {
@@ -244,7 +243,7 @@ export default {
                         self.$emit('upload-failed');
                         // self.$notify({type: 'danger', timeout: 8000, message: 'Unfortunately profile picture upload failed! Please try again.'})
                         // self.$router.push('/profile')
-                        console.error('file upload S3 error:', data)
+                        console.error('file upload error')
                     });
 
                 },
@@ -279,7 +278,6 @@ export default {
             //     this.currentFile = thumb; // dataURI
             // })
             this.dropzone.on('processing', file => {
-                // console.error('setting upload url', this.uploadUrl)
                 this.dropzone.options.url = this.uploadUrl;
             })
         },
@@ -287,7 +285,6 @@ export default {
             // self.$axios.get('/s3-url?&name=profile/' + file.name)
             return await this.$axios.get('/s3-url?name=' + this.storagePath + file.upload.filename)
             .then(res => {
-                // console.error('fetched S3 url:', res.data.data);
                 // file.uploadUrl  = res.data.data.s3UploadUrl;
                 // this.uploadUrl  = res.data.data.s3UploadUrl;
                 // file.additionalData = res.data.data.additionalData;

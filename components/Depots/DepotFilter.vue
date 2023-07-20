@@ -325,14 +325,13 @@ export default {
         return "no_saving_plan";
       }
     },
-    loadStatus: function () {
-      //console.log(this)
-      this.$store.dispatch("orderStatus/fetchList", "").then((data) => {
-        data.data.data.forEach((element) => {
-          console.log(element.name_translation_key);
-        });
-      });
-    },
+    // loadStatus: function () {
+    //   this.$store.dispatch("orderStatus/fetchList", "").then((data) => {
+    //     data.data.data.forEach((element) => {
+    //       console.log(element.name_translation_key);
+    //     });
+    //   });
+    // },
     quiryBuilder: function () {
       let query = "";
       if (this.selectedAgio && !isNaN(this.selectedAgio)) {
@@ -362,7 +361,7 @@ export default {
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
-      console.log(query);
+      
       return query;
     },
     applyFilter: function () {

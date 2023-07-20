@@ -128,7 +128,6 @@ export const actions = {
                         mappedData  = response.data.data.map(p => [(new Date(p.created_at)).getTime(), p.fixing_gram])
                     }
                 }
-                console.log(mappedData);
                 context.commit('prices', mappedData)
                 context.commit('historyType', payload.type)
 
@@ -152,6 +151,22 @@ export const actions = {
                 if(firstEntry)
                 {
                     return firstEntry.fixing_gram;
+                }
+                else{
+                    return -1;
+                }
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+    },
+    getFullFixingPrice(context, payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/historical-price?currency=EUR&date=${ payload }`)
+            .then(response => {
+                let firstEntry = response.data.data[0];
+                if(firstEntry)
+                {
+                    return firstEntry;
                 }
                 else{
                     return -1;

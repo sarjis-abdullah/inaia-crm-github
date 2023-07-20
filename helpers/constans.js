@@ -5,7 +5,8 @@ export const orderDetailScreens = {
     delete:"delete",
     paid:'paid',
     refund:'refund',
-    sell:"sell"
+    sell:"sell",
+    revert:'revert'
 }
 export const events = {
     shippmentFeeChargeChanged:'shippmentFeeChargeChanged',

@@ -80,7 +80,6 @@ export default {
       return this.client(this.customerId,this.accountId);
     },
     info() {
-      //console.log('resource', this.resource)
       return this.singleClientData && this.singleClientData.customer;
     },
     getName() {

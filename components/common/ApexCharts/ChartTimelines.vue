@@ -57,7 +57,6 @@ export default {
         },
 
         async fetchTimelineData() {
-            console.log(this.assetType);
             let balanceHistory = null, prices = null, payload = {"type": this.list[this.timeline]};
             let action = 'gold/prices';
             if(this.assetType == 'silver')
@@ -66,7 +65,6 @@ export default {
             }
             prices  = await this.$store.dispatch(action, payload)
                 .then(res => {
-                    // console.error('price-history', res)
                     this.$emit('update-timeline-data', res);
                 })
         }

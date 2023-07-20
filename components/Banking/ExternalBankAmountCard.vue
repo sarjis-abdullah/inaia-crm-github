@@ -6,7 +6,7 @@
             <div class="media">
               <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
               <div class="media-body">
-                <h5 class="card-title text-uppercase text-muted mb-0">Volksbank Böblingen</h5>
+                <h5 class="card-title text-uppercase text-muted mb-0">Bernhauser Bank eG</h5>
                 <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="!isLoading && bankAccount">{{ bankAccount.balance/100 }} €</span>
                 <Loader :width="24" :height="24" v-else/>
               </div>
@@ -31,7 +31,7 @@
           <Loader :width="14" :height="14" v-else/>
         </div>
       </div>
-      
+
     </div>
 </template>
 <script>
@@ -60,7 +60,7 @@ export default {
         this.bankAccount = res;
         this.$emit('loaded',this.bankAccount.id)
       }).catch((err)=>{
-        console.log(err);
+        console.log('Error while loading bank account summary');
       }).finally(()=>{
         this.isLoading = false
       })

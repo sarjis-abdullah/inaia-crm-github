@@ -103,9 +103,6 @@ export default {
                     //height: '300px',
                     events: {
                         mouseMove: (e, chartContext, config) => {
-                            // console.error('event:', e)
-                            // console.error('pointer context:', chartContext)
-                            // console.error('pointed data:', this.series[0].data[config.dataPointIndex])
                             this.indicatedData(config.dataPointIndex)
                         }
                     }
@@ -169,7 +166,6 @@ export default {
         },
 
         refreshChart(dt) {
-            // console.error('prices', dt)
             setTimeout(() => this.series = [{
                 name: "Goldpreis / g",
                 data: dt

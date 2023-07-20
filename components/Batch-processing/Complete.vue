@@ -87,6 +87,7 @@
             {{ $t('the_stock_amounts_must_be_equal_to_purchased_amout') }}
           </div>
       </div>
+      <span class="text-danger" v-if="batchProcessPreview && batchProcessPreview.gram_amount > totalAvailableStockAmount">{{ $t('please_buy_assets') }}</span>
       </div>
     </div>
     <template slot="footer">
@@ -151,7 +152,16 @@ export default {
   computed:{
         ...mapGetters({
             depotTypes : 'depots/depotTypes'
-        })
+        }),
+        totalAvailableStockAmount(){
+          if(this.batchProcessPreview){
+            const operationAmount = (this.batchProcessPreview.operation_stock_balance?this.batchProcessPreview.operation_stock_balance:0);
+            const inaiaAmount = (this.batchProcessPreview.inaia_stock_balance?this.batchProcessPreview.inaia_stock_balance:0);
+            return operationAmount + inaiaAmount;
+          }
+          return 0;
+          
+        }
     },
   methods: {
     isOrderGoldPurchase,
@@ -261,8 +271,6 @@ export default {
       }
     },
     shouldDisableMarkAsComplete(){
-      console.log((this.inaiaStockAmount*1000 + this.operationStockAmount*1000));
-      console.log(parseInt(this.batchProcessPreview?this.batchProcessPreview.gram_amount:null));
       if(this.selectedOrderProcess && isOrderGoldSale(this.selectedOrderProcess))
       {
         return this.isSubmitting;

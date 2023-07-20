@@ -40,7 +40,6 @@ export default {
             this.$store.dispatch('orders/getPaymentMethod',payment.id).then(res=>{
                 let details = res;
                 this.paymentMethod = details.payment_account;
-                console.log(details);
                 if(details.payment_account)
                 {
                     if(details.payment_account.payment_account_specs && details.payment_account.payment_account_specs.length>0)

@@ -1,6 +1,6 @@
 <template>
      <modal :show.sync="show"  headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onClose" :allowOutSideClose="false">
-        <template slot="header" class="pb-0">
+        <template slot="header" >
             <h5 class="modal-title">{{$t('add_stocks')}}</h5>
         </template>
         <form>
@@ -20,21 +20,6 @@
                     >
                     </Option>
                 </Select>
-                <date-picker
-                    size="large"
-                    class="my-2"
-                    v-model="fixingDate"
-                    type="date"
-                    :placeholder="$t('select_gold_price_date')"
-                    @change="getFixingPrice"
-                >
-                </date-picker>
-                <div v-if="fixingPrice > -1" class="mt--1 mb-3 text-sm text-muted">
-                    {{$t('gram_price')}} : {{fixingPrice}} €
-                </div>
-                <div v-else class="mt--1 mb-3 text-sm text-danger">
-                    {{$t('this_date_has_not_goldprice')}}
-                </div>
                 <Select
                 :placeholder="$t('stock_type')"
                 v-model="selectedStockType"
@@ -49,9 +34,35 @@
                     >
                     </Option>
                 </Select>
+                <date-picker
+                    size="large"
+                    class="my-2"
+                    v-model="fixingDate"
+                    type="date"
+                    :placeholder="$t('select_gold_price_date')"
+                    @change="getFixingPrice"
+                >
+                </date-picker>
+                <div class="mt--1 mb-3 row">
+                    <div v-if="fixingPriceGram > -1" class="col text-sm text-muted">
+                        {{$t('gram_price')}} : {{$n(fixingPriceGram)}} €
+                    </div>
+                    <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
+                        {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} €
+                    </div>
+                    <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
+                        {{$t('this_date_has_not_goldprice')}}
+                    </div>
+                </div>
+                <div class="row mb-3"  v-if="isRefinerySource()">
+                    <Input v-model="unitPrice" :placeholder="$t('buying_gram_price')" class="col"/>
+                    <Input v-model="totalMoneyAmount" :placeholder="$t('total_buying_amount')" class="col"/>
+                </div>
+                <span class=" text-sm-center text-muted mb-3">{{ $t('stock_bought_amount_explanation') }}</span>
                 <div class="row" v-if="isNewOperations()">
                     <div class="col-3">
-                        <Input v-model="amount" :placeholder="$t('amount')"/>
+                        <Input v-model="amount" :placeholder="$t('stock_bought_amount')"/>
+                    
                     </div>
                     <div class="col-9 m-auto">
                         <span class="mr-2">{{ $t('from') }}</span>
@@ -69,9 +80,9 @@
                     </Option>
                 </Select>
                     </div>
-
                 </div>
-                <Input v-model="amount" :placeholder="$t('amount')" v-else class="mb-3"/>
+                <Input v-model="amount" :placeholder="$t('stock_bought_amount')" v-else class="mb-3"/>
+                
                 <SelectSuppliers v-if="isRefinerySource()" @change="onSupplierChange"/>
                 <Input v-model="reference" :placeholder="$t('reference')" v-if="isRefinerySource()" class="mb-3"/>
                 <div class="d-flex justify-content-center" v-if="isRefinerySource()">
@@ -149,20 +160,7 @@ export default {
         SelectSuppliers
     },
     mounted(){
-        if(this.depotTypes.length == 0)
-        {
-            this.loadingTypes =  true
-            this.$store.dispatch('depots/getDepotTypes').then(()=>{
-                this.initDepotType();
-            }).finally(()=>{
-                this.loadingTypes = false;
-            })
-        }
-        else{
-            this.initDepotType();
-        }
-        this.initDate();
-        this.initStockType();
+        
     },
     computed:{
         ...mapGetters({
@@ -175,7 +173,8 @@ export default {
             disableDepotType:false,
             loadingTypes:false,
             fixingDate:new Date(),
-            fixingPrice:0,
+            fixingPriceGram:-1,
+            fixingPriceOunce:-1,
             stockTypesData:[{id:0,name_translation_key:stockTypes.inaiaStock.toString()},{id:1,name_translation_key:stockTypes.operationStock.toString()}],
             selectedStockType:null,
             disableStockType:false,
@@ -185,8 +184,9 @@ export default {
             reference:null,
             file:null,
             isSubmitting:false,
-            supplierId:null
-
+            supplierId:null,
+            totalMoneyAmount:null,
+            unitPrice:null,
         }
     },
     watch:{
@@ -201,7 +201,48 @@ export default {
                 this.initDepotType()
             },
             immediate: true
+        },
+        unitPrice:{
+            handler(){
+                if(parseFloat(this.unitPrice)> 0 && this.totalMoneyAmount!=null){
+                    this.amount = (parseFloat(this.totalMoneyAmount)/parseFloat(this.unitPrice)).toFixed(3);
+                }
+                
+            },
+            immediate: true
+        },
+        totalMoneyAmount:{
+            handler(){
+                if(parseFloat(this.unitPrice)> 0 && this.totalMoneyAmount!=null){
+                    this.amount = (parseFloat(this.totalMoneyAmount)/parseFloat(this.unitPrice)).toFixed(3);
+                }
+                
+            },
+            immediate: true
+        },
+        show:{
+            handler(){
+                if(this.show==true && this.fixingPriceGram == -1 && this.fixingPriceOunce == -1){
+                    
+                    if(this.depotTypes.length == 0)
+                    {
+                        this.loadingTypes =  true
+                        this.$store.dispatch('depots/getDepotTypes').then(()=>{
+                            this.initDepotType();
+                        }).finally(()=>{
+                            this.loadingTypes = false;
+                        })
+                    }
+                    else{
+                        this.initDepotType();
+                    }
+                    this.initDate();
+                    this.initStockType();
+                }
+            },
+            immediate: true
         }
+
     },
     methods:{
         onClose(){
@@ -231,14 +272,31 @@ export default {
             const dbDate = formatDateToApiFormat(this.fixingDate);
             if(this.assetType == assetTypes.gold)
             {
-                this.$store.dispatch('gold/getFixingPrice',dbDate).then(res=>{
-                    this.fixingPrice = res;
+                this.$store.dispatch('gold/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1)
+                    {
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                    }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
+                    }
+                    
                 })
             }
             if(this.assetType == assetTypes.silver)
             {
-                this.$store.dispatch('silver/getFixingPrice',dbDate).then(res=>{
-                    this.fixingPrice = res;
+                this.$store.dispatch('silver/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1){
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                    }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
+                    }
+                    
                 })
             }
         },
@@ -256,20 +314,22 @@ export default {
             return this.selectedSource == REFINERY;
         },
         isValid(){
-            let essentials = (this.selectedStockType && this.selectedDepotType && this.fixingPrice >0 && this.amount >0);
+            
+            let essentials = (this.selectedStockType && this.selectedDepotType && this.fixingPriceGram >0 && this.amount >0);
+           
             if(this.selectedSource != REFINERY && essentials)
             {
                 return true;
             }
             if(this.selectedSource == REFINERY && essentials)
             {
-                return (this.reference!=null);  
+                
+                return (this.reference!=null && this.unitPrice > 0 && this.totalMoneyAmount > 0);  
             }
             return false;
         },
         onChange(file, fileList) {
             this.file = file;
-            console.log(file.raw);
         },
         submitNewStock(){
             this.isSubmitting = true;
@@ -281,8 +341,10 @@ export default {
                 data.append('depot_type_id',this.selectedDepotType);
                 data.append('transaction_type','CREDIT');
                 data.append('amount',this.amount*1000);
-                data.append('fixing_price',parseInt(this.fixingPrice*100));
+                data.append('fixing_price',parseInt(this.fixingPriceGram*100));
                 data.append('fixing_date',formatDateToApiFormat(this.fixingDate));
+                data.append('money_amount',(this.totalMoneyAmount*100));
+                data.append('fixing_trading',(this.unitPrice*100));
                 if(this.reference)
                     data.append('external_ref_number',this.reference);
                 if(this.file)
@@ -298,7 +360,23 @@ export default {
                     stockType : this.selectedStockType
                 }
                 this.$store.dispatch('stocks/createNewStock',payload).then((res)=>{
-                    this.$emit('added');
+                    this.selectedDepotType=null;
+                    this.disableDepotType=false;
+                    this.loadingTypes=false;
+                    this.fixingDate=new Date();
+                    this.fixingPriceGram=-1;
+                    this.fixingPriceOunce=-1;
+                    this.selectedStockType=null;
+                    this.disableStockType=false;
+                    this.amount=null;
+                    this.selectedSource=REFINERY;
+                    this.reference=null;
+                    this.file=null,
+                    this.isSubmitting=false;
+                    this.supplierId=null;
+                    this.totalMoneyAmount=null;
+                    this.unitPrice=null;
+                this.$emit('added');
                     this.onClose();
                     this.$notify({
                     type:'success',

@@ -54,7 +54,6 @@ export const actions = {
                 return response
             })
             .catch(err => {
-                // console.log('axios error during fetching type-pairs', err)
                 return Promise.reject(err)
             })
             .finally(() => {
@@ -67,7 +66,6 @@ export const actions = {
                 context.commit('list', res.data.data)
                 return res
             }).catch(err => {
-                // console.error('axios error during fetching types')
                 return Promise.reject(err)
             }).finally(() => {
             })
@@ -82,22 +80,18 @@ export const actions = {
     },
     submit(context, payload) {
         if (!payload.id) {
-            // console.log(payload)
             return this.$axios.post('/types', payload)
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during storing type')
                     return Promise.reject(err)
                 })
         } else {
             const id = payload.id
-            // console.log(id)
             return this.$axios.put('/types/' + id, payload)
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during updating type', id)
                     return Promise.reject(err)
                 })
         }

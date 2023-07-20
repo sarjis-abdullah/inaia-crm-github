@@ -198,18 +198,15 @@
                 <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
                 <span></span>
             </template>
-            <div v-if="depot.agio==0">
+            <div>
                 {{$t('cancel_saving_plan_question')}}
-            </div>
-            <div v-else>
-              {{$t('cant_cancel_agio_not_zero')}}
             </div>
             <template slot="footer">
                 <base-button type="link" class="ml-auto" @click="cancelCancel()">
                   {{$t('cancel')}}
                 </base-button>
                 <base-button type="primary" @click="() => cancelSavinPlan()"
-                    :disabled="isSubmitting" v-if="depot.agio==0">
+                    :disabled="isSubmitting">
                     <span>{{$t('cancel_contract')}}</span>
                   </base-button>
             </template>

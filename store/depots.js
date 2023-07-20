@@ -119,7 +119,6 @@ export const actions = {
                 return res
             })
             .catch(err => {
-                // console.log('axios error during fetching role-pairs', err)
                 return Promise.reject(err)
             })
     },
@@ -131,7 +130,6 @@ export const actions = {
                     context.commit('list', res.data.data)
                     return res
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 }).finally(() => {
                     context.commit('loading', false)
@@ -142,10 +140,8 @@ export const actions = {
         return await this.$axios
             .get(`${process.env.golddinarApiUrl}/depots/${payload}?include=depot_status,depot_status_history`).then(res => {
                 context.commit('details', res.data.data);
-                console.log(res.data.data);
                 return res
             }).catch((err) => {
-                // console.error('axios error during detailing role', err)
                 return Promise.reject(err)
             })
     },
@@ -155,7 +151,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during storing role')
                     return Promise.reject(err)
                 })
         } else {
@@ -163,7 +158,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during updating role', err)
                     return Promise.reject(err)
                 })
         }
@@ -185,7 +179,6 @@ export const actions = {
                     context.commit('orderFilterList', res.data.data)
                     return res
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 }).finally(() => {
                     context.commit('loading', false)
@@ -199,7 +192,6 @@ export const actions = {
                     context.commit('setGoldPrice',res.data.data.fixing_gram);
                     return res.data.data.fixing_gram;
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
     },
@@ -210,7 +202,6 @@ export const actions = {
                     context.commit('silverPrice',res.data.data.fixing_gram);
                     return res.data.data.fixing_gram;
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
     },
@@ -220,7 +211,6 @@ export const actions = {
                 .then(res => {
                     return res.data.data[0];
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
     },
@@ -306,7 +296,6 @@ export const actions = {
                     context.commit('agioTransactions',res.data.data)
                     return res.data;
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
     },
@@ -316,7 +305,6 @@ export const actions = {
                     context.commit('agioTransactionTypes',res.data.data)
                     return res.data.data
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 })
     },
@@ -344,7 +332,6 @@ export const actions = {
     {
         return this.$axios.get(`${process.env.golddinarApiUrl}/depot-types`)
             .then(res => {
-                console.log(res.data.data);
                 context.commit('depotTypes',res.data.data)
                 return true
             }).catch(err=>{

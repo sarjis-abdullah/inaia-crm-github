@@ -30,7 +30,7 @@
             <div class="col-lg-3 order-lg-2">
               <div class="card-profile-image">
                 <div class="img-container">
-                  <img :src="avatar(loggedin)" @error="refreshAvatar($event, gender)" class="rounded-circle" />
+                  <img :src="avatar" @error="refreshAvatar($event, gender)" class="rounded-circle" />
                   <div class="overlay" @click="clicked = true">
                     <div>
                       <i class="fa fa-camera" id="camera" @click.prevent.stop="clicked = true" />
@@ -113,6 +113,7 @@
               @file-selected="fileSelected"
               @upload-process-started="processStarted"
               @change="savePhoto"
+              :id="loggedin && loggedin.id"
             />
             <!-- <template #footer>
                 <button type="button" class="btn btn-primary" @click.prevent.stop="startProcess = true" :disabled="startProcess || !photo">Save photo</button>
@@ -210,20 +211,18 @@ export default {
         goldAdminAccess() {
             return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
         },
-        // avatar() {
-        //     if (this.info) {
-        //         if (!this.info.avatar && this.info.person_data) {
-        //             let gender    = this.info.person_data.gender.toLowerCase()
-        //             if (gender == 'female' || gender == 'f') {
-        //                 return '/img/theme/avatar_f.png'
-        //             }
-        //         } else if (this.info.avatar) {
-        //             // return process.env.s3BucketUri + this.info.avatar
-        //             return this.info.avatar
-        //         }
-        //     }
-        //     return '/img/theme/avatar_m.png'
-        // },
+        avatar() {
+          if (this.info) {
+                if (!this.info.avatar && this.info.person_data) {
+                  let gender    = this.info.person_data.gender.toLowerCase()
+                  return anonymousUserAvatar(gender);
+                }
+                else if (this.info.avatar) {
+                   
+                   return this.info.avatar
+          }
+          }
+        },
         name() {
             let name    = ''
             if (this.info && this.info.name) {
@@ -297,8 +296,8 @@ export default {
             }
         },
         savePhoto(fileName) {
-            // console.error('fileName:', fileName)
             this.clicked        = false
+           
             if (fileName) {
                 this.$store.dispatch('clients/saveAvatar', {
                     id: this.loggedin.id,
@@ -307,7 +306,6 @@ export default {
                     this.$notify({type: 'success', timeout: 5000, message: 'Profile picture saved successfully!'})
                     // this.$store.dispatch('auth/fetchLoggedIn').then(res => {
                     // })
-                    // console.error('response', res.data.data)
                 }).catch(err => {
                     this.notifyError(err, this.$notify)
                 }).finally(() => {

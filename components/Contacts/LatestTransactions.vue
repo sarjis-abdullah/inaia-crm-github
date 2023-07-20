@@ -53,7 +53,7 @@
                                     <span class="status" v-if="row.unit === 'gram'">
                                         <i18n-n :value="row.amount/1000"></i18n-n> g
                                     </span>
-                                    <span class="status" v-else-if="row.unit == 'euro'">
+                                    <span class="status" v-else-if="row.unit == 'EUR'">
                                         <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
                                     </span>
                                     <span class="status" v-else-if="!row.unit">
