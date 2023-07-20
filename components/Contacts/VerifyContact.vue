@@ -44,7 +44,7 @@
       <base-button
         type="primary"
         @click="() => submitUpload()"
-        :disabled="isSubmitting || !file || !title || !description || title.length<5" 
+        :disabled="isSubmitting || !title || !description || title.length<5" 
       >
         {{ $t("verify") }}
       </base-button>
