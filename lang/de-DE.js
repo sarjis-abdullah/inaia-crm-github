@@ -148,7 +148,7 @@ export default {
     depot_agio:'Agio',
     saving_plan:'Sparplan',
     onetime:'Agio sofort bezahlen',
-    installment:'Verrechnung 50/50',
+    installment:'Verrechnung 75/25',
     no_saving_plan:'Nicht eingerichtet',
     product:'Produkt',
     agio_payment_plan:'Agio payment plan',
