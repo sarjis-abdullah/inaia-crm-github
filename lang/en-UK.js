@@ -154,7 +154,7 @@ export default {
     depot_agio:'Depot agio',
     saving_plan:'Savings plan',
     onetime:'Pay immediately',
-    installment:'Billing 50/50',
+    installment:'Billing 75/25',
     no_saving_plan:'Not set',
     product:'Product',
     agio_payment_plan:'Agio payment plan',
