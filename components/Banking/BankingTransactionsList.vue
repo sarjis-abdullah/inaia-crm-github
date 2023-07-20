@@ -196,7 +196,6 @@ export default {
           this.$store
             .dispatch("banking-accounts/getBankingTransactions", pageQuery )
             .then(response => {
-              //console.log('data', response)
               this.data = response.data
 
               this.totalTableData = response.meta.total

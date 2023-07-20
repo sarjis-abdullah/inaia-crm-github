@@ -237,7 +237,6 @@ export default {
           }
           this.isSubmitting = true
           this.$store.dispatch("banking-accounts/blockCard",data).then(res=>{
-            console.log(res);
             const c = this.cards.find(x=>x.id==res.id);
             Object.assign(c,res);
             this.$notify({type: 'success', timeout: 5000, message: this.$t('card_blocked_successfully')})
@@ -296,7 +295,6 @@ export default {
           }
           this.isSubmitting = true
           this.$store.dispatch("banking-accounts/reIssueCard",data).then(res=>{
-            console.log(res);
             const c = this.cards.find(x=>x.id==res.id);
             Object.assign(c,res);
             this.$notify({type: 'success', timeout: 5000, message: this.$t('card_reissued_successfully')})

@@ -131,9 +131,9 @@ export function redirectPost(url, data) {
 
 export function anonymousUserAvatar(gender = null) {
     if (gender === 'female' || gender === 'f') {
-        return process.env.femaleAvatar
+        return '/img/theme/avatar_f.png'
     }
-    return process.env.maleAvatar
+    return '/img/theme/avatar_m.png'
 }
 
 export function avatar(loggedInUser = null) {

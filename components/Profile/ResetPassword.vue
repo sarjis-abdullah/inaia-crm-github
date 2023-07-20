@@ -141,7 +141,6 @@ export default {
             this.$router.push('/profile')
             this.$notify({type: 'success', timeout: 5000, message: 'Password changed successfully!'})
           }).catch( err => {
-            console.log(err.response.data)
             this.failed = err.response.data.message
             if (err.response.data.errors) {
               this.errors =  err.response.data.errors

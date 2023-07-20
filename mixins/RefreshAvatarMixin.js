@@ -28,7 +28,7 @@ export default {
                     .then(res => {
                         e.target.src = res.data.url
                     }).catch(err => {
-                        console.log('avatar error:', err.response)
+                        console.log('avatar error')
                     })
                 }
             }
@@ -67,7 +67,7 @@ export default {
                     .then(res => {
                         e.target.src = res.data.url
                     }).catch(err => {
-                        console.log('logo error:', err.response)
+                        console.log('logo error')
                     })
                 }
             }

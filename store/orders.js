@@ -66,7 +66,6 @@ export const actions = {
                 return res
             })
             .catch(err => {
-                // console.log('axios error during fetching role-pairs', err)
                 return Promise.reject(err)
             })
     },
@@ -78,7 +77,6 @@ export const actions = {
                     context.commit('list', res.data.data)
                     return res
                 }).catch(err => {
-                    // console.error('axios error during fetching roles', err)
                     return Promise.reject(err)
                 }).finally(() => {
                     context.commit('loading', false)
@@ -92,7 +90,6 @@ export const actions = {
                 context.commit('details', res.data.data)
                 return res
             }).catch((err) => {
-                // console.error('axios error during detailing role', err)
                 return Promise.reject(err)
             })
     },
@@ -102,7 +99,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during storing role')
                     return Promise.reject(err)
                 })
         } else {
@@ -110,7 +106,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during updating role', err)
                     return Promise.reject(err)
                 })
         }
@@ -150,6 +145,14 @@ export const actions = {
     refund(context, payload) {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/refund?include=${includes}`,payload.data)
+            .then(res => {
+                context.commit('update', res.data.data)
+                return res
+            })
+    },
+    revert(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/revert?include=${includes}`,payload.data)
             .then(res => {
                 context.commit('update', res.data.data)
                 return res

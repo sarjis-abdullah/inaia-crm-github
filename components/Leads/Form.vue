@@ -307,12 +307,10 @@ export default {
         singleClientData: {
             handler(value) {
                 if (this.singleClientData) {
-                    // console.log('data', value)
                     // if (this.singleClientData && typeof this.singleClientData === 'object' && Object.keys(this.singleClientData).length !== 0) {
                     //     this.iterate(this.singleClientData)
                     // }
                     Object.keys(value).forEach(key => {
-                        // console.log(key, typeof value[key] == 'object' ? {...value[key]} : value[key])
                         if (this[key] !== undefined) {
                             this.$set(this, key, JSON.parse(JSON.stringify(value[key])))
                         }
@@ -340,9 +338,7 @@ export default {
                     } else if (!this.customer.person_data.nationality) {
                         this.customer.person_data.nationality = {}
                     }
-                    // console.log('channels2', this.customer)
                 }
-                // console.log('customer', {...this.customer})
             },
             immediate: true
         },
@@ -416,7 +412,6 @@ export default {
                     //     this[key + 'Xvalue']   = channel.value
                     // }
                 })
-                // console.log('channels', channels);
                 return {
                     email:{},
                     mobile: {},

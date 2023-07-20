@@ -6,6 +6,7 @@
       <detail-list-item :title="$t('date')"><div slot="value">{{$d(new Date(order.created_at),'long')}}</div></detail-list-item>
       <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
       <detail-list-item :title="$t('proceeds')"><div slot="value"> <i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
+      <detail-list-item v-if="order && order.depot" :title="$t('customer')"><UserInfo :accountId="order.depot.account_id" slot="value"></UserInfo></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
     <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
@@ -18,12 +19,14 @@ import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
 import { isOrderPending } from '~/helpers/order'
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
     components:{
         DetailListItem,
         Status,
         PaymentAccount,
-        Transactions
+        Transactions,
+        UserInfo
     },
     props: {
         order: {
@@ -34,7 +37,7 @@ export default {
       isOrderPending
     },
   beforeMount() {
-    console.log(this.order);
+    
   }
 
 

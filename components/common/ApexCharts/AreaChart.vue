@@ -523,7 +523,6 @@ export default {
                 .then((response) => {
                     let sortedData    = []
                     let bitcoinData = response.data
-                    // console.log('fetched data:', bitcoinData)
                     let count = 0
                     for (let date in bitcoinData.bpi){
                         sortedData.push([
@@ -550,7 +549,7 @@ export default {
 
                 })
                 .catch((err) => {
-                    console.log(err);
+                    console.log('Error fetching coindesk data');
                 });
         },
 

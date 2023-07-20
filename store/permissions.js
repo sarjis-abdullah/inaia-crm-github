@@ -50,7 +50,6 @@ export const actions = {
                 return res
             })
             .catch(err => {
-                // console.log('axios error during fetching permission-pairs', err)
                 return Promise.reject(err)
             })
     },
@@ -62,7 +61,6 @@ export const actions = {
                     context.commit('list', res.data.data)
                     return res
                 }).catch(err => {
-                    // console.error('axios error during fetching permissions', err)
                     return Promise.reject(err)
                 }).finally(() => {
                     context.commit('loading', false)
@@ -83,7 +81,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during storing permission', err)
                     return Promise.reject(err)
                 })
         } else {
@@ -91,7 +88,6 @@ export const actions = {
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
-                    // console.error('axios error during updating permission', err)
                     return Promise.reject(err)
                 })
         }

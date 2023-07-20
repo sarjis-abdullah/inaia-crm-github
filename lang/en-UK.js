@@ -634,5 +634,15 @@ export default {
     salesadvisor_updated_unsuccessfully:"We couldn't update the sales advisor",
     are_you_sure_you_want_to_reset_account_pin:"Are you sure you want to reset the user pin?",
     pin_account_reset_successfully:'Pin account was reset successfully',
-    pin_account_reset_unsuccessfully:"We couldn't reset the pin code"
+    pin_account_reset_unsuccessfully:"We couldn't reset the pin code",
+    ounce_price:'Ounce price',
+    stock_bought_amount:'The total amount of assets bougth in gram',
+    stock_bought_amount_explanation:'The amount of assets in gram that is bought and will be added to the stock',
+    buying_gram_price:'Unit price by gram in euros',
+    total_buying_amount:'Total buying amount in euros',
+    please_buy_assets:"There is not enough assets in the stocks to perform the operation, please buy more assets.",
+    order_revert:'Order revert',
+    order_reverted_successfully:'Order reverted successfully',
+    order_reverted_unsuccessfully:"We couldn't revert the order please try again later",
+    order_status_reverted:'Order reverted'
 }

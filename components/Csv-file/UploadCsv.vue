@@ -74,8 +74,6 @@ export default {
     },
     uploadFileRequest(file) {
       this.isSubmitting = true;
-      //console.log(file);
-      console.log(this.file);
       var formData = new FormData();
       formData.append("paid_orders", this.file.raw);
       this.$axios.post(this.uploadUrl,formData,{

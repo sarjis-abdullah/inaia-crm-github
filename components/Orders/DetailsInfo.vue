@@ -64,6 +64,31 @@
           <input type="radio" value="0" v-model="isMoneyRefunded" />
           <label for="no">No</label>
         </div>
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.revert">
+            <date-picker
+                    size="large"
+                    class="my-2"
+                    v-model="fixingDate"
+                    type="date"
+                    :placeholder="$t('select_gold_price_date')"
+                    @change="getFixingPrice"
+                >
+                </date-picker>
+                <div class="mt--1 mb-3 row text-sm text-danger" v-if="fixingDate==null">
+                    {{$t('choose_fixing_date')}}
+                </div>
+                <div class="mt--1 mb-3 row" v-else>
+                    <div v-if="fixingPriceGram > -1" class="col text-sm text-muted">
+                        {{$t('gram_price')}} : {{$n(fixingPriceGram)}} €
+                    </div>
+                    <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
+                        {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} €
+                    </div>
+                    <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
+                        {{$t('this_date_has_not_goldprice')}}
+                    </div>
+                </div>
+        </div>
     </div>
 </template>
 
@@ -82,6 +107,9 @@ import SellOrderDetail from '@/components/Orders/goldDetails/SellOrderDetails';
 import {orderDetailScreens} from '../../helpers/constans';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
 import {Input} from 'element-ui';
+import DetailListItem from '@/components/common/DetailListItem.vue';
+import {formatDateToApiFormat} from '../../helpers/helpers';
+import {DatePicker} from 'element-ui';
 export default {
     components:{
         GoldSale,
@@ -95,7 +123,9 @@ export default {
         SelectPaymentAccount,
         Input,
         SellOrderDetail,
-        CompleteGoldDelivery
+        CompleteGoldDelivery,
+        DetailListItem,
+        DatePicker
     },
     props: {
         resource: {
@@ -109,7 +139,10 @@ export default {
     data:function(){
         return {
             deleteOrderId:'',
-            isMoneyRefunded: 0
+            isMoneyRefunded: 0,
+            fixingPriceGram:-1,
+            fixingPriceOunce:-1,
+            fixingDate:null,
         }
     },
     created (){
@@ -163,6 +196,43 @@ export default {
         },
         onSellingPaymentAccountSelected (account) {
             this.$emit('sellingPaymentAccountSelected',account);
+        },
+        getFixingPrice(){
+            const dbDate = formatDateToApiFormat(this.fixingDate);
+            if(this.resource!=null && this.resource.order_type!=null && this.resource.order_type.name_translation_key.indexOf('gold') != -1)
+            {
+                this.$store.dispatch('gold/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1)
+                    {
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                        this.$emit('revertorderdateselected',dbDate);
+                    }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
+                        this.$emit('revertorderdateselected',null);
+                    }
+                    
+                })
+            }
+            else if(this.resource!=null && this.resource.order_type!=null && this.resource.order_type.name_translation_key.indexOf('silver') != -1)
+            {
+                this.$store.dispatch('silver/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1){
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                        this.$emit('revertorderdateselected',dbDate);
+                    }
+                    else{
+                        this.fixingPriceGram = -1;
+                        this.fixingPriceOunce = -1;
+                        this.$emit('revertorderdateselected',null);
+                    }
+                    
+                })
+            }
+            
         },
 
     }

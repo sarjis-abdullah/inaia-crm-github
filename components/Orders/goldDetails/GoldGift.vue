@@ -5,6 +5,7 @@
       <detail-list-item :title="$t('date')"><div slot="value">{{$d(new Date(order.created_at),'long')}}</div></detail-list-item>
       <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
       <detail-list-item :title="$t('gold_amount')"><div slot="value"><i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
+      <detail-list-item v-if="order && order.depot" :title="$t('customer')"><UserInfo :accountId="order.depot.account_id" slot="value"></UserInfo></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
   </div>
@@ -15,11 +16,13 @@ import Status from '@/components/Orders/Status';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentMethod from '@/components/Orders/goldDetails/PaymentMethod';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
     components:{
         DetailListItem,
         Status,
-        Transactions
+        Transactions,
+        UserInfo
     },
     props: {
         order: {
