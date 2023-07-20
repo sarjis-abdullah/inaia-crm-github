@@ -12,10 +12,10 @@
       <span></span>
     </template>
     <div class="d-flex   flex-column justify-content-center align-items-center">
-        <Input v-model="title" :placeholder="$t('title')" class="my-3"/>
+        <!-- <Input v-model="title" :placeholder="$t('title')" class="my-3"/>
         <div class="text-danger text-sm-left" v-if="title && title.length<5">{{ $t('title_must_be_at_least_five') }}</div>
-        <Input v-model="description" :placeholder="$t('description')" class="my-3"/>
-      <Upload
+        <Input v-model="description" :placeholder="$t('description')" class="my-3"/> -->
+      <!-- <Upload
         class="upload-demo"
         drag
         ref="upload"
@@ -34,7 +34,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">jpeg, png or pdf files under 4 MB of size</div>
         
-      </Upload>
+      </Upload> -->
       <div class="text-danger text-sm-left mt-2">{{ errorText }}</div>
     </div>
     <template slot="footer">
@@ -44,7 +44,7 @@
       <base-button
         type="primary"
         @click="() => submitUpload()"
-        :disabled="isSubmitting || !file || !title || !description || title.length<5" 
+        :disabled="isSubmitting" 
       >
         {{ $t("verify") }}
       </base-button>
@@ -92,9 +92,10 @@ export default ({
         uploadFileRequest(file) {
             this.isSubmitting = true;
             var formData = new FormData();
-            formData.append("document", this.file.raw);
+            if(this.file)
+              formData.append("document", this.file.raw);
             formData.append("title", this.title);
-            formData.append("description", this.title);
+            formData.append("description", this.description);
             const url = process.env.productApiUrl+`/contacts/${this.account_id}/verify`;
             this.$axios.post(url,formData,{
             headers: {
@@ -119,7 +120,33 @@ export default ({
         });
     },
     submitUpload() {
-      this.$refs.upload.submit();
+      
+      //this.$refs.upload.submit();
+      var formData = new FormData();
+      //formData.append("title", this.title);
+      //formData.append("description", this.description);
+      const url = process.env.productApiUrl+`/contacts/${this.account_id}/verify`;
+            this.$axios.post(url,formData,{
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }}).then((res)=>{
+                this.$notify({
+                        type: "success",
+                        timeout: 5000,
+                        message: this.$t("client_verified_successfully"),
+                    });
+                    
+                this.cancelUpload();
+                location.reload();
+            }).catch(()=>{
+            this.$notify({
+                    type: "danger",
+                    timeout: 5000,
+                    message: this.$t("client_verified_unsuccessfully"),
+                });
+            }).finally(()=>{
+            this.isSubmitting = false;
+        });
     },
     }
 })
