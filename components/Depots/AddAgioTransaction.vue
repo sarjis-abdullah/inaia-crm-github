@@ -26,7 +26,7 @@
                 <Button type="primary" :disabled="shouldDisableSave() || isSubmitting" @click="saveAddTransaction">{{$t('save')}}</Button>
             </div>
         </div>
-        <Checkbox v-model="includeClaim" :label="$t('include_getting_money_from_bank_account')" class="mt-2" v-if="paymentSelected"></Checkbox>
+        
     </div>
 </template>
 <script>
@@ -80,7 +80,7 @@ export default ({
             selectedAgioTransactionType:null,
             amount:null,
             paymentSelected:false,
-            includeClaim:false,
+           
             isSubmitting:false
         }
     },
@@ -104,13 +104,13 @@ export default ({
                 }
             }
             this.paymentSelected = false;
-            this.includeClaim = false;
+            
         },
         cancelAddTransaction()
         {
             this.selectedAgioTransactionType = null;
             this.amount =  null;
-            this.includeClaim = false;
+            
             this.paymentSelected = false;
             this.$emit('canceled');
         },
@@ -119,7 +119,6 @@ export default ({
             let payload = {
                 "depot_id":this.depot_id,
                 "amount":Number(this.amount)*100,
-                "include_claim":this.includeClaim,
                 "agio_type_id":this.selectedAgioTransactionType,
                 "is_manual":true
             }
