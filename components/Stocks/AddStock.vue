@@ -395,7 +395,7 @@ export default {
                 let data = {
                     depot_type_id:this.selectedDepotType,
                     amount:this.amount*1000,
-                    fixing_price:parseInt(this.fixingPrice*100),
+                    fixing_price:parseInt(this.fixingPriceGram*100),
                     fixing_date:formatDateToApiFormat(this.fixingDate)
                 }
                 let payload = {
