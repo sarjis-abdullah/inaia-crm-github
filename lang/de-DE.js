@@ -639,5 +639,11 @@ export default {
     order_revert:'Order revert',
     order_reverted_successfully:'Order reverted successfully',
     order_reverted_unsuccessfully:"We couldn't revert the order please try again later",
-    order_status_reverted:'Order reverted'
+    order_status_reverted:'Order reverted',
+    gold_storage_fee:'Gold storage fee',
+    silver_storage_fee:'Silver storage free',
+    direct_debit_return:'Direct debit return',
+    silver_withdrawal:'Silver withdrawal',
+    paused_until:'Paused until',
+    select_end_pause_date_placeholder:'End pausing date'
 }

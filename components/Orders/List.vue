@@ -67,7 +67,7 @@
                                     >
                                     <template v-slot="{row}">
                                         <span>{{row.depotName}}</span>
-                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.id : ''}}</div>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.depot_number : ''}}</div>
                                     </template>
                     </el-table-column>
 

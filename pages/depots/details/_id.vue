@@ -26,7 +26,7 @@
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">{{depot.name }}</span>
+                        <span class="h2 font-weight-bold mb-0">{{depot.name }} #. {{ depot.depot_number }}</span>
                         <div class="font-weight-bold mb-0">{{$t(depot.depot_type.name_translation_key)}}</div>
                       </div>
                     </div>
@@ -163,6 +163,15 @@
                     </template>
                     <div>
                         {{$t('pause_saving_plan_question')}}
+                        <div class="mt-3">
+                  {{ $t('paused_until') }} : 
+                  <date-picker
+            size="large"
+            v-model="endPauseDate"
+            type="date"
+            :placeholder="$t('select_end_pause_date_placeholder')"
+          />
+                </div>
                     </div>
                     <template slot="footer">
                         <base-button type="link" class="ml-auto" @click="cancelPause()">
@@ -200,6 +209,7 @@
             </template>
             <div>
                 {{$t('cancel_saving_plan_question')}}
+                
             </div>
             <template slot="footer">
                 <base-button type="link" class="ml-auto" @click="cancelCancel()">
@@ -252,6 +262,10 @@ import UserInfo from '@/components/Contacts/UserInfo';
 import CommentBox from '@/components/Comment/CommentBox';
 import {isSilverDepot,isGoldDepot} from "~/helpers/depots"
 import {MessageBox} from 'element-ui';
+import {
+  DatePicker
+} from "element-ui";
+import { formatDateToApiFormat } from '../../../helpers/helpers';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -272,7 +286,8 @@ export default {
             showCancelConfirm:false,
             showAgioTransaction:false,
             showDepotStatusHistory:false,
-            showComments:false
+            showComments:false,
+            endPauseDate:null
         }
     },
     components: {
@@ -285,7 +300,8 @@ export default {
         AgioTransactions,
         DepotStatusHistory,
         UserInfo,
-        CommentBox
+        CommentBox,
+        DatePicker
     },
     computed:
         {
@@ -362,7 +378,8 @@ export default {
         pauseSavinPlan(){
           const data = {
             depot_id:this.depot.id,
-            account_id:this.depot.account_id
+            account_id:this.depot.account_id,
+            end_date:formatDateToApiFormat(this.endPauseDate)
           };
           this.isSubmitting = true;
           this.$store.dispatch('depots/pauseSavingPlan',data).then(()=>{

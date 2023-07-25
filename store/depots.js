@@ -1,7 +1,9 @@
 import {formatDateToApiFormat} from '~/helpers/helpers';
-function changeDepotStatus($axios,context,depot_id,status_id,account_id)
+function changeDepotStatus($axios,context,depot_id,status_id,account_id,date)
 {
-    let date = formatDateToApiFormat(new Date());
+    if(!date){
+        date = formatDateToApiFormat(new Date());
+    }
     const data ={
         "status_id": status_id,
         "account_id": account_id,
@@ -229,7 +231,7 @@ export const actions = {
         {
             context.dispatch('getDepotStatuses').then((res)=>{
                 const status_id = getStatusId(res,'depot_status_paused');
-                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id,payload.end_date);
             }).catch(err => {
                 return Promise.reject(err)
             })

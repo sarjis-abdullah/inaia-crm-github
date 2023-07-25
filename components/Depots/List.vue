@@ -42,10 +42,11 @@
                                     <div class="avatar mr-3">
                                       <img v-bind:src="row.avatar" />
                                     </div>
-                                    <div class="d-flex align-items-center text-body">
-                                      <span><strong>{{row.name}}</strong></span>
-
+                                    <div class="d-flex text-body flex-column">
+                                        <div><strong>{{row.name}}</strong></div>
+                                        <div>Num. {{ row.depot_number }}</div>
                                     </div>
+                                    
                                 </div>
                             </template>
                         </el-table-column>

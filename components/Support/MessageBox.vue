@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-4 text-truncate">
                     <div><small>{{$t('client')}}</small></div>
-                    <h4 class="mt--1 mb-0">{{name}}</h4>
+                    <h4 class="mt--1 mb-0"><a @click.prevent="$router.push('/customers/details/'+ticket.account.contact.id)" v-if="ticket && ticket.account && ticket.account.contact">{{name}}</a></h4>
                 </div>
                 <div class="col-4 text-truncate mx-auto text-center">
                     <h4 class="mb-0">{{ticket.subject}}</h4>

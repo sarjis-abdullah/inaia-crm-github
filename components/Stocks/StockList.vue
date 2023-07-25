@@ -179,6 +179,14 @@ export default {
             return query;
         }
     },
+    watch: {
+        searchQuery: {
+            handler() {
+                this.loadData()
+            },
+            immediate: true,
+        }
+    },
     mounted(){
         this.loadData();
     },
