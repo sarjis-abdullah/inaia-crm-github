@@ -115,10 +115,7 @@ export const actions = {
                     let data = [];
                    
                     res.data.data.forEach(element=>{
-                        if(element.name_translation_key.startsWith('gold'))
-                        {
-                            data.push(element);
-                        }
+                        data.push(element);
                     })
                     context.commit('orderFilterList',data)
                     return res

@@ -72,15 +72,15 @@
       <div class="card">
         <div class="card-body">
           <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item ::title="$t('aggregated_claims')" name="aggregatedClaims" class="mycollapse">
+            <collapse-item ::title="$t('claims')" name="aggregatedClaims" class="mycollapse">
               <template v-slot:title>
                 <div>
-                  <h3>{{ $t('aggregated_claims') }}</h3>
+                  <h3>{{ $t('claims') }}</h3>
                   <span class="tim-icons icon-minimal-down"></span>
                 </div>
               </template>
 
-              <AggregatedClaims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims" style="width: 100%;"/>
+              <Claims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims" style="width: 100%;"/>
             </collapse-item>
           </collapse>
         </div>
@@ -116,7 +116,7 @@ import DepotList from "@/components/Depots/List";
 import LatestTransactions from "@/components/Contacts/LatestTransactions"
 import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
-import AggregatedClaims from '@/components/Claims/AggregatedClaims';
+import Claims from '@/components/Contacts/AccountClaimList';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
@@ -131,7 +131,7 @@ export default {
         LatestTransactions,
         BankingAmountCard,
         ProductClassCard,
-        AggregatedClaims,
+        Claims,
         InboxMessageList,
         Collapse,
         CollapseItem,

@@ -121,7 +121,7 @@ export default {
             })
         },
         shouldDisableSubmit(){
-            if(this.comment!='' && !isNaN(this.amount) && this.amount*1000>=999 && this.priceDate && typeof this.priceDate.getMonth === 'function'){
+            if(this.comment!='' && !isNaN(this.amount) && this.amount*1000>=100 && this.priceDate && typeof this.priceDate.getMonth === 'function'){
                 return false;
             }
             else
@@ -149,7 +149,8 @@ export default {
             })
         },
         onAmountChange(value){
-            if(!isNaN(value) && value>=1)
+            const amount = value *1000
+            if(!isNaN(amount) && amount>=100)
             {
                 this.validationError.amount = null;
             }

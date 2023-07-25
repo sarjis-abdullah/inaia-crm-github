@@ -44,7 +44,15 @@
                                     </div>
                                 </template>
                             </el-table-column>
-
+                            <el-table-column v-bind:label="$t('depot')"
+                                    prop="depotName"
+                                    min-width="180"
+                                    >
+                                    <template v-slot="{row}">
+                                        <span>{{row.depotName}}</span>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.depot_number : ''}}</div>
+                                    </template>
+                    </el-table-column>
                             <el-table-column v-bind:label="$t('amount')"
                                     min-width="140px"
                                     align="right"
