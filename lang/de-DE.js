@@ -648,5 +648,7 @@ export default {
     select_end_pause_date_placeholder:'End pausing date',
     interval_day:'Interval day',
     '15':'15th',
-    '1':'1st'
+    '1':'1st',
+    referred_by:'Referred by code',
+    no_referrer:'-'
 }

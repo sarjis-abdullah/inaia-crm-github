@@ -59,6 +59,7 @@
               <div>{{$t('created_at')}}: {{info.account.created_at ? $d(new Date(info.account.created_at),'narrow') : ''}}</div>
               <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
               <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
+              <div>{{$t('referred_by')}}: {{info.account.influencer_referral_code?info.account.influencer_referral_code:$t('no_referrer')}}</div>
               <div>{{$t('sales_advisor')}}: {{info.account.sales_advisor?(info.account.sales_advisor.first_name  + ' '+info.account.sales_advisor.last_name):$t('not_assigned')}}</div>
             </div>
 
