@@ -645,5 +645,10 @@ export default {
     direct_debit_return:'Direct debit return',
     silver_withdrawal:'Silver withdrawal',
     paused_until:'Paused until',
-    select_end_pause_date_placeholder:'End pausing date'
+    select_end_pause_date_placeholder:'End pausing date',
+    interval_day:'Interval day',
+    '15':'15th',
+    '1':'1st',
+    referred_by:'Referred by code',
+    no_referrer:'-'
 }
