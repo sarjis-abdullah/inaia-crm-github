@@ -222,7 +222,7 @@ export default {
     gold_price_buy:'Buying gram price',
     gold_price_average:'Average gram price',
     add_valid_date:'Price date is required and needs to be a valid date',
-    add_gold_gift_amount:'Menge muss größer 0 sein.',
+    add_gold_gift_amount:'Menge muss größer 0.1 g sein.',
     add_gold_gift_comment:'Comment is required',
     include_delivery_fee: 'Charge shippment fee',
     add_shippment_details: 'Add shippment details',
@@ -650,5 +650,10 @@ export default {
     '15':'15th',
     '1':'1st',
     referred_by:'Referred by code',
-    no_referrer:'-'
+    no_referrer:'-',
+    block_depot:'Block depot',
+    activate_depot:'Activate depot',
+    are_you_sure_you_want_to_block_depot:'Are you sure you want to block this depot ?',
+    Depot_blocked_successfully:'Depot blocked successfully',
+    Depot_blocked_unsuccessfully:"We couldn't block the depot due to an issue, please try again later"
 }

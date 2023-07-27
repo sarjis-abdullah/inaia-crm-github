@@ -40,7 +40,8 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
+                      <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                     </base-dropdown>
                   </div>
@@ -245,6 +246,25 @@
            </div>
 
         </modal>
+        <modal :show.sync="showBlockConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('are_you_sure_you_want_to_block_depot')}}
+                
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelBlocked()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => blockDepot()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('block_depot')}}</span>
+                  </base-button>
+            </template>
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
       </div>
     </div>
@@ -290,7 +310,8 @@ export default {
             showAgioTransaction:false,
             showDepotStatusHistory:false,
             showComments:false,
-            endPauseDate:null
+            endPauseDate:null,
+            showBlockConfirm:false
         }
     },
     components: {
@@ -456,6 +477,25 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+        },
+        
+        blockDepot(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/blockDepot',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_blocked_successfully')});
+             this.showBlockConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_blocked_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelBlocked(){
+          this.showBlockConfirm = false;
         },
         openComment(){
           this.showComments = true;

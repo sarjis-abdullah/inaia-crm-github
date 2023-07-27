@@ -224,7 +224,7 @@ export default {
     gold_gift_successfully:'Asset was gifted successfully',
     gold_gift_unsuccessfully:"We can't end gift due to an error",
     add_valid_date:'Price date is required and needs to be a valid date',
-    add_gold_gift_amount:'Amount is required and must be greater than 0',
+    add_gold_gift_amount:'Amount is required and must be greater than 0.1 g',
     add_gold_gift_comment:'Comment is required',
     include_delivery_fee: 'Charge shippment fee',
     add_shippment_details: 'Add shippment details',
@@ -655,5 +655,10 @@ export default {
     '15':'15th',
     '1':'1st',
     referred_by:'Referred by code',
-    no_referrer:'-'
+    no_referrer:'-',
+    block_depot:'Block depot',
+    activate_depot:'Activate depot',
+    are_you_sure_you_want_to_block_depot:'Are you sure you want to block this depot ?',
+    Depot_blocked_successfully:'Depot blocked successfully',
+    Depot_blocked_unsuccessfully:"We couldn't block the depot due to an issue, please try again later"
 }
