@@ -12,6 +12,7 @@
                     <Select
                 :placeholder="$t('interval_day')"
                 v-model="selectedPaymentDay"
+                disabled
                 
                 >
                     <Option
@@ -52,7 +53,7 @@
                     <Select
                 :placeholder="$t('payment_method')"
                 v-model="selectePaymentMethod"
-                
+                disabled
                 >
                     <Option
                     v-for="option in paymentMethods"
@@ -75,7 +76,7 @@
                     v-model="startingDate"
                     type="date"
                     :placeholder="$t('start_date')"
-                    :disabled="diableStartDate"
+                    :disabled="true"
                 >
             </date-picker>
                 </div>
@@ -85,7 +86,7 @@
                     {{ $t('duration') }} {{$t('in')}} {{$t('years')}}
                 </div>
                 <div class="col-8">
-                    <Input v-model="duration" placeholder="duration" type="numeric"/>
+                    <Input v-model="duration" placeholder="duration" type="numeric" disabled/>
                 </Select>
             </div>
             </div>
