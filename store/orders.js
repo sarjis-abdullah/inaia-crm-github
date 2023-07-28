@@ -134,6 +134,14 @@ export const actions = {
                 return res.data.data.order_status
             })
     },
+    failed(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/failed?include=${includes}`)
+            .then(res => {
+                context.commit('update', res.data.data)
+                return res.data.data.order_status
+            })
+    },
     cancel(context, payload) {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/cancel?include=${includes}`,payload.data)

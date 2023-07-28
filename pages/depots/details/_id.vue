@@ -40,7 +40,8 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
+                      <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                     </base-dropdown>
                   </div>
@@ -111,10 +112,12 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" @click.prevent="showEditSavingPlan()"
+                      >{{ $t("edit_saving_plan") }}</a>
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
+                      
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active'"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
@@ -245,7 +248,27 @@
            </div>
 
         </modal>
+        <modal :show.sync="showBlockConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('are_you_sure_you_want_to_block_depot')}}
+                
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelBlocked()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => blockDepot()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('block_depot')}}</span>
+                  </base-button>
+            </template>
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
+        <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
       </div>
     </div>
   </div>
@@ -269,6 +292,7 @@ import {
   DatePicker
 } from "element-ui";
 import { formatDateToApiFormat } from '../../../helpers/helpers';
+import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -290,7 +314,9 @@ export default {
             showAgioTransaction:false,
             showDepotStatusHistory:false,
             showComments:false,
-            endPauseDate:null
+            endPauseDate:null,
+            showBlockConfirm:false,
+            showEditDepot:false
         }
     },
     components: {
@@ -304,7 +330,8 @@ export default {
         DepotStatusHistory,
         UserInfo,
         CommentBox,
-        DatePicker
+        DatePicker,
+        UpdateSavingPlan
     },
     computed:
         {
@@ -328,6 +355,12 @@ export default {
         },
     },
     methods: {
+      showEditSavingPlan(){
+        this.showEditDepot = true;
+      },
+      closeEditSavingPlan(){
+          this.showEditDepot = false;
+      },
         getCustomerName(client) {
           return client.username;
         },
@@ -456,6 +489,25 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+        },
+        
+        blockDepot(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/blockDepot',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_blocked_successfully')});
+             this.showBlockConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_blocked_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelBlocked(){
+          this.showBlockConfirm = false;
         },
         openComment(){
           this.showComments = true;

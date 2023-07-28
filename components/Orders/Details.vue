@@ -26,10 +26,15 @@
                             v-if="selectedResourceScreen!=orderDetailsSceens.detail">
                           {{$t('cancel')}}
                         </base-button>
+                       
                         <base-button type="white" class="text-danger" @click="() => removeOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)"
                             :disabled="(!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete) || isSubmitting">
                           <i class="lnir lnir-trash mr-1"></i>{{$t('delete_order')}}
+                        </base-button>
+                        <base-button type="danger" class="ml-auto" @click="markOrderAsfailed(selectedResource)"
+                            v-if="selectedResource && shouldDisplayOrderFailedButton(selectedResource)">
+                          {{$t('mark_failed')}}
                         </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
@@ -214,6 +219,11 @@ export default {
         {
             return (isOrderPaid(resource) || isOrderOutstanding(resource) || (isOrderPending(resource) && isDeliveryOrder(resource)))
             && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
+            ;
+        },
+        shouldDisplayOrderFailedButton(resource){
+            return (isOrderPaid(resource) || (isOrderPending(resource)))
+            && (this.selectedResourceScreen == orderDetailScreens.failed || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
         completeOrder(resource)
@@ -421,7 +431,6 @@ export default {
                 this.selectedResourceScreen = orderDetailScreens.revert;
             }
             else{
-                debugger;
                 let data = {
                     id:resource.id,
                     data:{
@@ -440,6 +449,27 @@ export default {
                         this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_reverted_unsuccessfully')})
                     }).finally(()=>this.isSubmitting = false)
             }
+        },
+        markOrderAsfailed(resource){
+            if(this.selectedResourceScreen != orderDetailScreens.failed)
+            {
+                this.selectedResourceScreen = orderDetailScreens.failed;
+            }
+            else{
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/failed', resource.id)
+                    .then( res => {
+                        this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
+                        this.onDetailClose();
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_marked_failed_successfully')})
+                        // console.error('order->', res.data.data)
+                    }).catch(()=>{
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_marked_failed_unsuccessfully')})
+                    }).finally(()=>this.isSubmitting = false)
+            }
+            
         }
     }
 }

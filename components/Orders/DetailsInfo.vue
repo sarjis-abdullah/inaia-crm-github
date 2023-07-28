@@ -49,6 +49,9 @@
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.paid">
             {{$t('confirm_paid_order')}} "{{ resource ? resource.id : '' }}"?
         </div>
+        <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.failed">
+            {{$t('confirm_failed_order')}} "{{ resource ? resource.id : '' }}"?
+        </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.refund">
             <select-payment-account :account_id="resource.depot.account_id"
                 @paymentaccountselected="setRefundPaymentAccount"
