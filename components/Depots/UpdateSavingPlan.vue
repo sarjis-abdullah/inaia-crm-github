@@ -53,7 +53,6 @@
                     <Select
                 :placeholder="$t('payment_method')"
                 v-model="selectePaymentMethod"
-                disabled
                 >
                     <Option
                     v-for="option in paymentMethods"
