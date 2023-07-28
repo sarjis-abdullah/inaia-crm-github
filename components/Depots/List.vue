@@ -193,7 +193,7 @@ export default {
             showPopup: false,
             showConfirm: false,
             pageTitle: 'Depots',
-            perPage: 10,
+            perPage: 30,
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },

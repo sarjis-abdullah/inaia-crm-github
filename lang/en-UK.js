@@ -670,5 +670,6 @@ export default {
     mark_failed:'Failed',
     Order_marked_failed_successfully:"The order was marked failed successfully",
     Order_marked_failed_unsuccessfully:"We couldn't mark the order as failed, please try again later",
-    order_status_payment_outstanding:'Payment outstanding'
+    order_status_payment_outstanding:'Payment outstanding',
+    depot_status_completed:'Completed'
 }

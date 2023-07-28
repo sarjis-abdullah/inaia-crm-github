@@ -181,7 +181,7 @@ export default {
             selectedResource: null,
             showPopup: false,
             pageTitle: 'Orders',
-            perPage: 10,
+            perPage: 50,
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
