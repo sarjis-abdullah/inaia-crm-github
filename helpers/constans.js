@@ -6,7 +6,8 @@ export const orderDetailScreens = {
     paid:'paid',
     refund:'refund',
     sell:"sell",
-    revert:'revert'
+    revert:'revert',
+    failed:'failed'
 }
 export const events = {
     shippmentFeeChargeChanged:'shippmentFeeChargeChanged',

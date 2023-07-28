@@ -112,10 +112,12 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" @click.prevent="showEditSavingPlan()"
+                      >{{ $t("edit_saving_plan") }}</a>
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
+                      
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active'"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
@@ -266,6 +268,7 @@
             </template>
         </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
+        <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
       </div>
     </div>
   </div>
@@ -289,6 +292,7 @@ import {
   DatePicker
 } from "element-ui";
 import { formatDateToApiFormat } from '../../../helpers/helpers';
+import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -311,7 +315,8 @@ export default {
             showDepotStatusHistory:false,
             showComments:false,
             endPauseDate:null,
-            showBlockConfirm:false
+            showBlockConfirm:false,
+            showEditDepot:false
         }
     },
     components: {
@@ -325,7 +330,8 @@ export default {
         DepotStatusHistory,
         UserInfo,
         CommentBox,
-        DatePicker
+        DatePicker,
+        UpdateSavingPlan
     },
     computed:
         {
@@ -349,6 +355,12 @@ export default {
         },
     },
     methods: {
+      showEditSavingPlan(){
+        this.showEditDepot = true;
+      },
+      closeEditSavingPlan(){
+          this.showEditDepot = false;
+      },
         getCustomerName(client) {
           return client.username;
         },

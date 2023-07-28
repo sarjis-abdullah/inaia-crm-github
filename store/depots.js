@@ -149,16 +149,17 @@ export const actions = {
     },
     submit(context, payload) {
         if (!payload.id) {
-            return this.$axios.post(process.env.golddinarApiUrl + '/depots?include=depot_status', payload)
+            return this.$axios.post(process.env.golddinarApiUrl + '/depots?iinclude=depot_status,depot_status_history', payload)
                 .then(res => {
                     return Promise.resolve(res)
                 }).catch(err => {
                     return Promise.reject(err)
                 })
         } else {
-            return this.$axios.put(process.env.golddinarApiUrl + '/depots/' + payload.id + '?include=depot_status', payload)
+            return this.$axios.put(process.env.golddinarApiUrl + '/depots/' + payload.id + '?include=depot_status,depot_status_history', payload)
                 .then(res => {
-                    return Promise.resolve(res)
+                    context.commit('details', res.data.data);
+                    return res.data.data;
                 }).catch(err => {
                     return Promise.reject(err)
                 })
@@ -356,5 +357,5 @@ export const actions = {
             const status_id = getStatusId(status,'depot_status_blocked');
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
-    },
+    }
 }

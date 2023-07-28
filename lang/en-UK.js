@@ -660,5 +660,15 @@ export default {
     activate_depot:'Activate depot',
     are_you_sure_you_want_to_block_depot:'Are you sure you want to block this depot ?',
     Depot_blocked_successfully:'Depot blocked successfully',
-    Depot_blocked_unsuccessfully:"We couldn't block the depot due to an issue, please try again later"
+    Depot_blocked_unsuccessfully:"We couldn't block the depot due to an issue, please try again later",
+    edit_saving_plan:'Edit saving plan contract',
+    billing_method:'Billing method',
+    success_updating_saving_plan:'Savings plan contact has been updated successfully',
+    error_updating_saving_plan:"We couldn't update the saving plan information due to an error",
+    confirm_failed_order:'Are you sure you want to mark this order as failed',
+    mark_failed:'Failed',
+    mark_failed:'Failed',
+    Order_marked_failed_successfully:"The order was marked failed successfully",
+    Order_marked_failed_unsuccessfully:"We couldn't mark the order as failed, please try again later",
+    order_status_payment_outstanding:'Payment outstanding'
 }
