@@ -12,7 +12,7 @@
                     <Select
                 :placeholder="$t('interval_day')"
                 v-model="selectedPaymentDay"
-                disabled
+                :disabled="shouldDisableIntervalDay"
                 
                 >
                     <Option
@@ -148,12 +148,18 @@ export default {
                     this.selectePaymentMethod = this.depot.payment_method;
                     this.duration = this.calculateDuration(new Date(this.depot.interval_enddate),this.startingDate);
                     const now = Date.now();
-                    console.log(this.startingDate)
                     if(now >= this.startingDate){
                         this.diableStartDate = true
                     }
                     else{
                         this.diableStartDate = false;
+                    }
+                    const dayOfMonth = new Date().getDate();
+                    if(dayOfMonth > 15){
+                        this.shouldDisableIntervalDay = false
+                    }
+                    else{
+                        this.shouldDisableIntervalDay = true
                     }
                 }   
             },
@@ -203,7 +209,8 @@ export default {
             selectePaymentMethod:null,
             selecteBillingMethod:null,
             duration : 0,
-            diableStartDate:false
+            diableStartDate:false,
+            shouldDisableIntervalDay:true
         }
     },
     methods:{

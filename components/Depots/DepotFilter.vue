@@ -73,6 +73,23 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('status')"
+            v-model="selectedDepotStatus"
+            filterable
+            class="mb-3"
+            @remove-tag="applyFilter"
+            multiple
+            @clear="removeSelectedDepotStatus"
+          >
+            <Option
+              v-for="option in depotStatus"
+              :value="option.id"
+              :label="$t(option.name_translation_key)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
           <el-input
             v-model="selectedAgio"
             type="number"
@@ -125,6 +142,16 @@
         v-if="selectedCustomerInfo != null"
         >{{ formatClientTag()
         }}<a class="badgeIcon" @click.prevent="removeCustomer()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-for="stat in selectedDepotStatus"
+        v-bind:key="stat"
+        >{{ $t(getStatusTranslationKey(stat))
+        }}<a class="pointer badgeIcon" @click.prevent="removeStatus(stat)"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
       <Badge
@@ -223,6 +250,7 @@ export default {
       selectedDepotType:null,
       timer: null,
       customerQuery: "",
+      selectedDepotStatus:[],
       savinplans: [
         { id: 1, value: true, label: "saving_plan" },
         { id: 2, value: false, label: "no_saving_plan" },
@@ -238,6 +266,10 @@ export default {
     {
       this.$store.dispatch('depots/getDepotTypes')
     }
+    if(this.depotStatus.length == 0)
+    {
+      this.$store.dispatch('depots/getDepotStatuses')
+    }
   },
   computed: {
     ...mapGetters("clients", {
@@ -245,6 +277,9 @@ export default {
     }),
     ...mapGetters("depots", {
       depotTypes: "depotTypes",
+    }),
+    ...mapGetters("depots", {
+      depotStatus: "depotStatuses",
     }),
   },
   methods: {
@@ -337,6 +372,9 @@ export default {
       if (this.selectedAgio && !isNaN(this.selectedAgio)) {
         query += "&agio=" + parseInt(this.selectedAgio);
       }
+      if (this.selectedDepotStatus.length>0) {
+        query += "&depot_status_ids=" + this.selectedDepotStatus.join(',');
+      }
       if (this.selectedAgioPaymentPlan != null) {
         query += "&agio_payment_option=" + this.selectedAgioPaymentPlan;
       }
@@ -395,6 +433,9 @@ export default {
         this.$emit("filter", query);
       }
     },
+    removeSelectedDepotStatus:function (){
+
+    },
     removeDate: function () {
       this.intervalstartDate = null;
       this.intervalendDate = null;
@@ -421,6 +462,15 @@ export default {
         return '';
       }
     },
+    getStatusTranslationKey: function (id) {
+      let stat = this.depotStatus.find((x) => x.id == id);
+      return stat.name_translation_key;
+    },
+    removeStatus: function (id) {
+      this.selectedDepotStatus = this.selectedDepotStatus.filter((sta) => sta != id);
+      const query = this.quiryBuilder();
+      this.$emit("filter", query);
+    },
     clearFilter() {
       this.selectedAgioPaymentPlan = null;
       this.selectedAgio = null;
@@ -431,6 +481,7 @@ export default {
       this.selectedSavingPlan = null;
       this.selectedDepotType = null;
       this.filterIsActive = false;
+      this.selectedDepotStatus = [];
       this.$emit("filter", "");
     },
   },
