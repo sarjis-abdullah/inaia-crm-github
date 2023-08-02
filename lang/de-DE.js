@@ -665,5 +665,8 @@ export default {
     Order_marked_failed_successfully:"The order was marked failed successfully",
     Order_marked_failed_unsuccessfully:"We couldn't mark the order as failed, please try again later",
     order_status_payment_outstanding:'Payment outstanding',
-    depot_status_completed:'Completed'
+    depot_status_completed:'Completed',
+    discount_pay_immediately:'Discount pay immediatly',
+    discount_inaia_special_offer:'INAIA special offer',
+    discount_from_advisor:'Advisor discount'
 }

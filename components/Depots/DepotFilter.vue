@@ -90,15 +90,32 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('interval_day')"
+            v-model="selectedIntervalDay"
+            
+            class="mb-3"
+            clearable
+            @clear="removeIntervalDay"
+          >
+            <Option
+              v-for="option in intervalDays"
+              :value="option.value"
+              :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+        </div>
+        <div class="col-md displayFlex flex-column align-content-center">
           <el-input
             v-model="selectedAgio"
             type="number"
             :placeholder="$t('agio')"
             clearable
             @clear="removeAgio"
+            class="filterElement"
           />
-        </div>
-        <div class="col-md displayFlex flex-column align-content-center">
           <date-picker
             size="large"
             class="filterElement"
@@ -176,6 +193,15 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-if="selectedIntervalDay != null"
+        >{{ $t(selectedIntervalDay)
+        }}<a class="badgeIcon" @click.prevent="removeIntervalDay()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedAgioPaymentPlan != null"
         >{{ $t(selectedAgioPaymentPlan)
         }}<a class="badgeIcon" @click.prevent="removeAgioPaymentPlan()"
@@ -194,9 +220,9 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
-        v-if="intervalstartDate && intervalendDate"
-        >{{ $t("from") }}: {{ $d(intervalstartDate) }} {{ $t("until") }}:
-        {{ $d(intervalendDate) }}
+        v-if="intervalstartDate"
+        >{{ $t("from") }}: {{ $d(intervalstartDate) }} <span  v-if="intervalendDate">{{ $t("until") }}:
+        {{ $d(intervalendDate) }}</span>
         <a class="badgeIcon" @click.prevent="removeDate()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
@@ -259,6 +285,11 @@ export default {
         { id: 1, value: "onetime", label: "onetime" },
         { id: 2, value: "installment", label: "installment" },
       ],
+      intervalDays:[
+      { id: 1, value: 1, label: "1" },
+        { id: 2, value: 15, label: "15" },
+      ],
+      selectedIntervalDay:null
     };
   },
   mounted() {
@@ -388,13 +419,18 @@ export default {
         if (this.selectedSavingPlan) query += "&is_savings_plan=1";
         else query += "&is_savings_plan=0";
       }
-      if (this.intervalstartDate != null && this.intervalendDate != null) {
+      if (this.intervalstartDate != null) {
         query +=
           "&interval_startdate=" +
           this.formatDateToApiFormat(this.intervalstartDate);
+      }
+      if (this.intervalendDate != null) {
         query +=
           "&interval_enddate=" +
           this.formatDateToApiFormat(this.intervalendDate);
+      }
+      if(this.selectedIntervalDay){
+        query+='&interval_day='+this.selectedIntervalDay;
       }
       if (query == "") {
         this.filterIsActive = false;
@@ -435,6 +471,10 @@ export default {
     },
     removeSelectedDepotStatus:function (){
 
+    },
+    removeIntervalDay:function(){
+      this.selectedIntervalDay = null;
+      if (this.filterIsActive) this.applyFilter();
     },
     removeDate: function () {
       this.intervalstartDate = null;
@@ -482,6 +522,7 @@ export default {
       this.selectedDepotType = null;
       this.filterIsActive = false;
       this.selectedDepotStatus = [];
+      this.selectedIntervalDay = null;
       this.$emit("filter", "");
     },
   },
