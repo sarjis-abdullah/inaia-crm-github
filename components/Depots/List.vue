@@ -250,7 +250,11 @@ export default {
             }
         },
         gotoDetails(resource){
-            const url = "http://"+window.location.host+this.$route.path+'/details/'+resource.id;
+            let part = "/details/"
+            if(this.$route.path.at(-1)=='/'){
+                part = "details/"
+            }
+            const url = "http://"+window.location.host+this.$route.path+part+resource.id;
             window.open(url,'__blank')
           //this.$router.push('/depots/details/'+resource.id)
         },
