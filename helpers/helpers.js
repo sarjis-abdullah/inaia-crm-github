@@ -46,8 +46,8 @@ export function mapCountryCode(list){
         if(item.allow){
             countyList.push({
                 id:item.id,
-                value:item.calling_code.replace('00','+'),
-                text:item.country+" ( "+ item.calling_code.replace('00','+') + " )"
+                value:item.numeric_code.replace('00','+'),
+                text:item.country+" ( "+ item.numeric_code.replace('00','+') + " )"
             })
         }
     })

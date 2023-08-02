@@ -7,7 +7,7 @@
                     <div class="card-header">
                       <div class="row align-items-center">
                         <div class="col-8">
-                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('depot_name')" clearable style="width: 200px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
+                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('name')+' / '+$t('number')" clearable style="width: 300px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
                           
                         </div>
                         <div class="col-4 text-right">
@@ -250,7 +250,9 @@ export default {
             }
         },
         gotoDetails(resource){
-          this.$router.push('/depots/details/'+resource.id)
+            const url = "http://"+window.location.host+this.$route.path+'/details/'+resource.id;
+            window.open(url,'__blank')
+          //this.$router.push('/depots/details/'+resource.id)
         },
         newDepot() {
             this.$router.push('/depots/add')

@@ -9,9 +9,7 @@
           <h6 class="h2 text-white d-inline-block mb-0">{{$t('customer') + ' '+$t('number_short') + ' ' + getAccountNumber }}</h6>
 
         </div>
-        <div class="col-lg-6 col-5 text-right">
-          <base-button size="sm" type="neutral" @click.prevent="() => $router.push('/customers/edit/'+info.id)">Edit Profile</base-button>
-        </div>
+       
 
       </div>
     </base-header>
