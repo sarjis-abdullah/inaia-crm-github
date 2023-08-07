@@ -59,7 +59,10 @@
               <div>{{$t('created_at')}}: {{info.account.created_at ? $d(new Date(info.account.created_at),'narrow') : ''}}</div>
               <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
               <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
-              <div>{{$t('referred_by')}}: {{info.account.influencer_referral_code?info.account.influencer_referral_code:$t('no_referrer')}}</div>
+              <div>{{$t('referred_by')}}: <span v-if="info.account.referred_by!=null">
+                <a v-if="info.account.referred_by.referred_by" @click.prevent="openRefrredByLink" class="text-primary pe-auto">{{ info.account.referred_by.referred_by.name }}</a>
+              </span>
+              <span v-else>{{info.account.influencer_referral_code?info.account.influencer_referral_code:$t('no_referrer')}}</span></div>
               <div>{{$t('sales_advisor')}}: {{info.account.sales_advisor?(info.account.sales_advisor.first_name  + ' '+info.account.sales_advisor.last_name):$t('not_assigned')}}</div>
             </div>
 
@@ -255,6 +258,14 @@ export default {
         }).then(() => {
           this.confirmResetPin();
         });
+      },
+      openRefrredByLink(){
+        if(this.info && this.info.account && this.info.account.referred_by && this.info.account.referred_by.referred_by){
+          const contactId = this.info.account.referred_by.referred_by.contract_id
+          const link = "http://"+window.location.host+"/customers/details/"+contactId;
+          window.open(link,'__blank');
+
+        }
       },
       confirmResetPin(){
         this.$store.dispatch('clients/resetAccountPin',this.info.account.id).then(()=>{

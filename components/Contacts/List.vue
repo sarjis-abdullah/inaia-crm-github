@@ -298,7 +298,10 @@ export default {
             this.showPopup      = true
         },
         gotoDetails(resource) {
-          this.$router.push('/customers/details/'+resource.id)
+            const part = "/customers/details/";
+            const url = "http://"+window.location.host+part+resource.id;
+            window.open(url,'__blank');
+          //this.$router.push('/customers/details/'+resource.id)
         },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {

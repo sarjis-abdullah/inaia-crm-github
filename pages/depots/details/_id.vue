@@ -96,6 +96,7 @@
                         icon="fa fa-clock-rotate-left"
                         class="mr-1"
                       />{{$t('saving_plan')}}<Status class="ml-2" :row="depot"/>
+
                     </h5>
 
                     <div>
@@ -137,6 +138,7 @@
                   <div>{{$t(depot.agio_payment_option)}}</div>
                   <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
                   <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
+                  <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span></div>
                 </div>
               </div>
             </div>
@@ -340,6 +342,19 @@ export default {
             goldPrice:"getGoldPrice",
             silverPrice:'silverPrice'
         }),
+        pauseEndDate(){
+          debugger;
+          let pausedDate = '';
+          if(this.depot && this.depot.status && this.depot.status == 'depot_status_paused' 
+          && this.depot.status_history && this.depot.status_history.length > 0 ){
+            debugger;
+            const history = this.depot.status_history.find(h=>h.id==this.depot.status.id);
+            if(history){
+              pausedDate = history.end_date;
+            }
+          }
+          return pausedDate;
+        }
     },
      mounted () {
        this.$confirm = MessageBox.confirm
@@ -386,7 +401,8 @@ export default {
         },
         initDepotData()
         {
-            this.$store.dispatch('depots/details',this.depotId).then(()=>{
+            this.$store.dispatch('depots/details',this.depotId).then((res)=>{
+              console.log(res);
                 this.initPrices()
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{

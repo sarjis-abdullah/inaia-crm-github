@@ -25,7 +25,7 @@
                             header-row-class-name="thead-light"
                             :data="data">
                         <el-table-column label="#"
-                                        min-width="120px"
+                                        min-width="100px"
                                         prop="id"
                                         >
                             <template v-slot="{row}">
@@ -82,9 +82,9 @@
                             <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
                           </template>
                         </el-table-column>
-                        <el-table-column :label="$t('depot_type')"
+                        <el-table-column :label="$t('type')"
 
-                                         min-width="160px"
+                                         min-width="120px"
                         >
                           <template v-slot="{row}">
                              <span>{{$t(row.depot_type.name_translation_key)}}</span>
@@ -92,7 +92,7 @@
                         </el-table-column>
                         <el-table-column :label="$t('status')"
                                         prop="status.name_translation_key"
-                                        min-width="160px"
+                                        min-width="120px"
                                         >
                                  <template v-slot="{row}">
                                     <Status :row="row"/>
@@ -250,10 +250,9 @@ export default {
             }
         },
         gotoDetails(resource){
-            const part = "/depots/details/"
-            
+            const part = "/depots/details/";
             const url = "http://"+window.location.host+part+resource.id;
-            window.open(url,'__blank')
+            window.open(url,'__blank');
           //this.$router.push('/depots/details/'+resource.id)
         },
         newDepot() {
