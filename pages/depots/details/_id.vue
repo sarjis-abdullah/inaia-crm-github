@@ -343,18 +343,17 @@ export default {
             silverPrice:'silverPrice'
         }),
         pauseEndDate(){
-          debugger;
           let pausedDate = '';
-          if(this.depot && this.depot.status && this.depot.status == 'depot_status_paused' 
+          if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused' 
           && this.depot.status_history && this.depot.status_history.length > 0 ){
-            debugger;
-            const history = this.depot.status_history.find(h=>h.id==this.depot.status.id);
+            const history = this.depot.status_history.find(h=>h.depot_status_id==this.depot.status.id);
             if(history){
               pausedDate = history.end_date;
             }
           }
           return pausedDate;
         }
+        
     },
      mounted () {
        this.$confirm = MessageBox.confirm
@@ -542,7 +541,8 @@ export default {
             value = this.depot.gram_amount/1000*this.silverPrice;
           }
           return value;
-        }
+        },
+        
     }
 
 }
