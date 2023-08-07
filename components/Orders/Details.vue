@@ -350,7 +350,7 @@ export default {
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return isOrderPending(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource));
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource));
         },
         setCancelPaymentAccount(account)
         {
