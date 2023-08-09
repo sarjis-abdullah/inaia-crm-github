@@ -252,7 +252,7 @@ export default {
         gotoDetails(resource){
             const part = "/depots/details/";
             const url = "http://"+window.location.host+part+resource.id;
-            window.open(url,'__blank');
+            window.open(url,'_blank');
           //this.$router.push('/depots/details/'+resource.id)
         },
         newDepot() {

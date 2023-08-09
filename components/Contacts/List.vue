@@ -300,7 +300,7 @@ export default {
         gotoDetails(resource) {
             const part = "/customers/details/";
             const url = "http://"+window.location.host+part+resource.id;
-            window.open(url,'__blank');
+            window.open(url,'_blank');
           //this.$router.push('/customers/details/'+resource.id)
         },
         fetchClientData(pageQuery) {
