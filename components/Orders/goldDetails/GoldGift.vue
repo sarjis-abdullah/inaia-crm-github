@@ -6,6 +6,7 @@
       <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
       <detail-list-item :title="$t('gold_amount')"><div slot="value"><i18n-n :value="order.amount/1000"></i18n-n> g</div></detail-list-item>
       <detail-list-item v-if="order && order.depot" :title="$t('customer')"><UserInfo :accountId="order.depot.account_id" slot="value"></UserInfo></detail-list-item>
+      <detail-list-item :title="$t('comment')" v-if="order && order.comment"><div slot="value">{{ order.comment }}</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
   </div>
