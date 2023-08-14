@@ -19,6 +19,7 @@
                         @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
                         @isMoneyRefunded="setIsMoneyRefunded"
                         @revertorderdateselected="setRevertDate"
+                        @includeAgio="doIncludeAgio"
                         />
                     </div>
                     <template slot="footer">
@@ -103,7 +104,8 @@ export default {
             isSubmitting: false,
             selectedResourceScreen:orderDetailScreens.detail,
             isMoneyRefunded: 0,
-            revertDate:null
+            revertDate:null,
+            includeAgio:true
         }
     },
      created (){
@@ -159,7 +161,6 @@ export default {
                 this.$store
                     .dispatch('orders/cancel', data)
                     .then( res => {
-                        console.log(res);
                         let data = res.data.data;
                         if(data.fin_api_webform_url){
                             window.location.href = data.fin_api_webform_url
@@ -191,6 +192,9 @@ export default {
        setIsMoneyRefunded(isMoneyRefunded)
        {
           this.isMoneyRefunded = isMoneyRefunded;
+       },
+       doIncludeAgio(value){
+        this.includeAgio = value;
        },
         onDetailClose ()
         {
@@ -240,7 +244,7 @@ export default {
                 }
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
-                    data.data = {price_date:this.completeOrderInfo.date}
+                    data.data = {price_date:this.completeOrderInfo.date,discount_transaction_fee:!this.includeAgio}
                 }
                 if(isDeliveryOrder(resource))
                 {
@@ -254,6 +258,7 @@ export default {
                         }
                     }
                 }
+               
                 this.isSubmitting = true;
                 this.$store
                 .dispatch('orders/complete', data)

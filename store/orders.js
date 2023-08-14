@@ -54,7 +54,7 @@ export const mutations = {
     },
     commissionList(state,list){
         state.commissionList = list;
-    }
+    },
 }
 
 export const actions = {
@@ -227,6 +227,13 @@ export const actions = {
     fetchCommissionList(context,payload){
         return this.$axios.get(`${ process.env.golddinarApiUrl }/sales-commission/orders?include=${includes}${ payload }`).then(res=>{
             context.commit('commissionList',res.data.data)
+        })
+    },
+    deposit(context,payload){
+        return this.$axios
+        .post(`${ process.env.golddinarApiUrl }/orders/deposit?include=${includes}`,payload)
+        .then(res => {
+            return res.data.data;
         })
     }
 }

@@ -211,8 +211,9 @@ import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
-import { isEmail,isPhoneNumber } from '../../helpers/helpers';
+import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/helpers';
 import AmlStatus from '@/components/Contacts/AmlStatus';
+
 export default {
     components: {
         [Table.name]: Table,
@@ -378,7 +379,14 @@ export default {
         onSearch(value){
             if(value!="")
             {
-                this.search = "name="+value;
+                if(checkIfItIsAccountNumber(value))
+                {
+                    this.search = "account_number="+value;
+                }
+                else{
+                    this.search = "name="+value;
+                }
+                
                 this.page = 1;
             }
             else{

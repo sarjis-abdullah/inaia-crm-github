@@ -56,6 +56,12 @@ export const mutations = {
             let aggClaim = state.aggregatedClaims.find(x=>x.id == id);
             aggClaim.claim_status = newStatus;
         });
+    },
+    updateClaim(state,data){
+        let existingClaim  = state.claims.find( x => data.id == x.id  )
+        if (existingClaim) {
+            Object.assign(existingClaim, data)
+        }
     }
 }
 
@@ -80,7 +86,7 @@ export const actions = {
     getClientClaims(context,payload)
     {
         return this.$axios
-                .get(`/claims?include=claim_type${payload}`)
+                .get(`/claims?include=claim_type,claim_status${payload}`)
                 .then(res=>{
                     context.commit('claims',res.data.data);
                     return res.data;
@@ -104,6 +110,14 @@ export const actions = {
                 .post(`/aggregated-claims/mark/paid`,{'aggregated_claims_ids':payload})
                 .then(res=>{
                     context.commit('updateStatus',res.data.data);
+                    return res.data.data;
+                })
+    },
+    markSingleClaimAsPaid(context,payload){
+        return this.$axios
+                .put(`/claims/mark-paid/${payload}?include=claim_type,claim_status`)
+                .then(res=>{
+                    context.commit('updateClaim',res.data.data);
                     return res.data.data;
                 })
     }

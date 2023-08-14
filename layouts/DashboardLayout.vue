@@ -153,7 +153,7 @@
         </sidebar-item>
 -->
         <sidebar-item
-          v-if="accountingAccess"
+          v-if="hasSalesCommissionAccess"
           :link="{
             name: 'Assets',
             icon: 'lnir lnir-gold-bar text-primary',
@@ -356,7 +356,7 @@
         return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
       },
       hasSalesCommissionAccess(){
-        return this.user && (hasMaxAccess(this.user.account) || isSalesAdvisor(this.user.account));
+        return (this.hasMaxAccess || isSalesAdvisor(this.user.account));
       }
     },
     methods: {

@@ -321,7 +321,7 @@ export default {
     max_balance:'Max balance',
     client_info:'Client info',
     name:'Name',
-    search_customer:'Search: Name',
+    search_customer:'Search: Name/Account number',
     usage:'Reason',
     card_acceptor:'Card acceptor',
     sender:"Sender",
@@ -674,5 +674,11 @@ export default {
     depot_status_completed:'Completed',
     discount_pay_immediately:'Discount pay immediatly',
     discount_inaia_special_offer:'INAIA special offer',
-    discount_from_advisor:'Advisor discount'
+    discount_from_advisor:'Advisor discount',
+    include_agio:'Include agio with this transaction',
+    do_you_want_to_mark_claim_as_paid:"Are you sure you want to mark this claim as paid ?",
+    deposit:'Deposit',
+    add_deposit:'Add deposit',
+    deposit_created_successfully:'The new deposit order was created successfully',
+    deposit_created_unsuccessfully:"We couldn't add deposit order due to an error, please try again later"
 }

@@ -5,7 +5,7 @@
         header-row-class-name="thead-light"
         :data="aggregatedClaims"
       >
-        <el-table-column label="#" min-width="100px" prop="id">
+        <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
             <div class="media align-items-center">
               <div class="media-body">
@@ -16,7 +16,7 @@
         </el-table-column>
           <el-table-column
           v-bind:label="$t('amount')"
-          min-width="180px"
+          
           align="right"
           prop="amount"
         >
@@ -38,14 +38,31 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-bind:label="$t('date')" min-width="180px" prop="created_at">
-          <template v-slot="{ row }">
+        <el-table-column v-bind:label="$t('status')" prop="status">
+        <template v-slot="{ row }">
+          <div class="d-flex align-items-center">
+            <div>
+             <Status :status='row.claim_status ? $t(row.claim_status.name_translation_key) : ""'/>
+
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+        <el-table-column v-bind:label="$t('date')" prop="created_at">
+          <template v-slot="{ row }" >
             <div class="d-flex align-items-center">
               <div>
                 {{row.created_at?$d(new Date(row.created_at),'short'):""}}
   
               </div>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column  >
+          <template v-slot="{ row }" >
+            <base-button type="success" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
+                            <span>{{$t('paid')}}</span>
+                         </base-button>
           </template>
         </el-table-column>
   
@@ -63,9 +80,10 @@
   </template>
   <script>
   import { Table, TableColumn } from "element-ui";
-  import Status from "@/components/Depots/Status";
+  import Status from "@/components/Claims/Status";
   import { mapGetters } from "vuex";
-  import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
+  import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
+  import { MessageBox } from "element-ui";
   export default {
     props: {
      
@@ -111,6 +129,9 @@
         isSubmitting: false
       };
     },
+    mounted(){
+      this.$confirm = MessageBox.confirm
+    },
     methods: {
       fetchClaims() {
         
@@ -124,6 +145,32 @@
       },
       isPending(){
         return this.aggregated_status == PAYMENT_PENDING;
+      },
+      isFailed(){
+        return this.aggregated_status == PAYMENT_FAILED;
+      },
+      markAspaid(id){
+        this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/markSingleClaimAsPaid',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_marked_paid_successfully"),
+          });
+         }).catch(()=>{
+          this.$notify({
+            type: "error",
+            timeout: 5000,
+            message: this.$t("claim_marked_paid_unsuccessfully"),
+          });
+         });
+        }).catch(() => {
+         
+        });
       }
     },
   };

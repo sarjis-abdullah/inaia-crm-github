@@ -15,6 +15,7 @@
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
                 <CompleteOrderDetail :order="resource"
                     @dateselected="onCompleteDateSelected"
+                    @includeagio="onIncludeAgioChanged"
                     v-if="isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource)"
                 />
                 <span v-if="isSellOrder(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
@@ -180,6 +181,9 @@ export default {
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);
+         },
+         onIncludeAgioChanged(value){
+            this.$emit('includeAgio',value);
          },
          onSellGoldDateSelected(date){
              this.$emit('sellGoldDateSelected',date)

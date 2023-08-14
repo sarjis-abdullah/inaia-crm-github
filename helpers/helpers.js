@@ -160,4 +160,8 @@ export function getMonthName(monthNumber)
     const month = objDate.toLocaleString(locale, { month: "long" });
     return month;
 }
+export function checkIfItIsAccountNumber(number){
+    const re = /^GD\d+$/;
+    return re.test(number);
+}
 
