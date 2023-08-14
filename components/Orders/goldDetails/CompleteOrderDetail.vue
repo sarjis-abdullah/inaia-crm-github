@@ -23,6 +23,7 @@
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
             <span v-if="!preview.operation_stock_balance || preview.operation_stock_balance<preview.gram_amount" class="text-sm-left text-danger mt-3">{{ $t('please_buy_assets') }}</span>
+            <Checkbox v-model="includeAgio" class="mt-3" @change="doIncludeAgio">Include agio with this transaction</Checkbox>
             <!--
             <detail-list-item :title="$t('depot_balance_before')"><div slot="value"><i18n-n :value="preview.depot_balance_before/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('depot_balance_after')"><div slot="value"><i18n-n :value="preview.depot_balance_after/100"></i18n-n> €</div></detail-list-item>
@@ -33,11 +34,12 @@
 <script >
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../../helpers/helpers';
-import {DatePicker} from 'element-ui';
+import {DatePicker,Checkbox} from 'element-ui';
 export default {
     components:{
         DetailListItem,
         DatePicker,
+        Checkbox
     },
     props:{
         order:{
@@ -50,6 +52,7 @@ export default {
             preview:null,
             isLoading:false,
             error:null,
+            includeAgio:true
         }
     },
     mounted:function(){
@@ -77,6 +80,10 @@ export default {
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        doIncludeAgio:function(value){
+            debugger;
+            this.$emit('includeagio',value);
         }
     }
 }

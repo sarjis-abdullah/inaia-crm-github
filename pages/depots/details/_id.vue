@@ -42,6 +42,7 @@
                       </template>
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
+                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                     </base-dropdown>
                   </div>
@@ -271,6 +272,7 @@
         </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
+        <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
       </div>
     </div>
   </div>
@@ -295,6 +297,7 @@ import {
 } from "element-ui";
 import { formatDateToApiFormat } from '../../../helpers/helpers';
 import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
+import AddDeposit from '@/components/Depots/AddDeposit';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -318,7 +321,8 @@ export default {
             showComments:false,
             endPauseDate:null,
             showBlockConfirm:false,
-            showEditDepot:false
+            showEditDepot:false,
+            showAddDeposit:false
         }
     },
     components: {
@@ -333,7 +337,8 @@ export default {
         UserInfo,
         CommentBox,
         DatePicker,
-        UpdateSavingPlan
+        UpdateSavingPlan,
+        AddDeposit
     },
     computed:
         {
@@ -369,6 +374,9 @@ export default {
         },
     },
     methods: {
+      showDeposit(){
+        this.showAddDeposit = true;
+      },
       showEditSavingPlan(){
         this.showEditDepot = true;
       },
