@@ -19,7 +19,7 @@
                         @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
                         @isMoneyRefunded="setIsMoneyRefunded"
                         @revertorderdateselected="setRevertDate"
-                        @includeAgio="doIncludeAgio"
+                        @makediscount="doMakeDiscount"
                         />
                     </div>
                     <template slot="footer">
@@ -105,7 +105,7 @@ export default {
             selectedResourceScreen:orderDetailScreens.detail,
             isMoneyRefunded: 0,
             revertDate:null,
-            includeAgio:true
+            makeDiscount:false
         }
     },
      created (){
@@ -193,8 +193,9 @@ export default {
        {
           this.isMoneyRefunded = isMoneyRefunded;
        },
-       doIncludeAgio(value){
-        this.includeAgio = value;
+       doMakeDiscount(value){
+        debugger;
+        this.makeDiscount = value;
        },
         onDetailClose ()
         {
@@ -244,7 +245,7 @@ export default {
                 }
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
-                    data.data = {price_date:this.completeOrderInfo.date,discount_transaction_fee:!this.includeAgio}
+                    data.data = {price_date:this.completeOrderInfo.date,discount_transaction_fee:this.makeDiscount}
                 }
                 if(isDeliveryOrder(resource))
                 {

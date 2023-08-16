@@ -113,6 +113,17 @@ export default {
                 };
                 this.isSubmitting = true;
             this.$store.dispatch('orders/orderGoldGift',data).then(res=>{
+                this.amount = null;
+                this.priceDate = null;
+                this.comment = '';
+                this.currentPrice = null;
+                this.validationError= {
+                date:null,
+                amount:null,
+                comment:null,
+            }
+            this.error = null;
+            this.$emit('onClose');
                 this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_gift_successfully')})
             }).catch(()=>{
                 this.$notify({type: 'error', timeout: 5000, message: this.$t('gold_gift_unsuccessfully')})
