@@ -183,7 +183,6 @@ export default {
              this.$emit('completeDateSelected',date);
          },
          onMakeDiscountChanged(value){
-            debugger;
             this.$emit('makediscount',value);
          },
          onSellGoldDateSelected(date){

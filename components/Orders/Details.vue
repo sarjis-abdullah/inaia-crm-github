@@ -194,7 +194,6 @@ export default {
           this.isMoneyRefunded = isMoneyRefunded;
        },
        doMakeDiscount(value){
-        debugger;
         this.makeDiscount = value;
        },
         onDetailClose ()
