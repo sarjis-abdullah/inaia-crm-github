@@ -675,7 +675,7 @@ export default {
     discount_pay_immediately:'Discount pay immediatly',
     discount_inaia_special_offer:'INAIA special offer',
     discount_from_advisor:'Advisor discount',
-    include_agio:'Include agio with this transaction',
+    skip_transaction_fee:'Skip transaction fee for this order',
     do_you_want_to_mark_claim_as_paid:"Are you sure you want to mark this claim as paid ?",
     deposit:'Deposit',
     add_deposit:'Add deposit',
