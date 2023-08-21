@@ -141,6 +141,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
 import { canEditDepot} from '@/permissions'; 
+
 export default {
   props: {
     depot_id: {
@@ -237,7 +238,7 @@ export default {
     },
     confirmDeletion()
     {
-      this.$store.dispatch('depots/deleteAgioTransaction').then(()=>{
+      this.$store.dispatch('depots/deleteAgioTransaction',this.selectedAgioTransaction.id).then(()=>{
         this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
         this.cancelDeletion();
       }).catch(()=>{
