@@ -15,7 +15,7 @@
           <div class="col-auto">
             <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                            menu-on-right
-                           :has-toggle="false">
+                           :has-toggle="false" v-if="hasEditAccess">
 
               <template slot="title">
                 <i class="fas fa-ellipsis-v"></i>
@@ -36,7 +36,7 @@
 </template>
 <script>
 import Loader from "../common/Loader/Loader";
-
+import { canEditInaiaBankAccount } from '@/permissions';
 export default {
   components: {
     Loader
@@ -51,6 +51,9 @@ export default {
     iban(){
         return this.bankAccount && this.bankAccount.iban.match(/.{1,4}/g).join(' ')
 
+    },
+    hasEditAccess(){
+      return canEditInaiaBankAccount()
     }
   },
   methods: {

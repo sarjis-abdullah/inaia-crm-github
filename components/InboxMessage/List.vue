@@ -7,7 +7,7 @@
                         <div class="col-8">
                              <h5 class="h3 mb-0" v-if="account_id==-1">{{$t('inbox_messages')}}</h5>
                         </div>
-                        <div class="col-4">
+                        <div class="col-4" v-if="hasEditAccess">
                             <div  class="d-flex justify-content-end" v-if="!createNewBatch">
                                 <base-button size="sm" type="neutral" @click="createNewInboxMessage">
                                         {{$t('new_inbox_message')}}
@@ -89,6 +89,7 @@ import { mapGetters } from "vuex"
 import IconButton from '@/components/common/Buttons/IconButton';
 import {Badge} from '@/components/argon-core';
 import Detail from '@/components/InboxMessage/Detail';
+import { canEditCustomers } from '@/permissions';
 export default {
   props: {
     account: {
@@ -109,6 +110,9 @@ export default {
     }),
     searchQuery(){
         return '&page='+this.page+'&per_page='+this.perPage+'&account_id='+this.account.id;
+    },
+    hasEditAccess(){
+        return canEditCustomers();
     }
   },
   data(){

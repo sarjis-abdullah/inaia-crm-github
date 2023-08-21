@@ -27,6 +27,7 @@
             :placeholder="$t('type')"
             rows="3"
             v-model="note"
+            v-if="hasEditAccess"
           >
           </textarea>
           <base-button
@@ -34,6 +35,7 @@
             class="float-right mt-2"
             @click="sendNote"
             :disabled="isSending || !note || note == ''"
+            v-if="hasEditAccess"
             >Send<span class="btn-inner--icon"
               ><i class="fa fa-arrow-right"></i></span
           ></base-button>
@@ -44,6 +46,7 @@
   <script>
   import { mapGetters } from "vuex";
   import LoadMore from "@/components/common/Loader/LoadMore";
+  import { canEditCustomers } from '@/permissions';
   export default {
     props: {
       account: {
@@ -64,6 +67,9 @@
           (this.account.person_data ? " " + this.account.person_data.surname : "")
         );
       },
+      hasEditAccess(){
+        return canEditCustomers();
+      }
     },
     data() {
       return {

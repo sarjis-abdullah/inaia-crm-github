@@ -6,7 +6,7 @@
         <h5 class="h2 mb-0">{{ $t("agio_history") }}</h5>
       </div>
       <div class="col-4 text-right" v-if="!showAddTransaction">
-          <button @click.prevent="toggleAddTransaction()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm">
+          <button @click.prevent="toggleAddTransaction()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasDepotEditAccess">
             <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_transaction')}}</span>
           </button>
       </div>
@@ -140,7 +140,7 @@ import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
-
+import { canEditDepot} from '@/permissions'; 
 export default {
   props: {
     depot_id: {
@@ -169,6 +169,9 @@ export default {
     totalPages() {
       return Math.floor(this.totalTableData / this.perPage);
     },
+    hasDepotEditAccess(){
+      return canEditDepot();
+    }
   },
   watch: {
     searchQuery: {

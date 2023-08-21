@@ -22,7 +22,7 @@
                         @makediscount="doMakeDiscount"
                         />
                     </div>
-                    <template slot="footer">
+                    <template slot="footer" v-if="hasEditAccess">
                         <base-button type="link" class="ml-auto" @click="backToDetailScreen()"
                             v-if="selectedResourceScreen!=orderDetailsSceens.detail">
                           {{$t('cancel')}}
@@ -76,7 +76,8 @@
 <script>
 import {orderDetailScreens} from '../../helpers/constans';
 import DetailsInfo from '@/components/Orders/DetailsInfo';
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order'
+import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
+import { canEditOrder } from '@/permissions';
 export default {
     props:{
         showPopup:{
@@ -110,6 +111,11 @@ export default {
     },
      created (){
         this.orderDetailsSceens = orderDetailScreens;
+    },
+    computed : {
+        hasEditAccess(){
+          return canEditOrder();
+        }
     },
     watch:{
         showPopup:{

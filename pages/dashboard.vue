@@ -27,7 +27,7 @@
     <div class="container-fluid mt--6">
       <div class="row">
 
-        <div class="col-xl-4 col-md-6" v-if="isSuperAdmin(this.user.account)">
+        <div class="col-xl-4 col-md-6" v-if="canViewInaiaBankAccount()">
           <ExternalBankAmountCard />
         </div>
 
@@ -335,7 +335,7 @@
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
   import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
   import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
-  import {isSuperAdmin } from '@/helpers/auth';
+  import { canViewInaiaBankAccount } from '@/permissions'
   import { mapGetters } from "vuex"
   export default {
     layout: 'DashboardLayout',
@@ -396,7 +396,7 @@
       };
     },
     methods: {
-      isSuperAdmin,
+      canViewInaiaBankAccount,
       initBigChart(index) {
         let chartData = {
           datasets: [

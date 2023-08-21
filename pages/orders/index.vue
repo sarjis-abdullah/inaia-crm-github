@@ -10,7 +10,7 @@
                 </nav>
                 -->
         </div>
-        <div class="col-lg-11 text-right">
+        <div class="col-lg-11 text-right" v-if="hasEditAccess">
           <div  class="d-flex justify-content-end" v-if="!createNewBatch">
               <base-button size="sm" type="neutral" @click="createNewBatchFromList">
                     {{$t('new_batch_process')}}
@@ -57,7 +57,7 @@ import { DatePicker } from 'element-ui';
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import NewBatch from '@/components/Batch-processing/NewBatch';
-
+import { canEditDepot } from '@/permissions'
 export default {
   layout: "DashboardLayout",
   components: {
@@ -77,6 +77,11 @@ export default {
           selectedOrderType:null,
           activateSelection:false
       }
+  },
+  computed : {
+    hasEditAccess(){
+       return canEditDepot();
+    }
   },
   methods:{
       createNewBatchFromList(){

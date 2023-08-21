@@ -82,7 +82,10 @@ export default {
     mounted(){
         if(this.statuses.length == 0)
         {
-            this.$store.dispatch("support/fetchStatuses");
+            this.$store.dispatch("support/fetchStatuses").then(()=>{
+                this.fetchList();
+            });
+            
         }
     },
     methods:{
@@ -128,6 +131,10 @@ export default {
         },
         fetchList(){
             this.isLoading = true;
+            if(this.statuses.length == 0)
+            {
+                return;
+            }
             this.$store
                     .dispatch("support/fetchList", this.searchQuery+'&page='+this.page+this.getClosedParam())
                     .then(data => {

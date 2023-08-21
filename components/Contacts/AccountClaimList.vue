@@ -58,7 +58,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column  >
+        <el-table-column  v-if="hasEditAccess">
           <template v-slot="{ row }" >
             <base-button type="success" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
                             <span>{{$t('paid')}}</span>
@@ -84,6 +84,7 @@
   import { mapGetters } from "vuex";
   import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
   import { MessageBox } from "element-ui";
+  import { canEditClaims } from '@/permissions';
   export default {
     props: {
      
@@ -109,6 +110,9 @@
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
       },
+      hasEditAccess(){
+        return canEditClaims();
+      }
     },
     watch: {
       searchQuery: {

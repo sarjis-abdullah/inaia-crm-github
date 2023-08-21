@@ -11,7 +11,7 @@
           </nav>
           -->
         </div>
-        <div class="col-lg-6 col-5 text-right">
+        <div class="col-lg-6 col-5 text-right" v-if="hasEditAccess">
           <base-button size="sm" type="neutral" @click="actDecMarkAsMany" v-if="!markManyAsPaid">{{$t('mark_many_as_paid')}}</base-button>
           <div class="d-flex justify-content-end" v-else>
                 <base-button size="sm" type="neutral" @click="cancelMarkMany">
@@ -100,6 +100,7 @@
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
 import { getMonthName } from "../../../../helpers/helpers";
 import { Table, TableColumn } from "element-ui";
+import { canEditClaims } from '@/permissions';
 export default {
   layout: "DashboardLayout",
   components: {
@@ -122,7 +123,10 @@ export default {
           let dates = this.month.split('-');
           const monthName = getMonthName(dates[1]);
           return monthName + ' ' + dates[0];
-      }
+      },
+    hasEditAccess(){
+      return canEditClaims()
+    }
   },
   methods:{
     actDecMarkAsMany(){
