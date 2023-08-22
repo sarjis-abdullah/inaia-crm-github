@@ -166,7 +166,7 @@ export default {
             handler(newval, oldval){
                 if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
                 {
-                    this.fetchDetails(newval.id)
+                    this.fetchDetails(this.ticket.id)
                 }
             },immediate:true
         }

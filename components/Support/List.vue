@@ -19,6 +19,9 @@ export default {
         ListTickets,
         MessageBox
     },
+    mounted(){
+        this.selectedTicket = null;
+    },
     data(){
         return {
 
