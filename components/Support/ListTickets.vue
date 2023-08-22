@@ -115,6 +115,13 @@ export default {
         },
         applyFilter(query){
             this.page = 1;
+            if(query!='')
+            {
+                this.includeClosed = true;
+            }
+            else{
+                this.includeClosed = false;
+            }
             this.filterQuery = query;
         },
         loadMore(){
