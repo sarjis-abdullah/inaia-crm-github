@@ -96,7 +96,7 @@ export const actions = {
     },
     initProductList(context) {
         return this.$axios
-            .get(`${process.env.productApiUrl}/products?order_direction=asc&per_page=500`)
+            .get(`${process.env.productApiUrl}/products?order_direction=asc&per_page=250`)
             .then(response => {
                 context.commit('initProductList', response.data.data)
                 return response

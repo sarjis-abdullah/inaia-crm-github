@@ -11,7 +11,7 @@
                     </nav>
                     -->
                 </div>
-                <div class="col-lg-6 col-5 text-right">
+                <div class="col-lg-6 col-5 text-right" v-if="hasEditAccess">
                     <base-button size="sm" type="neutral" @click="newFeed">{{ $t('add') }} {{$t('news_feed')}}</base-button>
                 </div>
             </div>
@@ -91,8 +91,8 @@
                                 <template v-slot="{row}">
                                     
                                     <icon-button type="info" @click="() => popupDetails(row)"></icon-button>
-                                    <icon-button type="edit" @click="() => $router.push('/news-feeds/edit/'+row.id)"></icon-button>
-                                    <icon-button type="delete" @click="() => removeConfirm(row)"></icon-button>
+                                    <icon-button type="edit" @click="() => $router.push('/news-feeds/edit/'+row.id)" v-if="hasEditAccess"></icon-button>
+                                    <icon-button type="delete" @click="() => removeConfirm(row)" v-if="hasEditAccess"></icon-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -136,6 +136,7 @@ import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import Details from '@/components/NewsFeeds/Details'
 import IconButton from '@/components/common/Buttons/IconButton';
+import { canEditMarketing } from '@/permissions';
 export default {
     components: {
         [Table.name]: Table,
@@ -177,7 +178,10 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
-        }
+        },
+    hasEditAccess(){
+      return canEditMarketing()
+    }
     },
     watch: {
         // searchQuery: {

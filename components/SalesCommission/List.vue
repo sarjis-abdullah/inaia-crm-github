@@ -81,7 +81,7 @@
                                         <div>{{$t(row.direction)}}</div>
                                 </template>
                         </el-table-column>
-                        <el-table-column>
+                        <el-table-column v-if="hasEditAccess">
                             <template v-slot="{row}">
                                 <IconButton type="edit" @click="()=>editTicket(row)"/>
                                 <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting"/>
@@ -100,6 +100,7 @@ import { Table, TableColumn,MessageBox } from 'element-ui';
 import { mapGetters } from "vuex";
 import IconButton from '@/components/common/Buttons/IconButton';
 import CommissionFilter from '@/components/SalesCommission/Filter';
+import { canEditSalesCimmission } from '@/permissions';
 export default{
     components: {
         [Table.name]: Table,
@@ -127,7 +128,10 @@ export default{
     computed : {
         ...mapGetters({
             commissions:"salesCommission/commissions"
-        })
+        }),
+    hasEditAccess(){
+      return canEditSalesCimmission()
+    }
     },
     watch:{
         page:{
@@ -158,7 +162,7 @@ export default{
             });
         },
         getQuery(){
-            let query = '&per_page='+this.perPage+'page='+this.page;
+            let query = '&per_page='+this.perPage+'&page='+this.page;
             if(this.salesAdvisorId > 0){
                 query+="&sales_advisor_id="+this.salesAdvisorId
             }

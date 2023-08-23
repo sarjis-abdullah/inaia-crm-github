@@ -36,6 +36,7 @@
                       title-classes="btn btn-sm btn-link mr-0"
                       menu-on-right
                       :has-toggle="false"
+                      v-if="hadDepotEditAccess"
                     >
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
@@ -71,6 +72,7 @@
                       title-classes="btn btn-sm btn-link mr-0"
                       menu-on-right
                       :has-toggle="false"
+                      v-if="hadDepotEditAccess"
                     >
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
@@ -114,21 +116,21 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-                      <a class="dropdown-item" @click.prevent="showEditSavingPlan()"
+                      <a class="dropdown-item" @click.prevent="showEditSavingPlan()" v-if="hadDepotEditAccess"
                       >{{ $t("edit_saving_plan") }}</a>
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
-                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true">{{ $t("agio_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
                       
                       <a class="dropdown-item" @click.prevent="confirmPause()"
-                        v-if="depot.status.name_translation_key=='depot_status_active'"
+                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmResume()"
-                        v-if="depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled'"
+                        v-if="(depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled')  && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmContractConfirm" v-if="depot.status.name_translation_key=='depot_status_applied_for_savings_plan'">
+                      <a class="dropdown-item" @click.prevent="confirmContractConfirm" v-if="depot.status.name_translation_key=='depot_status_applied_for_savings_plan'  && hadSavingPlanStatusEditAccess">
                         <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'">
+                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'  && hadSavingPlanStatusEditAccess">
                         <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
                     </base-dropdown>
                   </div>
@@ -298,6 +300,7 @@ import {
 import { formatDateToApiFormat } from '../../../helpers/helpers';
 import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 import AddDeposit from '@/components/Depots/AddDeposit';
+import { canEditDepot, canModifySavingPlanStatus} from '@/permissions'; 
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -357,6 +360,12 @@ export default {
             }
           }
           return pausedDate;
+        },
+        hadDepotEditAccess(){
+          return canEditDepot();
+        },
+        hadSavingPlanStatusEditAccess(){
+          return canModifySavingPlanStatus();
         }
         
     },
@@ -409,7 +418,7 @@ export default {
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then((res)=>{
-              console.log(res);
+             
                 this.initPrices()
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{

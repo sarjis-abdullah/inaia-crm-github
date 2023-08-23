@@ -177,7 +177,7 @@ export const actions = {
     fetchDepotsByAccount(context,payload) {
         if (!context.state.loading) {
             context.commit('loading', true)
-            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?per_page=500&only=name,target_amount&account_id=${ payload }`)
+            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?per_page=250&only=name,target_amount&account_id=${ payload }`)
                 .then(res => {
                     context.commit('orderFilterList', res.data.data)
                     return res

@@ -17,7 +17,7 @@
             title-classes="btn btn-sm mr-0"
             menu-on-right
             :has-toggle="false"
-
+            v-if="hasEditAccess"
 
           >
             <template slot="title">
@@ -86,7 +86,8 @@ import moment from 'moment';
 import MessageElement from '@/components/Support/MessageElement';
 import Status from '@/components/Support/Status';
 import { mapGetters } from "vuex";
- import {  MessageBox } from 'element-ui'
+ import {  MessageBox } from 'element-ui';
+import { canEditCustomers } from '@/permissions';
 export default {
     props:{
         ticket:{
@@ -156,13 +157,16 @@ export default {
                 return '';
             }
         },
+        hasEditAccess(){
+          return canEditCustomers();
+        }
     },
     watch:{
         ticket:{
             handler(newval, oldval){
                 if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
                 {
-                    this.fetchDetails(newval.id)
+                    this.fetchDetails(this.ticket.id)
                 }
             },immediate:true
         }
@@ -215,7 +219,7 @@ export default {
         },
         shouldShowMessageBoxAndCloseTicket()
         {
-            return this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed';
+            return (this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed' && this.hasEditAccess);
         },
         sendMessage(){
             const user = this.$store.getters["auth/user"];

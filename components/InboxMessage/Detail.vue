@@ -59,7 +59,8 @@
     <div v-else class="d-flex flex-fill justify-content-center align-items-center">
         <loader />
     </div>
-    <template slot="footer" v-if="!inboxMessage">
+   
+    <template slot="footer" v-if="!inboxMessage && hasEditAccess">
       <base-button type="link" class="ml-auto" @click="onDetailClose()">
         {{ $t("cancel") }}
       </base-button>
@@ -78,7 +79,7 @@
         {{ $t("send_message") }}
       </base-button>
     </template>
-    <template slot="footer" v-if="inboxMessage && isDraft">
+    <template slot="footer" v-if="inboxMessage && isDraft && hasEditAccess">
      <base-button
         type="danger"
         @click="() => deleteMessageBox()"
@@ -101,7 +102,7 @@
         {{ $t("save_and_send") }}
       </base-button>
     </template>
-    <template slot="footer" v-if="inboxMessage && !isDraft">
+    <template slot="footer" v-if="inboxMessage && !isDraft && hasEditAccess">
       <base-button type="link" class="ml-auto" @click="onDetailClose()">
         {{ $t("cancel") }}
       </base-button>
@@ -113,6 +114,7 @@
         {{ $t("delete") }}
       </base-button>
     </template>
+    
  </modal>
 </template>
 <script>
@@ -120,6 +122,7 @@ import { VueEditor } from "vue2-editor";
 import Document from '@/components/InboxMessage/Document';
 import Loader from '../common/Loader/Loader.vue';
 import {Badge} from '@/components/argon-core';
+import { canEditCustomers } from '@/permissions';
 export default {
     props:{
         inboxMessage:{
@@ -179,6 +182,9 @@ export default {
                 return this.inboxMessage.is_draft;
             }
             return true;
+        },
+        hasEditAccess(){
+          return canEditCustomers();
         }
     },
     methods:{

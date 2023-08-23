@@ -43,11 +43,11 @@ export function mapCountriesNationalities(list) {
 export function mapCountryCode(list){
     let countyList = [];
     list.forEach(item=>{
-        if(item.allow){
+        if(item.allow && item.calling_code){
             countyList.push({
                 id:item.id,
-                value:item.numeric_code.replace('00','+'),
-                text:item.country+" ( "+ item.numeric_code.replace('00','+') + " )"
+                value:item.calling_code.replace('00','+'),
+                text:item.country+" ( "+ item.calling_code.replace('00','+') + " )"
             })
         }
     })

@@ -12,7 +12,7 @@
                     -->
                 </div>
                 <div class="col-lg-6 col-5 text-right">
-                    <base-button size="sm" type="neutral" @click="newRole">New Role</base-button>
+                    <base-button size="sm" type="neutral" @click="newRole" v-if="hasEditAccess">New Role</base-button>
                 </div>
             </div>
         </base-header>
@@ -108,7 +108,7 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column min-width="180px">
+                            <el-table-column min-width="180px" v-if="hasEditAccess">
                                 <template v-slot="{row}">
                                     <el-dropdown trigger="click" class="dropdown">
                                         <span class="btn btn-sm btn-icon-only text-light">
@@ -162,7 +162,7 @@
 import { mapGetters } from "vuex"
 import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown } from 'element-ui'
 import Details from '@/components/Roles/Details'
-
+import { canEditAdmin } from '@/permissions';
 export default {
     components: {
         [Table.name]: Table,
@@ -203,7 +203,10 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
-        }
+        },
+    hasEditAccess(){
+      return canEditAdmin()
+    }
     },
     watch: {
         // searchQuery: {

@@ -179,7 +179,7 @@ export const actions = {
     },
     getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=500`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=250`)
             .then(response => {
                 const clientData = response.data.data;
                 context.commit('orderFilterList', clientData)
@@ -246,7 +246,7 @@ export const actions = {
     initCountryList(context) {
         context.commit('countryListLoaded', 1)
         return this.$axios
-            .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
+            .get('/countries?order_direction=asc&per_page=250', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
                 const countryList = response.data
                 context.commit('initCountryList', countryList)
@@ -291,7 +291,7 @@ export const actions = {
     },
     getKycDocument(context,payload){
         return this.$axios
-            .get(`/documents?account_id=${payload}&per_page=500`)
+            .get(`/documents?account_id=${payload}&per_page=250`)
             .then(response => {
                 context.commit('kycDocuments',response.data.data);
                 return response.data.data;

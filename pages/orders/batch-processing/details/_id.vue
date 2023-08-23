@@ -35,7 +35,7 @@
                       menu-on-right
                       :has-toggle="false"
                       v-if="
-                        shouldShowCsv()
+                        shouldShowCsv() && hasEditAccess
                       "
                     >
                       <template slot="title">
@@ -101,7 +101,7 @@
                       menu-on-right
                       :has-toggle="false"
                       v-if="
-                        shouldDisplayProgressActions()
+                        shouldDisplayProgressActions() && hasEditAccess
                       "
                     >
                       <template slot="title">
@@ -269,6 +269,7 @@ import UploadCsv from "@/components/Csv-file/UploadCsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
 import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
+import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
 export default {
   layout: "DashboardLayout",
@@ -327,6 +328,9 @@ export default {
       else{
         return 0;
       }
+    },
+    hasEditAccess(){
+       return canEditDepot();
     }
   },
   destroyed(){

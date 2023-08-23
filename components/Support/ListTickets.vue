@@ -82,7 +82,10 @@ export default {
     mounted(){
         if(this.statuses.length == 0)
         {
-            this.$store.dispatch("support/fetchStatuses");
+            this.$store.dispatch("support/fetchStatuses").then(()=>{
+                this.fetchList();
+            });
+            
         }
     },
     methods:{
@@ -112,6 +115,13 @@ export default {
         },
         applyFilter(query){
             this.page = 1;
+            if(query!='')
+            {
+                this.includeClosed = true;
+            }
+            else{
+                this.includeClosed = false;
+            }
             this.filterQuery = query;
         },
         loadMore(){
@@ -128,6 +138,10 @@ export default {
         },
         fetchList(){
             this.isLoading = true;
+            if(this.statuses.length == 0)
+            {
+                return;
+            }
             this.$store
                     .dispatch("support/fetchList", this.searchQuery+'&page='+this.page+this.getClosedParam())
                     .then(data => {

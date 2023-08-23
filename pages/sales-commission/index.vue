@@ -6,7 +6,7 @@
           <h6 class="h2 text-white d-inline-block mb-0">{{ $t("sales_commission") }}</h6>
         </div>
           <div class="col-lg-10 text-right">
-                <base-button size="sm" type="neutral" @click="createnewCommission">
+                <base-button size="sm" type="neutral" @click="createnewCommission" v-if="hasEditAccess">
                         {{$t('new_commission')}}
                     </base-button>
         </div>
@@ -22,7 +22,8 @@
 import List from '@/components/SalesCommission/List';
 import { mapGetters } from "vuex";
 import {isSalesAdvisor} from '@/helpers/auth';
-import NewCommission from '@/components/SalesCommission/NewCommission'
+import NewCommission from '@/components/SalesCommission/NewCommission';
+import { canEditSalesCimmission } from '@/permissions';
 export default{
     layout: 'DashboardLayout',
     components:{
@@ -46,7 +47,10 @@ export default{
                 id = this.user.account.id;
             }
             return id;
-        }
+        },
+    hasEditAccess(){
+      return canEditSalesCimmission()
+    }
     },
     methods:{
         createnewCommission(){

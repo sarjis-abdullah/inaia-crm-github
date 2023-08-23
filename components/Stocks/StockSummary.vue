@@ -36,7 +36,7 @@
                         <el-table-column>
                             <template v-slot="{row}">
                               <icon-button type="info" @click="() => gotoDetails(row)" :disabled="depotTypes.length == 0"></icon-button>
-                              <icon-button type="add" @click="() => addStock(row)"></icon-button>
+                              <icon-button type="add" @click="() => addStock(row)" v-if="hasEditAccess"></icon-button>
                             </template>
                         </el-table-column>
                         </el-table>
@@ -54,6 +54,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import {assetTypes} from '@/helpers/depots'
 import PieChart from '@/components/argon-core/Charts/PieChart';
 import AddStock from '@/components/Stocks/AddStock';
+import { canEditDepot } from '@/permissions';
 export default {
     props:{
         stockType:{
@@ -87,7 +88,10 @@ export default {
         }),
         totalAmount(){
             return 
-        }
+        },
+        hasEditAccess(){
+        return canEditDepot();
+      }
     },
     data(){
         return {

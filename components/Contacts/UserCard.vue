@@ -22,6 +22,7 @@
             title-classes="btn btn-sm btn-link mr-0"
             menu-on-right
             :has-toggle="false"
+            v-if="hasEditAccess"
           >
             <template slot="title">
               <i class="fas fa-ellipsis-v"></i>
@@ -124,6 +125,7 @@ import KycDocumentList from "@/components/Contacts/KycDocumentList";
 import VerifyContact from '@/components/Contacts/VerifyContact';
 import {  MessageBox } from 'element-ui'
 import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
+import { canEditCustomers } from '@/permissions';
 export default {
     props: {
         resource: {
@@ -185,6 +187,9 @@ export default {
                 age--
             }
             return age
+        },
+        hasEditAccess(){
+          return canEditCustomers();
         }
     },
     data(){
