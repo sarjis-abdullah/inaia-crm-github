@@ -163,8 +163,8 @@ export default {
       agioTransactions: "depots/agioTransactions",
     }),
     searchQuery() {
-      return `&depot_id=${this.depot_id}&page=${this.page | 1}&per_page=${
-        this.perPage | 5
+      return `&depot_id=${this.depot_id}&page=${this.page}&per_page=${
+        this.perPage
       }`;
     },
     totalPages() {
@@ -199,6 +199,7 @@ export default {
   methods: {
     fetchAgioTransactions() {
       this.isLoading = true;
+      console.log(this.searchQuery);
       this.$store
         .dispatch("depots/fetchAgioTransactionList", this.searchQuery)
         .then((res) => (this.totalTableData = res.meta.total))
