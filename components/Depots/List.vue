@@ -79,7 +79,11 @@
                         >
                           <template v-slot="{row}">
                             <span>{{$n(row.agio/100)}} €</span>
-                            <div class="dateStyle">{{$t(row.agio_payment_option)}}</div>
+                            <div class="dateStyle" v-if="row.agio_payment_option=='onetime'">{{$t(row.agio_payment_option)}}</div>
+                            <div class="dateStyle" v-else>{{$t('billing')}}  <span v-if="row.agio_percentage == 75">75/25</span>
+                                <span v-if="row.agio_percentage == 50">50/50</span>
+                            </div>
+                            
                           </template>
                         </el-table-column>
                         <el-table-column :label="$t('type')"
