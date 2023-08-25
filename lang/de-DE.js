@@ -676,5 +676,6 @@ export default {
     deposit:'Deposit',
     add_deposit:'Add deposit',
     deposit_created_successfully:'The new deposit order was created successfully',
-    deposit_created_unsuccessfully:"We couldn't add deposit order due to an error, please try again later"
+    deposit_created_unsuccessfully:"We couldn't add deposit order due to an error, please try again later",
+    billing:'Verrechnung'
 }
