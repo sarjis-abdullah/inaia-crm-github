@@ -22,7 +22,7 @@
       v-if="
         selectedOrderProcess &&
         (isOrderGoldPurchase(selectedOrderProcess) ||
-          isOrderGoldPurchaseInterval(selectedOrderProcess))
+          isOrderGoldPurchaseInterval(selectedOrderProcess) || isOrderSilverPurchase(selectedOrderProcess) || isOrderSilverPurchaseInterval(selectedOrderProcess))
       "
     >
       <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview" :placeholder="$t('select_price_date')"/>
@@ -109,6 +109,8 @@ import {
   isOrderGoldPurchase,
   isOrderGoldPurchaseInterval,
   isOrderGoldSale,
+  isOrderSilverPurchase,
+  isOrderSilverPurchaseInterval
 } from "../../helpers/order";
 import { DatePicker,Input } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
@@ -167,6 +169,8 @@ export default {
     isOrderGoldPurchase,
     isOrderGoldPurchaseInterval,
     isOrderGoldSale,
+    isOrderSilverPurchase,
+    isOrderSilverPurchaseInterval,
     cancelConfirmComplete() {
       this.showConfirmComplete = false;
       this.selectedOrderProcess = null;
