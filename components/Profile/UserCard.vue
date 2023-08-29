@@ -107,18 +107,28 @@
             <template #header>
               <h5 class="modal-title">Select Profile Photo</h5>
             </template>
-            <profile-photo
-              v-model="photo"
-              :clicked="clicked"
-              @file-selected="fileSelected"
-              @upload-process-started="processStarted"
-              @change="savePhoto"
-              :id="loggedin && loggedin.id"
-            />
-            <!-- <template #footer>
-                <button type="button" class="btn btn-primary" @click.prevent.stop="startProcess = true" :disabled="startProcess || !photo">Save photo</button>
-                <button type="button" class="btn btn-link  ml-auto" @click.prevent.stop="clicked = !clicked">Close</button>
-            </template> -->
+            <Upload
+        class="upload-demo"
+        drag
+        ref="upload"
+        :auto-upload="false"
+        accept=".png,.jpg,.jpeg"
+        :limit="1"
+        :multiple="false"
+        :http-request="savePhoto"
+        :disabled="startProcess"
+        :on-change="onChange"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">
+          Drop file here or <em>click to upload</em>
+        </div>
+        <div class="el-upload__tip" slot="tip">png,jpg and jpeg files</div>
+      </Upload>
+          <template #footer>
+                <button type="button" class="btn btn-primary" @click.prevent.stop="submitUpload" :disabled="startProcess || !photo">Save photo</button>
+                <button type="button" class="btn btn-link  ml-auto" @click.prevent.stop="clicked = !clicked;photo = null">Close</button>
+            </template>
           </modal>
         </div>
       </div>
@@ -146,12 +156,15 @@ import { hasMaxAccess, avatar, anonymousUserAvatar, notifyError } from '@/helper
 import Loading from 'vue-loading-overlay'
 import 'vue-loading-overlay/dist/vue-loading.css'
 import { redirectPost } from "~/helpers/auth"
+import { Upload } from "element-ui";
+import { toBase64 } from '../../helpers/helpers'
 
 export default {
     components: {
         ProfilePhoto,
         Modal,
-        Loading
+        Loading,
+        Upload
     },
     mixins: [
         RefreshAvatarMixin
@@ -160,9 +173,10 @@ export default {
         return {
             clicked: false,
             startProcess: false,
-            photo: '',
+            photo: null,
             selectedLocale: null,
-            fullPage: true
+            fullPage: true,
+            isSubmitting:false
         }
     },
     computed: {
@@ -295,15 +309,29 @@ export default {
                 console.error('No file selected');
             }
         },
-        savePhoto(fileName) {
-            this.clicked        = false
-           
-            if (fileName) {
+        onChange(file, fileList) {
+          this.photo = file;
+        },
+        async savePhoto() {
+            if (this.photo) {
+              this.startProcess = true;
+              let photodata = "";
+              try{
+                photodata = await toBase64(this.photo.raw);
+              }
+              catch(err){
+                console.log(err);
+                this.notifyError(err, this.$notify);
+                this.startProcess = false;
+                return;
+              }
                 this.$store.dispatch('clients/saveAvatar', {
                     id: this.loggedin.id,
-                    avatar: fileName
+                    avatar: photodata
                 }).then(res => {
                     this.$notify({type: 'success', timeout: 5000, message: 'Profile picture saved successfully!'})
+                    this.clicked = false;
+                    this.photo = null;
                     // this.$store.dispatch('auth/fetchLoggedIn').then(res => {
                     // })
                 }).catch(err => {
@@ -311,10 +339,11 @@ export default {
                 }).finally(() => {
                     this.startProcess   = false
                 })
-            } else {
-                this.startProcess   = false
             }
-        }
+        },
+        submitUpload() {
+      this.$refs.upload.submit();
+    },
     }
 
 }
