@@ -57,8 +57,17 @@ export default {
     },
     mounted:function(){
         const today = new Date();
+        const dayOfTheWeek = today.getDay();
         this.selectedDate = new Date(today);
-        this.selectedDate.setDate(this.selectedDate.getDate()-1);
+        if(dayOfTheWeek == 1){
+            this.selectedDate.setDate(this.selectedDate.getDate()-3);
+        }
+        else if(dayOfTheWeek == 0){
+            this.selectedDate.setDate(this.selectedDate.getDate()-2);
+        }
+        else{
+            this.selectedDate.setDate(this.selectedDate.getDate()-1);
+        }
         this.getPreview();
     },
     methods:{
