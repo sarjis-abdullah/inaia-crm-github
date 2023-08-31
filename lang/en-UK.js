@@ -681,5 +681,8 @@ export default {
     add_deposit:'Add deposit',
     deposit_created_successfully:'The new deposit order was created successfully',
     deposit_created_unsuccessfully:"We couldn't add deposit order due to an error, please try again later",
-    billing:'Billing'
+    billing:'Billing',
+    fixing_price:'Fixing price',
+    buying_unit_price:'Buying unit price',
+    new_transaction:'New transaction'
 }
