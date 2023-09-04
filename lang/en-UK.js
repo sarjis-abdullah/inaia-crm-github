@@ -684,5 +684,21 @@ export default {
     billing:'Billing',
     fixing_price:'Fixing price',
     buying_unit_price:'Buying unit price',
-    new_transaction:'New transaction'
+    new_transaction:'New transaction',
+    add_bank_account:'Add bank account',
+    bank_name:'Bank name',
+    iban:'IBAN',
+    bic:'BIC',
+    account_holder:'Account holder',
+    valide:'Valide',
+    bank_accounts:'Bank accounts',
+    default:'Default',
+    validated:'Validated',
+    not_validated:'Not validated',
+    do_you_want_to_delete_bank_account:'Are you sure you want to delete this bank account',
+    bank_account_deleted_successfully:'Bank account deleted successfully',
+    bank_account_deleted_unsuccessfully:"We couldn't delete this bank account",
+    bank_account_added_successfully:"Bank account was added successfully",
+    bank_account_added_unsuccessfully:"We couldn't add the new bank account due to an error"
+
 }
