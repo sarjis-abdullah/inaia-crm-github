@@ -232,7 +232,7 @@ export default {
       let base = `&page=${
         this.page
       }&per_page=${this.perPage}`;
-      if(this.selectedCustomer)
+      if(this.selectedCustomer > 0)
       {
         base+=`&account_id=${this.selectedCustomer}`;
       }
