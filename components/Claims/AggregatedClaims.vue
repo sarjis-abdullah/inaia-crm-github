@@ -52,11 +52,11 @@
           header-row-class-name="thead-light"
           :data="aggregatedClaims"
         >
-          <el-table-column label="#" min-width="100px" prop="id">
+          <el-table-column label="#"  prop="id">
             <template v-slot="{ row }">
               <div class="media align-items-center">
                 <div class="media-body">
-                  <div class="font-weight-300 name" v-if="markManyAsPaid" >
+                  <div class="font-weight-300 name" v-if="markMany" >
                     <Checkbox :value="shouldCheck(row.id)" :label="row.id" @change="(value)=>addMarkAsPaid(value,row)" :disabled="isPaid(row.claim_status.name_translation_key)">
                         
                     </Checkbox>
@@ -88,7 +88,7 @@
               {{ $d(new Date(row.claim_date), "short") }}
             </template>
           </el-table-column>
-          <el-table-column v-bind:label="$t('status')" min-width="140px">
+          <el-table-column v-bind:label="$t('status')">
             <template v-slot="{ row }">
               <Status
                 :status="
@@ -103,6 +103,15 @@
                 type="info"
                 @click="() => displayDetails(row)"
               ></icon-button>
+              <Dropdown trigger="click" v-if="!isPaid(row.claim_status.name_translation_key)">
+                <span class="btn btn-sm btn-icon-only text-light">
+                    <i class="fas fa-ellipsis-v mt-2"></i>
+                </span>
+                <DropdownMenu  slot="dropdown">
+                    <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
+                    <DropdownItem command="initiate_payment" >{{$t('initiate_payment')}}</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -127,7 +136,7 @@
           size="lg"
           @close="selectedAggregated = null"
         >
-          <template slot="header" class="pb-0">
+          <template slot="header">
             <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
             <span></span>
           </template>
@@ -166,7 +175,7 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn,Checkbox } from "element-ui";
 import Status from "@/components/Claims/Status";
 import Claims from "@/components/Claims/Claims";
-import { Select, Option, DatePicker } from "element-ui";
+import { Select, Option, DatePicker,Dropdown,DropdownMenu,DropdownItem } from "element-ui";
 import IconButton from "@/components/common/Buttons/IconButton";
 import { formatDateToApiFormat } from "../../helpers/helpers";
 import CustomerFilter from '@/components/common/CustomerFilter';
@@ -188,7 +197,7 @@ export default {
     status:{
       type:String
     },
-    markManyAsPaid:{
+    markMany:{
       type:Boolean,
       default:false
     }
@@ -203,7 +212,10 @@ export default {
     DatePicker,
     Claims,
     Checkbox,
-    CustomerFilter
+    CustomerFilter,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem
   },
   mounted() {
     if (this.claimStatuses.length == 0) {
@@ -348,7 +360,7 @@ export default {
       if(value)
       {
         this.selectedToBeMarked.push(row.id);
-        this.$emit('markAsPayedAdded',row)
+        this.$emit('markAdded',row)
       }
       else
       {
@@ -356,7 +368,7 @@ export default {
         if(index> -1)
         {
           this.selectedToBeMarked.splice(index,1);
-          this.$emit('markAsPayedDeleted',row)
+          this.$emit('markDeleted',row)
         }
       }
       

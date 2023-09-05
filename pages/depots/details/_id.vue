@@ -517,7 +517,8 @@ export default {
             account_id:this.depot.account_id
           };
           this.isSubmitting = true;
-          this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+          if(this.depot.status.name_translation_key=='depot_status_applied_for_savings_plan'){
+            this.$store.dispatch('depots/rejectSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
              this.showCancelConfirm = false;
           }).catch(()=>{
@@ -525,6 +526,18 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+          }
+          else{
+            this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
+             this.showCancelConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+          }
+          
         },
         
         blockDepot(){

@@ -699,6 +699,11 @@ export default {
     bank_account_deleted_successfully:'Bank account deleted successfully',
     bank_account_deleted_unsuccessfully:"We couldn't delete this bank account",
     bank_account_added_successfully:"Bank account was added successfully",
-    bank_account_added_unsuccessfully:"We couldn't add the new bank account due to an error"
+    bank_account_added_unsuccessfully:"We couldn't add the new bank account due to an error",
+    manage_payments:'Manage payments',
+    initiate_payment_for_this_month:'Initiate direct debits for the month',
+    initiate_payment_for_many:'Initiate direct debit for selected aggregated claims',
+    payment_not_initiated:"We couldn't initiate direct debit for requested aggregated claims",
+    depot_status_withdrawn:'Withdrawn'
 
 }
