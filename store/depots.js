@@ -293,6 +293,23 @@ export const actions = {
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
     },
+    rejectSavingPlan(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_withdrawn');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_withdrawn');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
     fetchAgioTransactionList(context,payload){
         return this.$axios.get(`${process.env.golddinarApiUrl}/agio-transaction?include=agio_type${payload}`)
                 .then(res => {

@@ -86,15 +86,15 @@
       <div class="card">
         <div class="card-body">
           <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item :title="$t('inbox_messages')" name="inboxMessages" class="mycollapse">
+            <collapse-item :title="$t('bank_accounts')" name="bankAccount" class="mycollapse">
               <template v-slot:title>
                 <div>
-                  <h3>{{ $t('inbox_messages') }}</h3>
+                  <h3>{{ $t('bank_accounts') }}</h3>
                   <span class="tim-icons icon-minimal-down"></span>
                 </div>
               </template>
 
-              <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
+              <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadBankAccounts"/>
             </collapse-item>
           </collapse>
         </div>
@@ -118,7 +118,7 @@ import Claims from '@/components/Contacts/AccountClaimList';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
-
+import UserBankAccounts from "@/components/Contacts/BankAccounts"
 export default {
     components: {
         Loader,
@@ -133,7 +133,8 @@ export default {
         InboxMessageList,
         Collapse,
         CollapseItem,
-        UserComment
+        UserComment,
+        UserBankAccounts
     },
     props: {
         resource: {
@@ -150,7 +151,8 @@ export default {
         shouldLoadlastTransactions:false,
         shouldLoadAggregatedClaims:false,
         shouldLoadInboxMessages:false,
-        hasBankingAcoount:false
+        hasBankingAcoount:false,
+        shouldLoadBankAccounts:false
       }
     },
 
@@ -230,6 +232,9 @@ export default {
           }
           if(element == "inboxMessages" && !this.shouldLoadInboxMessages){
             this.shouldLoadInboxMessages = true;
+          }
+          if(element == "bankAccount" && !this.shouldLoadInboxMessages){
+            this.shouldLoadBankAccounts = true;
           }
         });
       }

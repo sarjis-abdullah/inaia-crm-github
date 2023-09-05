@@ -13,6 +13,9 @@
                   <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                     <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                   </button>
+                  <button @click.prevent="addStock()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                    <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('new_transaction')}}</span>
+                  </button>
                 </div>
               </div>
 
@@ -130,13 +133,15 @@
     </div>
 
 </div>
-
+<AddStock :show="showAddStock" :assetTypeId="depotType" :target="stockType" @closed="onClosed" @added="loadData"/>
 </div>
+
 </template>
 <script>
 import {stockTypes} from '@/helpers/stocks';
 import { Table, TableColumn,Input } from 'element-ui';
 import StockFilter from '@/components/Stocks/StockFilter';
+import AddStock from '@/components/Stocks/AddStock';
 export default {
     props:{
         depotType:{
@@ -152,7 +157,8 @@ export default {
         [Table.name]: Table,
         [TableColumn.name]: TableColumn,
         StockFilter,
-        Input
+        Input,
+        AddStock
     },
     data(){
         return{
@@ -163,7 +169,8 @@ export default {
             perPage:10,
             totalTableData:1,
             filterQuery:null,
-            data:[]
+            data:[],
+            showAddStock:false
         }
     },
     computed:{
@@ -221,6 +228,12 @@ export default {
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        onClosed(){
+            this.showAddStock = false;
+        },
+        addStock(){
+            this.showAddStock = true;
         }
     }
 }

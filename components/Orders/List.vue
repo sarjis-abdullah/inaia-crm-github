@@ -92,7 +92,7 @@
                                     min-width="140px"
                                     >
                         <template v-slot="{row}">
-                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}} {{row.comment ? '('+row.comment+')' : null}}</Status>
+                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                         </template>
                     </el-table-column>
 

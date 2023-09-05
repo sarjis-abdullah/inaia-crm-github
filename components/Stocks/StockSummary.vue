@@ -108,7 +108,7 @@ export default {
                 chartData.datasets = [
                     {
 
-                        data:[this.inaiaGoldSock/1000,this.operationGoldSock/1000],
+                        data:[this.inaiaGoldSock>0?this.inaiaGoldSock/1000:0,this.operationGoldSock>0?this.operationGoldSock/1000:0],
                         backgroundColor:['#0065D3','#4DA1FF']
                     }
                 ];
@@ -117,7 +117,7 @@ export default {
             {
                 chartData.datasets = [
                     {
-                        data:[this.inaiaSilverSock/1000,this.operationSilverSock/1000],
+                        data:[this.inaiaSilverSock>0?this.inaiaSilverSock/1000:0,this.operationSilverSock>0?this.operationSilverSock/1000:0],
                         backgroundColor:['#0065D3','#4DA1FF']
                     }
                 ];

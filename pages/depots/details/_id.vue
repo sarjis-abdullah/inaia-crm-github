@@ -4,7 +4,7 @@
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0" v-if="loaded && !loadedWithError">
-            {{ $t("depot") }} {{ depot.depot_number }}
+            {{ $t("depot_details") }}
           </h6>
         </div>
       </div>
@@ -25,8 +25,9 @@
                     <div class="media align-items-center">
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
+                        <div>{{$t('depot')}} #. {{ depot.depot_number }}</div>
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">{{depot.name }} #. {{ depot.depot_number }}</span>
+                        <span class="h2 font-weight-bold mb-0">{{depot.name }} </span>
                         <div class="font-weight-bold mb-0">{{$t(depot.depot_type.name_translation_key)}}</div>
                       </div>
                     </div>
@@ -516,7 +517,8 @@ export default {
             account_id:this.depot.account_id
           };
           this.isSubmitting = true;
-          this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+          if(this.depot.status.name_translation_key=='depot_status_applied_for_savings_plan'){
+            this.$store.dispatch('depots/rejectSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
              this.showCancelConfirm = false;
           }).catch(()=>{
@@ -524,6 +526,18 @@ export default {
           }).finally(()=>{
             this.isSubmitting = false;
           })
+          }
+          else{
+            this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
+             this.showCancelConfirm = false;
+          }).catch(()=>{
+             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+          }
+          
         },
         
         blockDepot(){

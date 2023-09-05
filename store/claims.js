@@ -120,5 +120,10 @@ export const actions = {
                     context.commit('updateClaim',res.data.data);
                     return res.data.data;
                 })
+    },
+    initiateAggregatedClaimDirectDebit(context,payload){
+        return this.$axios.post(`/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
+            return res.data.data.url;
+        })
     }
 }

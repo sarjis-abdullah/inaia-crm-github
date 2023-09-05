@@ -34,22 +34,22 @@
                                     />
                                 </div>
                                 <div class="col">
-                                   <!--  <Select
-                                        placeholder="AML"
-                                        v-model="selectedAmlStatus"
+                                  <Select
+                                        :placeholder="$t('sales_advisors')"
+                                        v-model="selectedSalesAdvisor"
                                         clearable
-                                        @clear="clearDepot"
+                                        @clear="clearSalesAdvisor"
                                         :multiple="false"
                                         class="float-right"
                                     >
                                         <Option
-                                        v-for="option in amlStatuses"
+                                        v-for="option in salesAdvisors"
                                         :value="option.id"
-                                        :label="$t(option.name)"
+                                        :label="formatSalesAdvisorLabel(option)"
                                         :key="option.id"
                                         >
                                         </Option>
-                                    </Select> -->
+                                    </Select>
                                 </div>
                           </div>
                         </div>
@@ -248,7 +248,8 @@ export default {
             totalTableData: 0,
             sortedBy: { customer: "asc" },
             searchWords:null,
-            selectedAmlStatus:null
+            selectedAmlStatus:null,
+            selectedSalesAdvisor:null
         }
     },
    
@@ -259,10 +260,13 @@ export default {
         ...mapGetters({
             amlStatuses: "clients/amlStatuses"
         }),
+        ...mapGetters("salesCommission", {
+            salesAdvisors: "salesAdvisors",
+        }),
         searchQuery() {
             return (
                 (this.search ? '&' + this.search : '') +
-                ( this.selectedAmlStatus ? `&aml_status_id=${ this.selectedAmlStatus }`:'')+
+                ( this.selectedSalesAdvisor ? `&sales_advisor_id=${ this.selectedSalesAdvisor }`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
                 `&per_page=${this.perPage}&type=customer`
@@ -274,9 +278,9 @@ export default {
         },
     },
      mounted(){
-        if(this.amlStatuses.length == 0)
+        if(this.salesAdvisors.length == 0)
         {
-            this.$store.dispatch('clients/getAmlStatuses')
+            this.$store.dispatch("salesCommission/fetchSalesAdvisors")
         }
     },
     watch: {
@@ -398,7 +402,28 @@ export default {
         {
             this.search = "";
             this.page = 1;
-        }
+        },
+        clearSalesAdvisor(){
+            this.selectedSalesAdvisor = null;
+        },
+        formatSalesAdvisorLabel: function (client) {
+            if (client) {
+                let email = null;
+                if (client.contact.channels) {
+                    client.contact.channels.forEach((element) => {
+                        if (element.type == "email") {
+                            email = element.value;
+                        }
+                    });
+                }
+                let label =
+                    client.contact.name + " " + client.contact.person_data.surname;
+                if (email) {
+                    label += ` (${email})`;
+                }
+                return label;
+            }
+        },
     }
 }
 </script>
