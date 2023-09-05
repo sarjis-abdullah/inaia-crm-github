@@ -9,7 +9,7 @@
                 </p>
       </div>
       <div class="col-4 text-right">
-        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="isPending() && !confirming" @click="confirming=true">
+        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="(isPending() || isFailed()) && !confirming" @click="confirming=true">
           <span class="btn-inner--icon"><i class="fas fa-check"></i></span><span class="btn-inner--text">{{$t('mark_as_paid')}}</span>
         </button>
         <div class="d-flex justify-content-end" v-else-if="confirming">
@@ -40,7 +40,7 @@
       </el-table-column>
         <el-table-column
         v-bind:label="$t('amount')"
-        min-width="180px"
+       
         align="right"
         prop="amount"
       >
@@ -48,7 +48,7 @@
           <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
         </template>
       </el-table-column>
-        <el-table-column v-bind:label="$t('type')"  prop="type">
+        <el-table-column v-bind:label="$t('type')"  prop="type" min-width="150">
         <template v-slot="{ row }">
           <div class="d-flex align-items-center">
             <div>
@@ -82,11 +82,11 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column  >
+      <el-table-column  v-bind:label="$t('mark_as_paid')">
           <template v-slot="{ row }" >
-            <base-button type="success" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
+            <IconButton type="confirm" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
                             <span>{{$t('paid')}}</span>
-                         </base-button>
+                         </IconButton>
           </template>
         </el-table-column>
     </el-table>
@@ -106,8 +106,9 @@ import { Table, TableColumn } from "element-ui";
 import Status from "@/components/Claims/Status";
 import { mapGetters } from "vuex";
 import UserInfo from '@/components/Contacts/UserInfo';
-import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
+import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
 import { MessageBox } from "element-ui";
+import IconButton from "@/components/common/Buttons/IconButton";
 export default {
   props: {
     aggregated_id: {
@@ -126,7 +127,8 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     Status,
-    UserInfo
+    UserInfo,
+    IconButton
   },
   computed: {
     ...mapGetters({
@@ -176,6 +178,9 @@ export default {
     },
     isPending(){
       return this.aggregated_status == PAYMENT_PENDING;
+    },
+    isFailed(){
+      return this.aggregated_status == PAYMENT_FAILED;
     },
     completeAsPaid()
     {

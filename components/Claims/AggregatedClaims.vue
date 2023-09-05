@@ -103,7 +103,7 @@
                 type="info"
                 @click="() => displayDetails(row)"
               ></icon-button>
-              <Dropdown trigger="click" v-if="!isPaid(row.claim_status.name_translation_key)">
+              <Dropdown trigger="click" v-if="!isPaid(row.claim_status.name_translation_key)" @command="(command)=>handleCommand(command,row.id)">
                 <span class="btn btn-sm btn-icon-only text-light">
                     <i class="fas fa-ellipsis-v mt-2"></i>
                 </span>
@@ -181,6 +181,7 @@ import { formatDateToApiFormat } from "../../helpers/helpers";
 import CustomerFilter from '@/components/common/CustomerFilter';
 import moment from 'moment';
 import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
+import { MessageBox } from "element-ui";
 export default {
   props: {
     account_id: {
@@ -218,6 +219,7 @@ export default {
     DropdownItem
   },
   mounted() {
+    this.$confirm = MessageBox.confirm
     if (this.claimStatuses.length == 0) {
       this.$store.dispatch("claims/getClaimStatuses").then(()=>{
         if(this.status == PAYMENT_PENDING)
@@ -383,7 +385,49 @@ export default {
     refresh(){
       this.page = 1;
       this.fetchAggregatedClaims();
-    }
+    },
+    handleCommand(command,id){
+      if(command=="mark_as_paid"){
+        this.markAspaid(id)
+      }
+      else{
+        this.initiatePayment(id);
+      }
+    },
+    markAspaid(id){
+        this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          let data = [];
+      data.push(id);
+      this.$store.dispatch('claims/markManyAspaid',data).then(()=>{
+        this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
+        this.$emit("markedAsPaid");
+      }).catch(()=>{
+        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      });
+        }).catch(() => {
+         
+        });
+      },
+      initiatePayment(id){
+          this.isSubmitting = true;
+          let aggregated_claims = [];
+          aggregated_claims.push({id:id});
+          const executionDate = moment().add('1','day').toDate();
+          const data = {
+            aggregated_claims:aggregated_claims,
+            execution_date : formatDateToApiFormat(executionDate)
+          }
+          this.$store.dispatch('claims/initiateAggregatedClaimDirectDebit',data).then((res)=>{
+          window.open(res,'_blanc');
+           
+          }).catch(()=>{
+            this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_not_initiated')})
+          })
+        }
   },
 };
 </script>

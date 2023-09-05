@@ -704,6 +704,7 @@ export default {
     initiate_payment_for_this_month:'Initiate direct debits for the month',
     initiate_payment_for_many:'Initiate direct debit for selected aggregated claims',
     payment_not_initiated:"We couldn't initiate direct debit for requested aggregated claims",
-    depot_status_withdrawn:'Withdrawn'
+    depot_status_withdrawn:'Withdrawn',
+    initiate_payment:'Initiate direct debit'
 
 }
