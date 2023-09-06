@@ -145,6 +145,7 @@
                   </div>
                   <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
                   <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
+                  <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} € {{ $t('of') }} {{(depot.target_amount/100)}} €</div>
                   <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span></div>
                 </div>
               </div>
