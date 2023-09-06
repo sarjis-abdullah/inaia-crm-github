@@ -91,7 +91,7 @@ export default ({
     },
     methods:{
         removeClaim(){
-            this.filtredAgioTransactionTypes = this.agioTransactionsTypes.filter(x=>x.name_translation_key!='claim');
+            //this.filtredAgioTransactionTypes = this.agioTransactionsTypes.filter(x=>x.name_translation_key!='claim');
         },
         typeSelected(){
             let type = this.agioTransactionsTypes.find(x=>x.id==this.selectedAgioTransactionType);
