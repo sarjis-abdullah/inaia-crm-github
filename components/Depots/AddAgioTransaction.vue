@@ -1,26 +1,31 @@
 <template>
     <div class="mb-3 flex-fill">
         <div class="d-flex flex-row justify-content-center align-items-center">
-            <Loader v-if='isLoadingTypes' :width="32" :height="32" />
-            <TextError :textError ="$t(typesError)" v-if="!isLoadingTypes && textError"/>
-            <div class="w-100">
-                <Select :placeholder="$t('type')"
-                        class="d-block"
-                        v-if="!isLoadingTypes && !textError"
+            <div class="flex-fill">
+                <div class="d-flex flex-row justify-content-center align-items-center flex-fill">
+                    <Loader v-if='isLoadingTypes' :width="32" :height="32" />
+                    <TextError :textError ="$t(typesError)" v-if="!isLoadingTypes && textError"/>
+                    <div class="w-100">
+                        <Select :placeholder="$t('type')"
+                                class="d-block"
+                                v-if="!isLoadingTypes && !textError"
 
-                            v-model="selectedAgioTransactionType"
-                            @change="typeSelected"
-                            >
-                        <Option v-for="option in filtredAgioTransactionTypes"
-                                :value="option.id"
-                                :label="$t(option.name_translation_key)"
-                                :key="option.id"
-                                >
-                        </Option>
-                </Select>
+                                    v-model="selectedAgioTransactionType"
+                                    @change="typeSelected"
+                                    >
+                                <Option v-for="option in filtredAgioTransactionTypes"
+                                        :value="option.id"
+                                        :label="$t(option.name_translation_key)"
+                                        :key="option.id"
+                                        >
+                                </Option>
+                        </Select>
 
+                    </div>
+                    <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
+                </div>
+                <Input :placeholder="$t('comment')" v-model="comment"  class="mt-3"/>
             </div>
-            <Input :placeholder="$t('amount')" v-model="amount" type="number" class="ml-3"/>
             <div class="ml-3 d-flex flex-fill flex-row align-content-end">
                 <Button @click="cancelAddTransaction" :disabled="isSubmitting">{{$t('cancel')}}</Button>
                 <Button type="primary" :disabled="shouldDisableSave() || isSubmitting" @click="saveAddTransaction">{{$t('save')}}</Button>
@@ -81,7 +86,8 @@ export default ({
             amount:null,
             paymentSelected:false,
            
-            isSubmitting:false
+            isSubmitting:false,
+            comment:null
         }
     },
     computed:{
@@ -121,7 +127,8 @@ export default ({
                 "depot_id":this.depot_id,
                 "amount":Number(this.amount)*100,
                 "agio_type_id":this.selectedAgioTransactionType,
-                "is_manual":true
+                "is_manual":true,
+                "comment":this.comment
             }
             this.isSubmitting = true;
             this.$store.dispatch('depots/createAgioTransaction',payload).then(res=>{
@@ -135,7 +142,7 @@ export default ({
         shouldDisableSave()
         {
             const num = Number(this.amount);
-            return (!this.depot_id ||!this.selectedAgioTransactionType || !this.amount || Number.isNaN(num) || num <= 0)
+            return (!this.depot_id ||!this.selectedAgioTransactionType || !this.amount || Number.isNaN(num) || num <= 0 || !this.comment)
         }
     }
 })

@@ -82,11 +82,17 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column  v-bind:label="$t('mark_as_paid')">
+      <el-table-column>
           <template v-slot="{ row }" >
-            <IconButton type="confirm" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
-                            <span>{{$t('paid')}}</span>
-                         </IconButton>
+            <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
+                <span class="btn btn-sm btn-icon-only text-light">
+                    <i class="fas fa-ellipsis-v mt-2"></i>
+                </span>
+                <DropdownMenu  slot="dropdown">
+                    <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
+                   
+                </DropdownMenu>
+                </Dropdown>
           </template>
         </el-table-column>
     </el-table>
@@ -102,7 +108,7 @@
   </div>
 </template>
 <script>
-import { Table, TableColumn } from "element-ui";
+import { Table, TableColumn,Dropdown,DropdownItem,DropdownMenu } from "element-ui";
 import Status from "@/components/Claims/Status";
 import { mapGetters } from "vuex";
 import UserInfo from '@/components/Contacts/UserInfo';
@@ -128,7 +134,10 @@ export default {
     [TableColumn.name]: TableColumn,
     Status,
     UserInfo,
-    IconButton
+    IconButton,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu
   },
   computed: {
     ...mapGetters({
@@ -174,6 +183,11 @@ export default {
           .then((res) => (this.totalTableData = res.meta.total))
           .catch((err) => (this.loadingError = this.$t("cant_load_list")))
           .finally(() => (this.isLoading = false));
+      }
+    },
+    handleCommand(command,id){
+      if(command=="mark_as_paid"){
+        this.markAspaid(id);
       }
     },
     isPending(){

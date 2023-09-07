@@ -55,6 +55,21 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('payment_method')"
+            v-model="selectedPaymentMethod"
+            clearable
+            class="filterElement"
+            @clear="removeSelectedPaymentMethod"
+          >
+            <Option
+              v-for="option in paymentmethods"
+              :value="option.value"
+              :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
@@ -211,6 +226,15 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-if="selectedPaymentMethod != null"
+        >{{ $t(selectedPaymentMethod)
+        }}<a class="badgeIcon" @click.prevent="removeSelectedPaymentMethod()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedAgio != null"
         >{{ selectedAgio
         }}<a class="badgeIcon" @click.prevent="removeAgio()"
@@ -281,6 +305,10 @@ export default {
         { id: 1, value: true, label: "saving_plan" },
         { id: 2, value: false, label: "no_saving_plan" },
       ],
+      paymentmethods: [
+        { id: 1, value: "bank_transfer", label: "bank_transfer" },
+        { id: 2, value: "bank_account", label: "bank_account" },
+      ],
       agioPaymentPlans: [
         { id: 1, value: "onetime", label: "onetime" },
         { id: 2, value: "installment", label: "installment" },
@@ -289,7 +317,8 @@ export default {
       { id: 1, value: 1, label: "1" },
         { id: 2, value: 15, label: "15" },
       ],
-      selectedIntervalDay:null
+      selectedIntervalDay:null,
+      selectedPaymentMethod:null
     };
   },
   mounted() {
@@ -432,6 +461,9 @@ export default {
       if(this.selectedIntervalDay){
         query+='&interval_day='+this.selectedIntervalDay;
       }
+      if(this.selectedPaymentMethod){
+        query+='&payment_method='+this.selectedPaymentMethod;
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -450,6 +482,10 @@ export default {
     getTypeTranslationKey: function (id) {
       let type = this.types.find((x) => x.id == id);
       return type.name_translation_key;
+    },
+    removeSelectedPaymentMethod: function (){
+      this.selectedPaymentMethod = null;
+      if (this.filterIsActive) this.applyFilter();
     },
     removeAgioPaymentPlan: function () {
       this.selectedAgioPaymentPlan = null;
@@ -523,6 +559,7 @@ export default {
       this.filterIsActive = false;
       this.selectedDepotStatus = [];
       this.selectedIntervalDay = null;
+      this.selectedPaymentMethod = null;
       this.$emit("filter", "");
     },
   },

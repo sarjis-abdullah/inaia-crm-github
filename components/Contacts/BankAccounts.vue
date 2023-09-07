@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col">
             
-            <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm float-right mb-3" @click="showAddBank=true">
+            <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm float-right mb-3" @click="showAddBank=true" v-if="haveEditRight">
                     <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_bank_account')}}</span>
                 </button>
             
@@ -58,7 +58,7 @@
                     <el-table-column>
                                 <template v-slot="{row}">
 
-                                  <icon-button type="delete" @click="()=>deleteBankAccount(row)" v-if="row.is_default == '0'"></icon-button>
+                                  <icon-button type="delete" @click="()=>deleteBankAccount(row)" v-if="row.is_default == '0' && haveEditRight"></icon-button>
                                   <span v-else>{{$t('default')}}</span>
 
 
@@ -108,7 +108,7 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn } from 'element-ui';
 import IconButton from '@/components/common/Buttons/IconButton';
 import { MessageBox } from "element-ui";
-
+import {canEditCustomers} from '@/permissions'
 export default {
     props:{
         account_id:{
@@ -125,6 +125,9 @@ export default {
         ...mapGetters({
             paymentAccounts: "payment-accounts/paymentAccounts"
         }),
+        haveEditRight(){
+            return canEditCustomers();
+        }
     },
     mounted(){
         this.isLoading = true;
