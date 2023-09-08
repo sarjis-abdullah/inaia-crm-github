@@ -708,7 +708,7 @@ export default {
     initiate_payment:'Initiate direct debit',
     invested_amount:'Invested amount',
     of:'of',
-    added_amount:'Added amount',
+    added_amount:'Increase agio',
     added_amount_explanation:'The amount you are adding here, will increase the agio by that amount, at saving point a new agio transaction of type claim will be created',
     monthly_payment:'Monthly payment',
     change_target_amount:'Change target amount'
