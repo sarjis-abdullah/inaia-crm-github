@@ -85,18 +85,46 @@
                     {{ $t('duration') }} {{$t('in')}} {{$t('years')}}
                 </div>
                 <div class="col-8">
-                    <Input v-model="duration" placeholder="duration" type="numeric" disabled/>
-                </Select>
+                    <Input v-model="duration" placeholder="duration" type="numeric"/>
             </div>
             </div>
-            
+            <div class="d-flex flex-row align-content-center mt-3">
+                <div class="col-4">
+                    {{ $t('monthly_payment') }}
+                </div>
+                <div class="col-8">
+                    <Input v-model="monthlyPayment" :placeholder="$t('monthly_payment')" type="numeric"/>
+                </div>
+            </div>
+            <div class="mt-3 ml-3">
+            <checkbox :label="$t('change_target_amount')" v-model="checkChangeTargetAmount" size="meduim"/>
+        </div>
+            <div v-if="checkChangeTargetAmount">
+                <div class="d-flex flex-row align-content-center mt-3">
+                    <div class="col-4">
+                    {{ $t('target_amount') }}
+                </div>
+                <div class="col-8">
+                    <Input v-model="targetAmount" :placeholder="$t('target_amount')" type="numeric"/>
+                </div>
+                </div>
+            </div>
+            <div class="d-flex flex-row align-content-center mt-3" v-if="checkChangeTargetAmount">
+                <div class="col-4">
+                    {{ $t('added_amount') }}
+                </div>
+                <div class="col-8">
+                    <Input v-model="addedAmount" :placeholder="$t('added_amount')" type="numeric"/>
+                    <p class="mt-2 text-muted  text-sm-left">{{ $t('added_amount_explanation') }}</p>
+                </div>
+            </div>
         </form>
         <template slot="footer">
             <base-button type="link" class="ml-auto" @click="onClose()">
                 {{$t('cancel')}}
             </base-button>
             <base-button type="primary" @click="() => saveSavingPlan()"
-            :disabled="isSubmitting">
+            :disabled="isSubmitting || (checkChangeTargetAmount && (!addedAmount || addedAmount<0 || isNaN(addedAmount)))">
                 {{$t('save')}}
             </base-button>
         </template>
@@ -110,9 +138,9 @@ import {
   Autocomplete,
   Form,
   FormItem,
-  Input
+  Input,
+  Checkbox
 } from "element-ui";
-import { json } from 'd3';
 import { formatDateToApiFormat } from '../../helpers/helpers';
 export default {
     props:{
@@ -130,13 +158,15 @@ export default {
         
     },
     components: {
+        Checkbox,
         Select,
         Option,
         DatePicker,
         Autocomplete,
         Form,
         FormItem,
-        Input
+        Input,
+        
     },
     watch:{
         show:{
@@ -144,8 +174,16 @@ export default {
                 if(this.depot && this.show){
                     this.selectedPaymentDay = this.depot.interval_day;
                     this.startingDate = new Date(this.depot.interval_startdate);
-                    this.selecteBillingMethod = this.depot.agio_payment_option;
+                    if(this.selecteBillingMethod == 'onetime'){
+                        this.selecteBillingMethod = this.depot.agio_payment_option;
+                    }
+                    else{
+                        this.selecteBillingMethod = this.depot.agio_percentage;
+                    }
+                    
                     this.selectePaymentMethod = this.depot.payment_method;
+                    this.monthlyPayment = this.depot.interval_amount/100;
+                    this.targetAmount = this.depot.target_amount/100;
                     this.duration = this.calculateDuration(new Date(this.depot.interval_enddate),this.startingDate);
                     const now = Date.now();
                     if(now >= this.startingDate){
@@ -200,8 +238,13 @@ export default {
                 },
                 {
                     id:2,
-                    value:'installment',
-                    text: this.$t('installment')
+                    value:50,
+                    text: '50/50'
+                },
+                {
+                    id:3,
+                    value:75,
+                    text: "75/25"
                 }
             ],
             selectedPaymentDay:null,
@@ -210,7 +253,12 @@ export default {
             selecteBillingMethod:null,
             duration : 0,
             diableStartDate:false,
-            shouldDisableIntervalDay:true
+            shouldDisableIntervalDay:true,
+            monthlyPayment:null,
+            checkChangeTargetAmount:false,
+            addedAmount:null,
+            isSubmitting:false,
+            targetAmount:null
         }
     },
     methods:{
@@ -230,9 +278,21 @@ export default {
             if(this.selectePaymentMethod){
                 newDepot.payment_method = this.selectePaymentMethod;
             }
-            if(this.selecteBillingMethod){
-                newDepot.agio_payment_option = this.selecteBillingMethod;
+            if(this.monthlyPayment && this.monthlyPayment > 0){
+                newDepot.interval_amount = this.monthlyPayment * 100;
             }
+            if(this.selecteBillingMethod){
+                if(this.selecteBillingMethod == "onetine")
+                    newDepot.agio_payment_option = this.selecteBillingMethod;
+                else{
+                    newDepot.agio_payment_option = "installment";
+                    newDepot.agio_percentage = this.selecteBillingMethod;
+                }
+            }
+            if(this.targetAmount && this.targetAmount > 0){
+                newDepot.target_amount = this.targetAmount * 100;
+            }
+            this.isSubmitting = true;
             this.$store.dispatch('depots/submit',newDepot).then(()=>{
                 this.$notify({
                     type:'success',
@@ -243,14 +303,56 @@ export default {
                 this.selectedPaymentDay = null;
                 this.duration = 0;
                 this.selectePaymentMethod = null;
-                this.onClose();
+                if(this.checkChangeTargetAmount && this.addedAmount){
+                    this.createClaim();
+                }
+                else{
+                    this.isSubmitting = false;
+                    this.onClose();
+                }
+                
             }).catch((err)=>{
-                console.log(err);
+               this.isSubmitting = false;
                 this.$notify({
                     type:'error',
                     message:this.$t('error_updating_saving_plan'),
                     duration:5000})
             })
+        },
+        createClaim() {
+            this.$store.dispatch('depots/fetchAgioTransactionTypes')
+                .then((res) => {
+                    const claim = res.find(x=>x.name_translation_key == 'claim')
+                    if (claim) {
+                        let payload = {
+                            "depot_id": this.depot.id,
+                            "amount": Number(this.addedAmount) * 100,
+                            "agio_type_id": claim.id,
+                            "is_manual": true,
+                        }
+                        this.$store.dispatch('depots/createAgioTransaction', payload).then(res => {
+                            this.$notify({ type: 'success', timeout: 5000, message: this.$t('agio_transaction_created_successfully') })
+                            this.onClose();
+                        }).catch((err) => {
+                            this.$notify({ type: 'danger', timeout: 5000, message: this.$t('agio_transaction_created_unsuccessfully') })
+                        }).finally(() => {
+                            this.isSubmitting = false;
+                        })
+                    }
+                    else{
+                        throw Error('no claim type found')
+                    }
+                })
+                .catch(
+                    (err) => {
+                        this.isSubmitting = false;
+                        this.$notify({
+                            type: 'error',
+                            message: this.$t('agio_transaction_created_unsuccessfully'),
+                            duration: 5000
+                        })
+                    }
+                )
         },
         addYears(date, years) {
             date.setFullYear(date.getFullYear() + years);

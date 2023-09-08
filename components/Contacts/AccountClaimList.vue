@@ -60,9 +60,15 @@
         </el-table-column>
         <el-table-column  v-if="hasEditAccess">
           <template v-slot="{ row }" >
-            <base-button type="success" @click="() => markAspaid(row.id)" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')">
-                            <span>{{$t('paid')}}</span>
-                         </base-button>
+            <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
+                <span class="btn btn-sm btn-icon-only text-light">
+                    <i class="fas fa-ellipsis-v mt-2"></i>
+                </span>
+                <DropdownMenu  slot="dropdown">
+                    <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
+                   
+                </DropdownMenu>
+                </Dropdown>
           </template>
         </el-table-column>
   
@@ -79,7 +85,7 @@
     </div>
   </template>
   <script>
-  import { Table, TableColumn } from "element-ui";
+  import { Table, TableColumn,Dropdown,DropdownItem,DropdownMenu } from "element-ui";
   import Status from "@/components/Claims/Status";
   import { mapGetters } from "vuex";
   import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
@@ -97,6 +103,7 @@
       [Table.name]: Table,
       [TableColumn.name]: TableColumn,
       Status,
+      Dropdown,DropdownItem,DropdownMenu
     },
     computed: {
       ...mapGetters({
@@ -147,6 +154,11 @@
             .finally(() => (this.isLoading = false));
         
       },
+      handleCommand(command,id){
+      if(command=="mark_as_paid"){
+        this.markAspaid(id);
+      }
+    },
       isPending(){
         return this.aggregated_status == PAYMENT_PENDING;
       },

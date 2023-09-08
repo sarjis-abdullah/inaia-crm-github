@@ -33,6 +33,9 @@
                 </Option>
               </Select>
             </div>
+            <div class="col">
+              <SelectCustomer @selected="filterByCustomer" @cleared="clearCustomer"/>
+            </div>
             <div class="col" v-if="!month">
               <date-picker
                 size="large"
@@ -182,6 +185,7 @@ import CustomerFilter from '@/components/common/CustomerFilter';
 import moment from 'moment';
 import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
 import { MessageBox } from "element-ui";
+import SelectCustomer from "@/components/Contacts/SelectCustomer";
 export default {
   props: {
     account_id: {
@@ -216,7 +220,8 @@ export default {
     CustomerFilter,
     Dropdown,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    SelectCustomer
   },
   mounted() {
     this.$confirm = MessageBox.confirm
@@ -411,6 +416,14 @@ export default {
         }).catch(() => {
          
         });
+      },
+      filterByCustomer(id){
+        this.selectedCustomer = id;
+        this.page = 1;
+      },
+      clearCustomer(){
+        this.selectedCustomer = null;
+        this.page = 1;
       },
       initiatePayment(id){
           this.isSubmitting = true;
