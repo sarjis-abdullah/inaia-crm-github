@@ -270,7 +270,8 @@ export default {
                 newDepot.interval_startdate = formatDateToApiFormat(this.startingDate);
             }
             if(!isNaN(this.duration) && this.duration > 0){
-                newDepot.interval_enddate =  formatDateToApiFormat(this.addYears(this.startingDate,this.duration));
+                const endDate = this.addYears(this.startingDate,parseInt(this.duration));
+                newDepot.interval_enddate =  formatDateToApiFormat(endDate);
             }
             if(this.selectedPaymentDay){
                 newDepot.interval_day = this.selectedPaymentDay;
@@ -292,6 +293,9 @@ export default {
             if(this.targetAmount && this.targetAmount > 0){
                 newDepot.target_amount = this.targetAmount * 100;
             }
+            if(this.checkChangeTargetAmount && this.addedAmount){
+                    newDepot.agio_increase = this.addedAmount * 100;
+            }
             this.isSubmitting = true;
             this.$store.dispatch('depots/submit',newDepot).then(()=>{
                 this.$notify({
@@ -303,14 +307,10 @@ export default {
                 this.selectedPaymentDay = null;
                 this.duration = 0;
                 this.selectePaymentMethod = null;
-                if(this.checkChangeTargetAmount && this.addedAmount){
-                    this.createClaim();
-                }
-                else{
-                    this.isSubmitting = false;
-                    this.onClose();
-                }
-                
+                this.checkChangeTargetAmount = false;
+                this.addedAmount = false;
+                this.isSubmitting = false;
+                this.onClose();
             }).catch((err)=>{
                this.isSubmitting = false;
                 this.$notify({
@@ -318,41 +318,6 @@ export default {
                     message:this.$t('error_updating_saving_plan'),
                     duration:5000})
             })
-        },
-        createClaim() {
-            this.$store.dispatch('depots/fetchAgioTransactionTypes')
-                .then((res) => {
-                    const claim = res.find(x=>x.name_translation_key == 'claim')
-                    if (claim) {
-                        let payload = {
-                            "depot_id": this.depot.id,
-                            "amount": Number(this.addedAmount) * 100,
-                            "agio_type_id": claim.id,
-                            "is_manual": true,
-                        }
-                        this.$store.dispatch('depots/createAgioTransaction', payload).then(res => {
-                            this.$notify({ type: 'success', timeout: 5000, message: this.$t('agio_transaction_created_successfully') })
-                            this.onClose();
-                        }).catch((err) => {
-                            this.$notify({ type: 'danger', timeout: 5000, message: this.$t('agio_transaction_created_unsuccessfully') })
-                        }).finally(() => {
-                            this.isSubmitting = false;
-                        })
-                    }
-                    else{
-                        throw Error('no claim type found')
-                    }
-                })
-                .catch(
-                    (err) => {
-                        this.isSubmitting = false;
-                        this.$notify({
-                            type: 'error',
-                            message: this.$t('agio_transaction_created_unsuccessfully'),
-                            duration: 5000
-                        })
-                    }
-                )
         },
         addYears(date, years) {
             date.setFullYear(date.getFullYear() + years);
