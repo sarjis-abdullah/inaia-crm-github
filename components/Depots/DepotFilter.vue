@@ -430,7 +430,7 @@ export default {
     quiryBuilder: function () {
       let query = "";
       if (this.selectedAgio && !isNaN(this.selectedAgio)) {
-        query += "&agio=" + parseInt(this.selectedAgio);
+        query += "&agio=" + parseInt(this.selectedAgio * 100);
       }
       if (this.selectedDepotStatus.length>0) {
         query += "&depot_status_ids=" + this.selectedDepotStatus.join(',');
