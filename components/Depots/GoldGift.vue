@@ -9,14 +9,6 @@
               <img src="/img/theme/gold-gift.png" class="icon"/>
               <h2 class="card-title mt-3 mb-0 title">{{$t('gold_gift')}}</h2>
             </div>
-            <div class="mt-4 list-group list-group-flush" v-if="!isLoading && error==null && currentPrice!=null">
-              <detail-list-item :title="$t('gold_price')"><div slot="value">{{$n(currentPrice.fixing_gram)}} €</div></detail-list-item>
-              <!--
-              <detail-list-item :title="$t('gold_price_sell')"><div slot="value">{{$n(currentPrice.au_bid)}} €</div></detail-list-item>
-              <detail-list-item :title="$t('gold_price_buy')"><div slot="value">{{$n(currentPrice.au_ask)}} €</div></detail-list-item>
-              <detail-list-item :title="$t('gold_price_average')"><div slot="value">{{$n(currentPrice.fixing_gram_eur)}} €</div></detail-list-item>
-              -->
-            </div>
             <div class="mt-4">
                 <div class="row">
                   <div class="col-md-6">
@@ -26,11 +18,25 @@
                       <TextError :textError="$t(validationError.date)" v-if="validationError.date!=null"/>
                     </div>
                   </div>
+                  <div class="col-md-6 my-auto">
+                   
+                      <div>{{ $t('gram_price') }} : {{ $n(fixingPriceGram) }} €</div>
+                      <div>{{ $t('ounce_price') }} : {{ $n(fixingPriceOunce) }} €</div>
+                  
+                  </div>
+                </div>
+                <div class="row">
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <div class="text-sm">{{ $t('gold_amount') }}</div>
-                      <Input class="filterElement mb-0" v-model="amount" :placeholder="$t('0')" type="number" @change="onAmountChange"/>
+                      <div class="text-sm">{{ $t('gold_amount') }} ( g )</div>
+                      <Input class="filterElement mb-0" v-model="amount" :placeholder="$t('0')" type="number" @change="onGramChanged"/>
                       <TextError :textError="$t(validationError.amount)" v-if="validationError.amount!=null"/>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <div class="text-sm">{{ $t('amount') }} ( € )</div>
+                      <Input class="filterElement mb-0" v-model="moneyAmount" :placeholder="$t('0')" type="number" @change="onMoneyChanged"/>
                     </div>
                   </div>
                 </div>
@@ -62,6 +68,7 @@ import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../helpers/helpers';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
+import { assetTypes } from '@/helpers/depots';
 export default {
     components:{
         Input,
@@ -88,16 +95,55 @@ export default {
         return {
             priceDate: null,
             amount:null,
+            moneyAmount:null,
             comment:'',
             isSubmitting:false,
             isLoading:false,
             error:null,
-            currentPrice:null,
+            
+            fixingPriceGram:0,
+            fixingPriceOunce:0,
             validationError:{
                 date:null,
                 amount:null,
                 comment:null,
             }
+        }
+    },
+    watch:{
+        moneyAmount:{
+            handler(){
+                
+                
+            },
+            immediate: true
+        },
+        priceDate:{
+            handler(){
+                
+                if(this.fixingPriceGram > 0){
+                    if(this.moneyAmount > 0){
+                        const amount = this.moneyAmount *100;
+                        const gramAmount = amount / (this.fixingPriceGram * 100)
+                        if(!isNaN(gramAmount) && gramAmount>=100)
+                        {
+                            this.validationError.amount = null;
+                            this.amount = gramAmount;
+                        }
+                        else
+                        {
+                            this.validationError.amount = 'add_gold_gift_amount'
+                        }
+                    }
+                    else if(this.gramAmount > 0){
+                        this.moneyAmount = (amount * this.fixingPriceGram * 100)/100000;
+
+                    }
+                    
+                }
+                
+            },
+            immediate: true
         }
     },
     methods:{
@@ -116,11 +162,13 @@ export default {
                 this.amount = null;
                 this.priceDate = null;
                 this.comment = '';
-                this.currentPrice = null;
+                this.fixingPriceGram = 0,
+                this.fixingPriceOunce = 0,
                 this.validationError= {
                 date:null,
                 amount:null,
                 comment:null,
+                
             }
             this.error = null;
             this.$emit('onClose');
@@ -132,7 +180,7 @@ export default {
             })
         },
         shouldDisableSubmit(){
-            if(this.comment!='' && !isNaN(this.amount) && this.amount*1000>=100 && this.priceDate && typeof this.priceDate.getMonth === 'function'){
+            if(this.comment!='' && !isNaN(this.amount) && this.amount*1000>=100 && this.priceDate && typeof this.priceDate.getMonth === 'function' && this.fixingPriceGram > 0){
                 return false;
             }
             else
@@ -143,7 +191,7 @@ export default {
         getPrice:function()
         {
             const today = new Date();
-            if(this.selectedDate>today)
+            if(this.priceDate>today)
             {
                 this.validationError.date = 'select_right_preview_date';
                 return;
@@ -151,23 +199,89 @@ export default {
             this.validationError.date = null;
             this.error = null;
             this.isLoading = true;
-            this.$store.dispatch('depots/getGoldPriceByDate',formatDateToApiFormat(this.priceDate)).then(res=>{
-                this.currentPrice = res;
-            }).catch(err=>{
-                this.error = 'cant_load_preview'
-            }).finally(()=>{
-                this.isLoading = false;
-            })
+            const dbDate = formatDateToApiFormat(this.priceDate);
+            
+            if(this.depot.depot_type.name_translation_key == assetTypes.gold)
+            {
+                this.$store.dispatch('gold/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1)
+                    {
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                        if(this.moneyAmount > 0){
+                            this.onMoneyChanged(this.moneyAmount);
+                        }
+                        else if(this.amount){
+                            this.onGramChanged(this.amount);
+                        }
+                    }
+                    else{
+                        this.fixingPriceGram = 0;
+                        this.fixingPriceOunce = 0;
+                        this.validationError.date = 'cant_load_preview'
+                    }
+                    
+                }).catch(err=>{
+                    this.fixingPriceGram = 0;
+                        this.fixingPriceOunce = 0;
+                        this.error = 'cant_load_preview'
+                    }).finally(()=>{
+                        this.isLoading = false;
+                    })
+            }
+            if(this.depot.depot_type.name_translation_key == assetTypes.silver)
+            {
+                this.$store.dispatch('silver/getFullFixingPrice',dbDate).then(res=>{
+                    if(res != -1){
+                        this.fixingPriceGram = res.fixing_gram;
+                        this.fixingPriceOunce = res.fixing_ounce;
+                        if(this.moneyAmount > 0){
+                            this.onMoneyChanged(this.moneyAmount);
+                        }
+                        else if(this.amount){
+                            this.onGramChanged(this.amount);
+                        }
+                    }
+                    else{
+                        this.fixingPriceGram = 0;
+                        this.fixingPriceOunce = 0;
+                        this.validationError.date = 'cant_load_preview'
+                    }
+                    
+                }).catch(err=>{
+                    this.fixingPriceGram = 0;
+                        this.fixingPriceOunce = 0;
+                    this.validationError.date = 'cant_load_preview'
+                    }).finally(()=>{
+                        this.isLoading = false;
+                    })
+            }
         },
-        onAmountChange(value){
+        onGramChanged(value){
             const amount = value *1000
             if(!isNaN(amount) && amount>=100)
             {
                 this.validationError.amount = null;
+                this.moneyAmount = value * this.fixingPriceGram;
             }
             else
             {
                 this.validationError.amount = 'add_gold_gift_amount'
+            }
+        },
+        onMoneyChanged(value){
+            
+            if(this.fixingPriceGram > 0){
+                const gramAmount = (value / (this.fixingPriceGram))
+                if(!isNaN(gramAmount) && (gramAmount*1000)>=100)
+                {
+                    this.validationError.amount = null;
+                    this.amount = parseFloat(gramAmount).toFixed(3);
+                }
+                else
+                {
+                    this.validationError.amount = 'add_gold_gift_amount'
+                }
             }
         }
     },
