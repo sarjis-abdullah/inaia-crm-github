@@ -174,11 +174,20 @@ export default {
                 if(this.depot && this.show){
                     this.selectedPaymentDay = this.depot.interval_day;
                     this.startingDate = new Date(this.depot.interval_startdate);
-                    if(this.selecteBillingMethod == 'onetime'){
+                    const onetimeIndex = this.billingOptions.findIndex(x=>x.id==1);
+                    if(this.depot.agio_payment_option == 'onetime'){
+                        if(onetimeIndex == -1)
+                            this.billingOptions.push({
+                                id:1,
+                                value:'onetime',
+                                text: this.$t('onetime')
+                            });
                         this.selecteBillingMethod = this.depot.agio_payment_option;
                     }
                     else{
                         this.selecteBillingMethod = this.depot.agio_percentage;
+                        if(onetimeIndex > -1)
+                            this.billingOptions.splice(onetimeIndex,1)
                     }
                     
                     this.selectePaymentMethod = this.depot.payment_method;
@@ -283,11 +292,16 @@ export default {
                 newDepot.interval_amount = this.monthlyPayment * 100;
             }
             if(this.selecteBillingMethod){
-                if(this.selecteBillingMethod == "onetine")
+                
+                if(this.selecteBillingMethod == "onetime")
+                {
                     newDepot.agio_payment_option = this.selecteBillingMethod;
+                    
+                }
                 else{
                     newDepot.agio_payment_option = "installment";
                     newDepot.agio_percentage = this.selecteBillingMethod;
+                    
                 }
             }
             if(this.targetAmount && this.targetAmount > 0){
