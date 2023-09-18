@@ -128,7 +128,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="primary" @click="() => saveSavingPlan()"
-            :disabled="isSubmitting || (checkChangeTargetAmount && (!addedAmount || addedAmount<0 || isNaN(addedAmount)))">
+            :disabled="isSubmitting || (checkChangeTargetAmount)">
                 {{$t('save')}}
             </base-button>
         </template>
@@ -320,7 +320,7 @@ export default {
                 this.duration = 0;
                 this.selectePaymentMethod = null;
                 this.checkChangeTargetAmount = false;
-                this.addedAmount = false;
+                this.addedAmount = null;
                 this.isSubmitting = false;
                 this.onClose();
             }).catch((err)=>{
