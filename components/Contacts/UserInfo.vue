@@ -16,7 +16,7 @@
             <div class="account_data text-sm mt-1">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('account_data')}}</div>
               <div>{{$t('name')}}:
-                <a href="" v-if="singleClientData && singleClientData.customer" @click.prevent="$router.push('/customers/details/' + singleClientData.customer.id)">{{getName}}</a>
+                <a href="" v-if="singleClientData && singleClientData.customer" @click.prevent="gotoDetails">{{getName}}</a>
               </div>
               <div>{{$t('status')}}:
                 <badge :type="`${info.is_active ? 'success' : 'danger'}`" class="ml-1">{{info.is_active ? $t('active') : $t('inactive')}}</badge>
@@ -128,6 +128,11 @@ export default {
       }
       return null;
     },
+    gotoDetails() {
+            const part = "/customers/details/";
+            const url = "http://"+window.location.host+part+this.singleClientData.customer.id;
+            window.open(url,'_blank');
+        },
   },
 };
 </script>

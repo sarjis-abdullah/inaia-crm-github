@@ -316,8 +316,8 @@ export default {
                         }
 
                         this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
-                        //window.open(res,'_blank');
-                        window.location.href = res;
+                        window.open(res,'_blank');
+                        //window.location.href = res;
                         }).catch((err)=>{
                             this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
                         }).finally(()=>{
