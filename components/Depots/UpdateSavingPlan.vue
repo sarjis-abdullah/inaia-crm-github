@@ -12,7 +12,6 @@
                     <Select
                 :placeholder="$t('interval_day')"
                 v-model="selectedPaymentDay"
-                :disabled="shouldDisableIntervalDay"
                 
                 >
                     <Option
@@ -82,10 +81,15 @@
             </div>
             <div class="d-flex flex-row align-content-center mt-3">
                 <div class="col-4">
-                    {{ $t('duration') }} {{$t('in')}} {{$t('years')}}
+                    {{ $t('end_date') }}
                 </div>
                 <div class="col-8">
-                    <Input v-model="duration" placeholder="duration" type="numeric"/>
+                    <date-picker
+                    v-model="endDate"
+                    type="date"
+                    :placeholder="$t('end_date')"
+                >
+            </date-picker>
             </div>
             </div>
             <div class="d-flex flex-row align-content-center mt-3">
@@ -124,7 +128,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="primary" @click="() => saveSavingPlan()"
-            :disabled="isSubmitting || (checkChangeTargetAmount && (!addedAmount || addedAmount<0 || isNaN(addedAmount)))">
+            :disabled="isSubmitting || (checkChangeTargetAmount)">
                 {{$t('save')}}
             </base-button>
         </template>
@@ -154,7 +158,6 @@ export default {
         },
     },
     mounted(){
-        console.log(this.depot);
         
     },
     components: {
@@ -176,24 +179,18 @@ export default {
                     this.startingDate = new Date(this.depot.interval_startdate);
                     const onetimeIndex = this.billingOptions.findIndex(x=>x.id==1);
                     if(this.depot.agio_payment_option == 'onetime'){
-                        if(onetimeIndex == -1)
-                            this.billingOptions.push({
-                                id:1,
-                                value:'onetime',
-                                text: this.$t('onetime')
-                            });
+                        
                         this.selecteBillingMethod = this.depot.agio_payment_option;
                     }
                     else{
                         this.selecteBillingMethod = this.depot.agio_percentage;
-                        if(onetimeIndex > -1)
-                            this.billingOptions.splice(onetimeIndex,1)
                     }
                     
                     this.selectePaymentMethod = this.depot.payment_method;
                     this.monthlyPayment = this.depot.interval_amount/100;
                     this.targetAmount = this.depot.target_amount/100;
                     this.duration = this.calculateDuration(new Date(this.depot.interval_enddate),this.startingDate);
+                    this.endDate = new Date(this.depot.interval_enddate);
                     const now = Date.now();
                     if(now >= this.startingDate){
                         this.diableStartDate = true
@@ -267,7 +264,8 @@ export default {
             checkChangeTargetAmount:false,
             addedAmount:null,
             isSubmitting:false,
-            targetAmount:null
+            targetAmount:null,
+            endDate:null,
         }
     },
     methods:{
@@ -278,9 +276,9 @@ export default {
             if(this.startingDate){
                 newDepot.interval_startdate = formatDateToApiFormat(this.startingDate);
             }
-            if(!isNaN(this.duration) && this.duration > 0){
-                const endDate = this.addYears(this.startingDate,parseInt(this.duration));
-                newDepot.interval_enddate =  formatDateToApiFormat(endDate);
+            if(this.endDate){
+                //const endDate = this.addYears(this.startingDate,parseInt(this.duration));
+                newDepot.interval_enddate =  formatDateToApiFormat(this.endDate);
             }
             if(this.selectedPaymentDay){
                 newDepot.interval_day = this.selectedPaymentDay;
@@ -322,7 +320,7 @@ export default {
                 this.duration = 0;
                 this.selectePaymentMethod = null;
                 this.checkChangeTargetAmount = false;
-                this.addedAmount = false;
+                this.addedAmount = null;
                 this.isSubmitting = false;
                 this.onClose();
             }).catch((err)=>{

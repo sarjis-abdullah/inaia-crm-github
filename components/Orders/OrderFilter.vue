@@ -82,6 +82,21 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('payment_method')"
+            v-model="selectedPaymentMethod"
+            clearable
+            class="filterElement"
+            @clear="removeSelectedPaymentMethod"
+          >
+            <Option
+              v-for="option in paymentmethods"
+              :value="option.value"
+              :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <date-picker
@@ -134,6 +149,15 @@
         v-if="selectedDepots != null && !isDepotSet"
         >{{ formatDepotTag()
         }}<a class="pointer badgeIcon" @click.prevent="removeDepot()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="selectedPaymentMethod != null"
+        >{{ $t(selectedPaymentMethod)
+        }}<a class="badgeIcon" @click.prevent="removeSelectedPaymentMethod()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
       <Badge
@@ -224,6 +248,11 @@ export default {
       selectedCustomerInfo: null,
       timer: null,
       customerQuery: "",
+      paymentmethods: [
+        { id: 1, value: "bank_transfer", label: "bank_transfer" },
+        { id: 2, value: "bank_account", label: "bank_account" },
+      ],
+      selectedPaymentMethod:null
     };
   },
   mounted() {
@@ -371,7 +400,10 @@ export default {
         query += "&create_date_start=" + formatDateToApiFormat(this.startDate);
       }
       if (this.endDate != null) {
-        query += "&create_date_end=" + formatDateToApiFormat(this.startDate);
+        query += "&create_date_end=" + formatDateToApiFormat(this.endDate);
+      }
+      if(this.selectedPaymentMethod){
+        query+='&payment_method='+this.selectedPaymentMethod;
       }
       if (query == "") {
         this.filterIsActive = false;
@@ -395,6 +427,10 @@ export default {
       this.selectedStatus = this.selectedStatus.filter((sta) => sta != id);
       const query = this.quiryBuilder();
       this.$emit("filter", query);
+    },
+    removeSelectedPaymentMethod: function (){
+      this.selectedPaymentMethod = null;
+      if (this.filterIsActive) this.applyFilter();
     },
     removeType: function (id) {
       this.selectedType = this.selectedType.filter((type) => type != id);
@@ -428,6 +464,7 @@ export default {
       this.selectedDepots = null;
       this.selectedCustomerInfo = null;
       this.selectedDepots = null;
+      this.selectedPaymentMethod = null;
       this.filterIsActive = false;
       this.$emit("filter", "");
     },

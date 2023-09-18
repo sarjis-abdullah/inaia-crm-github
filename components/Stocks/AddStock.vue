@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <span class=" text-sm-center text-muted mb-3" v-if="isCredit">{{ $t('stock_bought_amount_explanation') }}</span>
-                <div class="row" v-if="isNewOperations() && !isCredit">
+                <div class="row" v-if="isNewOperations() && isCredit">
                     <div class="col-3">
                         <Input v-model="amount" :placeholder="$t('stock_bought_amount')"/>
                     
