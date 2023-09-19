@@ -134,7 +134,7 @@ import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
-import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale } from '../../helpers/order';
+import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale, isOrderSilverPurchase, isOrderSilverSale } from '../../helpers/order';
 export default {
     components: {
         [Table.name]: Table,
@@ -359,7 +359,7 @@ export default {
         },
         allowAddToOrderProcess(order)
         {
-            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order));
+            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order) || isOrderSilverPurchase(order) || isOrderSilverSale(order));
         },
         onOrderUpdated(order)
         {
