@@ -60,7 +60,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import { GOLD_PURCHASE_TYPE, GOLD_SELL_TYPE, ORDER_STATUS_PENDING } from "../../helpers/order";
+import { GOLD_PURCHASE_TYPE, GOLD_SELL_TYPE, ORDER_STATUS_PENDING, SILVER_PURCHASE_INTERVAL_TYPE, SILVER_PURCHASE_TYPE, SILVER_SELL_TYPE } from "../../helpers/order";
 import { Select, Option, DatePicker } from "element-ui";
 import {formatDateToApiFormat} from '../../helpers/helpers';
 export default {
@@ -93,7 +93,9 @@ export default {
         this.allTypes.forEach((element) => {
           if (
             element.name_translation_key == GOLD_PURCHASE_TYPE ||
-            element.name_translation_key == GOLD_SELL_TYPE
+            element.name_translation_key == GOLD_SELL_TYPE ||
+            element.name_translation_key == SILVER_SELL_TYPE ||
+            element.name_translation_key == SILVER_PURCHASE_TYPE
           ) {
             data.push(element);
           }
