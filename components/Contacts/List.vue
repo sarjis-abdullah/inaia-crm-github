@@ -172,8 +172,9 @@
                           -->
                         </el-table>
 
-                        <div class="card-footer py-4 d-flex justify-content-end">
-                            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                        <div class="card-footer py-4 d-flex align-items-center">
+                            <MetaInfo :meta="meta" class="d-flex"/>
+                            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
                         </div>
 
                         <modal :show.sync="showPopup">
@@ -213,7 +214,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
 import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/helpers';
 import AmlStatus from '@/components/Contacts/AmlStatus';
-
+import MetaInfo from '@/components/common/MetaInfo';
 export default {
     components: {
         [Table.name]: Table,
@@ -225,7 +226,8 @@ export default {
         IconButton,
         AmlStatus,
         Select,
-        Option
+        Option,
+        MetaInfo
     },
     data() {
         return {
@@ -249,7 +251,8 @@ export default {
             sortedBy: { customer: "asc" },
             searchWords:null,
             selectedAmlStatus:null,
-            selectedSalesAdvisor:null
+            selectedSalesAdvisor:null,
+            meta:null
         }
     },
    
@@ -316,6 +319,7 @@ export default {
                     .then(response => {
                         this.data = response.data.data
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta;
                     }).finally(() => {
                         this.initiated  = false
                     })

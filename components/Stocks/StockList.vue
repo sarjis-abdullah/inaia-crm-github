@@ -124,9 +124,10 @@
                 </el-table-column>
             </el-table>
 
-            <div class="card-footer py-4 d-flex justify-content-end">
-                <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
-            </div>
+            <div class="card-footer py-4 d-flex align-items-center">
+                    <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
+                </div>
 
         </div>
 
@@ -142,6 +143,7 @@ import {stockTypes} from '@/helpers/stocks';
 import { Table, TableColumn,Input } from 'element-ui';
 import StockFilter from '@/components/Stocks/StockFilter';
 import AddStock from '@/components/Stocks/AddStock';
+import MetaInfo from '@/components/common/MetaInfo';
 export default {
     props:{
         depotType:{
@@ -158,7 +160,8 @@ export default {
         [TableColumn.name]: TableColumn,
         StockFilter,
         Input,
-        AddStock
+        AddStock,
+        MetaInfo
     },
     data(){
         return{
@@ -170,7 +173,8 @@ export default {
             totalTableData:1,
             filterQuery:null,
             data:[],
-            showAddStock:false
+            showAddStock:false,
+            meta:null
         }
     },
     computed:{
@@ -225,6 +229,7 @@ export default {
                 this.page = res.meta.current_page;
                 this.totalTableData = res.meta.total;
                 this.data = res.data;
+                this.meta = res.meta
             }).finally(()=>{
                 this.isLoading = false;
             })

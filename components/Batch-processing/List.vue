@@ -120,8 +120,9 @@
 
                 </el-table>
 
-                <div class="card-footer py-4 d-flex justify-content-end">
-                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                <div class="card-footer py-4 d-flex align-items-center">
+                    <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
                 </div>
                 
 
@@ -144,6 +145,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import BachFilter from '@/components/Batch-processing/Filter';
 import Complete from '@/components/Batch-processing/Complete';
 import RetryFailed from '@/components/Batch-processing/RetryFailed';
+import MetaInfo from '@/components/common/MetaInfo';
 export default {
     components: {
         [Table.name]: Table,
@@ -156,7 +158,8 @@ export default {
         BachFilter,
         Complete,
         Progress,
-        RetryFailed
+        RetryFailed,
+        MetaInfo
     },
     data() {
         return {
@@ -174,7 +177,8 @@ export default {
             showConfirmComplete: false,
             selectedOrderProcess: null,
             isSubmitting : false,
-            showConfirmRetryComplete:false
+            showConfirmRetryComplete:false,
+            meta:null
         }
     },
     computed: {
@@ -210,6 +214,7 @@ export default {
                     .dispatch("batch-processing/fetchList", pageQuery)
                     .then(response => {
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta;
                         this.isLoading = false
                     }).finally(() => {
                         this.initiated  = false

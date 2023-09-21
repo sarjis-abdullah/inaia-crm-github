@@ -117,9 +117,11 @@
 
                     </el-table>
 
-                    <div class="card-footer py-4 d-flex justify-content-end" v-if="totalTableData> perPage">
-                        <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
-                    </div>
+                   
+                    <div class="card-footer py-4 d-flex align-items-center">
+                        <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto" v-if="totalTableData> perPage"></base-pagination>
+                </div>
 
                     <modal :show.sync="showPopup">
                         <template slot="header">
@@ -163,6 +165,7 @@ import {Badge} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
 import DepotFilter from '@/components/Depots/DepotFilter';
 import Status from '@/components/Depots/Status';
+import MetaInfo from '@/components/common/MetaInfo';
 export default {
     components: {
         [Table.name]: Table,
@@ -174,7 +177,8 @@ export default {
         Badge,
         IconButton,
         DepotFilter,
-        Status
+        Status,
+        MetaInfo
     },
     props:{
       accountId:{
@@ -203,7 +207,8 @@ export default {
             sortedBy: { customer: "asc" },
             showFilter: false,
             filterQuery:null,
-            searchValue:null
+            searchValue:null,
+            meta:null
         }
     },
     computed: {
@@ -248,6 +253,7 @@ export default {
                     .then(response => {
                         this.data = response.data.data;
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta;
                     }).finally(() => {
                         this.initiated  = false
                     })
@@ -303,6 +309,7 @@ export default {
                       this.data = response.data.data
 
                       this.totalTableData = response.data.meta.total
+                      this.meta = response.data.meta;
                   }).catch(() => {
                       this.data = [];
                   })

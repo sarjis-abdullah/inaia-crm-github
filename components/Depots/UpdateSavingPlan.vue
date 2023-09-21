@@ -63,7 +63,25 @@
                 </Select>
             </div>
             </div>
-
+            <div class="d-flex flex-row align-content-center mt-3" v-if="selectePaymentMethod=='bank_account'">
+                <div class="col-4">
+                    {{ $t('payment_accounts') }}
+                </div>
+                <div class="col-8">
+                    <Select
+                :placeholder="$t('payment_accounts')"
+                v-model="selectedBankAccount"
+                >
+                    <Option
+                    v-for="option in paymentAccounts"
+                    :value="option.id"
+                    :label="formatPaymentAccountLabel(option)"
+                    :key="option.id"
+                    >
+                    </Option>
+                </Select>
+            </div>
+            </div>
             <div class="d-flex flex-row align-content-center mt-3">
                 <div class="col-4">
                     {{ $t('start_date') }}
@@ -128,7 +146,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="primary" @click="() => saveSavingPlan()"
-            :disabled="isSubmitting || (checkChangeTargetAmount)">
+            :disabled="isSubmitting || (checkChangeTargetAmount || (selectePaymentMethod == 'bank_account' && !selectedBankAccount))">
                 {{$t('save')}}
             </base-button>
         </template>
@@ -146,6 +164,8 @@ import {
   Checkbox
 } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
+import { mapGetters } from "vuex";
+import { lab } from 'd3';
 export default {
     props:{
         show:{
@@ -156,6 +176,11 @@ export default {
             type : Object,
             default: null
         },
+    },
+    computed:{
+        ...mapGetters({
+            paymentAccounts: "payment-accounts/paymentAccounts"
+        }),
     },
     mounted(){
         
@@ -186,7 +211,9 @@ export default {
                         this.selecteBillingMethod = this.depot.agio_percentage;
                     }
                     
+                    debugger;
                     this.selectePaymentMethod = this.depot.payment_method;
+                    this.selectedBankAccount == this.depot.payment_account_id;
                     this.monthlyPayment = this.depot.interval_amount/100;
                     this.targetAmount = this.depot.target_amount/100;
                     this.duration = this.calculateDuration(new Date(this.depot.interval_enddate),this.startingDate);
@@ -206,6 +233,14 @@ export default {
                         this.shouldDisableIntervalDay = true
                     }
                 }   
+            },
+            immediate:true
+        },
+        selectePaymentMethod:{
+            handler(){
+                this.$store.dispatch('payment-accounts/getPaymentAccountByUser',this.depot.account_id).finally(()=>{
+                    this.selectedBankAccount = this.depot.payment_account_id
+                })
             },
             immediate:true
         }
@@ -266,6 +301,7 @@ export default {
             isSubmitting:false,
             targetAmount:null,
             endDate:null,
+            selectedBankAccount:null
         }
     },
     methods:{
@@ -285,6 +321,9 @@ export default {
             }
             if(this.selectePaymentMethod){
                 newDepot.payment_method = this.selectePaymentMethod;
+            }
+            if(this.selectedBankAccount){
+                newDepot.payment_account_id = this.selectedBankAccount;
             }
             if(this.monthlyPayment && this.monthlyPayment > 0){
                 newDepot.interval_amount = this.monthlyPayment * 100;
@@ -321,6 +360,7 @@ export default {
                 this.selectePaymentMethod = null;
                 this.checkChangeTargetAmount = false;
                 this.addedAmount = null;
+                this.selectedBankAccount = null;
                 this.isSubmitting = false;
                 this.onClose();
             }).catch((err)=>{
@@ -342,6 +382,23 @@ export default {
             var diff =(endDate.getTime() - startDate.getTime()) / 1000;
             diff /= (60 * 60 * 24);
             return Math.abs(Math.round(diff/365.25));
+        },
+        formatPaymentAccountLabel(paymentAccount){
+            let label = '';
+            let iban = '';
+            let bankName = '';
+            if(paymentAccount && paymentAccount.payment_account_specs ){
+                paymentAccount.payment_account_specs.forEach(spec=>{
+                    if(spec.name == 'iban'){
+                        iban  = spec.value
+                    }
+                    if(spec.name == 'bank_name'){
+                        bankName  = spec.value
+                    }
+                })
+                label = bankName + ' ' + iban
+            }
+            return label;
         }
     }
 }

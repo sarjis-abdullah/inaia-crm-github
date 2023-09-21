@@ -104,9 +104,11 @@
 
                 </el-table>
 
-                <div class="card-footer py-4 d-flex justify-content-end">
-                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                <div class="card-footer py-4 d-flex align-items-center">
+                    <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
                 </div>
+
                 <Details
                         :selectedResource="selectedResource"
                         :showPopup="showPopup"
@@ -132,6 +134,7 @@ import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
 
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
+import MetaInfo from '@/components/common/MetaInfo';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
 import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale, isOrderSilverPurchase, isOrderSilverSale } from '../../helpers/order';
@@ -147,7 +150,8 @@ export default {
         IconButton,
         OrderFilter,
         SelectPaymentAccount,
-        Checkbox
+        Checkbox,
+        MetaInfo
     },
     props:{
         isDepotSet:{
@@ -192,7 +196,8 @@ export default {
             selectedOrders:{
                 type:'',
                 orders:[]
-            }
+            },
+            meta:null
         }
     },
     computed: {
@@ -234,6 +239,7 @@ export default {
                         this.data = response.data.data
 
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta
                     }).catch(() => {
                         this.data = [];
                     })
@@ -265,9 +271,8 @@ export default {
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {
                         this.data = response.data.data
-
                         this.totalTableData = response.data.meta.total
-
+                        this.meta = response.data.meta
                         this.isLoading = false
                     }).finally(() => {
                         this.initiated  = false
