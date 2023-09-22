@@ -42,14 +42,6 @@
             </div>
             <div class="d-flex flex-row align-content-center mt-3">
                 <div class="col-4">
-                    {{ $t('reference') }}
-                </div>
-                <div class="col-8">
-                    <Input v-model="reference" :placeholder="$t('reference')"/>
-                </div>
-            </div>
-            <div class="d-flex flex-row align-content-center mt-3">
-                <div class="col-4">
                     {{ $t('comment') }}
                 </div>
                 <div class="col-8">
