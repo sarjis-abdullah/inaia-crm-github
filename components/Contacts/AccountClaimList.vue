@@ -1,5 +1,10 @@
 <template>
     <div>
+      <div class="d-flex mb-3 justify-content-end">
+        <button @click.prevent="toggleAddClaim()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
+            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
+          </button>
+      </div>
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
@@ -81,7 +86,7 @@
           :total="totalTableData"
         ></base-pagination>
       </div>
-  
+      <CreateClaim :show="showCreateNewClaim" :account_id="account_id" @closed="closeAddClaim"/>
     </div>
   </template>
   <script>
@@ -91,6 +96,7 @@
   import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
   import { MessageBox } from "element-ui";
   import { canEditClaims } from '@/permissions';
+  import CreateClaim from "@/components/Claims/CreateClaim";
   export default {
     props: {
      
@@ -103,7 +109,8 @@
       [Table.name]: Table,
       [TableColumn.name]: TableColumn,
       Status,
-      Dropdown,DropdownItem,DropdownMenu
+      Dropdown,DropdownItem,DropdownMenu,
+      CreateClaim
     },
     computed: {
       ...mapGetters({
@@ -137,7 +144,8 @@
         isLoading: false,
         loadingError: null,
         confirming:false,
-        isSubmitting: false
+        isSubmitting: false,
+        showCreateNewClaim:false
       };
     },
     mounted(){
@@ -187,6 +195,12 @@
         }).catch(() => {
          
         });
+      },
+      toggleAddClaim(){
+        this.showCreateNewClaim = true;
+      },
+      closeAddClaim(){
+        this.showCreateNewClaim = false;
       }
     },
   };

@@ -165,7 +165,6 @@ import {
 } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import { mapGetters } from "vuex";
-import { lab } from 'd3';
 export default {
     props:{
         show:{
@@ -210,8 +209,6 @@ export default {
                     else{
                         this.selecteBillingMethod = this.depot.agio_percentage;
                     }
-                    
-                    debugger;
                     this.selectePaymentMethod = this.depot.payment_method;
                     this.selectedBankAccount == this.depot.payment_account_id;
                     this.monthlyPayment = this.depot.interval_amount/100;
