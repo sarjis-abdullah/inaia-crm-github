@@ -712,6 +712,9 @@ export default {
     added_amount_explanation:'The amount you are adding here, will increase the agio by that amount, at saving point a new agio transaction of type claim will be created',
     monthly_payment:'Monthly payment',
     change_target_amount:'Change target amount',
-    purchase_amount:'Purchase amount'
+    purchase_amount:'Purchase amount',
+    add_claim:'Add claim',
+    claim_type:'Claim type',
+    success_creating_claim:'New claim created successfully'
 
 }

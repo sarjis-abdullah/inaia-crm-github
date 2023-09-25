@@ -42,6 +42,7 @@ export default {
     },
     methods:{
       displayAmount(){
+        /*
         if(this.order.order_status && this.order.order_status.name_translation_key=='order_status_completed'){
             if(this.order.order_type && this.order.order_type.name_translation_key.includes('interval')){
                 return this.order.amount;
@@ -55,6 +56,7 @@ export default {
                 }
             }
         }
+        */
         return this.order.amount;
 
    },

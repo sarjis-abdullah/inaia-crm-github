@@ -62,6 +62,9 @@ export const mutations = {
         if (existingClaim) {
             Object.assign(existingClaim, data)
         }
+    },
+    newclaim(state,data){
+        state.claims.unshift(data)
     }
 }
 
@@ -125,5 +128,13 @@ export const actions = {
         return this.$axios.post(`/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
             return res.data.data.url;
         })
+    },
+    createNewClaim(context,payload){
+        return this.$axios
+                .post(`/claims?include=claim_type,claim_status`,payload)
+                .then(res=>{
+                    context.commit('newclaim',res.data.data);
+                    return res.data;
+                })
     }
 }
