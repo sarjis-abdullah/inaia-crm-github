@@ -40,7 +40,7 @@
                         </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
-                            :disabled="(selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            :disabled="(!hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
                             >
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
@@ -108,7 +108,7 @@ export default {
             isMoneyRefunded: 0,
             revertDate:null,
             makeDiscount:false,
-            hasMoneyTransfered:true
+            hasMoneyTransfered:false
         }
     },
      created (){
@@ -159,7 +159,6 @@ export default {
                 this.selectedResourceScreen = orderDetailScreens.cancel;
             }
             else if(this.selectedResourceScreen == orderDetailScreens.cancel){
-
                 let data = {
                     id:resource.id,
                 }
@@ -181,7 +180,7 @@ export default {
                     .then( res => {
                         let data = res.data.data;
                         if(data.fin_api_webform_url){
-                            window.location.href = data.fin_api_webform_url
+                            window.open(data.fin_api_webform_url,'_blank')
                         }
                         else{
                             this.showPopup = false;
@@ -227,6 +226,9 @@ export default {
             this.sellGoldDate = null;
             this.selectedSellingPaymentAccount = null;
             this.isMoneyRefunded = 0;
+            this.revertDate = null;
+            this.makeDiscount = false;
+            this.hasMoneyTransfered = false;
         },
         shouldDisplayOrderDeleteButton(resource)
         {
