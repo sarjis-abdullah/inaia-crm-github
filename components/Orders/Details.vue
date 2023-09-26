@@ -20,6 +20,7 @@
                         @isMoneyRefunded="setIsMoneyRefunded"
                         @revertorderdateselected="setRevertDate"
                         @makediscount="doMakeDiscount"
+                        @hasMoneyTransfered="setHasMoneyTranfered"
                         />
                     </div>
                     <template slot="footer" v-if="hasEditAccess">
@@ -106,7 +107,8 @@ export default {
             selectedResourceScreen:orderDetailScreens.detail,
             isMoneyRefunded: 0,
             revertDate:null,
-            makeDiscount:false
+            makeDiscount:false,
+            hasMoneyTransfered:true
         }
     },
      created (){
@@ -157,10 +159,20 @@ export default {
                 this.selectedResourceScreen = orderDetailScreens.cancel;
             }
             else if(this.selectedResourceScreen == orderDetailScreens.cancel){
+
                 let data = {
                     id:resource.id,
-                    data:{
-                        payment_account_id:this.selectedCancelPaymentAccount
+                }
+                if(this.hasMoneyTransfered){
+                    data.data = {
+                        
+                        has_money_transferred:true
+                    }
+                }
+                else{
+                    data.data = {
+                        payment_account_id:this.selectedCancelPaymentAccount,
+                        has_money_transferred:false
                     }
                 }
                 this.isSubmitting =  true;
@@ -201,6 +213,9 @@ export default {
        },
        doMakeDiscount(value){
         this.makeDiscount = value;
+       },
+       setHasMoneyTranfered(value){
+        this.hasMoneyTransfered = value;
        },
         onDetailClose ()
         {
