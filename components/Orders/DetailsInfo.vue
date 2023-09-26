@@ -35,11 +35,12 @@
                 <div>
                   <h4>{{$tc('confirm_cancel_order', resource.id)}}</h4>
 
-                  <div class="mt-4 mb-1">{{ $t('choose_payment_account_for_payback') }}:</div>
+                  <div class="mt-4 mb-1" v-if="!hasMoneyTransfered">{{ $t('choose_payment_account_for_payback') }}:</div>
                   <select-payment-account :account_id="resource.depot.account_id"
-                                          v-if="resource"
+                                          v-if="resource && !hasMoneyTransfered"
                                           @paymentaccountselected="setCancelPaymentAccount"
                   />
+                  <Checkbox v-model="hasMoneyTransfered" class="mt-3" @change="hasMoneyTranferedChanged">{{ $t('money_was_tranfered') }}</Checkbox>
                 </div>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
@@ -110,7 +111,7 @@ import CompleteGoldDelivery from '@/components/Orders/goldDetails/CompleteGoldDe
 import SellOrderDetail from '@/components/Orders/goldDetails/SellOrderDetails';
 import {orderDetailScreens} from '../../helpers/constans';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
-import {Input} from 'element-ui';
+import {Input,Checkbox} from 'element-ui';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../helpers/helpers';
 import {DatePicker} from 'element-ui';
@@ -129,7 +130,8 @@ export default {
         SellOrderDetail,
         CompleteGoldDelivery,
         DetailListItem,
-        DatePicker
+        DatePicker,
+        Checkbox
     },
     props: {
         resource: {
@@ -147,6 +149,7 @@ export default {
             fixingPriceGram:-1,
             fixingPriceOunce:-1,
             fixingDate:null,
+            hasMoneyTransfered:false
         }
     },
     created (){
@@ -184,6 +187,9 @@ export default {
          },
          onMakeDiscountChanged(value){
             this.$emit('makediscount',value);
+         },
+         hasMoneyTranferedChanged(value){
+            this.$emit('hasMoneyTransfered',value);
          },
          onSellGoldDateSelected(date){
              this.$emit('sellGoldDateSelected',date)

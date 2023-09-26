@@ -715,6 +715,7 @@ export default {
     purchase_amount:'Purchase amount',
     add_claim:'Add claim',
     claim_type:'Claim type',
-    success_creating_claim:'New claim created successfully'
+    success_creating_claim:'New claim created successfully',
+    money_was_tranfered:'Money is already transfered'
 
 }

@@ -20,6 +20,7 @@
                         @isMoneyRefunded="setIsMoneyRefunded"
                         @revertorderdateselected="setRevertDate"
                         @makediscount="doMakeDiscount"
+                        @hasMoneyTransfered="setHasMoneyTranfered"
                         />
                     </div>
                     <template slot="footer" v-if="hasEditAccess">
@@ -39,7 +40,7 @@
                         </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
-                            :disabled="(selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            :disabled="(!hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
                             >
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
@@ -106,7 +107,8 @@ export default {
             selectedResourceScreen:orderDetailScreens.detail,
             isMoneyRefunded: 0,
             revertDate:null,
-            makeDiscount:false
+            makeDiscount:false,
+            hasMoneyTransfered:false
         }
     },
      created (){
@@ -159,8 +161,17 @@ export default {
             else if(this.selectedResourceScreen == orderDetailScreens.cancel){
                 let data = {
                     id:resource.id,
-                    data:{
-                        payment_account_id:this.selectedCancelPaymentAccount
+                }
+                if(this.hasMoneyTransfered){
+                    data.data = {
+                        
+                        has_money_transferred:true
+                    }
+                }
+                else{
+                    data.data = {
+                        payment_account_id:this.selectedCancelPaymentAccount,
+                        has_money_transferred:false
                     }
                 }
                 this.isSubmitting =  true;
@@ -169,7 +180,7 @@ export default {
                     .then( res => {
                         let data = res.data.data;
                         if(data.fin_api_webform_url){
-                            window.location.href = data.fin_api_webform_url
+                            window.open(data.fin_api_webform_url,'_blank')
                         }
                         else{
                             this.showPopup = false;
@@ -202,6 +213,9 @@ export default {
        doMakeDiscount(value){
         this.makeDiscount = value;
        },
+       setHasMoneyTranfered(value){
+        this.hasMoneyTransfered = value;
+       },
         onDetailClose ()
         {
             this.selectedResourceScreen = orderDetailScreens.detail;
@@ -212,6 +226,9 @@ export default {
             this.sellGoldDate = null;
             this.selectedSellingPaymentAccount = null;
             this.isMoneyRefunded = 0;
+            this.revertDate = null;
+            this.makeDiscount = false;
+            this.hasMoneyTransfered = false;
         },
         shouldDisplayOrderDeleteButton(resource)
         {
