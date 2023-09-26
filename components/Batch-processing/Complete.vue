@@ -62,7 +62,7 @@
             {{ batchProcessPreview.total_orders_count }}
           </div></detail-list-item
         >
-        <div v-if="batchProcessPreview.inaia_stock_balance && batchProcessPreview.operation_stock_balance">
+        <div v-if="batchProcessPreview.inaia_stock_balance >=0 && batchProcessPreview.operation_stock_balance >=0">
         <div class="my-4">
           <span class=" text-black-100 text-uppercase">Asset sources</span>
           <div class="text-danger" v-if="batchProcessPreview.gram_amount > (batchProcessPreview.operation_stock_balance+batchProcessPreview.inaia_stock_balance)">
