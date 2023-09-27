@@ -80,7 +80,7 @@ export default({
     },
     computed:{
         enableSaving(){
-            return (this.selectedAdvisor>=0 && this.rate > 0 && !this.wrongAmount && this.amount > 0);
+            return (this.selectedAdvisor>=0 && this.rate >=0 && this.rate<=100 && !this.wrongAmount && this.amount > 0);
         }
     },
     watch: {
