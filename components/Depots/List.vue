@@ -103,7 +103,7 @@
                                  </template>
                         </el-table-column>
 
-                        <el-table-column>
+                        <el-table-column v-if="hasViewAccess">
                             <template v-slot="{row}">
 
                               <icon-button type="info" @click="() => gotoDetails(row)"></icon-button>
@@ -166,6 +166,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import DepotFilter from '@/components/Depots/DepotFilter';
 import Status from '@/components/Depots/Status';
 import MetaInfo from '@/components/common/MetaInfo';
+import {canViewDepot} from '@/permissions'
 export default {
     components: {
         [Table.name]: Table,
@@ -222,6 +223,9 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
+        },
+        hasViewAccess(){
+            return canViewDepot();
         }
     },
     watch: {
