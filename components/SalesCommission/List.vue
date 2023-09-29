@@ -50,7 +50,7 @@
                                 
                                     <div>
                                         <div>{{$n(row.amount/100)}} €</div>
-                                        <div class="text-sm-left text-muted">{{$n(row.rate/100)}} %</div>
+                                        <div class="text-sm-left text-muted">{{$n(row.rate)}} %</div>
                                     </div>
                                 </template>
                         </el-table-column>

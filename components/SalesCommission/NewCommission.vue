@@ -150,7 +150,7 @@ export default{
             rate:null,
             directions:[{id:1,name:'credit'},{id:2,name:'debit'}],
             selectedDirection:null,
-            reasons:[{id:1,name:'new_contract'},{id:2,name:'contract_canceled'}],
+            reasons:[{id:1,name:'new_contract'},{id:2,name:'contract_canceled'},{id:3,name:'contract_data_changed'}],
             selectedReason:null,
             isSubmitting:false,
             hideStaticElements:false,
@@ -223,7 +223,7 @@ export default{
                             this.target_amount = parseFloat(depot.target_amount/100);
                         }
                     }
-                    const payload = "per_page=500&depot_ids="+this.selectedDepots+
+                    const payload = "per_page=500&depot_id="+this.selectedDepots;
                     this.$store.dispatch('orders/fetchCommissionList',payload);
                 }
             },

@@ -12,10 +12,10 @@
       <span></span>
     </template>
     <div class="d-flex   flex-column justify-content-center align-items-center">
-        <!-- <Input v-model="title" :placeholder="$t('title')" class="my-3"/>
+        <Input v-model="title" :placeholder="$t('document_title')" class="my-3"/>
         <div class="text-danger text-sm-left" v-if="title && title.length<5">{{ $t('title_must_be_at_least_five') }}</div>
-        <Input v-model="description" :placeholder="$t('description')" class="my-3"/> -->
-      <!-- <Upload
+        <Input v-model="description" :placeholder="$t('document_description')" class="my-3"/>
+      <Upload
         class="upload-demo"
         drag
         ref="upload"
@@ -34,7 +34,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">jpeg, png or pdf files under 4 MB of size</div>
         
-      </Upload> -->
+      </Upload>
       <div class="text-danger text-sm-left mt-2">{{ errorText }}</div>
     </div>
     <template slot="footer">
@@ -44,13 +44,13 @@
       <base-button
         type="primary"
         @click="() => submitUpload()"
-        :disabled="isSubmitting" 
+        :disabled="isSubmitting || !file || !title || title.length <5 || !description" 
       >
         {{ $t("verify") }}
       </base-button>
     </template>
   </modal>
-</template>
+</template> 
 <script>
 import { Upload, Input } from "element-ui";
 export default ({
@@ -94,8 +94,10 @@ export default ({
             var formData = new FormData();
             if(this.file)
               formData.append("document", this.file.raw);
-            formData.append("title", this.title);
-            formData.append("description", this.description);
+            if(this.title)
+              formData.append("title", this.title);
+            if(this.description)
+              formData.append("description", this.description);
             const url = process.env.productApiUrl+`/contacts/${this.account_id}/verify`;
             this.$axios.post(url,formData,{
             headers: {
@@ -121,10 +123,10 @@ export default ({
     },
     submitUpload() {
       
-      //this.$refs.upload.submit();
-      var formData = new FormData();
-      //formData.append("title", this.title);
-      //formData.append("description", this.description);
+      this.$refs.upload.submit();
+      /*var formData = new FormData();
+      formData.append("title", this.title);
+      formData.append("description", this.description);
       const url = process.env.productApiUrl+`/contacts/${this.account_id}/verify`;
             this.$axios.post(url,formData,{
             headers: {
@@ -146,7 +148,7 @@ export default ({
                 });
             }).finally(()=>{
             this.isSubmitting = false;
-        });
+        });*/
     },
     }
 })

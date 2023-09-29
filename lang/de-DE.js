@@ -712,5 +712,8 @@ export default {
     add_claim:'Add claim',
     claim_type:'Claim type',
     success_creating_claim:'New claim created successfully',
-    money_was_tranfered:'Money is already transfered'
+    money_was_tranfered:'Money is already transfered',
+    contract_data_changed:'Contract data changed',
+    document_title:'Document title',
+    document_description:'Document description'
 }
