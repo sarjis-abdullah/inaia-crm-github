@@ -146,7 +146,7 @@
                   <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
                   <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
                   <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} € {{ $t('of') }} {{(depot.target_amount/100)}} €</div>
-                  <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span></div>
+                  <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span><span v-else>No date available</span></div>
                 </div>
               </div>
             </div>
@@ -359,8 +359,8 @@ export default {
           let pausedDate = '';
           if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused' 
           && this.depot.status_history && this.depot.status_history.length > 0 ){
-            const history = this.depot.status_history.find(h=>h.depot_status_id==this.depot.status.id);
-            if(history){
+            const history = this.depot.status_history.findLast(h=>h.depot_status_id==this.depot.status.id);
+            if(history && history.end_date){
               pausedDate = history.end_date;
             }
           }
