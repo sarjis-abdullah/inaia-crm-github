@@ -715,5 +715,6 @@ export default {
     money_was_tranfered:'Money is already transfered',
     contract_data_changed:'Contract data changed',
     document_title:'Document title',
-    document_description:'Document description'
+    document_description:'Document description',
+    depot_history:'Depot history'
 }
