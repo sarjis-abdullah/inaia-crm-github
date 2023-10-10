@@ -1,0 +1,89 @@
+<template>
+    <div>
+        <div class="row align-items-center mb-3">
+      <div class="col-8">
+        <h5 class="h2 mb-0">{{ $t("depot_history") }}</h5>
+      </div>
+      
+    </div>
+    <el-table
+      class="table-hover table-responsive table-flush mb-3"
+      header-row-class-name="thead-light"
+      :data="depotHistories"
+    >
+    <el-table-column
+        v-bind:label="$t('saving_plan')"
+        prop="is_savings_plan"
+      >
+        <template v-slot="{ row }">
+          {{ row.is_savings_plan ? $t('saving_plan') : $t('no_saving_plan') }}
+        </template>
+      </el-table-column>
+      <el-table-column :label="$t('agio_payment_option')" min-width="100px" prop="agio_payment_option">
+        <template v-slot="{ row }">
+          <div class="dateStyle" v-if="row.agio_payment_option=='onetime'">{{$t(row.agio_payment_option)}}</div>
+          <div class="dateStyle" v-else>{{$t('billing')}}  <span v-if="row.agio_percentage == 75">75/25</span>
+              <span v-if="row.agio_percentage == 50">50/50</span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column v-bind:label="$t('agio')" prop="agio">
+        <template v-slot="{ row }">
+          <span>{{$n(row.agio/100)}} €</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('interval_amount')"
+        prop="interval_amount"
+      >
+        <template v-slot="{ row }">
+          <span>{{$n(row.interval_amount/100)}} €</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('interval_day')"
+        prop="interval_day"
+      >
+        <template v-slot="{ row }">
+          <span>{{ row.interval_day}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('interval_startdate')"
+        prop="interval_startdate"
+      >
+        <template v-slot="{ row }">
+          <span>{{ $d(new Date(row.interval_startdate))}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('interval_enddate')"
+        prop="interval_enddate"
+      >
+        <template v-slot="{ row }">
+          <span>{{ $d(new Date(row.interval_enddate))}}</span>
+        </template>
+      </el-table-column>
+     
+    </el-table>
+    </div>
+</template>
+<script>
+
+import { Table, TableColumn } from "element-ui";
+
+
+export default {
+  props: {
+    depotHistories: {
+      type: Array,
+      default: [],
+    },
+  },
+  components: {
+    [Table.name]: Table,
+    [TableColumn.name]: TableColumn,
+    
+  },
+}
+</script>

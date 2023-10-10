@@ -45,6 +45,7 @@
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
+                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                     </base-dropdown>
                   </div>
@@ -277,6 +278,17 @@
                   </base-button>
             </template>
         </modal>
+        <modal :show.sync="showDepotHistory" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+              <DepotHistory :depotHistories="depot.depot_histories"/>
+
+           </div>
+
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
@@ -291,6 +303,7 @@ import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
+import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
@@ -306,6 +319,7 @@ import { formatDateToApiFormat } from '../../../helpers/helpers';
 import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 import AddDeposit from '@/components/Depots/AddDeposit';
 import { canEditDepot, canModifySavingPlanStatus} from '@/permissions'; 
+import Modal from '../../../components/argon-core/Modal.vue';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -330,7 +344,8 @@ export default {
             endPauseDate:null,
             showBlockConfirm:false,
             showEditDepot:false,
-            showAddDeposit:false
+            showAddDeposit:false,
+            showDepotHistory:false
         }
     },
     components: {
@@ -346,7 +361,9 @@ export default {
         CommentBox,
         DatePicker,
         UpdateSavingPlan,
-        AddDeposit
+        AddDeposit,
+        DepotHistory,
+        Modal
     },
     computed:
         {
@@ -564,6 +581,9 @@ export default {
         },
         closeComments(){
           this.showComments = false;
+        },
+        openDepotHistory(){
+          this.showDepotHistory = true;
         },
         calculateDepotValue(){
           let value = 0;
