@@ -214,7 +214,7 @@ export default {
       let creationDate = moment(transaction.created_at);
       const numberOfDays = creationDate.diff(moment(),'days');
       const lastTransaction = this.agioTransactions[0];
-      return this.hasDepotEditAccess && transaction.type.name_translation_key!='claim' && numberOfDays<=30 && transaction.id == lastTransaction.id;
+      return this.hasDepotEditAccess && numberOfDays<=30 && transaction.id == lastTransaction.id;
     },
     deleteAgioTransaction(transaction) {
       this.selectedAgioTransaction = transaction;
