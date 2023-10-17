@@ -6,11 +6,11 @@
      props:{
          height:{
              type:Number,
-             default:35
+             default:30
          },
          width:{
              type:Number,
-             default:35
+             default:30
          },
      }
  }
