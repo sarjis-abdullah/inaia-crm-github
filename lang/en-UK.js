@@ -596,7 +596,7 @@ export default {
     client_verified_unsuccessfully:"We couldn't verify the client please try again later",
     allow_marketing:'Marketing allowed',
     en:'English',
-    de:'Graman',
+    de:'German',
     fr:'French',
     allowed:'Allowed',
     not_allowed:'Not allowed',
