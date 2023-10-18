@@ -3,7 +3,7 @@
       <div class="card-body">
         <div class="mb-3">{{ $t('customers') }} {{ data?'( '+data.customers.total+' )':'' }}</div>
         
-        <div v-if="!loading" style="height: 250px;overflow: scroll;">
+        <div v-if="data && !loading" style="height: 250px;overflow: scroll;">
             <div>
              {{ $t('average_age') }} : {{ data.customers.average_age }}
              
@@ -81,7 +81,7 @@ import Loader from '@/components/common/Loader/Loader'
     mounted(){
         this.loading = true;
         this.$store.dispatch('statistic/getCustomerStatistics').then(()=>{
-            if(this.data){
+            if(this.data && this.data.customers_by_country){
                     
                 for (const [key, value] of Object.entries(this.data.customers_by_country)) {
                     let object = value;
@@ -90,8 +90,6 @@ import Loader from '@/components/common/Loader/Loader'
                     
                     }
                     this.tableData.sort((a,b)=>a.total>=b.total?-1:1)
-                console.log(this.tableData);
-                
             }
         }).catch((err)=>console.log(err)).finally(()=>{
             this.loading = false;

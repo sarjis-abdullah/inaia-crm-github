@@ -107,35 +107,34 @@ import Loader from '@/components/common/Loader/Loader'
             if(this.data){
                     const depots = this.data.depots;
                
-                    if(depots.gold && depots.silver){
+                    if(depots && depots.gold && depots.silver){
                         const goldsData = depots.gold;
                         const silverData = depots.silver;
                         this.series.push({
                             name:this.$t("applied"),
-                            data:[goldsData.applied_for_saving_plan,silverData.applied_for_saving_plan]
+                            data:[goldsData.applied_for_saving_plan?goldsData.applied_for_saving_plan:0,silverData.applied_for_saving_plan?silverData.applied_for_saving_plan:0]
                         });
                         this.series.push({
                             name:this.$t("active"),
-                            data:[goldsData.active,silverData.active]
+                            data:[goldsData.active?goldsData.active:0,silverData.active?silverData.active:0]
                         });
                         this.series.push({
                             name:this.$t("paused"),
-                            data:[goldsData.paused,silverData.paused]
+                            data:[goldsData.paused?goldsData.paused:0,silverData.paused?silverData.paused:0]
                         });
                         this.series.push({
                             name:this.$t("completed"),
-                            data:[goldsData.completed,silverData.completed]
+                            data:[goldsData.completed?goldsData.completed:0,silverData.completed?silverData.completed:0]
                         });
                         this.series.push({
                             name:this.$t("blocked"),
-                            data:[goldsData.blocked,silverData.blocked]
+                            data:[goldsData.blocked?goldsData.blocked:0,silverData.blocked?silverData.blocked:0]
                         });
                         this.series.push({
                             name:this.$t("canceled"),
                             data:[goldsData.canceled?goldsData.canceled:0,silverData.canceled?silverData.canceled:0]
                         });
                         const categories = ['Gold ('+this.data.depots.gold.total+')','Silver ('+this.data.depots.silver.total+')'];
-                        console.log(categories);
                         this.chartOptions.xaxis.categories = categories
                         this.loading = false;
                     }

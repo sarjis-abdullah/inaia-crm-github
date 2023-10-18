@@ -321,7 +321,7 @@ export default {
     max_balance:'Max balance',
     client_info:'Client info',
     name:'Name',
-    search_customer:'Search: Name/Account number',
+    search_customer:'Search: Name/Account number/email/phone',
     usage:'Reason',
     card_acceptor:'Card acceptor',
     sender:"Sender",

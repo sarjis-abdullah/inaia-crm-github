@@ -391,6 +391,14 @@ export default {
                 {
                     this.search = "account_number="+value;
                 }
+                else if(isEmail(value))
+                {
+                    this.search = "email="+value;
+                }
+                else if(isPhoneNumber(value))
+                {
+                    this.search = "phone="+value;
+                }
                 else{
                     this.search = "name="+value;
                 }

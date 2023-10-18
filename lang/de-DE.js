@@ -319,7 +319,7 @@ export default {
     max_balance:'Max balance',
     client_info:'Client info',
     name:'Name',
-    search_customer:'Suche: Name/Account number',
+    search_customer:'Suche: Name/Account number/email/phone',
     usage:'Verwendungszweck',
     card_acceptor:'Akzeptanzstelle',
     sender:"Sender",
