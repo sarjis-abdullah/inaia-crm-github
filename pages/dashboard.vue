@@ -27,14 +27,12 @@
     <div class="container-fluid mt--6">
       <div class="row">
 
-        <div class="col-xl-4 col-md-6" v-if="canViewInaiaBankAccount()">
-          <ExternalBankAmountCard />
-        </div>
+        
 
-        <div class="col-xl-4 col-md-6" v-if="canViewAdmin()">
+        <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
           <gold-dinar-stat/>
         </div>
-        <div class="col-xl-4 col-md-6" v-if="canViewAdmin()">
+        <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
           <customer-stat/>
         </div>
         <!--

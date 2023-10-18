@@ -107,7 +107,7 @@ export default {
                         }
                     }
                 },
-                colors: [ '#DAB518'],
+                colors: [ '#0065D3'],
                 grid: {
                     xaxis: {
                         lines: {

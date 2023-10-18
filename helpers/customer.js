@@ -1,4 +1,4 @@
-export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city,region})
+export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city,region,country_id})
 {
     let newAddress = {
         line1:line1,
@@ -10,7 +10,7 @@ export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city
         is_primary:true,
         is_active:true,
         id:customer.address.id,
-        country:customer.address.country
+        country:country_id?country_id:customer.address.country
     };
     if(line2)
     {

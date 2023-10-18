@@ -76,20 +76,20 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
     .apexcharts-tooltip { opacity: 0 !important; }
     .apexcharts-xaxistooltip-bottom {
         margin-top: 4px !important;
         padding: 4px 5px !important;
-        border-color: #DAB518 !important;
-        background: #DAB518 !important;
+        border-color: #0065D3 !important;
+        background: #0065D3 !important;
         color:#fff !important;
     }
     .apexcharts-xaxistooltip-bottom:before {
         display: none !important;
     }
     .apexcharts-xaxistooltip-bottom:after {
-        border-bottom-color: #DAB518     !important;
+        border-bottom-color: ##0065D3     !important;
     }
 
     .img-container {
