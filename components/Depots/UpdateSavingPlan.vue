@@ -146,7 +146,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="primary" @click="() => saveSavingPlan()"
-            :disabled="isSubmitting || (addedAmount!=null && isNaN(addedAmount)) || ((selectePaymentMethod == 'bank_account' && !selectedBankAccount))">
+            :disabled="isSubmitting || (addedAmount!=null && isNaN(addedAmount))">
                 {{$t('save')}}
             </base-button>
         </template>
