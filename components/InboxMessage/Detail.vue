@@ -123,6 +123,7 @@ import Document from '@/components/InboxMessage/Document';
 import Loader from '../common/Loader/Loader.vue';
 import {Badge} from '@/components/argon-core';
 import { canEditCustomers } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         inboxMessage:{
@@ -263,11 +264,7 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('message_sent_unsuccessfully'),
-                    duration:5000
-                })
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })
@@ -292,11 +289,7 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('message_sent_unsuccessfully'),
-                    duration:5000
-                })
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })
@@ -331,11 +324,7 @@ export default {
                 })
                 this.onDetailClose();
             }).catch((err)=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('message_deleted_unsuccessfully'),
-                    duration:5000
-                })
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })

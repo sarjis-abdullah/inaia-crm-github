@@ -31,6 +31,7 @@ import SupplierItem from '@/components/Suppliers/SupplierItem';
 import AddSupplier from '@/components/Suppliers/AddSupplier';
 import IconButton from '@/components/common/Buttons/IconButton';
 import Loader from '@/components/common/Loader/Loader';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 
 export default {
     components:{
@@ -89,11 +90,8 @@ export default {
             this.$store.dispatch('suppliers/deleteSupplier',this.companyToDelete.id).then(()=>{
                 this.selectedSupplier = null;
                 
-            }).catch(()=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('error_deleting_supplier'),
-                    duration:5000})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isDeleting = false;
                 this.finishDeleting();

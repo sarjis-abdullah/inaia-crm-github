@@ -62,6 +62,7 @@
 </template>
 <script>
 import { Select,Option,Input } from 'element-ui';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
     export default {
         components:{
             Select,Option,Input
@@ -166,11 +167,7 @@ import { Select,Option,Input } from 'element-ui';
                     duration:5000})
                     this.onClose();
                 }).catch(err=>{
-                    
-                    this.$notify({
-                    type:'error',
-                    message:err.message,
-                    duration:5000})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting = false;
                 })

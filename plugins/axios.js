@@ -11,9 +11,13 @@ export default function({ store, $axios }) {
     error => {
       if (error.response && error.response.status === 401) {
         store.dispatch('auth/unauthorize');
-        window.location.href = '/'
+        window.location.href = '/';
+        return;
       }
-      return Promise.reject(error)
+      else{
+        return Promise.reject(error)
+      }
+      
     }
   )
 }

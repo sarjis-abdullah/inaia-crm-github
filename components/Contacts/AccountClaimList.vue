@@ -97,6 +97,7 @@
   import { MessageBox } from "element-ui";
   import { canEditClaims } from '@/permissions';
   import CreateClaim from "@/components/Claims/CreateClaim";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
   export default {
     props: {
      
@@ -158,7 +159,7 @@
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
             .then((res) => (this.totalTableData = res.meta.total))
-            .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+            .catch((err) => (this.loadingError =apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
         
       },
@@ -185,15 +186,11 @@
             timeout: 5000,
             message: this.$t("claim_marked_paid_successfully"),
           });
-         }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t("claim_marked_paid_unsuccessfully"),
-          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
          });
-        }).catch(() => {
-         
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
         });
       },
       toggleAddClaim(){

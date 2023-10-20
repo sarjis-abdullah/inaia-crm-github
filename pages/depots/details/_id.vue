@@ -320,6 +320,7 @@ import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 import AddDeposit from '@/components/Depots/AddDeposit';
 import { canEditDepot, canModifySavingPlanStatus} from '@/permissions'; 
 import Modal from '../../../components/argon-core/Modal.vue';
+import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -475,8 +476,8 @@ export default {
           this.$store.dispatch('depots/pauseSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_paused_successfully')});
              this.showPauseConfirm = false;
-          }).catch(()=>{
-             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_paused_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           }).finally(()=>{
             this.isSubmitting = false;
           })
@@ -496,8 +497,8 @@ export default {
           this.$store.dispatch('depots/resumeSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_resumed_successfully')});
              this.showResumeConfirm = false;
-          }).catch(()=>{
-             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_resumed_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           }).finally(()=>{
             this.isSubmitting = false;
           })
@@ -522,8 +523,8 @@ export default {
             this.$store.dispatch('depots/confirmSavingPlanContract',data).then(()=>{
               this.$notify({type: 'success', timeout: 5000, message: this.$t('savingplan_activated_successfully')});
               this.showCancelConfirm = false;
-            }).catch(()=>{
-              this.$notify({type: 'danger', timeout: 5000, message: this.$t('savinplan_activated_unsuccessfully')})
+            }).catch((err)=>{
+              apiErrorHandler(err,this.$notify);
             }).finally(()=>{
               this.isSubmitting = false;
             })
@@ -539,8 +540,8 @@ export default {
             this.$store.dispatch('depots/rejectSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
              this.showCancelConfirm = false;
-          }).catch(()=>{
-             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           }).finally(()=>{
             this.isSubmitting = false;
           })
@@ -549,8 +550,8 @@ export default {
             this.$store.dispatch('depots/cancelSavingPlan',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_canceled_successfully')});
              this.showCancelConfirm = false;
-          }).catch(()=>{
-             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_canceled_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           }).finally(()=>{
             this.isSubmitting = false;
           })
@@ -567,8 +568,8 @@ export default {
           this.$store.dispatch('depots/blockDepot',data).then(()=>{
              this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_blocked_successfully')});
              this.showBlockConfirm = false;
-          }).catch(()=>{
-             this.$notify({type: 'danger', timeout: 5000, message: this.$t('Depot_blocked_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           }).finally(()=>{
             this.isSubmitting = false;
           })

@@ -114,6 +114,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import OrderDetails from '@/components/Orders/Details';
 import BankStatus from '@/components/Banking/TransactionStatus';
 import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         account_id:{
@@ -169,7 +170,7 @@ export default {
             this.isLoading = true;
             this.$store.dispatch('clients/getClientLatestTransactions',this.searchQuery)
                 .then(res=>this.totalTableData = res.total)
-                .catch(err=>this.loadingError=this.$t('cant_load_list'))
+                .catch(err=>this.loadingError=apiErrorHandler(err,null))
                 .finally(()=>this.isLoading=false)
         },
         displayDetails(resource)

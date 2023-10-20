@@ -69,6 +69,7 @@ import {formatDateToApiFormat} from '../../helpers/helpers';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
 import { assetTypes } from '@/helpers/depots';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     components:{
         Input,
@@ -173,8 +174,8 @@ export default {
             this.error = null;
             this.$emit('onClose');
                 this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_gift_successfully')})
-            }).catch(()=>{
-                this.$notify({type: 'error', timeout: 5000, message: this.$t('gold_gift_unsuccessfully')})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })
@@ -224,7 +225,7 @@ export default {
                 }).catch(err=>{
                     this.fixingPriceGram = 0;
                         this.fixingPriceOunce = 0;
-                        this.error = 'cant_load_preview'
+                        this.error = apiErrorHandler(err,null);
                     }).finally(()=>{
                         this.isLoading = false;
                     })
@@ -251,7 +252,7 @@ export default {
                 }).catch(err=>{
                     this.fixingPriceGram = 0;
                         this.fixingPriceOunce = 0;
-                    this.validationError.date = 'cant_load_preview'
+                    this.validationError.date = apiErrorHandler(err,null);
                     }).finally(()=>{
                         this.isLoading = false;
                     })

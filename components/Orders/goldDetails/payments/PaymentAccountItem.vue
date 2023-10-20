@@ -90,6 +90,7 @@ import SelectPaymentAccount from './SelectPaymentAccount.vue';
 import { isOrderPending,isOrderPaymentFailed} from '~/helpers/order';
 import {formatDateToApiFormat} from '~/helpers/helpers';
 import moment from "moment"
+import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
 export default {
     name:'payment-method',
     components:{
@@ -192,7 +193,7 @@ export default {
                     }
 
                 }).catch((err)=>{
-                    this.error = this.$t('error_loading_payment_accounts');
+                    this.error = apiErrorHandler(err,null)
                 }).finally(()=>{
                     this.loadindPaymentInformation = false;
                 })
@@ -235,7 +236,7 @@ export default {
 
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_payment_changed_successfully')})
                     }).catch((err)=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_payment_changed_unsuccessfully')})
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSubmitting = false;
                     })
@@ -296,7 +297,7 @@ export default {
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('payment_initiated_successfully')})
                         this.$emit('paymentAccountUpdated',res);
                     }).catch((err)=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSubmitting = false;
                     })
@@ -319,7 +320,7 @@ export default {
                         window.open(res,'_blank');
                         //window.location.href = res;
                         }).catch((err)=>{
-                            this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                            apiErrorHandler(err,this.$notify);
                         }).finally(()=>{
                             this.isSubmitting = false;
                         })

@@ -79,6 +79,7 @@ import {orderDetailScreens} from '../../helpers/constans';
 import DetailsInfo from '@/components/Orders/DetailsInfo';
 import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
 import { canEditOrder } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         showPopup:{
@@ -149,7 +150,7 @@ export default {
                         this.$emit('orderUpdated',resource);
                         this.showPopup = false;
                         this.onDetailClose();
-                    }).catch((err)=>{console.error(err);this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
+                    }).catch((err)=>{apiErrorHandler(err,this.$notify);})
                     .finally(()=>this.isSubmitting = false)
             }
         },
@@ -189,8 +190,8 @@ export default {
                             this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
                         }
                         
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -293,7 +294,7 @@ export default {
                     this.onDetailClose();
 
                 }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>this.isSubmitting = false)
             }
 
@@ -313,8 +314,8 @@ export default {
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                         // console.error('order->', res.data.data)
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_paid_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -340,8 +341,8 @@ export default {
                         this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_refunded_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -432,7 +433,7 @@ export default {
                     this.onDetailClose();
 
                 }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_sold_unsuccessfully')})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -473,8 +474,8 @@ export default {
                         this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_reverted_successfully')})
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_reverted_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -493,8 +494,8 @@ export default {
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_marked_failed_successfully')})
                         // console.error('order->', res.data.data)
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_marked_failed_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
             

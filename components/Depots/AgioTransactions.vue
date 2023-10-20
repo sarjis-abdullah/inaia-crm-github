@@ -141,6 +141,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
 import { canEditDepot} from '@/permissions'; 
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 
 export default {
   props: {
@@ -203,7 +204,7 @@ export default {
       this.$store
         .dispatch("depots/fetchAgioTransactionList", this.searchQuery)
         .then((res) => (this.totalTableData = res.meta.total))
-        .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+        .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
         .finally(() => (this.isLoading = false));
     },
     toggleAddTransaction() {
@@ -242,8 +243,8 @@ export default {
       this.$store.dispatch('depots/deleteAgioTransaction',this.selectedAgioTransaction.id).then(()=>{
         this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
         this.cancelDeletion();
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('agio_transaction_deleted_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       })
     }
   },

@@ -55,6 +55,7 @@ import {assetTypes} from '@/helpers/depots'
 import PieChart from '@/components/argon-core/Charts/PieChart';
 import AddStock from '@/components/Stocks/AddStock';
 import { canEditDepot } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         stockType:{
@@ -167,7 +168,7 @@ export default {
         getAmounts() {
             this.isLoading = true;
             this.$store.dispatch('stocks/getStocksBalance').catch(err=>{
-                        console.log('Error getting stocks balance');
+                apiErrorHandler(err,this.$notify);
                     }).finally(
                         ()=>{
 

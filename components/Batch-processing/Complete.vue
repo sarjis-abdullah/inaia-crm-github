@@ -118,6 +118,7 @@ import DetailListItem from "@/components/common/DetailListItem.vue";
 import Loader from '@/components/common/Loader/Loader';
 import { mapGetters } from "vuex";
 import { assetTypes } from '@/helpers/depots'
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   components: {
     DatePicker,
@@ -190,11 +191,7 @@ export default {
           this.batchProcessPreview = res;
         })
         .catch((err) => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("this_date_has_not_goldprice"),
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;
@@ -234,12 +231,8 @@ export default {
           this.cancelConfirmComplete();
           this.$emit("completed");
         })
-        .catch(() => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("order_batch_completed_unsuccessfully"),
-          });
+        .catch((err) => {
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;
@@ -265,12 +258,9 @@ export default {
                 }
                 this.$store.dispatch('stocks/transferStock',{data:data}).then((res)=>{
                     this.markAsComplete();
-                }).catch(()=>{
+                }).catch((err)=>{
                     this.isSubmitting =  false;
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                    apiErrorHandler(err,this.$notify);
                 })
       }
     },

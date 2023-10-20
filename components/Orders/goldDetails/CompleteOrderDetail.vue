@@ -11,7 +11,7 @@
             <p class="mt-2 text-sm text-center text-muted">{{$t('loading')}}...</p>
         </div>
         <div v-else-if="!isLoading && error!=null">
-            <p class="mt-2 text-sm text-center text-danger">{{$t(error)}}</p>
+            <p class="mt-2 text-sm text-center text-danger">{{error}}</p>
         </div>
         <div v-else-if="!isLoading && error==null && preview!=null" >
             <!--<detail-list-item title="ID"><div slot="value">{{preview.order_id}}</div></detail-list-item>-->
@@ -35,6 +35,7 @@
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../../helpers/helpers';
 import {DatePicker,Checkbox} from 'element-ui';
+import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 export default {
     components:{
         DetailListItem,
@@ -84,8 +85,9 @@ export default {
             this.$emit('dateselected',formatDateToApiFormat(this.selectedDate));
             this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate)}).then(res=>{
                 this.preview = res;
-            }).catch(err=>{
-                this.error = 'cant_load_preview'
+            }).catch((err)=>{
+                
+                this.error = apiErrorHandler(err,null);
             }).finally(()=>{
                 this.isLoading = false;
             })

@@ -126,6 +126,7 @@ import VerifyContact from '@/components/Contacts/VerifyContact';
 import {  MessageBox } from 'element-ui'
 import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
 import { canEditCustomers } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props: {
         resource: {
@@ -279,12 +280,8 @@ export default {
             timeout: 5000,
             message: this.$t('pin_account_reset_successfully'),
           });
-        }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t('pin_account_reset_unsuccessfully'),
-          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
         })
       },
       desactvateAccount(){
@@ -307,12 +304,8 @@ export default {
             timeout: 5000,
             message: this.$t('account_desactivated_successfully'),
           });
-        }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t('account_desactivated_unsuccessfully'),
-          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
         });
       },
       activateAccount(){
@@ -335,12 +328,8 @@ export default {
             timeout: 5000,
             message: this.$t('account_activated_successfully'),
           });
-        }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t('account_activated_unsuccessfully'),
-          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
         });
       },
       unLockAccount(){
@@ -363,12 +352,8 @@ export default {
             timeout: 5000,
             message: this.$t('account_unlock_successfully'),
           });
-        }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t('account_unlock_unsuccessfully'),
-          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
         });
       },
       cancelEditSalesAdvisor(){
