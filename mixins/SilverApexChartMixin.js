@@ -55,7 +55,7 @@ export default {
                             hour: 'HH:mm'
                         },
                         style: {
-                            colors: '#8898aa',
+                            colors: '#0065D3',
                         },
                     },
                     axisBorder: {
@@ -66,7 +66,7 @@ export default {
                     },
 
                 },
-                colors: [ '#8F9FB3'],
+                colors: [ '#0065D3'],
                 tooltip: {
                     x: {
                         show: false,

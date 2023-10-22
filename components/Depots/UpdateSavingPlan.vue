@@ -165,6 +165,7 @@ import {
 } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import { mapGetters } from "vuex";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         show:{
@@ -362,10 +363,7 @@ export default {
                 this.onClose();
             }).catch((err)=>{
                this.isSubmitting = false;
-                this.$notify({
-                    type:'error',
-                    message:this.$t('error_updating_saving_plan'),
-                    duration:5000})
+               apiErrorHandler(err,this.$notify);
             })
         },
         addYears(date, years) {

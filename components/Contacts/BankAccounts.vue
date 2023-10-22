@@ -109,6 +109,7 @@ import { Table, TableColumn } from 'element-ui';
 import IconButton from '@/components/common/Buttons/IconButton';
 import { MessageBox } from "element-ui";
 import {canEditCustomers} from '@/permissions'
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         account_id:{
@@ -228,15 +229,12 @@ export default {
             timeout: 5000,
             message: this.$t("bank_account_deleted_successfully"),
           });
-         }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t("bank_account_deleted_unsuccessfully"),
-          });
+         }).catch((err)=>{
+            apiErrorHandler(err,this.$notify)
+            
          });
-        }).catch(() => {
-         
+        }).catch((err) => {
+            apiErrorHandler(err,this.$notify)
         });
         },
         saveNewBankAccount(){
@@ -257,12 +255,8 @@ export default {
           this.newIban = null;
           this.newAccountHolder = null;
           this.showAddBank = false;
-         }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t("bank_account_added_unsuccessfully"),
-          });
+         }).catch((err)=>{
+            apiErrorHandler(err,this.$notify)
          });
 
         }

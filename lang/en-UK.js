@@ -57,7 +57,7 @@ export default {
     gold_price:'Gram price',
     gold_price_sell:'Gram price sell',
     gold_price_buy:'Gram price buy',
-    gold_price_per_gram: 'Gram price per gram',
+    gold_price_per_gram: 'Gold price per gram',
     total_gold_amount: 'Gram amount',
     total_gold_value: 'Gold value',
     storage_fee: 'Storage fee',

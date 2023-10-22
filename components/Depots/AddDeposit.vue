@@ -40,6 +40,7 @@
 <script>
 import {Input} from 'element-ui';
 import TextError from '@/components/common/Errors/TextError';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     components:{
         Input,
@@ -88,8 +89,8 @@ export default {
                 this.amount = null;
                 this.comment = '';
 
-            }).catch(()=>{
-                this.$notify({type: 'error', timeout: 5000, message: this.$t('deposit_created_unsuccessfully')})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })

@@ -38,6 +38,7 @@ import {
   isOrderGoldSale,
 } from "../../helpers/order";
 import { formatDateToApiFormat } from "../../helpers/helpers";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     showConfirmComplete: {
@@ -84,12 +85,8 @@ export default {
           this.cancelConfirmComplete();
           this.$emit("completed");
         })
-        .catch(() => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("retry_order_batch_completed_unsuccessfully"),
-          });
+        .catch((err) => {
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;

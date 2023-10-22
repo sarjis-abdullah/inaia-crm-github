@@ -33,6 +33,7 @@ import {
   DatePicker,
 } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     components: {
         DatePicker,
@@ -79,7 +80,7 @@ export default {
             this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
                 window.open(res,'_blank');
             }).catch((err)=>{
-                this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_initiated_unsuccessfully')})
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })

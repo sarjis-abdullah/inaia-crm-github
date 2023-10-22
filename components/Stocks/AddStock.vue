@@ -155,6 +155,7 @@ import { stockTypes } from '@/helpers/stocks';
 import { formatDateToApiFormat } from '@/helpers/helpers';
 import { Upload } from "element-ui";
 import SelectSuppliers from "@/components/Suppliers/SelectSuppliers";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 const REFINERY = 'refinery';
 const credit = "CREDIT";
 const debit = "DEBIT";
@@ -430,11 +431,8 @@ export default {
                     type:'success',
                     message:this.$t('success_adding_stock'),
                     duration:5000})
-                }).catch(()=>{
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting =  false;
                 })
@@ -458,11 +456,8 @@ export default {
                     type:'success',
                     message:this.$t('success_adding_stock'),
                     duration:5000})
-                }).catch(()=>{
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting =  false;
                 })

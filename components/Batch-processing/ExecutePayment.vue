@@ -32,6 +32,7 @@
   </modal>
 </template>
 <script>
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     showConfirmExecute: {
@@ -76,11 +77,7 @@ export default {
           
         })
         .catch((err) => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("execute_payments_started_unsuccessfully"),
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;

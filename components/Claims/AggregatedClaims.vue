@@ -186,6 +186,7 @@ import moment from 'moment';
 import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
 import { MessageBox } from "element-ui";
 import SelectCustomer from "@/components/Contacts/SelectCustomer";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     account_id: {
@@ -339,7 +340,7 @@ export default {
             this.amounts = res.total_amounts
           }
         })
-        .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+        .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
         .finally(() => (this.isLoading = false));
     },
     displayDetails(resource) {
@@ -410,11 +411,11 @@ export default {
       this.$store.dispatch('claims/markManyAspaid',data).then(()=>{
         this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
         this.$emit("markedAsPaid");
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       });
-        }).catch(() => {
-         
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
         });
       },
       filterByCustomer(id){
@@ -437,8 +438,8 @@ export default {
           this.$store.dispatch('claims/initiateAggregatedClaimDirectDebit',data).then((res)=>{
           window.open(res,'_blanc');
            
-          }).catch(()=>{
-            this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_not_initiated')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
           })
         }
   },

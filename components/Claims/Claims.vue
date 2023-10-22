@@ -115,6 +115,7 @@ import UserInfo from '@/components/Contacts/UserInfo';
 import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
 import { MessageBox } from "element-ui";
 import IconButton from "@/components/common/Buttons/IconButton";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     aggregated_id: {
@@ -181,7 +182,7 @@ export default {
         this.$store
           .dispatch("claims/getClientClaims", this.searchQuery)
           .then((res) => (this.totalTableData = res.meta.total))
-          .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+          .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
           .finally(() => (this.isLoading = false));
       }
     },
@@ -205,8 +206,8 @@ export default {
         this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
         this.$emit("markedAsPaid");
         this.confirming = false;
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify)
       }).finally(()=>{
         this.isSubmitting = false;
       })
@@ -223,15 +224,11 @@ export default {
             timeout: 5000,
             message: this.$t("claim_marked_paid_successfully"),
           });
-         }).catch(()=>{
-          this.$notify({
-            type: "error",
-            timeout: 5000,
-            message: this.$t("claim_marked_paid_unsuccessfully"),
-          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
          });
-        }).catch(() => {
-         
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
         });
       }
   },

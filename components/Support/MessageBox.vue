@@ -88,6 +88,7 @@ import Status from '@/components/Support/Status';
 import { mapGetters } from "vuex";
  import {  MessageBox } from 'element-ui';
 import { canEditCustomers } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         ticket:{
@@ -233,8 +234,8 @@ export default {
                 this.groupedMessages = [];
                 this.groupMessages();
                 this.messageText = null;
-            }).catch(()=>{
-                this.$notify({type:'error',message:this.$t('cant_send_message'),duration:5000})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSending = false;
             })
@@ -255,8 +256,8 @@ export default {
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
                         this.ticket = data;
                         this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
-                    }).catch(()=>{
-                        this.$notify({type:'danger',message:this.$t('ticket_closed_unsuccessfully'),duration:5000});
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSending = false
                     })
@@ -279,8 +280,8 @@ export default {
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
                         this.ticket = data;
                         this.$notify({type:'success',message:this.$t('ticket_opened_successfully'),duration:5000});
-                    }).catch(()=>{
-                        this.$notify({type:'danger',message:this.$t('ticket_opened_unsuccessfully'),duration:5000});
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSending = false
                     })

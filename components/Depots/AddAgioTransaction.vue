@@ -39,6 +39,7 @@ import { mapGetters } from "vuex";
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
 import {Select,Option,Input,Checkbox,Button} from 'element-ui';
+import { apiErrorHandler } from "../../helpers/apiErrorHandler";
 export default ({
     setup() {
 
@@ -134,7 +135,7 @@ export default ({
             this.$store.dispatch('depots/createAgioTransaction',payload).then(res=>{
                 this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_created_successfully')})
             }).catch((err)=>{
-                this.$notify({type: 'danger', timeout: 5000, message: this.$t('agio_transaction_created_unsuccessfully')})
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSubmitting = false;
             })

@@ -111,6 +111,7 @@ import { formatDateToApiFormat, getMonthName } from "../../../../helpers/helpers
 import { Table, TableColumn,Dropdown,DropdownMenu,DropdownItem } from "element-ui";
 import { canEditClaims } from '@/permissions';
 import moment from 'moment';
+import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
 export default {
   layout: "DashboardLayout",
   components: {
@@ -195,8 +196,8 @@ export default {
         this.$refs.list.refresh();
         this.showConfirmMany = false;
         this.cancelMarkMany();
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       }).finally(()=>{
         this.isSubmitting = false;
       })
@@ -217,8 +218,8 @@ export default {
        window.open(res,'_blanc');
         this.showConfirmMany = false;
         this.cancelMarkMany();
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('payment_not_initiated')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       }).finally(()=>{
         this.isSubmitting = false;
       })

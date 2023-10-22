@@ -64,6 +64,7 @@ import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
 import DetailListItem from "@/components/common/DetailListItem.vue";
 import Loader from '@/components/common/Loader/Loader';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   components: {
     DatePicker,
@@ -107,11 +108,7 @@ export default {
           this.batchProcessSellPreview = res;
         })
         .catch((err) => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("this_date_has_not_goldprice"),
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;
@@ -138,12 +135,8 @@ export default {
           this.cancelConfirmSell();
           this.$emit("completed");
         })
-        .catch(() => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("order_batch_gold_unsuccessfully"),
-          });
+        .catch((err) => {
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;

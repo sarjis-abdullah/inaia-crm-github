@@ -21,6 +21,7 @@
 import { Input } from 'element-ui';
 import IconButton from '@/components/common/Buttons/IconButton';
 import Loader from '@/components/common/Loader/Loader';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         isEdit:{
@@ -71,11 +72,8 @@ export default {
                 this.$store.dispatch('suppliers/editSupplier',payload).then(()=>{
                     this.supplierName =null; 
                     this.$emit('editCanceled');
-                }).catch(()=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('error_editing_supplier'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                         this.isSaving = false;
                     })
@@ -84,11 +82,8 @@ export default {
                 this.$store.dispatch('suppliers/addNew',data).then(()=>{
                     this.supplierName =null; 
                     this.$emit('saved');
-                }).catch(()=>{
-                this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_supplier'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                         this.isSaving = false;
                     })

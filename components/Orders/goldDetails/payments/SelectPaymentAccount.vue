@@ -19,6 +19,7 @@
 import {Select,Option} from 'element-ui';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '../../../common/Errors/TextError.vue';
+import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
 export default {
     components:{
         Select,
@@ -117,7 +118,7 @@ export default {
                 }
                 this.$emit('paymentaccountselected',this.selectedPaymentAccount);
             }).catch((err)=>{
-                this.error = this.$t('error_loading_payment_accounts');
+                this.error = apiErrorHandler(err,null);
             }).finally(()=>{
                 this.loading = false;
             })

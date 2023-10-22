@@ -101,6 +101,7 @@ import { mapGetters } from "vuex";
 import IconButton from '@/components/common/Buttons/IconButton';
 import CommissionFilter from '@/components/SalesCommission/Filter';
 import { canEditSalesCimmission } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default{
     components: {
         [Table.name]: Table,
@@ -192,8 +193,8 @@ export default{
             this.isDeleting = true;
             this.$store.dispatch('salesCommission/deleteCommission',id).then(()=>{
                 this.$notify({type: 'success', timeout: 5000, message: this.$t('commission_deleted_successfully')})
-            }).catch(()=>{
-                this.$notify({type: 'danger', timeout: 5000, message: this.$t('commission_deleted_unsuccessfully')})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isDeleting = false;
             })

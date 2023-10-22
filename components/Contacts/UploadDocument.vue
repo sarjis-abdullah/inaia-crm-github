@@ -53,6 +53,7 @@
 </template>
 <script>
 import { Upload, Input } from "element-ui";
+import { apiErrorHandler } from "../../helpers/apiErrorHandler";
 export default ({
    components: {
        Upload,
@@ -111,12 +112,8 @@ export default ({
                    
                this.cancelUpload();
                location.reload();
-           }).catch(()=>{
-           this.$notify({
-                   type: "danger",
-                   timeout: 5000,
-                   message: this.$t("document_uploaded_unsuccessfully"),
-               });
+           }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
            }).finally(()=>{
            this.isSubmitting = false;
        });

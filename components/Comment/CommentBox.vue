@@ -61,6 +61,7 @@
 import { mapGetters } from "vuex";
 import LoadMore from "@/components/common/Loader/LoadMore";
 import { canEditDepot } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     account: {
@@ -155,11 +156,7 @@ export default {
           this.note = null;
         })
         .catch((err) => {
-          this.$notify({
-            message: this.$t("cant_create_new_note"),
-            type: "error",
-            duration: 5000,
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSending = false;

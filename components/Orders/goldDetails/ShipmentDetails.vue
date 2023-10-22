@@ -34,6 +34,7 @@ import {Input,Button} from 'element-ui';
 import { validURL } from '~/helpers/helpers';
 import TextError from '@/components/common/Errors/TextError';
 import DetailListItem from '@/components/common/DetailListItem.vue';
+import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 export default {
     components : {
         Input,
@@ -118,8 +119,8 @@ export default {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Shippment_details_changed_successfully')});
                     this.shippmentDetails = res;
                     this.isEditing = false;
-                }).catch(()=>{
-                    this.$notify({type: 'error', timeout: 5000, message: this.$t('Shippment_details_changed_unsuccessfully')})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isUploading = false;
                 })
