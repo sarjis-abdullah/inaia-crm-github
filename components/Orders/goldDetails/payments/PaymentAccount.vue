@@ -64,7 +64,7 @@ export default {
     methods:{
         init(){
             this.paymentAccounts=[];
-            if(isOrderPending(this.order) || isOrderPaymentFailed(this.order) || isOrderOutstanding(this.order))
+            if(isOrderPending(this.order)  || isOrderOutstanding(this.order))
             {
                 this.activateEdit = true
             }

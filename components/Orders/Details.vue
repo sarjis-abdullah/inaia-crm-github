@@ -77,9 +77,10 @@
 <script>
 import {orderDetailScreens} from '../../helpers/constans';
 import DetailsInfo from '@/components/Orders/DetailsInfo';
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
+import {  isPaymentInProgressOrder,isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
 import { canEditOrder } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { isOrderGoldSale } from '../../helpers/order';
 export default {
     props:{
         showPopup:{
@@ -379,7 +380,7 @@ export default {
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return (isOrderPending(resource) || isOrderPaymentFailed(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource));
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource) || isOrderOutstanding(resource) || isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) || isOrderGoldSale(resource) );
         },
         setCancelPaymentAccount(account)
         {

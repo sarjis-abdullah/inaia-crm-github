@@ -2,9 +2,11 @@ const generalError ="Unknown error, we can't determine the error"
 export const apiErrorHandler = (err,alert)=>{
     try{
         let message = null;
-        if(err.response && err.response.data && err.response.data.message){
-            
-            message = err.response.data.message;
+        if(err.response && err.response.data){
+            if(err.response.data.message)
+                message = err.response.data.message;
+            if(err.response.data.data && err.response.data.data.message)
+                message = err.response.data.data.message;
         }
         else{
             if(err && err.message){
@@ -13,7 +15,7 @@ export const apiErrorHandler = (err,alert)=>{
         }
         if(message){
             if(alert){
-                alert({type: 'danger', timeout: 5000, message:err.response.data.message})
+                alert({type: 'danger', timeout: 5000, message:message})
             }
             else{
                 return message;

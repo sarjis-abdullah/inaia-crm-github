@@ -400,8 +400,9 @@ export default {
                             .name_translation_key == ORDER_PROCESS_STATUS_FAILED);
   },
   shouldDisplayRetry(){
-    return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED;
+    /*return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED;*/
+                            return false;
   },
   shouldDisplayComplete(){
     return this.batchProcess.order_process_status
