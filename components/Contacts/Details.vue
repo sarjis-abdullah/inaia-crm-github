@@ -89,17 +89,37 @@
             <collapse-item :title="$t('bank_accounts')" name="bankAccount" class="mycollapse">
               <template v-slot:title>
                 <div>
+                  
                   <h3>{{ $t('bank_accounts') }}</h3>
                   <span class="tim-icons icon-minimal-down"></span>
                 </div>
               </template>
 
-              <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadBankAccounts"/>
+              <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadInboxMessages"/>
+            </collapse-item>
+          </collapse>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+            <collapse-item :title="$t('inbox_messages')" name="inboxMessages" class="mycollapse">
+              <template v-slot:title>
+                <div>
+                  <h3>{{ $t('inbox_messages') }}</h3>
+                  <span class="tim-icons icon-minimal-down"></span>
+                </div>
+              </template>
+
+              <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
             </collapse-item>
           </collapse>
         </div>
       </div>
     </div>
+    
+    
+
 
   </div>
 </template>
