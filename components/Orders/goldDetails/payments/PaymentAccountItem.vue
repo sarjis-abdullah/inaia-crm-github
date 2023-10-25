@@ -26,7 +26,7 @@
                             {{accountHolder}}
                         </div>
                 </detail-list-item>
-                <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'"">
+                <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'">
                     <div slot="value">
 
                         <DatePicker v-model="paymentDate"/>
@@ -69,7 +69,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting">
-                <span v-if="!editActive && !isNew">{{$t('edit_info')}}</span>
+                <span v-if="!editActive && !isNew && !failed">{{$t('edit_info')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
                 <span v-if="isNew">{{$t('set_Payment_method')}}</span>
             </base-button>
@@ -131,7 +131,15 @@ export default {
     computed:{
         ...mapGetters('payment-accounts',{
             paymentMethods:'paymentMethods'
-        })
+        }),
+        isFailed(){
+            if(this.order && this.order.order_status && this.order.order_status.name_translation_key == "order_status_payment_failed"){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
     },
     data: function(){
         return {
@@ -280,7 +288,7 @@ export default {
                 return false;
             }
             else{
-                return (isOrderPending(this.order) || isOrderPaymentFailed(this.order)) &&
+                return isOrderPending(this.order) &&
                 (this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
                 !this.editActive && !this.isNew;
             }
