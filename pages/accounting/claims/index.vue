@@ -18,18 +18,18 @@
     </base-header>
 
     <div class="container-fluid mt--6">
-        <SummaryByYear/>
+        <ClaimList/>
 
     </div>
 
   </div>
 </template>
 <script>
-import SummaryByYear from '@/components/Claims/SummaryByYear'
+import ClaimList from '@/components/Claims/ClaimList'
 export default {
   layout: "DashboardLayout",
   components: {
-    SummaryByYear
+    ClaimList
   },
 };
 </script>

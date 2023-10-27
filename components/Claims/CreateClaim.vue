@@ -23,6 +23,77 @@
                     </Option>
                 </Select>
             </div>
+           
+            </div>
+            <div class="d-flex flex-row align-content-center mt-3">
+                <div class="col-4">
+                    {{ $t('claim_status') }}
+                </div>
+                <div class="col-8">
+                    <Select
+                :placeholder="$t('claim_status')"
+                v-model="selectedClaimStatus"
+                
+                >
+                    <Option
+                    v-for="option in claimStatus"
+                    :value="option.value"
+                    :label="option.text"
+                    :key="option.id"
+                    >
+                    </Option>
+                </Select>
+            </div>
+           
+            </div>
+            <div class="d-flex flex-row align-content-center mt-3" v-if="account_id == -1">
+            <div class="col-4">
+                    {{ $t('Customer') }}
+                </div>
+                <div class="col-8">
+                    <Select
+            v-model="selectedCustomer"
+            remote
+            filterable
+            reserve-keyword
+            class="filterElement"
+            :placeholder="$t('customer_filter_placeholder')"
+            :loading="loadingCustomers"
+            :remote-method="loadCustomers"
+            @change="customerSelected"
+            @clear="clearCustomer"
+            clearable
+          >
+            <Option
+              v-for="option in customers"
+              :value="option.id"
+              :label="formatClientLabel(option)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+            </div>
+            </div>
+            <div class="d-flex flex-row align-content-center mt-3">
+            <div class="col-4">
+                    {{ $t('depot') }}
+                </div>
+                <div class="col-8">
+                    <Select
+            :placeholder="$t('depots')"
+            v-model="selectedDepot"
+            filterable
+            :disabled="account_id == -1 && !selectedCustomer"
+          >
+            <Option
+              v-for="option in depots"
+              :value="option.depot_number"
+              :label="option.name"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+            </div>
             </div>
             <div class="d-flex flex-row align-content-center mt-3">
                 <div class="col-4">
@@ -32,14 +103,7 @@
                     <Input v-model="amount" :placeholder="$t('amount')" type="numeric"/>
                 </div>
             </div>
-            <div class="d-flex flex-row align-content-center mt-3">
-                <div class="col-4">
-                    {{ $t('reference') }}
-                </div>
-                <div class="col-8">
-                    <Input v-model="reference" :placeholder="$t('reference')"/>
-                </div>
-            </div>
+            
             <div class="d-flex flex-row align-content-center mt-3">
                 <div class="col-4">
                     {{ $t('comment') }}
@@ -63,6 +127,8 @@
 <script>
 import { Select,Option,Input } from 'element-ui';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { mapGetters } from "vuex";
+import moment from "moment";
     export default {
         components:{
             Select,Option,Input
@@ -83,16 +149,34 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
                     if(!this.show){
                         this.selectedClaimType = null;
                         this.amount = null;
-                        this.reference = null;
+                        
                         this.comment = null;
                         this.isSubmitting = false;
                         this.notValid = true;
-                    }
-                }
+                    }else{
+                        if(this.account_id > -1)
+                        this.$store
+                            .dispatch("depots/fetchDepotsByAccount", this.account_id)
+                            .then((data) => console.log(data));
+                        }
+                    
+                },
+                
             },
+            selectedCustomer: {
+                handler() {
+                    if (this.selectedCustomer != null) {
+                    this.selectedDepots = null;
+                    this.$store
+                    .dispatch("depots/fetchDepotsByAccount", this.selectedCustomer)
+                        .then((data) => console.log(data));
+                    }
+                },
+                immediate: true,
+                },
             selectedClaimType:{
                 handler(){
-                    if(this.amount && this.selectedClaimType){
+                    if(this.amount && !isNaN(this.amount) && this.selectedClaimType && this.selectedDepot){
                         this.notValid = false
                     }else{
                         this.notValid = true
@@ -102,7 +186,7 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
             },
             amount:{
                 handler(){
-                    if(this.amount && this.selectedClaimType){
+                    if(this.amount && this.selectedClaimType && this.selectedDepot && !isNaN(this.amount)){
                         this.notValid = false
                     }else{
                         this.notValid = true
@@ -114,12 +198,9 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
         data(){
             return{
                 selectedClaimType:null,
+                selectedClaimStatus:'pending',
                 claimTypes:[
-                    {
-                        id:1,
-                        value:'agio',
-                        text:this.$t('agio')
-                    },
+                    
                     {
                         id:2,
                         value:'gold_storage_fee',
@@ -136,29 +217,122 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
                         text:this.$t('direct_debit_return')
                     }
                 ],
+                claimStatus:[
+                    {
+                        id:1,
+                        value:'pending',
+                        text:this.$t('pending')
+                    },
+                    {
+                        id:2,
+                        value:'paid',
+                        text:this.$t('paid')
+                    },
+                    {
+                        id:3,
+                        value:'payment_failed',
+                        text:this.$t('payment_failed')
+                    },
+                ],
                 amount:null,
                 reference:null,
                 comment:null,
                 isSubmitting : false,
-                notValid:true
+                notValid:true,
+                selectedDepot:null,
+                selectedOrder:null,
+                selectedCustomer: null,
+                lastRequest: null,
+                timer: null,
+                customerQuery: "",
             }
+        },
+        computed:{
+            ...mapGetters("depots", {
+            depots: "orderFilterList",
+            }),
+            ...mapGetters("clients", {
+      customers: "orderFilterList",
+    }),
         },
         methods:{
             onClose(){
                 this.$emit('closed');
             },
+            clearCustomer: function () {
+      this.selectedCustomer = null;
+      this.selectedCustomerInfo = null;
+      this.selectedDepots = null;
+      this.applyFilter();
+    },
+    loadCustomers: function (query) {
+      if (this.timer) {
+        clearTimeout(this.timer);
+      }
+      if (query.length >= 3) {
+        let update = true;
+        this.customerQuery = query;
+        if (this.lastRequest != null) {
+          let now = moment();
+          if (now.diff(this.lastRequest, "second") < 2) {
+            update = false;
+          }
+        }
+        if (update) {
+          this._getClients();
+        } else {
+          this.timer = setTimeout(this._getClients, 1000);
+        }
+      } else {
+        this.$store.commit("clients/orderFilterList", []);
+        this.customerQuery = "";
+      }
+    },
+    _getClients() {
+      this.loadingCustomers = true;
+      this.lastRequest = moment();
+      this.$store
+        .dispatch("clients/getClientListBySurname", this.customerQuery)
+        .then(() => {})
+        .finally(() => {
+          this.loadingCustomers = false;
+        });
+    },
+    customerSelected: function (id) {
+      let client = this.customers.find((x) => x.id == id);
+      if (client) {
+        this.selectedCustomerInfo = client;
+      }
+    },
+    formatClientLabel: function (client) {
+      if (client) {
+        let email = null;
+        if (client.contact.channels) {
+          client.contact.channels.forEach((element) => {
+            if (element.type == "email") {
+              email = element.value;
+            }
+          });
+        }
+        let label =
+          client.contact.name + " " + client.contact.person_data.surname;
+        if (email) {
+          label += ` (${email})`;
+        }
+        return label;
+      }
+    },
             createNewClaim(){
                 let data = {
-                    'account_id' : this.account_id,
                     'amount' : this.amount*100,
-                    'claim_type':this.selectedClaimType
+                    'claim_type':this.selectedClaimType,
+                    'depot_number':this.selectedDepot,
+                    'claim_status':this.selectedClaimStatus
                 }
                 if(this.comment){
                     data.comment = this.comment;
                 }
-                if(this.reference){
-                    data.reference = this.reference;
-                }
+                
                 this.isSubmitting = true;
                 this.$store.dispatch('claims/createNewClaim',data).then(()=>{
                     this.$notify({
