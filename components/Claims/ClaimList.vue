@@ -80,7 +80,7 @@
               <div>
                 <span class="orderType text-body"
                   >{{
-                    row.depot_id
+                    row.depot_number?row.depot_number:row.depot_id
                   }}</span
                 >
   
