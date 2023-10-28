@@ -71,7 +71,7 @@ export const mutations = {
 export const actions = {
     getClientAggregatedClaims(context,payload){
         return this.$axios
-                .get(`/aggregated-claims?include=claim_status${payload}`)
+                .get(`${process.env.golddinarApiUrl}/aggregated-claims?include=claim_status${payload}`)
                 .then(res=>{
                     context.commit('aggregatedClaims',res.data.data);
                     return res.data;
@@ -80,7 +80,7 @@ export const actions = {
     getClaimStatuses(context)
     {
         return this.$axios
-            .get(`/claim-statuses`)
+            .get(`${process.env.golddinarApiUrl}/claim-statuses`)
             .then(response => {
                 context.commit('claimStatuses', response.data.data)
                 return response
@@ -89,7 +89,7 @@ export const actions = {
     getClientClaims(context,payload)
     {
         return this.$axios
-                .get(`/claims?include=claim_type,claim_status${payload}`)
+                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status${payload}`)
                 .then(res=>{
                     context.commit('claims',res.data.data);
                     return res.data;
@@ -98,7 +98,7 @@ export const actions = {
     getClaimSummaryByYear(context,payload)
     {
         return this.$axios
-                .get(`/aggregated-claims/summary/${payload}`)
+                .get(`${process.env.golddinarApiUrl}/aggregated-claims/summary/${payload}`)
                 .then(res=>{
                     context.commit('summaryByYear',{
                         data:res.data.data,
@@ -110,7 +110,7 @@ export const actions = {
     },
     markManyAspaid(context,payload){
         return this.$axios
-                .post(`/aggregated-claims/mark/paid`,{'aggregated_claims_ids':payload})
+                .post(`${process.env.golddinarApiUrl}/aggregated-claims/mark/paid`,{'aggregated_claims_ids':payload})
                 .then(res=>{
                     context.commit('updateStatus',res.data.data);
                     return res.data.data;
@@ -118,23 +118,28 @@ export const actions = {
     },
     markSingleClaimAsPaid(context,payload){
         return this.$axios
-                .put(`/claims/mark-paid/${payload}?include=claim_type,claim_status`)
+                .put(`${process.env.golddinarApiUrl}/claims/mark-paid/${payload}?include=claim_type,claim_status`)
                 .then(res=>{
                     context.commit('updateClaim',res.data.data);
                     return res.data.data;
                 })
     },
     initiateAggregatedClaimDirectDebit(context,payload){
-        return this.$axios.post(`/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
+        return this.$axios.post(`${process.env.golddinarApiUrl}/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
             return res.data.data.url;
         })
     },
     createNewClaim(context,payload){
         return this.$axios
-                .post(`/claims?include=claim_type,claim_status`,payload)
+                .post(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status`,payload)
                 .then(res=>{
                     context.commit('newclaim',res.data.data);
                     return res.data;
                 })
+    },
+    initiateClaimPayment(context,payload){
+        return this.$axios.post(`${process.env.golddinarApiUrl}/claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
+            return res.data.message.data.url;
+        })
     }
 }

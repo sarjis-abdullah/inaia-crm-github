@@ -1,13 +1,37 @@
 <template>
     <div>
-      <div class="d-flex mb-3 justify-content-end">
-        <button @click.prevent="toggleAddClaim()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
+    <div class="row">
+        <div class="col">
+          
+          <div class="d-flex mb-3 justify-content-end">
+                  
+          <Dropdown  v-if="!makingManyAsPaid && !initiatePaymentForMany" @command="handleCommand" trigger="click">
+            <base-button size="sm" type="neutral">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
+                                        <DropdownMenu  slot="dropdown">
+                                            <!--DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem-->
+                                            <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many_claims')}}</DropdownItem>
+                                            <DropdownItem command="initiate_payment_for_all" >{{$t('initiate_payment_for_all')}}</DropdownItem>
+                                            
+                                            
+                                        </DropdownMenu>
+                                    </Dropdown>
+          
+          <div class="d-flex justify-content-end" v-else>
+                <base-button size="sm" type="neutral" @click="cancelMarkMany">
+                    {{$t('cancel')}}
+                </base-button>
+                <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedClaims.length==0">
+                    {{$t('confirm')}}
+                </base-button>
+                
+            </div>
+            <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
             <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
-          </button>
-          <button @click.prevent="initiatePaymentForAccount()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
-            <span class="btn-inner--text">{{$t('initiate_payment_for_all')}}</span>
-          </button>
-      </div>
+          </base-button>
+            </div>
+            
+            <div class="card">
+             
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
@@ -64,6 +88,20 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column v-bind:label="$t('client')"  prop="type" min-width="150">
+          <template v-slot="{ row }">
+            <div class="d-flex align-items-center">
+              <div>
+                <span class="orderType text-body"
+                  >{{
+                    row.account_id
+                  }}</span
+                >
+  
+              </div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column v-bind:label="$t('ref') + '/' +$t('comment')"  prop="type" min-width="200">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
@@ -106,8 +144,12 @@
           class="ml-auto"
         ></base-pagination>
       </div>
-      <CreateClaim :show="showCreateNewClaim" :account_id="account_id" @closed="closeAddClaim"/>
-      <modal
+  
+    </div>
+    </div>
+    </div>
+    <CreateClaim :show="showCreateNewClaim"  @closed="closeAddClaim"/>
+    <modal
     :show.sync="showExecutionDate"
     headerClasses=""
     bodyClasses="pt-0"
@@ -143,52 +185,50 @@
       </base-button>
     </template>
     </modal>
-    </div>
+</div>
   </template>
   <script>
-  import { Table, TableColumn,Dropdown,DropdownItem,DropdownMenu, Checkbox,DatePicker  } from "element-ui";
+  import { Table, TableColumn,Dropdown,DropdownItem,DropdownMenu, Checkbox,DatePicker } from "element-ui";
   import Status from "@/components/Claims/Status";
   import { mapGetters } from "vuex";
+  import UserInfo from '@/components/Contacts/UserInfo';
   import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
   import { MessageBox } from "element-ui";
-  import { canEditClaims } from '@/permissions';
-  import CreateClaim from "@/components/Claims/CreateClaim";
+  import IconButton from "@/components/common/Buttons/IconButton";
   import { apiErrorHandler } from '../../helpers/apiErrorHandler';
   import MetaInfo from '@/components/common/MetaInfo';
 import { formatDateToApiFormat } from '../../helpers/helpers';
+import CreateClaim from "@/components/Claims/CreateClaim";
   export default {
     props: {
-     
-      account_id:{
-        type:Number,
-        default:-1
-      },
+      
     },
     components: {
       [Table.name]: Table,
       [TableColumn.name]: TableColumn,
       Status,
-      Dropdown,DropdownItem,DropdownMenu,
-      CreateClaim,
+      UserInfo,
+      IconButton,
+      Dropdown,
+      DropdownItem,
+      DropdownMenu,
       MetaInfo,
       Checkbox,
-      DatePicker
+      DatePicker,
+      CreateClaim
     },
     computed: {
       ...mapGetters({
         claims: "claims/claims",
       }),
       searchQuery() {
-        return `&account_id=${this.account_id}&page=${
-          this.page | 1
-        }&per_page=${this.perPage | 10}`;
+        return `&page=${
+          this.page || 1
+        }&per_page=${this.perPage || 10}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
       },
-      hasEditAccess(){
-        return canEditClaims();
-      }
     },
     watch: {
       searchQuery: {
@@ -207,16 +247,18 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
         loadingError: null,
         confirming:false,
         isSubmitting: false,
-        showCreateNewClaim:false,
         meta:null,
+        makingManyAsPaid:false,
+        initiatePaymentForMany:false,
+        selectedClaims:[],
+        paymentExecutionDate : null,
         showExecutionDate:false,
-        paymentExecutionDate:null,
-        selectedClaims:[]
+        showCreateNewClaim:false
       };
     },
     mounted(){
-      this.$confirm = MessageBox.confirm
-    },
+        this.$confirm = MessageBox.confirm
+      },
     methods: {
       fetchClaims() {
         
@@ -224,43 +266,9 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
             .then((res) => {this.totalTableData = res.meta.total;this.meta = res.meta})
-            .catch((err) => (this.loadingError =apiErrorHandler(err,null)))
+            .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
         
-      },
-      handleCommand(command,id){
-      if(command=="mark_as_paid"){
-        this.markAspaid(id);
-      }
-      if(command=="initiate_payment"){
-            this.showExecutionDate = true;
-            this.selectedClaims.push(id);
-        }
-    },
-      isPending(){
-        return this.aggregated_status == PAYMENT_PENDING;
-      },
-      isFailed(){
-        return this.aggregated_status == PAYMENT_FAILED;
-      },
-      markAspaid(id){
-        this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
-          confirmButtonText: this.$t('ok'),
-          cancelButtonText: this.$t('cancel'),
-          type: 'warning'
-        }).then(() => {
-         this.$store.dispatch('claims/markSingleClaimAsPaid',id).then(()=>{
-          this.$notify({
-            type: "success",
-            timeout: 5000,
-            message: this.$t("claim_marked_paid_successfully"),
-          });
-         }).catch((err)=>{
-          apiErrorHandler(err,this.$notify);
-         });
-        }).catch((err) => {
-          apiErrorHandler(err,this.$notify);
-        });
       },
       toggleAddClaim(){
         this.showCreateNewClaim = true;
@@ -268,11 +276,72 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
       closeAddClaim(){
         this.showCreateNewClaim = false;
       },
-      initiatePaymentForAccount(){
-      this.showExecutionDate = true;
-      this.paymentExecutionDate = null;
-    },
-    initiateBankPayment(){
+      handleCommand(command,id){
+        if(command=="mark_as_paid"){
+          this.markAspaid(id);
+        }
+        if(command=="initiate_payment"){
+            this.showExecutionDate = true;
+            this.selectedClaims.push(id);
+        }
+        if(command=="mark_many_as_paid"){
+            this.makingManyAsPaid = true;
+            this.selectedClaims = [];
+        }
+        if(command=="initiate_payment_for_many"){
+            this.initiatePaymentForMany = true;
+            this.selectedClaims = [];
+        }
+        if(command=="initiate_payment_for_all"){
+            this.showExecutionDate = true;
+            this.selectedClaims = [];
+        }
+      },
+      cancelMarkMany(){
+        this.makingManyAsPaid = false;
+        this.initiatePaymentForMany = false;
+        this.paymentExecutionDate = null;
+        this.selectedClaims = [];
+      },
+      completeManyAction(){
+        if(this.initiatePaymentForMany){
+            this.paymentExecutionDate = null;
+            this.showExecutionDate = true;
+        }
+        if(this.makingManyAsPaid){
+            this.paymentExecutionDate = null;
+            this.showExecutionDate = true;
+        }
+        
+      },
+     addClaim(value,claim){
+        if(value){
+            this.selectedClaims.push(claim.id);
+        }else{
+            let index = this.selectedClaims.findIndex(i=>i==claim.id);
+            this.selectedClaims.splice(index,1)
+        }
+     },
+      markAspaid(id){
+          this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+           this.$store.dispatch('claims/markSingleClaimAsPaid',id).then(()=>{
+            this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("claim_marked_paid_successfully"),
+            });
+           }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+           });
+          }).catch((err) => {
+            apiErrorHandler(err,this.$notify);
+          });
+        },
+        initiateBankPayment(){
             this.isSubmitting = true;
             let data = {
                 execution_date: formatDateToApiFormat(this.paymentExecutionDate)
@@ -282,13 +351,14 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
                 data.claim_ids = this.selectedClaims
             }
             else{
-                data.account_id = this.account_id;
+                data.no_of_claims = 999;
             }
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
                 
                 this.paymentExecutionDate = null;
                 this.selectedClaims = [];
                 this.showExecutionDate = false;
+                this.cancelMarkMany();
                 window.open(res,'_blank');
             
             }).catch((err)=>{
@@ -299,6 +369,7 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
         },
         cancelExecutionDate(){
         this.paymentExecutionDate = null;
+        this.selectedClaims = [];
         this.showExecutionDate = false;
     }
     },
@@ -338,3 +409,4 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
     color: #8898aa;
   }
   </style>
+  

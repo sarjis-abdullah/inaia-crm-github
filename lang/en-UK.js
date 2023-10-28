@@ -720,5 +720,12 @@ export default {
     contract_data_changed:'Contract data changed',
     document_title:'Document title',
     document_description:'Document description',
-    depot_history:'Depot history'
+    depot_history:'Depot history',
+    create_claim:'Create claim',
+    claim_status:'Claim status',
+    initiate_payment_for_all:'Initiate payment for all claims',
+    ref:'ref',
+    choose_execute_date:'Choose execution date',
+    select_execution_date:'Select execution date',
+    initiate_payment_for_many_claims:'Initiate payment for multiple claims'
 }
