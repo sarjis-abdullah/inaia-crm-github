@@ -64,7 +64,7 @@
                <el-input :placeholder="$t('reference')" v-model="reference"  class="filterElement" v-if="!isNew"/>
             </div>
         </div>
-        <div class="mt-3 row d-flex justify-content-center" v-if="isEditable || isNew" >
+        <div class="mt-3 row d-flex justify-content-center" v-if="(isTheLatest && isEditable) || isNew" >
             <base-button type="link" @click="cancelEdit" v-if="editActive">
                 {{$t('cancel')}}
             </base-button>
@@ -126,6 +126,10 @@ export default {
         paymentMethod:{
             type: String,
             default:'bank_account'
+        },
+        isTheLatest:{
+            type: Boolean,
+            default:false
         }
     },
     computed:{
@@ -288,7 +292,7 @@ export default {
                 return false;
             }
             else{
-                return isOrderPending(this.order) &&
+                return (isOrderPending(this.order) ) && this.isTheLatest &&
                 (this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
                 !this.editActive && !this.isNew;
             }
