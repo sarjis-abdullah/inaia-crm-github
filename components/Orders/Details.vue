@@ -34,7 +34,7 @@
                             :disabled="(!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete) || isSubmitting">
                           <i class="lnir lnir-trash mr-1"></i>{{$t('delete_order')}}
                         </base-button>
-                        <base-button type="danger" class="ml-auto" @click="markOrderAsfailed(selectedResource)"
+                        <base-button type="danger"  @click="markOrderAsfailed(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderFailedButton(selectedResource)">
                           {{$t('mark_failed')}}
                         </base-button>
@@ -185,9 +185,9 @@ export default {
                             window.open(data.fin_api_webform_url,'_blank')
                         }
                         else{
-                            this.showPopup = false;
+                            //this.showPopup = false;
                             this.$emit('orderUpdated',resource);
-                            this.onDetailClose();
+                            this.selectedResourceScreen = orderDetailScreens.detail;
                             this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
                         }
                         
@@ -251,7 +251,7 @@ export default {
             ;
         },
         shouldDisplayOrderFailedButton(resource){
-            return (isOrderPaid(resource) || (isOrderPending(resource)))
+            return ((isOrderPending(resource)))
             && (this.selectedResourceScreen == orderDetailScreens.failed || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
@@ -290,9 +290,9 @@ export default {
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
                     this.selectedResource = null;
-                    this.showPopup = false;
+                    //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
-                    this.onDetailClose();
+                    this.selectedResourceScreen = orderDetailScreens.detail;
 
                 }).catch(err=>{
                     apiErrorHandler(err,this.$notify);
@@ -310,9 +310,10 @@ export default {
                 this.$store
                     .dispatch('orders/paid', resource.id)
                     .then( res => {
-                        this.showPopup = false;
+                        //this.showPopup = false;
                         this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
+                        this.selectedResourceScreen = orderDetailScreens.detail;
+                        //this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                         // console.error('order->', res.data.data)
                     }).catch((err)=>{
@@ -338,9 +339,9 @@ export default {
                 this.$store
                     .dispatch('orders/refund', data)
                     .then( res => {
-                        this.showPopup = false;
+                        //this.showPopup = false;
                         this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
+                        this.selectedResourceScreen = orderDetailScreens.detail;
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
                     }).catch((err)=>{
                         apiErrorHandler(err,this.$notify);
@@ -380,7 +381,7 @@ export default {
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return (isOrderPending(resource) || isOrderPaymentFailed(resource) || isOrderOutstanding(resource) || isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) || isOrderGoldSale(resource) );
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource) || isOrderOutstanding(resource) || isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) || isOrderGoldSale(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
         },
         setCancelPaymentAccount(account)
         {
@@ -429,9 +430,9 @@ export default {
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
                     this.selectedResource = null;
-                    this.showPopup = false;
+                    //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
-                    this.onDetailClose();
+                    this.selectedResourceScreen = orderDetailScreens.detail;
 
                 }).catch(err=>{
                     apiErrorHandler(err,this.$notify);
@@ -490,9 +491,9 @@ export default {
                 this.$store
                     .dispatch('orders/failed', resource.id)
                     .then( res => {
-                        this.showPopup = false;
+                        //this.showPopup = false;
                         this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
+                        this.selectedResourceScreen = orderDetailScreens.detail;
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_marked_failed_successfully')})
                         // console.error('order->', res.data.data)
                     }).catch((err)=>{
