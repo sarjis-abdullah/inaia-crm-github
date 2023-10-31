@@ -4,26 +4,27 @@
         <div class="row">
             <div class="col">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" v-if="accountId==0">
                       <div class="row align-items-center">
                         <div class="col-8">
-                          <el-input v-if="accountId==0" prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('name')+' / '+$t('number')" clearable style="width: 300px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
-                          
+                          <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: `+$t('name')+' / '+$t('number')" clearable style="width: 300px" v-model="searchValue" @change="doSearchById" @clear="clearSearchById" />
+
                         </div>
                         <div class="col-4 text-right">
-                          <button v-if="accountId==0" @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                          <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                             <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                           </button>
                         </div>
                       </div>
 
-                    </div>
+                      <depot-filter v-if="accountId==0" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
 
-                    <depot-filter v-if="accountId==0" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></depot-filter>
+                    </div>
 
                     <el-table class="table-hover table-responsive table-flush"
                             header-row-class-name="thead-light"
-                            :data="data">
+                            :data="data"
+                            v-if="!loading">
                         <el-table-column label="#"
                                         min-width="100px"
                                         prop="id"
@@ -46,7 +47,7 @@
                                         <div><strong>{{row.name}}</strong></div>
                                         <div>Num. {{ row.depot_number }}</div>
                                     </div>
-                                    
+
                                 </div>
                             </template>
                         </el-table-column>
@@ -83,7 +84,7 @@
                             <div class="dateStyle" v-else>{{$t('billing')}}  <span v-if="row.agio_percentage == 75">75/25</span>
                                 <span v-if="row.agio_percentage == 50">50/50</span>
                             </div>
-                            
+
                           </template>
                         </el-table-column>
                         <el-table-column :label="$t('type')"
@@ -117,11 +118,25 @@
 
                     </el-table>
 
-                   
-                    <div class="card-footer py-4 d-flex align-items-center">
-                        <MetaInfo :meta="meta" class="d-flex"/>
-                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto" v-if="totalTableData> perPage"></base-pagination>
-                </div>
+                    <!-- Loading: Spinner -->
+                    <div v-else class="text-center py-4"><Loader /></div>
+
+                    <div class="card-footer py-4 d-flex align-items-center" v-if="meta && meta.total > 0">
+
+                      <div class="perPageSelector mr-4">
+                          <select name="perPage" class="form-control" v-model="perPage">
+                            <option value="10">10 {{$t('perPage')}}</option>
+                            <option value="25">25 {{$t('perPage')}}</option>
+                            <option value="50">50 {{$t('perPage')}}</option>
+                            <option value="100">100 {{$t('perPage')}}</option>
+                          </select>
+                      </div>
+
+                      <MetaInfo :meta="meta" class="d-flex" />
+
+                      <base-pagination v-model="page" :per-page="parseInt(perPage)" :total="totalTableData" class="ml-auto" v-if="totalTableData > parseInt(perPage)"></base-pagination>
+
+                    </div>
 
                     <modal :show.sync="showPopup">
                         <template slot="header">
@@ -167,19 +182,21 @@ import DepotFilter from '@/components/Depots/DepotFilter';
 import Status from '@/components/Depots/Status';
 import MetaInfo from '@/components/common/MetaInfo';
 import {canViewDepot} from '@/permissions'
+import Loader from "../common/Loader/Loader";
 export default {
     components: {
-        [Table.name]: Table,
-        [TableColumn.name]: TableColumn,
-        [Dropdown.name]: Dropdown,
-        [DropdownItem.name]: DropdownItem,
-        [DropdownMenu.name]: DropdownMenu,
-        Details,
-        Badge,
-        IconButton,
-        DepotFilter,
-        Status,
-        MetaInfo
+      Loader,
+      [Table.name]: Table,
+      [TableColumn.name]: TableColumn,
+      [Dropdown.name]: Dropdown,
+      [DropdownItem.name]: DropdownItem,
+      [DropdownMenu.name]: DropdownMenu,
+      Details,
+      Badge,
+      IconButton,
+      DepotFilter,
+      Status,
+      MetaInfo
     },
     props:{
       accountId:{
@@ -191,6 +208,7 @@ export default {
         return {
             title: 'Depot List',
             data: [],
+            loading: true,
             search: '',
             sort: 'id',
             order: 'desc',
@@ -202,7 +220,7 @@ export default {
             showPopup: false,
             showConfirm: false,
             pageTitle: 'Depots',
-            perPage: 30,
+            perPage: 10,
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
@@ -222,7 +240,7 @@ export default {
             )
         },
         totalPages() {
-            return Math.ceil(this.totalTableData / this.perPage)
+            return Math.ceil(this.totalTableData / this.perPage )
         },
         hasViewAccess(){
             return canViewDepot();
@@ -258,6 +276,7 @@ export default {
                         this.data = response.data.data;
                         this.totalTableData = response.data.meta.total
                         this.meta = response.data.meta;
+                        this.loading = false;
                     }).finally(() => {
                         this.initiated  = false
                     })

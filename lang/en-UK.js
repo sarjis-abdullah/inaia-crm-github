@@ -1,4 +1,6 @@
 export default {
+    my_profile: 'My profile',
+
     customers: 'Customers',
     customer: 'Customer',
     customer_details: 'Customer details',
@@ -151,6 +153,7 @@ export default {
     account_holder:'Account holder',
     depot_list: 'Depot list',
     depot_name:'Depot name',
+    depot_number:'Depot No.',
     depot_agio:'Depot agio',
     saving_plan:'Savings plan',
     onetime:'Pay immediately',
@@ -555,7 +558,7 @@ export default {
     sync_with_FinApi:'Update bank connection',
     bank_connection_done_succesfully:'Bank connection synced successfully',
     bank_connection_unsuccessfully:"Couldn't sync bank connection please try again later",
-    inaia_banking_account:'Inaia banking account',
+    inaia_banking_account:'Bank account',
     payment_failed:'Payment failed',
     no_claim_data_available:'No data available for the year',
     sales_commission:'Sales commission',
@@ -726,5 +729,7 @@ export default {
     ref:'ref',
     choose_execute_date:'Choose execution date',
     select_execution_date:'Select execution date',
-    initiate_payment_for_many_claims:'Initiate payment for multiple claims'
+    initiate_payment_for_many_claims:'Initiate payment for multiple claims',
+
+    perPage: 'per page'
 }

@@ -184,17 +184,17 @@ export default {
     },
     constructCountryOptions(countries) {
             const countryList     = [];
-            
+
             countries.forEach(item => {
                 countryList[countryList.length] = {
                     text: item.name_translation_key,
                     value: item.id
                 };
-                
+
             });
 
             this.countryOptions     = countryList;
-            debugger;
+            //debugger;
         },
         initCountryList() {
             this.$store.dispatch("clients/initCountryList");

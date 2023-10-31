@@ -175,13 +175,13 @@
           }"
         >
         <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }" v-if="hasInaiaAccountAccess"/>
-          <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
+          <sidebar-item :link="{ name: $t('claims'), path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
         </sidebar-item>
         <sidebar-item
           v-if="hasSalesCommissionAccess"
           :link="{
             name: $t('sales_commission'),
-            icon: 'lnir lnir-calculator text-primary',
+            icon: 'lnir lnir-consulting text-primary',
             path:'/sales-commission'
           }"
         >
