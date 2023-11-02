@@ -1,5 +1,6 @@
 export default {
     my_profile: 'Profil',
+    send: 'Senden',
 
     customers: 'Kunden',
     customer: 'Kunde',

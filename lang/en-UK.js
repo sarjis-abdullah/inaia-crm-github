@@ -1,5 +1,6 @@
 export default {
     my_profile: 'My profile',
+    send: 'Send',
 
     customers: 'Customers',
     customer: 'Customer',
@@ -122,7 +123,7 @@ export default {
     order_status_executed:'executed',
     order_status_payment_outstanding:'Payment outstanding',
 
-    customer_filter_placeholder:'Please enter customer name',
+    customer_filter_placeholder:'Customer name',
     apply_filter:'Apply filter',
     types:'Types',
     select_start_date_placeholder:'Select start date',

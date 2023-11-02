@@ -1,19 +1,21 @@
 <template>
     <div class="position-relative d-flex flex-column h-100">
-        <div class="search bg-white p-3 border-bottom w-100 row">
-            <div class="px-1 pt-1 pb-0 col-11">
+        <div class="search bg-white p-3 border-bottom w-100">
+          <div class="d-flex">
+            <div class="pl-0 pr-3 pb-0 flex-grow-1">
               <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
             </div>
-            <div class="col-1 m-auto">
-            <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
-                      </button>
-                    </div>
+            <div class="m-auto">
+              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <SupportFilter :showFilter="showFilter" @filter="applyFilter"></SupportFilter>
+
         </div>
-        
-        <div class="p-2">
-            <SupportFilter :showFilter="showFilter" @filter="applyFilter"></SupportFilter>
-        </div>
+
         <div class="flex-fill overflow-auto">
           <div class="list-area">
               <TicketItem v-for="ticket in data" :key="ticket.id" :ticket="ticket" :isSelected="selectedTicket && ticket.id==selectedTicket.id" @ticketSelected="ticketSelected"/>
@@ -85,7 +87,7 @@ export default {
             this.$store.dispatch("support/fetchStatuses").then(()=>{
                 this.fetchList();
             });
-            
+
         }
     },
     methods:{

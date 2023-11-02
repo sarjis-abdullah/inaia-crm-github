@@ -89,7 +89,7 @@ export default {
         display: none !important;
     }
     .apexcharts-xaxistooltip-bottom:after {
-        border-bottom-color: ##0065D3     !important;
+        border-bottom-color: #0065D3     !important;
     }
 
     .img-container {

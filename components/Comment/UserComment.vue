@@ -2,7 +2,7 @@
   <div class="card commentCard">
 
     <div class="card-body h-100 d-flex flex-column align-items-stretch">
-      <h3 class="card-title" v-if="account">{{ $t('account_notes') }}</h3>
+      <h3 class="card-title mb-2" v-if="account">{{ $t('account_notes') }}</h3>
       <div class="message-area h-100" id="note-area">
         <div
           v-for="comment in comments"
@@ -20,7 +20,7 @@
         </div>
         <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" @click="loadMore"/>
       </div>
-      <div class="write-aria">
+      <div class="write-area">
         <textarea
           type="text"
           class="chat-input mt-3"
@@ -36,9 +36,7 @@
           @click="sendNote"
           :disabled="isSending || !note || note == ''"
           v-if="hasEditAccess"
-          >Send<span class="btn-inner--icon"
-            ><i class="fa fa-arrow-right"></i></span
-        ></base-button>
+          >{{ $t('send') }}<i class="lnir lnir-arrow-right ml-2"></i></base-button>
       </div>
     </div>
   </div>
@@ -84,6 +82,9 @@ export default {
   },
   mounted() {
     this.fetchComments();
+
+    let noteArea = this.$el.querySelector("#note-area");
+    noteArea.scrollTop = noteArea.scrollHeight;
   },
   methods: {
     fetchComments() {
@@ -152,42 +153,48 @@ export default {
 </script>
 
 <style>
-@media(min-width: 992px) {
-  .commentCard {
-    height: calc(100vh - 185px);
-    position: sticky;
-    top: 30px;
-    left: 0;
+  .message-area {
+    width: 100%;
+    z-index: 1000;
+    margin: 0 auto;
+    overflow:scroll;
+    overflow-x:hidden;
   }
-}
-.message-area {
-  overflow-x: hidden;
-  width: 100%;
-  z-index: 1000;
-  margin: 0 auto;
-  overflow:scroll;
-  overflow-x:hidden;
-}
-.write-aria {
-  margin: 0 auto;
-  position: relative;
-  bottom: 0;
-  height: auto;
-  width: 100%;
-}
-.chat-input {
-  background-color: #f5f5f5;
-  width: 100%;
-  border: white 0 solid;
-  padding: 10px;
-}
-.notebox {
-  min-height: 50px;
-  width: 100%;
-  background-color: #dfeeff;
-  border-radius: 10px;
-}
-.comment {
-  font-family: 'Noah', 'Open Sans', sans-serif;
-}
+  .write-area {
+    margin: 0 auto;
+    position: relative;
+    bottom: 0;
+    height: auto;
+    width: 100%;
+  }
+  .chat-input {
+    background-color: #f5f5f5;
+    width: 100%;
+    border: white 0 solid;
+    padding: 10px;
+  }
+  .notebox {
+    min-height: 50px;
+    width: 100%;
+    background-color: #dfeeff;
+    border-radius: 10px;
+  }
+  .comment {
+    font-family: 'Noah', 'Open Sans', sans-serif;
+  }
+  .commentCard {
+    max-height: 400px;
+  }
+  .commentCard .card-body {
+    overflow-y: scroll;
+  }
+  @media(min-width: 992px) {
+    .commentCard {
+      max-height: calc(100vh - 185px);
+      position: sticky;
+      top: 30px;
+      left: 0;
+    }
+  }
+
 </style>

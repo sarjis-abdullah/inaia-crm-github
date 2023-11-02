@@ -1,55 +1,46 @@
 <template>
   <div>
     <div v-if="showFilter">
-      <div class="row">
-        <div
-          class="col-6"
+      <Select
+        v-model="selectedCustomer"
+        remote
+        filterable
+        reserve-keyword
+        class="w-100 mt-3"
+        :placeholder="$t('customer_filter_placeholder')"
+        :loading="loadingCustomers"
+        :remote-method="loadCustomers"
+        @change="customerSelected"
+        @clear="clearCustomer"
+        clearable
+      >
+        <Option
+          v-for="option in customers"
+          :value="option.id"
+          :label="formatClientLabel(option)"
+          :key="option.id"
         >
-          <Select
-            v-model="selectedCustomer"
-            remote
-            filterable
-            reserve-keyword
-            :placeholder="$t('customer_filter_placeholder')"
-            :loading="loadingCustomers"
-            :remote-method="loadCustomers"
-            @change="customerSelected"
-            @clear="clearCustomer"
-            clearable
-          >
-            <Option
-              v-for="option in customers"
-              :value="option.id"
-              :label="formatClientLabel(option)"
-              :key="option.id"
-            >
-            </Option>
-          </Select>
-        </div>
-          <div
-          class="col-6"
+        </Option>
+      </Select>
+
+      <Select
+        :placeholder="$t('status')"
+        v-model="selectedStatus"
+        filterable
+        multiple
+        class="w-100 mt-3"
+        @remove-tag="applyFilter"
+        :loading="loadingStatus"
+      >
+        <Option
+          v-for="option in status"
+          :value="option.id"
+          :label="$t(option.name_translation_key)"
+          :key="option.id"
         >
-            <Select
-            :placeholder="$t('status')"
-            v-model="selectedStatus"
-            filterable
-            multiple
-            class="mb-3"
-            @remove-tag="applyFilter"
-            :loading="loadingStatus"
-          >
-            <Option
-              v-for="option in status"
-              :value="option.id"
-              :label="$t(option.name_translation_key)"
-              :key="option.id"
-            >
-            </Option>
-          </Select>
-          </div>
-          
-        </div>
-      
+        </Option>
+      </Select>
+
       <div
         class="
           applyContainer
@@ -57,7 +48,7 @@
           flex-row
           align-content-center
           justify-content-center
-          mb-0
+          mt-3 mb-0
         "
       >
         <base-button type="primary" @click="applyFilter">{{

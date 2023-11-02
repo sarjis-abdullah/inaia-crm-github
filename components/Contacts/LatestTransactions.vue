@@ -29,7 +29,7 @@
                             </el-table-column>
 
                             <el-table-column v-bind:label="$t('type')"
-                                    min-width="180px"
+                                    min-width="240px"
                                     >
                                 <template v-slot="{row}">
                                     <div class="d-flex align-items-center">
@@ -46,7 +46,7 @@
                             </el-table-column>
                             <el-table-column v-bind:label="$t('depot')"
                                     prop="depotName"
-                                    min-width="180"
+                                    min-width="140"
                                     >
                                     <template v-slot="{row}">
                                         <span>{{row.depotName}}</span>
@@ -68,7 +68,7 @@
                                         <span>{{row.direction=='CREDIT'?'- ':''}}</span><i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
                                     </span>
                                 </template>
-                               
+
                             </el-table-column>
                             <el-table-column v-bind:label="$t('status')"
                                     min-width="140px"
@@ -79,7 +79,7 @@
                                     </div>
                                     <div v-else>
                                         <BankStatus :status="row.status"  :lifecycle_status="row.lifecycle_status"/>
-                                    </div>                              
+                                    </div>
                                 </template>
                             </el-table-column>
                             <el-table-column>
@@ -94,15 +94,15 @@
                         <div class="card-footer py-4 d-flex justify-content-end">
                             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                         </div>
-                        <OrderDetails 
-                            :showPopup="showOrderDetails" 
-                            :selectedResource="selectedOrder" 
+                        <OrderDetails
+                            :showPopup="showOrderDetails"
+                            :selectedResource="selectedOrder"
                             @onClose="onOrderDetailsClosed"
                         />
                         <BankingTransactionDetail v-if="showBankTransactionDetail" :showModal="showBankTransactionDetail" :transaction="selectedOrder" @closed="onOrderDetailsClosed"/>
                     </div>
                 </div>
-                
+
             </div>
 </template>
 <script>
@@ -142,7 +142,7 @@ export default {
             )
         },
         totalPages() {
-            return Math.ceil(this.totalTableData / this.perPage) 
+            return Math.ceil(this.totalTableData / this.perPage)
         }
     },
     watch: {
@@ -178,7 +178,7 @@ export default {
             this.selectedOrder = resource;
             if(resource && resource.order_status)
             {
-                
+
                 this.showOrderDetails = true;
             }
             else
