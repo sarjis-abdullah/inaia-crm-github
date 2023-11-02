@@ -66,7 +66,7 @@
               <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
             </div>
 
-            <div class="write-aria" v-if="shouldShowMessageBoxAndCloseTicket()">
+            <div class="write-area" v-if="shouldShowMessageBoxAndCloseTicket()">
               <textarea type="text" class="chat-input mt-3" :placeholder="$t('write_answer')" rows="5" v-model="messageText"></textarea>
               <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">{{$t('send_message')}}<span class="btn-inner--icon ml-1"><i class="fa fa-paper-plane"></i></span></base-button>
             </div>
@@ -367,7 +367,7 @@ export default {
 
     margin: 0 auto;
 }
-.write-aria {
+.write-area {
      margin: 0 auto;
   position: relative;
   bottom: 0;

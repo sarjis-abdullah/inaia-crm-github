@@ -4,7 +4,7 @@
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0" v-if="loaded && !loadedWithError">
-            {{ $t("depot_details") }}
+            {{ $t("depot_number") }} {{ depot.depot_number }}
           </h6>
         </div>
       </div>
@@ -25,10 +25,8 @@
                     <div class="media align-items-center">
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
-                        <div>{{$t('depot')}} #. {{ depot.depot_number }}</div>
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
                         <span class="h2 font-weight-bold mb-0">{{depot.name }} </span>
-                        <div class="font-weight-bold mb-0">{{$t(depot.depot_type.name_translation_key)}}</div>
                       </div>
                     </div>
                   </div>
@@ -84,9 +82,10 @@
                     </base-dropdown>
                   </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm">
-                  <span class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> €</span>
-                </p>
+                <div class="mt-3 mb-0 text-sm">
+                  <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
+                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> €</div>
+                </div>
               </div>
             </div>
           </div>
@@ -123,7 +122,7 @@
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
-                      
+
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
@@ -181,7 +180,7 @@
                     <div>
                         {{$t('pause_saving_plan_question')}}
                         <div class="mt-3">
-                  {{ $t('paused_until') }} : 
+                  {{ $t('paused_until') }} :
                   <date-picker
             size="large"
             v-model="endPauseDate"
@@ -226,7 +225,7 @@
             </template>
             <div>
                 {{$t('cancel_saving_plan_question')}}
-                
+
             </div>
             <template slot="footer">
                 <base-button type="link" class="ml-auto" @click="cancelCancel()">
@@ -266,7 +265,7 @@
             </template>
             <div>
                 {{$t('are_you_sure_you_want_to_block_depot')}}
-                
+
             </div>
             <template slot="footer">
                 <base-button type="link" class="ml-auto" @click="cancelBlocked()">
@@ -318,7 +317,7 @@ import {
 import { formatDateToApiFormat } from '../../../helpers/helpers';
 import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 import AddDeposit from '@/components/Depots/AddDeposit';
-import { canEditDepot, canModifySavingPlanStatus} from '@/permissions'; 
+import { canEditDepot, canModifySavingPlanStatus} from '@/permissions';
 import Modal from '../../../components/argon-core/Modal.vue';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 export default {
@@ -375,7 +374,7 @@ export default {
         }),
         pauseEndDate(){
           let pausedDate = '';
-          if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused' 
+          if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused'
           && this.depot.status_history && this.depot.status_history.length > 0 ){
             const history = this.depot.status_history.findLast(h=>h.depot_status_id==this.depot.status.id);
             if(history && history.end_date){
@@ -390,7 +389,7 @@ export default {
         hadSavingPlanStatusEditAccess(){
           return canModifySavingPlanStatus();
         }
-        
+
     },
      mounted () {
        this.$confirm = MessageBox.confirm
@@ -441,7 +440,7 @@ export default {
         initDepotData()
         {
             this.$store.dispatch('depots/details',this.depotId).then((res)=>{
-             
+
                 this.initPrices()
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
@@ -556,9 +555,9 @@ export default {
             this.isSubmitting = false;
           })
           }
-          
+
         },
-        
+
         blockDepot(){
           const data = {
             depot_id:this.depot.id,
@@ -598,7 +597,7 @@ export default {
           }
           return value;
         },
-        
+
     }
 
 }

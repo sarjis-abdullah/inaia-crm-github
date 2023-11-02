@@ -1,13 +1,21 @@
 <template>
-    <div>
-      <div class="d-flex mb-3 justify-content-end">
-        <button @click.prevent="toggleAddClaim()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
+  <div class="card">
+    <div class="card-header">
+      <div class="row align-items-center">
+        <div class="col text-right">
+
+          <button @click.prevent="toggleAddClaim()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
             <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
           </button>
           <button @click.prevent="initiatePaymentForAccount()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess">
             <span class="btn-inner--text">{{$t('initiate_payment_for_all')}}</span>
           </button>
+
+        </div>
       </div>
+
+    </div>
+
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
@@ -23,7 +31,7 @@
         </el-table-column>
           <el-table-column
           v-bind:label="$t('amount')"
-         
+
           align="right"
           prop="amount"
           min-width="120"
@@ -36,20 +44,20 @@
           <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
-              
+
                 <span class="orderType text-body"
                   >{{
                     row.claim_type ? $t(row.claim_type.name_translation_key) : ""
                   }}</span
                 ><Status :status='row.claim_status ? row.claim_status.name_translation_key : ""' class="ml-2"/>
-  
-  
-              
+
+
+
             </div>
             {{row.created_at?$d(new Date(row.created_at),'short'):""}}
           </template>
         </el-table-column>
-        
+
         <el-table-column v-bind:label="$t('depot')"  prop="type" min-width="100">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
@@ -59,7 +67,7 @@
                     row.depot_number?row.depot_number:row.depot_id
                   }}</span
                 >
-  
+
               </div>
             </div>
           </template>
@@ -96,7 +104,7 @@
             </template>
           </el-table-column>
       </el-table>
-  
+
       <div class="card-footer py-4 d-flex align-items-center" v-if="totalTableData>1">
         <MetaInfo :meta="meta" class="d-flex"/>
         <base-pagination
@@ -158,7 +166,7 @@
 import { formatDateToApiFormat } from '../../helpers/helpers';
   export default {
     props: {
-     
+
       account_id:{
         type:Number,
         default:-1
@@ -219,14 +227,14 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
     },
     methods: {
       fetchClaims() {
-        
+
           this.isLoading = true;
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
             .then((res) => {this.totalTableData = res.meta.total;this.meta = res.meta})
             .catch((err) => (this.loadingError =apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
-        
+
       },
       handleCommand(command,id){
       if(command=="mark_as_paid"){
@@ -285,12 +293,12 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
                 data.account_id = this.account_id;
             }
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
-                
+
                 this.paymentExecutionDate = null;
                 this.selectedClaims = [];
                 this.showExecutionDate = false;
                 window.open(res,'_blank');
-            
+
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify)
             }).finally(()=>{
@@ -302,7 +310,7 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
         this.showExecutionDate = false;
     }
     },
-    
+
   };
   </script>
   <style scoped>

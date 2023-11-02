@@ -111,12 +111,14 @@
 
         <template>
 
+          <!--
           <div class="dropdown-header noti-title">
             <h6 class="text-overflow m-0">Welcome!</h6>
           </div>
+          -->
           <a href="#!" class="dropdown-item" @click.prevent="editProfile">
             <i class="ni ni-single-02"></i>
-            <span>My profile</span>
+            <span>{{ $t('my_profile') }}</span>
           </a>
           <!--
           <a href="#!" class="dropdown-item">

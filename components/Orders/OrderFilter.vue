@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="card-header border-0" v-if="showFilter">
+    <form class="pt-4" v-if="showFilter">
       <div class="row">
         <div
           class="col-md displayFlex flex-column align-content-center"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="card-header border-0" v-if="showFilter">
+    <form class="pt-4" v-if="showFilter">
       <div class="row">
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
@@ -108,7 +108,7 @@
           <Select
             :placeholder="$t('interval_day')"
             v-model="selectedIntervalDay"
-            
+
             class="mb-3"
             clearable
             @clear="removeIntervalDay"
@@ -467,7 +467,7 @@ export default {
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
-      
+
       return query;
     },
     applyFilter: function () {

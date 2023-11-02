@@ -35,8 +35,8 @@
             <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
-   
-            
+
+
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
             <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
@@ -60,10 +60,7 @@
               <div>{{$t('created_at')}}: {{info.account.created_at ? $d(new Date(info.account.created_at),'narrow') : ''}}</div>
               <div>{{$t('mobile_pin')}}: {{info.account.pin_length > 0 ? '*'.repeat(parseInt(info.account.pin_length)) : $t('not_set') }}</div>
               <div>{{$t('referral_code')}}: {{info.account.referral_code}}</div>
-              <div>{{$t('referred_by')}}: <span v-if="info.account.referred_by!=null">
-                <a v-if="info.account.referred_by.referred_by" @click.prevent="openRefrredByLink" class="text-primary pe-auto">{{ info.account.referred_by.referred_by.name }}</a>
-              </span>
-              <span v-else>{{info.account.influencer_referral_code?info.account.influencer_referral_code:$t('no_referrer')}}</span></div>
+              <div v-if="info.account.referred_by!=null">{{$t('referred_by')}}: <a v-if="info.account.referred_by.referred_by" @click.prevent="openRefrredByLink" class="text-primary pe-auto">{{ info.account.referred_by.referred_by.name }}</a></div>
               <div>{{$t('sales_advisor')}}: {{info.account.sales_advisor?(info.account.sales_advisor.first_name  + ' '+info.account.sales_advisor.last_name):$t('not_assigned')}}</div>
             </div>
 
@@ -74,7 +71,7 @@
               <div class="h5 text-muted text-uppercase ls-1">{{$t('person_data')}}</div>
               <div>{{$t('gender')}}: <i v-if="info.person_data" class="lnir ml-1" :class="`${info.person_data.gender == 'male' ? 'lnir-male rotate-45' : 'lnir-female lnir-rotate-180'}`" /></div>
               <div>{{$t('birthdate')}}: {{$d(new Date(info.person_data.birthdate),'narrow')}}</div>
-              <div>{{$t('birthplace')}}: </div>
+              <div>{{$t('birthplace')}}: {{ info.person_data.birth_place }}</div>
               <div>{{$t('nationality')}}: {{ (info.person_data && info.person_data.nationality_details ? info.person_data.nationality_details.nationality_translation_key : '' ) }}</div>
             </div>
 
@@ -108,7 +105,7 @@
     <EditPhoneNumber :showModal="showEditPhoneNumber" :customer="this.info" @cancelEdit="cancelEditPhoneNUmber" :phone="getChannelInfo('mobile')"/>
     <EditEmail :showModal="showEditEmail" :customer="this.info" @cancelEdit="cancelEditEmail" :email="getChannelInfo('email')"/>
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
-    
+
     <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
     <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
   </div>

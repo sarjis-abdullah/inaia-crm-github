@@ -31,10 +31,10 @@
         </div>
         <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" @click="loadMore"/>
       </div>
-     
-        
-      
-      <div class="write-aria">
+
+
+
+      <div class="write-area">
         <textarea
           type="text"
           class="chat-input mt-3"
@@ -189,7 +189,7 @@ export default {
   margin: 0 auto;
   margin-bottom: 10px;
 }
-.write-aria {
+.write-area {
   margin: 0 auto;
   position: relative;
   bottom: 0;

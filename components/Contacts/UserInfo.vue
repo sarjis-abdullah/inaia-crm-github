@@ -32,7 +32,7 @@
               <div class="h5 text-muted text-uppercase ls-1">{{$t('person_data')}}</div>
               <div>{{$t('gender')}}: <i v-if="info.person_data" class="lnir ml-1" :class="`${info.person_data.gender == 'male' ? 'lnir-male rotate-45' : 'lnir-female lnir-rotate-180'}`" /></div>
               <div>{{$t('birthdate')}}: {{$d(new Date(info.person_data.birthdate),'narrow')}}</div>
-              <div>{{$t('nationality')}}: {{ (info.person_data && info.person_data.nationality ? info.person_data.nationality.name_translation_key : '' ) }}</div>
+              <div>{{$t('nationality')}}: {{ (info.person_data && info.person_data.nationality_details ? info.person_data.nationality_details.nationality_translation_key : '' ) }}</div>
             </div>
 
           </div>
@@ -136,3 +136,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+.rotate-45 {
+  filter: none;
+  transform: rotate(45deg);
+}
+
+</style>

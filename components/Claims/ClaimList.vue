@@ -2,36 +2,42 @@
     <div>
     <div class="row">
         <div class="col">
-          
-          <div class="d-flex mb-3 justify-content-end">
-                  
-          <Dropdown  v-if="!makingManyAsPaid && !initiatePaymentForMany" @command="handleCommand" trigger="click">
-            <base-button size="sm" type="neutral">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
-                                        <DropdownMenu  slot="dropdown">
-                                            <!--DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem-->
-                                            <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many_claims')}}</DropdownItem>
-                                            <DropdownItem command="initiate_payment_for_all" >{{$t('initiate_payment_for_all')}}</DropdownItem>
-                                            
-                                            
-                                        </DropdownMenu>
-                                    </Dropdown>
-          
-          <div class="d-flex justify-content-end" v-else>
-                <base-button size="sm" type="neutral" @click="cancelMarkMany">
-                    {{$t('cancel')}}
-                </base-button>
-                <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedClaims.length==0">
-                    {{$t('confirm')}}
-                </base-button>
-                
+
+          <div class="card">
+            <div class="card-header">
+              <div class="row align-items-center">
+                <div class="col text-right">
+
+
+                  <Dropdown  v-if="!makingManyAsPaid && !initiatePaymentForMany" @command="handleCommand" trigger="click">
+                    <base-button size="sm" type="neutral" class="mr-0">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
+                    <DropdownMenu  slot="dropdown">
+                      <!--DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem-->
+                      <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many_claims')}}</DropdownItem>
+                      <DropdownItem command="initiate_payment_for_all" >{{$t('initiate_payment_for_all')}}</DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+
+                  <div class="d-flex justify-content-end" v-else>
+                    <base-button size="sm" type="neutral" @click="cancelMarkMany">
+                      {{$t('cancel')}}
+                    </base-button>
+                    <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedClaims.length==0">
+                      {{$t('confirm')}}
+                    </base-button>
+
+                  </div>
+                  <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
+                    <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
+                  </base-button>
+
+
+                </div>
+              </div>
+
             </div>
-            <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
-            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
-          </base-button>
-            </div>
-            
-            <div class="card">
-             
+
+
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
@@ -47,7 +53,7 @@
         </el-table-column>
           <el-table-column
           v-bind:label="$t('amount')"
-         
+
           align="right"
           prop="amount"
           min-width="120"
@@ -60,20 +66,20 @@
           <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
-              
+
                 <span class="orderType text-body"
                   >{{
                     row.claim_type ? $t(row.claim_type.name_translation_key) : ""
                   }}</span
                 ><Status :status='row.claim_status ? row.claim_status.name_translation_key : ""' class="ml-2"/>
-  
-  
-              
+
+
+
             </div>
             {{row.created_at?$d(new Date(row.created_at),'short'):""}}
           </template>
         </el-table-column>
-        
+
         <el-table-column v-bind:label="$t('depot')"  prop="type" min-width="100">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
@@ -83,7 +89,7 @@
                     row.depot_number?row.depot_number:row.depot_id
                   }}</span
                 >
-  
+
               </div>
             </div>
           </template>
@@ -97,7 +103,7 @@
                     row.account_id
                   }}</span
                 >
-  
+
               </div>
             </div>
           </template>
@@ -134,7 +140,7 @@
             </template>
           </el-table-column>
       </el-table>
-  
+
       <div class="card-footer py-4 d-flex align-items-center" v-if="totalTableData>1">
         <MetaInfo :meta="meta" class="d-flex"/>
         <base-pagination
@@ -144,7 +150,7 @@
           class="ml-auto"
         ></base-pagination>
       </div>
-  
+
     </div>
     </div>
     </div>
@@ -201,7 +207,7 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
 import CreateClaim from "@/components/Claims/CreateClaim";
   export default {
     props: {
-      
+
     },
     components: {
       [Table.name]: Table,
@@ -261,14 +267,14 @@ import CreateClaim from "@/components/Claims/CreateClaim";
       },
     methods: {
       fetchClaims() {
-        
+
           this.isLoading = true;
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
             .then((res) => {this.totalTableData = res.meta.total;this.meta = res.meta})
             .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
-        
+
       },
       toggleAddClaim(){
         this.showCreateNewClaim = true;
@@ -312,7 +318,7 @@ import CreateClaim from "@/components/Claims/CreateClaim";
             this.paymentExecutionDate = null;
             this.showExecutionDate = true;
         }
-        
+
       },
      addClaim(value,claim){
         if(value){
@@ -354,13 +360,13 @@ import CreateClaim from "@/components/Claims/CreateClaim";
                 data.no_of_claims = 999;
             }
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
-                
+
                 this.paymentExecutionDate = null;
                 this.selectedClaims = [];
                 this.showExecutionDate = false;
                 this.cancelMarkMany();
                 window.open(res,'_blank');
-            
+
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify)
             }).finally(()=>{
@@ -373,7 +379,7 @@ import CreateClaim from "@/components/Claims/CreateClaim";
         this.showExecutionDate = false;
     }
     },
-    
+
   };
   </script>
   <style scoped>
@@ -409,4 +415,3 @@ import CreateClaim from "@/components/Claims/CreateClaim";
     color: #8898aa;
   }
   </style>
-  

@@ -15,10 +15,9 @@
                     </div>
                   </div>
 
+                  <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
 
                 </div>
-
-                <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
 
                 <el-table class="table-hover table-responsive table-flush"
                         header-row-class-name="thead-light"
