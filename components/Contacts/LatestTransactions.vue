@@ -134,11 +134,11 @@ export default {
     },
     computed: {
         ...mapGetters({
-            lastTransactions: "clients/latestTransactions"
+            lastTransactions: "orders/list"
         }),
         searchQuery() {
             return (
-                `&account_id=${this.account_id}&page=${this.page | 1}&per_page=${this.perPage | 5}`
+                `&account_id=${this.account_id}&page=${this.page || 1}&per_page=${this.perPage || 5}`
             )
         },
         totalPages() {
@@ -168,7 +168,7 @@ export default {
     methods:{
         fetchLatestTransactions(){
             this.isLoading = true;
-            this.$store.dispatch('clients/getClientLatestTransactions',this.searchQuery)
+            this.$store.dispatch('orders/getClientLatestTransactions',this.searchQuery)
                 .then(res=>this.totalTableData = res.total)
                 .catch(err=>this.loadingError=apiErrorHandler(err,null))
                 .finally(()=>this.isLoading=false)

@@ -36,12 +36,18 @@ export const mutations = {
         Object.assign(item.order_status, order.order_status)
     },
     update(state, order) {
-        const item  = state.list.find( i => i.id == order.id)
-        Object.assign(item, order)
+        debugger;
+      
+            const item  = state.list.find( i => i.id == order.id)
+            Object.assign(item, order)
+        
+       
     },
     updateShippment(state, shippment) {
+        
         const item  = state.list.find( i => i.id == shippment.order_id)
         Object.assign(item.order_shipping_details, shippment.data)
+        
     },
     pairs(state, data) {
         state.pairs = data
@@ -235,5 +241,13 @@ export const actions = {
         .then(res => {
             return res.data.data;
         })
-    }
+    },
+    getClientLatestTransactions(context,payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=${includes}&${payload}`)
+            .then(res=>{
+                context.commit('list',res.data.data);
+                return res.data;
+            })
+    },
 }
