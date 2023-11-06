@@ -289,7 +289,7 @@ export default {
                 .dispatch('orders/complete', data)
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
-                    this.selectedResource = null;
+                    //this.selectedResource = null;
                     //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
                     this.selectedResourceScreen = orderDetailScreens.detail;

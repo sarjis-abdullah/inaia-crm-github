@@ -95,6 +95,20 @@
               </collapse-item>
             </collapse>
           </div>
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('support_ticket')" name="support" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('support_ticket') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <List :account_id="info.account.id" v-if="shouldLoadSupport"/>
+              </collapse-item>
+            </collapse>
+          </div>
 
         </div>
 
@@ -130,6 +144,7 @@ import Claims from '@/components/Contacts/AccountClaimList';
 import InboxMessageList from '@/components/InboxMessage/List';
 import {Collapse,CollapseItem} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
+import List from "@/components/Support/List";
 //import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 //import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
 //import UserBankAccounts from "@/components/Contacts/BankAccounts"
@@ -146,6 +161,7 @@ export default {
         Collapse,
         CollapseItem,
         UserComment,
+        List
         //BankingAmountCard,
         //ProductClassCard,
         //UserBankAccounts
@@ -166,7 +182,8 @@ export default {
         shouldLoadAggregatedClaims:false,
         shouldLoadInboxMessages:false,
         hasBankingAcoount:false,
-        shouldLoadBankAccounts:false
+        shouldLoadBankAccounts:false,
+        shouldLoadSupport:false
       }
     },
 
@@ -247,8 +264,11 @@ export default {
           if(element == "inboxMessages" && !this.shouldLoadInboxMessages){
             this.shouldLoadInboxMessages = true;
           }
-          if(element == "bankAccount" && !this.shouldLoadInboxMessages){
+          if(element == "bankAccount" && !this.shouldLoadBankAccounts){
             this.shouldLoadBankAccounts = true;
+          }
+          if(element == "support" && !this.shouldLoadSupport){
+            this.shouldLoadSupport = true;
           }
         });
       }

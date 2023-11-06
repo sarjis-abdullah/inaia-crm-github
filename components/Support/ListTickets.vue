@@ -1,9 +1,9 @@
 <template>
     <div class="position-relative d-flex flex-column h-100">
-        <div class="search bg-white p-3 border-bottom w-100">
+        <div class="search bg-white p-3 border-bottom w-100" v-if="account_id==-1">
           <div class="d-flex">
             <div class="pl-0 pr-3 pb-0 flex-grow-1">
-              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
+              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject" />
             </div>
             <div class="m-auto">
               <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
@@ -35,6 +35,12 @@ import TicketItem from '@/components/Support/TicketItem';
 import SupportFilter from '@/components/Support/SupportFilter';
 import LoadMore from "@/components/common/Loader/LoadMore";
 export default {
+    props:{
+        account_id:{
+            type:Number,
+            default:-1
+        }
+    },
     components:{
         TicketItem,
         SupportFilter,
@@ -49,7 +55,8 @@ export default {
             return (
                 '&order_by=updated_at' +
                 `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')+
-                (this.search ? `&search=${this.search}` : '')
+                (this.search ? `&search=${this.search}` : '')+
+                (this.account_id > -1 ?'&account_ids='+this.account_id : '')
             )
         },
         totalPages() {
