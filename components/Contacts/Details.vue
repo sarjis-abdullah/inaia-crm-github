@@ -76,7 +76,7 @@
                   </div>
                 </template>
 
-                <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadInboxMessages"/>
+                <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadBankAccounts" class="p-3"/>
               </collapse-item>
             </collapse>
           </div>
@@ -105,7 +105,7 @@
                   </div>
                 </template>
 
-                <List :account_id="info.account.id" v-if="shouldLoadSupport"/>
+                <List :account_id="info.account.id" v-if="shouldLoadSupport" class="p-3"/>
               </collapse-item>
             </collapse>
           </div>
@@ -147,7 +147,7 @@ import UserComment from "@/components/Comment/UserComment";
 import List from "@/components/Support/List";
 //import BankingAmountCard from "@/components/Banking/BankingAmountCard"
 //import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
-//import UserBankAccounts from "@/components/Contacts/BankAccounts"
+import UserBankAccounts from "@/components/Contacts/BankAccounts"
 export default {
     components: {
         Loader,
@@ -161,10 +161,10 @@ export default {
         Collapse,
         CollapseItem,
         UserComment,
-        List
+        List,
         //BankingAmountCard,
         //ProductClassCard,
-        //UserBankAccounts
+        UserBankAccounts
     },
     props: {
         resource: {
