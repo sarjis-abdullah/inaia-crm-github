@@ -722,5 +722,7 @@ export default {
     select_execution_date:'Select execution date',
     initiate_payment_for_many_claims:'Initiate payment for multiple claims',
 
-    perPage: 'pro Seite'
+    perPage: 'pro Seite',
+    do_you_want_to_delete_this_claim:'Are you sure you want to delete this claim?',
+    claim_deleted_successfully:'The claim deleted successfully'
 }
