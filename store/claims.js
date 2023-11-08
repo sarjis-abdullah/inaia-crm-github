@@ -65,6 +65,12 @@ export const mutations = {
     },
     newclaim(state,data){
         state.claims.unshift(data)
+    },
+    deleteclaim(state,id){
+        let index = state.claims.findIndex(x=>x.id==id);
+        if(index>-1){
+            state.claims.splice(index,1);
+        }
     }
 }
 
@@ -135,6 +141,14 @@ export const actions = {
                 .then(res=>{
                     context.commit('newclaim',res.data.data);
                     return res.data;
+                })
+    },
+    deleteSingleClaim(context,payload){
+        return this.$axios
+                .delete(`${process.env.golddinarApiUrl}/claims/${payload}`)
+                .then(()=>{
+                    context.commit('deleteclaim',payload);
+                    return true;
                 })
     },
     initiateClaimPayment(context,payload){

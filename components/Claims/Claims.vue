@@ -93,6 +93,7 @@
                    
                 </DropdownMenu>
                 </Dropdown>
+                <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting"/>
           </template>
         </el-table-column>
     </el-table>
@@ -169,7 +170,8 @@ export default {
       isLoading: false,
       loadingError: null,
       confirming:false,
-      isSubmitting: false
+      isSubmitting: false,
+      isDeleting:false
     };
   },
   mounted(){
@@ -219,6 +221,25 @@ export default {
           type: 'warning'
         }).then(() => {
          this.$store.dispatch('claims/markSingleClaimAsPaid',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_marked_paid_successfully"),
+          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+         });
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
+        });
+      },
+      confirmDelete(id){
+        this.$confirm(this.$t('do_you_want_to_delete_this_claim'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/deleteSingleClaim',id).then(()=>{
           this.$notify({
             type: "success",
             timeout: 5000,

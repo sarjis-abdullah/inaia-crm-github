@@ -166,7 +166,7 @@ export default {
             this.$emit('onselectedTicket',ticket);
         },
         getClosedParam(){
-            if(this.statuses.length>0 && !this.includeClosed)
+            if(this.statuses.length>0 && !this.includeClosed && this.account_id == -1)
             {
                 let closedStatus = null;
                 this.statuses.forEach(element => {

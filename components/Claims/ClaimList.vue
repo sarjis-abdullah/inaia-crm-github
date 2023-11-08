@@ -108,7 +108,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column v-bind:label="$t('ref') + '/' +$t('comment')"  prop="type" min-width="200">
+        <el-table-column v-bind:label="$t('ref') + '/' +$t('comment')"  prop="type" min-width="150">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
               <div v-if="row.reference">
@@ -137,6 +137,7 @@
                       <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
                   </DropdownMenu>
                   </Dropdown>
+                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting"/>
             </template>
           </el-table-column>
       </el-table>
@@ -259,7 +260,8 @@ import CreateClaim from "@/components/Claims/CreateClaim";
         selectedClaims:[],
         paymentExecutionDate : null,
         showExecutionDate:false,
-        showCreateNewClaim:false
+        showCreateNewClaim:false,
+        isDeleting:false
       };
     },
     mounted(){
@@ -377,7 +379,28 @@ import CreateClaim from "@/components/Claims/CreateClaim";
         this.paymentExecutionDate = null;
         this.selectedClaims = [];
         this.showExecutionDate = false;
-    }
+    },
+    confirmDelete(id){
+        this.$confirm(this.$t('do_you_want_to_delete_this_claim'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/deleteSingleClaim',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_deleted_successfully"),
+          });
+         }).catch((err)=>{
+          debugger;
+          apiErrorHandler(err,this.$notify);
+         });
+        }).catch((err) => {
+          debugger;
+          apiErrorHandler(err,this.$notify);
+        });
+      }
     },
 
   };
