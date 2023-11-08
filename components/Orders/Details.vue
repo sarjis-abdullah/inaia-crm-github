@@ -21,6 +21,7 @@
                         @revertorderdateselected="setRevertDate"
                         @makediscount="doMakeDiscount"
                         @hasMoneyTransfered="setHasMoneyTranfered"
+                        @setTransactionFee="onSetTransactionFee"
                         />
                     </div>
                     <template slot="footer" v-if="hasEditAccess">
@@ -110,7 +111,8 @@ export default {
             isMoneyRefunded: 0,
             revertDate:null,
             makeDiscount:false,
-            hasMoneyTransfered:false
+            hasMoneyTransfered:false,
+            transactionFee:null
         }
     },
      created (){
@@ -231,6 +233,7 @@ export default {
             this.revertDate = null;
             this.makeDiscount = false;
             this.hasMoneyTransfered = false;
+            this.transactionFee = null;
         },
         shouldDisplayOrderDeleteButton(resource)
         {
@@ -269,7 +272,10 @@ export default {
                 }
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
-                    data.data = {price_date:this.completeOrderInfo.date,discount_transaction_fee:this.makeDiscount}
+                    data.data = {price_date:this.completeOrderInfo.date};
+                    if(!isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
+                        data.data.transaction_fee = this.transactionFee;
+                    }
                 }
                 if(isDeliveryOrder(resource))
                 {
@@ -501,6 +507,9 @@ export default {
                     }).finally(()=>this.isSubmitting = false)
             }
             
+        },
+        onSetTransactionFee(value){
+            this.transactionFee = value;
         }
     }
 }

@@ -22,8 +22,14 @@
             <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
+            
+            <div v-if="isPurchaseOrder(order)" class="mt-3">
+                <label  for="transactionfee">{{ $t('transaction_fee') }} in %</label>
+                <Input type="numeric" v-model="transactionFee" class="mt-3" :placeholder="$t('transaction_fee')" name="transactionfee" @input="setTransactionFee"/>
+                <div class="text-sm-left" :class="transactionFeeBadValue?'text-danger':'text-muted'">{{ $t('transactionfee_explanation') }} </div>
+            </div>
             <span v-if="!preview.operation_stock_balance || preview.operation_stock_balance<preview.gram_amount" class="text-sm-left text-danger mt-3">{{ $t('please_buy_assets') }}</span>
-            <Checkbox v-model="doDiscount" class="mt-3" @change="makediscount">{{ $t('skip_transaction_fee') }}</Checkbox>
+            
             <!--
             <detail-list-item :title="$t('depot_balance_before')"><div slot="value"><i18n-n :value="preview.depot_balance_before/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('depot_balance_after')"><div slot="value"><i18n-n :value="preview.depot_balance_after/100"></i18n-n> €</div></detail-list-item>
@@ -34,13 +40,15 @@
 <script >
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../../helpers/helpers';
-import {DatePicker,Checkbox} from 'element-ui';
+import {DatePicker,Checkbox,Input} from 'element-ui';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
+import { isPurchaseOrder } from '~/helpers/order';
 export default {
     components:{
         DetailListItem,
         DatePicker,
-        Checkbox
+        Checkbox,
+        Input
     },
     props:{
         order:{
@@ -53,7 +61,10 @@ export default {
             preview:null,
             isLoading:false,
             error:null,
-            doDiscount:false
+            doDiscount:false,
+            transactionFee:null,
+            transactionFeeBadValue : false
+
         }
     },
     mounted:function(){
@@ -72,6 +83,7 @@ export default {
         this.getPreview();
     },
     methods:{
+        isPurchaseOrder,
         getPreview:function()
         {
             const today = new Date();
@@ -91,6 +103,16 @@ export default {
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        setTransactionFee:function(value){
+            if(!value || (!isNaN(value) && value>=0 && value<=100)){
+                this.transactionFeeBadValue = false;
+                this.$emit('setTransactionFee',value);
+            }
+            else{
+                this.transactionFeeBadValue = true;
+            }
+           
         },
         makediscount:function(value){
             this.$emit('makediscount',value);

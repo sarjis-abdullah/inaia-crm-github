@@ -16,6 +16,7 @@
                 <CompleteOrderDetail :order="resource"
                     @dateselected="onCompleteDateSelected"
                     @makediscount="onMakeDiscountChanged"
+                    @setTransactionFee="onSetTransactionFee"
                     v-if="isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource)"
                 />
                 <span v-if="isSellOrder(resource)">{{$t('confirm_complete_order')}} "{{ resource ? resource.id : '' }}"?</span>
@@ -246,6 +247,9 @@ export default {
                 })
             }
             
+        },
+        onSetTransactionFee:function(value){
+            this.$emit('setTransactionFee',value);
         },
 
     }

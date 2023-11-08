@@ -734,5 +734,8 @@ export default {
 
     perPage: 'per page',
     do_you_want_to_delete_this_claim:'Are you sure you want to delete this claim?',
-    claim_deleted_successfully:'The claim deleted successfully'
+    claim_deleted_successfully:'The claim deleted successfully',
+    payment_in_progress:'Payment in progress',
+    transaction_fee:'Transaction fee',
+    transactionfee_explanation:'If you want to change to transaction fee please put a valid value between 0 and 100, if you do not whish to change the value please let this field empty'
 }
