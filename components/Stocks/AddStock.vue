@@ -392,7 +392,7 @@ export default {
                 data.append('amount',this.amount*1000);
                 data.append('fixing_price',parseInt(this.fixingPriceGram*100));
                 data.append('fixing_date',formatDateToApiFormat(this.fixingDate));
-                data.append('money_amount',(this.totalMoneyAmount*100));
+                data.append('money_amount',(parseInt(this.totalMoneyAmount*100)));
                 if(this.reference)
                     data.append('external_ref_number',this.reference);
                 if(this.file)
