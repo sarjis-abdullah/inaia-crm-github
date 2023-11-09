@@ -14,7 +14,8 @@ export const state = () =>{
         loadedSummariesByYear : [],
         claimStatuses : [],
         aggregatedClaims : [],
-        claims:[]
+        claims:[],
+        claimTypes : [],
     }
 }
 
@@ -33,6 +34,7 @@ export const getters = {
     aggregatedClaims:state=>state.aggregatedClaims,
     claimStatuses:state=>state.claimStatuses,
     claims:state=> state.claims,
+    claimTypes:state=>state.claimTypes,
 }
 
 export const mutations = {
@@ -42,6 +44,9 @@ export const mutations = {
     },
     claimStatuses(state,list) {
         state.claimStatuses = list;
+    },
+    claimTypes(state,list) {
+        state.claimTypes = list;
     },
     claims(state,list) {
         state.claims = list;
@@ -89,6 +94,15 @@ export const actions = {
             .get(`${process.env.golddinarApiUrl}/claim-statuses`)
             .then(response => {
                 context.commit('claimStatuses', response.data.data)
+                return response
+            })
+    },
+    getClaimTypes(context)
+    {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/claim-types`)
+            .then(response => {
+                context.commit('claimTypes', response.data.data)
                 return response
             })
     },

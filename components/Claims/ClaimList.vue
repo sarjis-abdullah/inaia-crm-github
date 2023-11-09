@@ -30,14 +30,18 @@
                   <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
                     <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
                   </base-button>
-
-
+                  
+                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                      </button>
+                    
+                  
                 </div>
               </div>
-
+              <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
             </div>
 
-
+            
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
@@ -137,7 +141,7 @@
                       <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
                   </DropdownMenu>
                   </Dropdown>
-                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting"/>
+                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
             </template>
           </el-table-column>
       </el-table>
@@ -206,6 +210,7 @@
   import MetaInfo from '@/components/common/MetaInfo';
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import CreateClaim from "@/components/Claims/CreateClaim";
+import ClaimFilter from "@/components/Claims/ClaimFilter";
   export default {
     props: {
 
@@ -222,7 +227,8 @@ import CreateClaim from "@/components/Claims/CreateClaim";
       MetaInfo,
       Checkbox,
       DatePicker,
-      CreateClaim
+      CreateClaim,
+      ClaimFilter
     },
     computed: {
       ...mapGetters({
@@ -231,7 +237,7 @@ import CreateClaim from "@/components/Claims/CreateClaim";
       searchQuery() {
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -261,7 +267,9 @@ import CreateClaim from "@/components/Claims/CreateClaim";
         paymentExecutionDate : null,
         showExecutionDate:false,
         showCreateNewClaim:false,
-        isDeleting:false
+        isDeleting:false,
+        showFilter:true,
+        filterQuery:''
       };
     },
     mounted(){
@@ -393,14 +401,20 @@ import CreateClaim from "@/components/Claims/CreateClaim";
             message: this.$t("claim_deleted_successfully"),
           });
          }).catch((err)=>{
-          debugger;
           apiErrorHandler(err,this.$notify);
          });
         }).catch((err) => {
-          debugger;
           apiErrorHandler(err,this.$notify);
         });
-      }
+      },
+      applyFilter: function(query)
+        {
+            this.page = 1;
+            this.filterQuery = query;
+        },
+      toggleFilter: function() {
+          this.showFilter=!this.showFilter;
+        },
     },
 
   };

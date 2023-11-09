@@ -36,7 +36,6 @@ export const mutations = {
         Object.assign(item.order_status, order.order_status)
     },
     update(state, order) {
-        debugger;
       
             const item  = state.list.find( i => i.id == order.id)
             Object.assign(item, order)
