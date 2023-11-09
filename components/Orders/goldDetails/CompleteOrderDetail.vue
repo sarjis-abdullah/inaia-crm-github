@@ -22,13 +22,13 @@
             <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
-            
-            <div v-if="isPurchaseOrder(order)" class="mt-3">
+            <Checkbox v-model="doDiscount" @change="makediscount" class="mt-3">{{ $t('change_transaction_fee') }}</Checkbox>
+            <div v-if="isPurchaseOrder(order) && doDiscount" class="mt-3">
                 <label  for="transactionfee">{{ $t('transaction_fee') }} in %</label>
                 <Input type="numeric" v-model="transactionFee" class="mt-3" :placeholder="$t('transaction_fee')" name="transactionfee" @input="setTransactionFee"/>
                 <div class="text-sm-left" :class="transactionFeeBadValue?'text-danger':'text-muted'">{{ $t('transactionfee_explanation') }} </div>
             </div>
-            <span v-if="!preview.operation_stock_balance || preview.operation_stock_balance<preview.gram_amount" class="text-sm-left text-danger mt-3">{{ $t('please_buy_assets') }}</span>
+            <div v-if="!preview.operation_stock_balance || preview.operation_stock_balance<preview.gram_amount" class="text-sm-left text-danger mt-3">{{ $t('please_buy_assets') }}</div>
             
             <!--
             <detail-list-item :title="$t('depot_balance_before')"><div slot="value"><i18n-n :value="preview.depot_balance_before/100"></i18n-n> €</div></detail-list-item>
@@ -115,7 +115,9 @@ export default {
            
         },
         makediscount:function(value){
-            this.$emit('makediscount',value);
+            if(!value){
+                this.$emit('setTransactionFee',null);
+            }
         }
     }
 }

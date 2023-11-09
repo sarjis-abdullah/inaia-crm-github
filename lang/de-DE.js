@@ -727,5 +727,6 @@ export default {
     claim_deleted_successfully:'The claim deleted successfully',
     payment_in_progress:'Payment in progress',
     transaction_fee:'Transaction fee',
-    transactionfee_explanation:'If you want to change to transaction fee please put a valid value between 0 and 100, if you do not whish to change the value please let this field empty'
+    transactionfee_explanation:'If you want to change to transaction fee please put a valid value between 0 and 100, if you do not whish to change the value please let this field empty',
+    change_transaction_fee:'Change transaction fee'
 }
