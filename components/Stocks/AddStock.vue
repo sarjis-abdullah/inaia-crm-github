@@ -389,7 +389,7 @@ export default {
                 data.append('stock_type',this.selectedStockType);
                 data.append('depot_type_id',this.selectedDepotType);
                 data.append('transaction_type',this.transactionType);
-                data.append('amount',this.amount*1000);
+                data.append('amount',parseInt(this.amount*1000));
                 data.append('fixing_price',parseInt(this.fixingPriceGram*100));
                 data.append('fixing_date',formatDateToApiFormat(this.fixingDate));
                 data.append('money_amount',(parseInt(this.totalMoneyAmount*100)));
@@ -440,7 +440,7 @@ export default {
             else{
                 let data = {
                     depot_type_id:this.selectedDepotType,
-                    amount:this.amount*1000,
+                    amount:parseInt(this.amount*1000),
                     fixing_price:parseInt(this.fixingPriceGram*100),
                     fixing_date:formatDateToApiFormat(this.fixingDate)
                 }
