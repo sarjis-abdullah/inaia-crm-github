@@ -22,7 +22,7 @@
             <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
-            <!--Checkbox v-model="doDiscount" @change="makediscount" class="mt-3" v-if="isPurchaseOrder(order)">{{ $t('change_transaction_fee') }}</Checkbox-->
+            <Checkbox v-model="doDiscount" @change="makediscount" class="mt-3" v-if="isPurchaseOrder(order)">{{ $t('change_transaction_fee') }}</Checkbox>
             <div v-if="doDiscount" class="mt-3">
                 <label  for="transactionfee">{{ $t('transaction_fee') }} in %</label>
                 <Input type="numeric" v-model="transactionFee" class="mt-3" :placeholder="$t('transaction_fee')" name="transactionfee" @input="setTransactionFee"/>
