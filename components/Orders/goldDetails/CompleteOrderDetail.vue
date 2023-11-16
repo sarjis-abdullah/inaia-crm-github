@@ -7,6 +7,12 @@
             @change="getPreview"
             :placeholder="$t('select_end_date_placeholder')">
           </date-picker>
+          <Checkbox v-model="doDiscount" @change="makediscount" class="mt-3" v-if="isPurchaseOrder(order)">{{ $t('change_transaction_fee') }}</Checkbox>
+            <div v-if="doDiscount" class="mt-3">
+                <label  for="transactionfee">{{ $t('transaction_fee') }} in %</label>
+                <Input type="numeric" v-model="transactionFee" class="mt-3" :placeholder="$t('transaction_fee')" name="transactionfee" @input="setTransactionFee"/>
+                <div class="text-sm-left" :class="transactionFeeBadValue?'text-danger':'text-muted'">{{ $t('transactionfee_explanation') }} </div>
+            </div>
         <div v-if="isLoading">
             <p class="mt-2 text-sm text-center text-muted">{{$t('loading')}}...</p>
         </div>
@@ -22,12 +28,7 @@
             <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
-            <!--Checkbox v-model="doDiscount" @change="makediscount" class="mt-3" v-if="isPurchaseOrder(order)">{{ $t('change_transaction_fee') }}</Checkbox-->
-            <div v-if="doDiscount" class="mt-3">
-                <label  for="transactionfee">{{ $t('transaction_fee') }} in %</label>
-                <Input type="numeric" v-model="transactionFee" class="mt-3" :placeholder="$t('transaction_fee')" name="transactionfee" @input="setTransactionFee"/>
-                <div class="text-sm-left" :class="transactionFeeBadValue?'text-danger':'text-muted'">{{ $t('transactionfee_explanation') }} </div>
-            </div>
+            
             <div v-if="!preview.operation_stock_balance || preview.operation_stock_balance<preview.gram_amount" class="text-sm-left text-danger mt-3">{{ $t('please_buy_assets') }}</div>
             
             <!--
@@ -95,7 +96,7 @@ export default {
             this.error = null;
             this.isLoading = true;
             this.$emit('dateselected',formatDateToApiFormat(this.selectedDate));
-            this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate)}).then(res=>{
+            this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate),transaction_fee:(this.doDiscount  && !isNaN(this.transactionFee))?parseInt(this.transactionFee*100):undefined}).then(res=>{
                 this.preview = res;
             }).catch((err)=>{
                 
@@ -108,6 +109,7 @@ export default {
             if(!value || (!isNaN(value) && value>=0 && value<=100)){
                 this.transactionFeeBadValue = false;
                 this.$emit('setTransactionFee',value);
+                this.getPreview();
             }
             else{
                 this.transactionFeeBadValue = true;
