@@ -179,7 +179,7 @@ export const actions = {
     },
     getCompleteOrderPreview(context,payload) {
         return this.$axios
-                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}`).then(res=>{
+                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}${payload.transaction_fee?'&transaction_fee='+payload.transaction_fee:''}`).then(res=>{
                     return res.data;
                 })
     },
