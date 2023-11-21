@@ -201,7 +201,7 @@ export default {
         },
     submitClient() {
       this.isRequesting = true;
-      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region})
+      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region,country_id:this.country>0?this.country:undefined})
       if (data.customer.account && !data.customer.account.password) {
         // if empty then keep the account table intact
         delete data.customer["account"];
@@ -219,6 +219,9 @@ export default {
             timeout: 5000,
             message: this.$t('address_updated_successfully'),
           });
+          setTimeout(()=>{
+            window.location.reload();
+          },5000)
         })
         .catch((err) => {
           this.failed = err.response.data.message;
