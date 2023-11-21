@@ -5,12 +5,11 @@ export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city
         postal_code:postal_code,
         city:city,
         contact_id: customer.id,
-        country_id:customer.address.country_id,
+        country_id:country_id?country_id:customer.address.country,
         type_id:customer.address.type_id,
         is_primary:true,
         is_active:true,
         id:customer.address.id,
-        country:country_id?country_id:customer.address.country
     };
     if(line2)
     {

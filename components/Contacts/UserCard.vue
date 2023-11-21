@@ -83,7 +83,7 @@
               <div><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address.line1}}</div>
               <div v-if="info.address.line2" class="pl-4">{{info.address.line2}}</div>
               <div><i class="lnir lnir-map mr-2 text-muted" />{{info.address.postal_code}} {{info.address.city}}</div>
-              <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + info.address.country.name_translation_key}}</div>
+              <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + getCountryName(info)}}</div>
             </div>
 
           </div>
@@ -337,6 +337,15 @@ export default {
         }).then(() => {
           this.confirmUnlockAccount();
         });
+      },
+      getCountryName(info){
+        if(info && info.address && info.address.country)
+        {
+          return info.address.country.name_translation_key;
+        }
+        else{
+          return "";
+        }
       },
       confirmUnlockAccount(){
         let newAccount = JSON.parse(JSON.stringify(this.info.account));
