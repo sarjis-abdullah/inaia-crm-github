@@ -53,6 +53,8 @@
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
+            <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
+            <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
           </template>
         </el-table-column>
           <el-table-column
@@ -86,7 +88,7 @@
 
         <el-table-column v-bind:label="$t('depot')"  prop="type" min-width="100">
           <template v-slot="{ row }">
-            <div class="d-flex align-items-center">
+            <div >
               <div>
                 <span class="orderType text-body"
                   >{{
@@ -95,6 +97,7 @@
                 >
 
               </div>
+              <div class="font-weight-300" v-if="row.order_id">{{$t('order')}} : {{row.order_id}}</div>
             </div>
           </template>
         </el-table-column>
@@ -268,7 +271,7 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
         showExecutionDate:false,
         showCreateNewClaim:false,
         isDeleting:false,
-        showFilter:true,
+        showFilter:false,
         filterQuery:''
       };
     },

@@ -64,7 +64,15 @@
           <span>{{ $d(new Date(row.interval_enddate))}}</span>
         </template>
       </el-table-column>
-     
+      <el-table-column
+        
+        prop="interval_enddate"
+      >
+        <template v-slot="{ row }">
+          <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
+        </template>
+      </el-table-column>
     </el-table>
     </div>
 </template>
