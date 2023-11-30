@@ -38,7 +38,8 @@
 
 
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("documents") }}</a>
+            <a class="dropdown-item" @click.prevent="uploadDocument" v-if="info.is_verified">{{ $t("upload_document") }}</a>
             <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="unLockAccount" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
@@ -108,6 +109,7 @@
 
     <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
     <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
+    <UploadDocuments :showUploadDialog="showUploadDocument" :contactId="info.id" @canceled="closeUploadDocument"/>
   </div>
 </template>
 <script>
@@ -120,6 +122,7 @@ import AccountSettings from '@/components/Contacts/AccountSettings';
 import CommentBox from '@/components/Comment/CommentBox';
 import KycDocumentList from "@/components/Contacts/KycDocumentList";
 import VerifyContact from '@/components/Contacts/VerifyContact';
+import UploadDocuments from "@/components/Contacts/UploadDocuments.vue";
 import {  MessageBox } from 'element-ui'
 import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
 import { canEditCustomers } from '@/permissions';
@@ -138,7 +141,8 @@ export default {
       CommentBox,
       KycDocumentList,
       VerifyContact,
-      EditSalesAdvisor
+      EditSalesAdvisor,
+      UploadDocuments
     },
     mounted(){
       this.$confirm = MessageBox.confirm
@@ -199,7 +203,8 @@ export default {
         showComments: false,
         showKycDocument: false,
         showVerifyContact:false,
-        showEditSalesAdvisor:false
+        showEditSalesAdvisor:false,
+        showUploadDocument : false
       }
 
     },
@@ -252,6 +257,12 @@ export default {
       },
       closeCustomerIdentity(){
         this.showVerifyContact = false
+      },
+      uploadDocument(){
+        this.showUploadDocument = true;
+      },
+      closeUploadDocument(){
+        this.showUploadDocument = false;
       },
       resetPin(){
         this.$confirm(this.$t('are_you_sure_you_want_to_reset_account_pin'), 'Warning', {
