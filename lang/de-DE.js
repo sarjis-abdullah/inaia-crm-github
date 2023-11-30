@@ -731,5 +731,6 @@ export default {
     change_transaction_fee:'Change transaction fee',
     created_by:'Created by',
     updated_by:'Updated by',
-    order:'Order'
+    order:'Order',
+    file_Uploaded_successfully:'Document uploaded successfully'
 }

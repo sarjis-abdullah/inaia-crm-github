@@ -8,7 +8,7 @@
       :allowOutSideClose="false"
     >
       <template slot="header" class="pb-0">
-        <h5 class="modal-title">{{ $t("upload_file") }}</h5>
+        <h5 class="modal-title">{{ $t("upload_document") }}</h5>
         <span></span>
       </template>
       <div class="d-flex   flex-column justify-content-center align-items-center">
@@ -41,7 +41,7 @@
         <base-button
           type="primary"
           @click="() => submitUpload()"
-          :disabled="isSubmitting || files.length == 0 || !title || title.length<5"
+          :disabled="isSubmitting || files.length == 0 || !title || title.length<5 || !description"
         >
           {{ $t("upload") }}
         </base-button>
