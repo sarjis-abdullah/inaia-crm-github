@@ -154,6 +154,7 @@
             <div v-else class="card border-0">
               <div class="card-body">
                 <div class="row">
+                  
                   <div class="col">
                     <h5 class="card-title text-uppercase text-muted mb-0">
                       <font-awesome-icon
@@ -164,6 +165,21 @@
                     <span class="h2 font-weight-bold mb-0"
                       >{{$t('no_saving_plan')}}</span
                     >
+                  </div>
+                  <div class="col-auto">
+                    <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+                     
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                     
+  
+                    </base-dropdown>
                   </div>
                 </div>
               </div>

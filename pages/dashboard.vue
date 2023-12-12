@@ -103,11 +103,7 @@
         </div>
         -->
       </div>
-      <div class="row">
-        <div class="col">
-        <MonthlyPerfomanceStat/>
-      </div>
-      </div>
+      
     </div>
 
     <!--Charts-->
@@ -344,7 +340,6 @@
   import { mapGetters } from "vuex"
   import GoldDinarStat from '@/components/Statistics/GoldDinarStat';
   import CustomerStat from '@/components/Statistics/CustomerStat';
-  import MonthlyPerfomanceStat from '@/components/Statistics/MonthlyPerfomanceStat';
   export default {
     layout: 'DashboardLayout',
     components: {
@@ -365,8 +360,7 @@
       MasterAmountCard,
       SilverPrice,
       GoldDinarStat,
-      CustomerStat,
-      MonthlyPerfomanceStat
+      CustomerStat
     },
     computed:{
       ...mapGetters({
