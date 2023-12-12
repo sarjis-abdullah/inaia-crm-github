@@ -742,5 +742,6 @@ export default {
     created_by:'Created by',
     updated_by:'Updated by',
     order:'Order',
-    file_Uploaded_successfully:'Document uploaded successfully'
+    file_Uploaded_successfully:'Document uploaded successfully',
+    monthly_performance:'Monthly performance'
 }
