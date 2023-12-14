@@ -69,7 +69,7 @@
                 {{$t('cancel')}}
             </base-button>
             <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting">
-                <span v-if="!editActive && !isNew && !failed">{{$t('edit_info')}}</span>
+                <span v-if="!editActive && !isNew && !failed">{{$t('change_payment_method')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
                 <span v-if="isNew">{{$t('set_Payment_method')}}</span>
             </base-button>

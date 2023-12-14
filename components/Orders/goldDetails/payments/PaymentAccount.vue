@@ -95,8 +95,8 @@ export default {
                         this.paymentAccounts.sort((acc1,acc2)=>{
                             let date1 = new Date(acc1.updated_at);
                             let date2 = new Date(acc2.updated_at);
-                            if(date1 >=date2) return -1
-                            else return 1;
+                            if(date1 >=date2) return 1
+                            else return -1;
                         })
                         this.loading = false;
                         
