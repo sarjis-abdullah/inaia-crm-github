@@ -4,7 +4,7 @@
             
        
       <div class="card-body">
-        <div>{{ $t('monthly_performance') }} <span v-if="startDate && endDate">{{ startDate?$d(startDate)+' - ':'' }}{{ endDate?$d(endDate):'' }}</span></div>
+        <div><span v-if="startDate && endDate">{{ startDate?$d(startDate)+' - ':'' }}{{ endDate?$d(endDate):'' }}</span></div>
         <div class="row mt-3">
             <div class="col-md">
                 <date-picker type="date" v-model="startDate" :placeholder="$t('select_start_date_placeholder')" @change="changeDate"></date-picker>

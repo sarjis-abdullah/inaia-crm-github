@@ -119,8 +119,32 @@ export default ({
        });
    },
    submitUpload() {
-     
-     this.$refs.upload.submit();
+    this.isSubmitting = true;
+           var formData = new FormData();
+           if(this.file)
+             formData.append("document", this.file.raw);
+           if(this.title)
+             formData.append("title", this.title);
+           if(this.description)
+             formData.append("description", this.description);
+           const url = process.env.productApiUrl+`/contacts/${this.account_id}/verify`;
+           this.$axios.post(url,formData,{
+           headers: {
+           'Content-Type': 'multipart/form-data'
+           }}).then((res)=>{
+               this.$notify({
+                       type: "success",
+                       timeout: 5000,
+                       message: this.$t("client_verified_successfully"),
+                   });
+                   
+               this.cancelUpload();
+               location.reload();
+           }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+           }).finally(()=>{
+           this.isSubmitting = false;
+       });this.$refs.upload.submit();
    },
    }
 })
