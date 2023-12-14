@@ -753,5 +753,6 @@ export default {
     firstname:'Firstname',
     middlename:"Middlename",
     lastname:'Lastname',
-    pending_verifications:'Pending verifications'
+    pending_verifications:'Pending verifications',
+    change_payment_method:'Change payment method'
 }
