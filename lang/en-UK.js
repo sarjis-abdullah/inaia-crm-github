@@ -743,5 +743,15 @@ export default {
     updated_by:'Updated by',
     order:'Order',
     file_Uploaded_successfully:'Document uploaded successfully',
-    monthly_performance:'Monthly performance'
+    monthly_performance:'Monthly performance',
+    client_document:'Client documents',
+    upload_document:'Upload documents',
+    verify_client:'Verify client',
+    decline_client:'Decline client',
+    reports:'Reports',
+    monthly:'Monthly',
+    firstname:'Firstname',
+    middlename:"Middlename",
+    lastname:'Lastname',
+    pending_verifications:'Pending verifications'
 }

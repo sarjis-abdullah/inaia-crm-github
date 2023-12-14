@@ -177,7 +177,7 @@
                       </template>
                      
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
-                     
+                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
   
                     </base-dropdown>
                   </div>

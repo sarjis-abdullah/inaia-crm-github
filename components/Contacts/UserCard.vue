@@ -38,7 +38,7 @@
 
 
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("documents") }}</a>
+            <a class="dropdown-item" @click.prevent="openKycDocument">{{ $t("documents") }}</a>
             <a class="dropdown-item" @click.prevent="uploadDocument" v-if="info.is_verified">{{ $t("upload_document") }}</a>
             <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
@@ -108,7 +108,7 @@
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
 
     <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
-    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
+    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity" :client="info"/>
     <UploadDocuments :showUploadDialog="showUploadDocument" :contactId="info.id" @canceled="closeUploadDocument"/>
   </div>
 </template>

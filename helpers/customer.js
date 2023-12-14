@@ -31,7 +31,7 @@ export function updateAddressAndGetObject(customer,{line1,line2,postal_code,city
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:20}
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:null}
             },
             address: newAddress,
             account: {
@@ -62,7 +62,7 @@ export function updateSalesAdvisorAndGetObject(customer,sales_advisor_id)
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:20}
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:null}
             },
             address: {
                 ...customer.address,
@@ -98,7 +98,7 @@ export function functionUpdateChannelAndGetObject(customer,channel,value){
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:20}
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:null}
             },
             address: {
                 ...customer.address,
@@ -129,7 +129,7 @@ export function functionUpdateAccountAndGetObject(customer,account){
             person_data: {
                 ...customer.person_data,
                 contact_id: customer.id,
-                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:20}
+                nationality:{id:customer.person_data.nationality_details?customer.person_data.nationality_details.id:null}
             },
             address: {
                 ...customer.address,
@@ -137,6 +137,23 @@ export function functionUpdateAccountAndGetObject(customer,account){
             },
             account: account,
             channels: customer.channels
+        }
+    }
+}
+export function functionUpdatePersonDataAndGetObject(customer,lastname,middleName,firstname,birthdate){
+    return {
+        id: customer.id,
+        customer: {
+            contact: {
+                id: customer.id,
+                name: firstname,
+            },
+            person_data: {
+                id:customer.person_data.id,
+                surname:lastname,
+                middlename:middleName,
+                birthdate:birthdate
+            },
         }
     }
 }

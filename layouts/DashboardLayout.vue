@@ -138,6 +138,7 @@
         >
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
+          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications' }"/>
         </sidebar-item>
 <!--
         <sidebar-item
@@ -176,6 +177,16 @@
         >
         <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }" v-if="hasInaiaAccountAccess"/>
           <sidebar-item :link="{ name: $t('claims'), path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
+        </sidebar-item>
+        <sidebar-item
+          v-if="adminAccess"
+          :link="{
+            name: $t('reports'),
+            icon: 'lnir lnir-sales-report text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: $t('monthly'), path: '/reports/monthly' }"/>
         </sidebar-item>
         <sidebar-item
           v-if="hasSalesCommissionAccess"
