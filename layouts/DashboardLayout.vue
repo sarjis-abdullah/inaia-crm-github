@@ -138,7 +138,7 @@
         >
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
-          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications' }"/>
+          
         </sidebar-item>
 <!--
         <sidebar-item
