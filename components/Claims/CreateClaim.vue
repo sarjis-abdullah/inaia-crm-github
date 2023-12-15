@@ -48,7 +48,7 @@
             </div>
             <div class="d-flex flex-row align-content-center mt-3" v-if="account_id == -1">
             <div class="col-4">
-                    {{ $t('Customer') }}
+                    {{ $t('customer') }}
                 </div>
                 <div class="col-8">
                     <Select
@@ -199,6 +199,7 @@ import moment from "moment";
             return{
                 selectedClaimType:null,
                 selectedClaimStatus:'pending',
+                customers:[],
                 claimTypes:[
                     
                     {
@@ -251,9 +252,6 @@ import moment from "moment";
             ...mapGetters("depots", {
             depots: "orderFilterList",
             }),
-            ...mapGetters("clients", {
-      customers: "orderFilterList",
-    }),
         },
         methods:{
             onClose(){
@@ -284,7 +282,7 @@ import moment from "moment";
           this.timer = setTimeout(this._getClients, 1000);
         }
       } else {
-        this.$store.commit("clients/orderFilterList", []);
+        this.customers = [];
         this.customerQuery = "";
       }
     },
@@ -293,8 +291,12 @@ import moment from "moment";
       this.lastRequest = moment();
       this.$store
         .dispatch("clients/getClientListBySurname", this.customerQuery)
-        .then(() => {})
+        .then((data) => {
+            this.customers = data.data.data
+            this.loadingCustomers = false;
+        })
         .finally(() => {
+
           this.loadingCustomers = false;
         });
     },
