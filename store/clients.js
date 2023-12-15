@@ -322,5 +322,11 @@ export const actions = {
                 return response.data.data;
             })
     },
-
+    removeDocument(context,payload){
+        return this.$axios
+            .delete(`/documents/${payload}`)
+            .then(response => {
+                return true;
+            })
+    }
 }

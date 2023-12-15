@@ -5,7 +5,7 @@
             <collapse-item v-for="transaction in order.transactions" :key="transaction.id">
                 <template v-slot:title>
                   <div class="d-flex align-items-center">
-                    <div class="date mr-4">{{$d(new Date(transaction.created_at))}}</div>
+                    <div class="date mr-4">{{$d(new Date(transaction.gram_price_date?transaction.gram_price_date:transaction.created_at))}}</div>
                     <div class="type mb-0">{{$t(transaction.transaction_type.name_translation_key)}}</div>
                   </div>
                 </template>
