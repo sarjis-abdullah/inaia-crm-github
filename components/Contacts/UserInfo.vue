@@ -1,14 +1,14 @@
 
 <template>
   <div>
-    {{ $t("client") }}:
+   
       <el-popover
-      v-if="info && info.account"
+      
     placement="bottom"
     width="400"
     trigger="click"
     >
-    <div>
+    <div v-if="info && info.account">
 
         <div class="row">
           <div class="col-sm-6 _col-xl-3" v-if="info.account">
@@ -48,7 +48,7 @@
         </div>
 
     </div>
-    <a href="#" slot="reference">{{ singleClientData.customer.account.account_number }}</a>
+    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ !isLazy?singleClientData.customer.account.account_number:accountId }}</a>
   </el-popover>
   </div>
 </template>
@@ -69,6 +69,9 @@ export default {
     accountId:{
         type: Number,
       default: -1,
+    },
+    isLazy:{
+      default:false
     }
   },
   computed: {
@@ -102,22 +105,30 @@ export default {
     },
   },
   mounted() {
-    if (!this.singleClientData)
-    {
-        if(this.accountId!=-1)
-        {
-            this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
-                      this.$store.dispatch("clients/clientDetailsData", res.contact_id);
-                  })
-        }
-        if(this.customerId!=-1)
-        {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId);
-        }
-    }
+   
+      if(!this.isLazy){
+        this.loadCustomer();
+      }
+        
+    
 
   },
   methods: {
+    loadCustomer(){
+      if (!this.singleClientData)
+    {
+        if(this.accountId!=-1)
+          {
+              this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
+                        this.$store.dispatch("clients/clientDetailsData", res.contact_id);
+                    })
+          }
+          if(this.customerId!=-1)
+          {
+              this.$store.dispatch("clients/clientDetailsData", this.customerId);
+          }
+        }
+    },
     getChannelInfo(type) {
       let channel =
         this.info.channels &&

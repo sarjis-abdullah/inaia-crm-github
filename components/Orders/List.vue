@@ -37,8 +37,7 @@
                                     </Checkbox>
                                     </div>
                                     <div class="font-weight-300 name" v-else>{{row.id}}</div>
-                                    <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
-                                <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
+                                    
                                 </div>
                             </div>
                         </template>
