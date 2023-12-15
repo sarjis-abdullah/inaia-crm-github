@@ -157,3 +157,14 @@ export function functionUpdatePersonDataAndGetObject(customer,lastname,middleNam
         }
     }
 }
+export function updateKycStatusAndGetObject(customer,kycStatus){
+    return {
+        id: customer.id,
+        customer: {
+            contact: {
+                id: customer.id,
+                kyc_status_id: kycStatus.id,
+            }
+        }
+    }
+}

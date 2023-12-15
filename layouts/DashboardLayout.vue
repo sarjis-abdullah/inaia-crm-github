@@ -139,7 +139,7 @@
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
           <!--
-          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications' }"/>
+          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }"/>
           -->
         </sidebar-item>
 <!--
@@ -333,12 +333,13 @@
   import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
   import {canViewOrder,
-    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin} from '~/permissions'
+    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin} from '~/permissions';
   export default {
     components: {
       DashboardNavbar,
       ContentFooter,
-      DashboardContent
+      DashboardContent,
+  
     },
     middleware: ['auth','guard'],
     computed: {
@@ -346,6 +347,9 @@
         token: "auth/auth",
         user: "auth/user"
       }),
+      ...mapGetters({
+            kycStatuses: "clients/kycStatuses"
+        }),
       adminAccess() {
         return canViewAdmin();
       },
@@ -380,18 +384,46 @@
         return canViewMarketing();
       }
     },
+    data(){
+      return{
+        totalPendingVerifications:0
+      }
+    },
     methods: {
       initScrollbar() {
         let isWindows = navigator.platform.startsWith('Win');
         if (isWindows) {
           initScrollbar('scrollbar-inner');
         }
-      }
+      },
+      fetchClientData() {
+            let pendingStatus = this.kycStatuses.find(x=>x.name=='pending');
+            if (pendingStatus) {
+                this.initiated  = true
+                let fullQuery = `per_page=1&type=customer&is_verified=0&kyc_status_id=${pendingStatus.id}`;
+                this.$store
+                    .dispatch("clients/initClientData", fullQuery)
+                    .then(response => {
+                        
+                        this.totalPendingVerifications = response.data.meta.total
+                        
+                    }).finally(() => {
+                        
+                    })
+            }
+        },
     },
     mounted() {
-      this.initScrollbar()
+      this.initScrollbar();
+        /*if(this.kycStatuses.length == 0){
+              this.$store.dispatch("clients/getKycStatuses").then(res=>{
+                this.fetchClientData();
+        });
+      }else{
+        this.fetchClientData();
+      }*/
     }
-  };
+  }
 </script>
 <style lang="scss">
 </style>

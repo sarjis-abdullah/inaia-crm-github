@@ -754,5 +754,8 @@ export default {
     middlename:"Middlename",
     lastname:'Lastname',
     pending_verifications:'Pending verifications',
-    change_payment_method:'Change payment method'
+    change_payment_method:'Change payment method',
+    client_declined_successfully:'Client declined successfully',
+    do_you_want_to_decline_client:'Do you confirm declining this client?',
+    do_you_want_to_delete_document:'Do you confirm deleting the document?'
 }

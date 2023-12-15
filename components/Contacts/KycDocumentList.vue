@@ -26,7 +26,7 @@
                                 :data="documents">
 
                              <el-table-column label="#"
-                                   min-width="100px"
+                                   
                                     prop="id"
                                     >
                                 <template v-slot="{row}">
@@ -41,7 +41,7 @@
                             </el-table-column>
 
                             <el-table-column v-bind:label="$t('title')"
-                                    min-width="180px"
+                                    
                                     >
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
@@ -54,7 +54,7 @@
                                 </template>
                             </el-table-column>
                             <el-table-column v-bind:label="$t('description')"
-                                    min-width="180px"
+                                    
                                     >
                                 <template v-slot="{row}">
                                     <div class="media align-items-center">
@@ -66,7 +66,13 @@
                                     </div>
                                 </template>
                             </el-table-column>
-                            
+                            <el-table-column 
+                                    
+                                    >
+                                <template v-slot="{row}">
+                                    <IconButton type="delete" @click="()=>deleteDocument(row)" :disabled="isDeleting"/>
+                                </template>
+                            </el-table-column>
                             
                         </el-table>
                         
@@ -78,7 +84,9 @@
 </template>
 <script>
     import { mapGetters } from "vuex";
-    import { Table, TableColumn } from 'element-ui';
+    import { Table, TableColumn,MessageBox } from 'element-ui';
+    import { apiErrorHandler } from "../../helpers/apiErrorHandler";
+    import IconButton from "@/components/common/Buttons/IconButton";
     export default {
         props: {
             showModal: {
@@ -92,7 +100,9 @@
         },
         components: {
             [Table.name]: Table,
-            [TableColumn.name]: TableColumn
+            [TableColumn.name]: TableColumn,
+            MessageBox,
+            IconButton
         },
         computed:{
             ...mapGetters({
@@ -101,6 +111,11 @@
         },
         destroyed(){
             this.$store.commit('clients/kycDocuments',[])
+        },
+        data(){
+            return{
+                isDeleting:false
+            }
         },
         watch:{
             showModal:{
@@ -112,9 +127,30 @@
                 immediate: true
             }
         },
+        mounted(){
+            this.$confirm = MessageBox.confirm;
+        },
         methods:{
             closeKyc(){
                 this.$emit('closed');
+            },
+            deleteDocument(document){
+                this.$confirm(this.$t('do_you_want_to_delete_document'), 'Warning', {
+                    confirmButtonText: this.$t('ok'),
+                    cancelButtonText: this.$t('cancel'),
+                    type: 'warning'
+                }).then(() => {
+                    this.isDeleting = true;
+                    this.$store.dispatch('clients/removeDocument',document.id).then(()=>{
+                        this.$store.dispatch('clients/getKycDocument',this.account_id);
+                    }).catch((err)=>{
+                        apiErrorHandler(err, this.$notify);
+                    }).finally(()=>{
+                        this.isDeleting = false
+                    })
+                }).catch((err) => {
+                    console.log(err);
+                });
             }
         }
     }

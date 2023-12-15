@@ -1,9 +1,5 @@
 <template>
     <div>
-
-        
-
-        
             <div class="row">
                 <div class="col">
                     <div class="card">
@@ -134,7 +130,7 @@
                               <template v-slot="{row}">
 
                                 <icon-button type="info" @click="gotoDetails(row.contact)"></icon-button>
-                                <Dropdown trigger="click" @command="(command)=>handleCommand(command,row)">
+                                <Dropdown trigger="click" @command="(command)=>handleCommand(command,row)" :disabled="isSubmitting">
                   <span class="btn btn-sm btn-icon-only text-light">
                       <i class="fas fa-ellipsis-v mt-2"></i>
                   </span>
@@ -142,7 +138,7 @@
                       <DropdownItem command="client_document">{{$t('client_document')}}</DropdownItem>
                       <DropdownItem command="upload_document">{{$t('upload_document')}}</DropdownItem>
                       <DropdownItem command="verify_client">{{$t('verify_client')}}</DropdownItem>
-                      <DropdownItem command="decline_document">{{$t('decline_client')}}</DropdownItem>
+                      <DropdownItem command="decline_client">{{$t('decline_client')}}</DropdownItem>
                   </DropdownMenu>
                   </Dropdown>
                               </template>
@@ -192,7 +188,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option,MessageBox } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/helpers';
 import AmlStatus from '@/components/Contacts/AmlStatus';
@@ -201,6 +197,8 @@ import Loader from "../common/Loader/Loader";
 import KycDocumentList from "@/components/Contacts/KycDocumentList";
 import VerifyContact from '@/components/Contacts/VerifyContact';
 import UploadDocuments from "@/components/Contacts/UploadDocuments.vue";
+import { updateKycStatusAndGetObject } from "../../helpers/customer";
+import { apiErrorHandler } from "../../helpers/apiErrorHandler";
 export default {
     components: {
       Loader,
@@ -216,7 +214,8 @@ export default {
         MetaInfo,
         KycDocumentList,
         VerifyContact,
-        UploadDocuments
+        UploadDocuments,
+        MessageBox
     },
     data() {
         return {
@@ -246,7 +245,8 @@ export default {
             selectedClient:null,
             showKycDocument:false,
             showVerifyContact:false,
-            showUploadDocument:false
+            showUploadDocument:false,
+            isSubmitting:false
         }
     },
 
@@ -278,6 +278,7 @@ export default {
         },
     },
      mounted(){
+        this.$confirm = MessageBox.confirm;
         if(this.salesAdvisors.length == 0)
         {
             this.$store.dispatch("salesCommission/fetchSalesAdvisors")
@@ -438,6 +439,9 @@ export default {
                 case 'upload_document':
                     this.showUploadDocument = true;
                     break;
+                case 'decline_client':
+                    this.confirmDeclining();
+                    break;
                 default:
                     break;
             }
@@ -451,6 +455,42 @@ export default {
       closeCustomerIdentity(){
         this.showVerifyContact = false
       },
+      confirmDeclining(){
+        this.$confirm(this.$t('do_you_want_to_decline_client'), 'Warning', {
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+            this.declineClient();
+          }).catch((err) => {
+            console.log(err);
+          });
+      },
+      declineClient(){
+        let failedStatus = this.kycStatuses.find(x=>x.name=='failed');
+        if(failedStatus){
+            this.isSubmitting = true;
+            
+            const data = updateKycStatusAndGetObject(this.selectedClient.contact,failedStatus);
+            this.$store
+        .dispatch("clients/submitClient", data)
+        .then((response) => {
+            this.fetchClientData(this.searchQuery);
+            this.$notify({
+                type: "success",
+                timeout: 5000,
+                message: this.$t("client_declined_successfully"),
+                });
+        })
+        .catch((err) => {
+          apiErrorHandler(err, this.$notify);
+        })
+        .finally(() => {
+            this.isSubmitting = false;
+            this.selectedClient = null;
+        });
+        }
+      }
     }
 }
 </script>
