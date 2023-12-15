@@ -48,7 +48,7 @@
         </div>
 
     </div>
-    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ !isLazy?singleClientData.customer.account.account_number:accountId }}</a>
+    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ (!isLazy && singleClientData && singleClientData.customer && singleClientData.customer.account)?singleClientData.customer.account.account_number:accountId?accountId:customerId }}</a>
   </el-popover>
   </div>
 </template>
