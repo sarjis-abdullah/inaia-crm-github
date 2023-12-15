@@ -44,7 +44,9 @@
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
+                      <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
+                      
                     </base-dropdown>
                   </div>
                 </div>
@@ -307,6 +309,7 @@
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
+        <AssignSalesAdvisor :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
       </div>
     </div>
   </div>
@@ -318,6 +321,7 @@ import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
+import AssignSalesAdvisor from "@/components/Depots/AssignSalesAdvisor";
 import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
@@ -361,7 +365,8 @@ export default {
             showBlockConfirm:false,
             showEditDepot:false,
             showAddDeposit:false,
-            showDepotHistory:false
+            showDepotHistory:false,
+            showEditSalesAdvisor:false,
         }
     },
     components: {
@@ -379,7 +384,8 @@ export default {
         UpdateSavingPlan,
         AddDeposit,
         DepotHistory,
-        Modal
+        Modal,
+        AssignSalesAdvisor
     },
     computed:
         {
@@ -423,6 +429,12 @@ export default {
     methods: {
       showDeposit(){
         this.showAddDeposit = true;
+      },
+      cancelEditSalesAdvisor(){
+        this.showEditSalesAdvisor = false;
+      },
+      editSalesAdvisor (){
+        this.showEditSalesAdvisor = true;
       },
       showEditSavingPlan(){
         this.showEditDepot = true;

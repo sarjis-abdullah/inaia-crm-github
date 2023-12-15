@@ -104,6 +104,7 @@
                       <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
                   </DropdownMenu>
                   </Dropdown>
+                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
             </template>
           </el-table-column>
       </el-table>
@@ -166,6 +167,7 @@
   import CreateClaim from "@/components/Claims/CreateClaim";
   import { apiErrorHandler } from '../../helpers/apiErrorHandler';
   import MetaInfo from '@/components/common/MetaInfo';
+  import IconButton from "@/components/common/Buttons/IconButton";
 import { formatDateToApiFormat } from '../../helpers/helpers';
   export default {
     props: {
@@ -183,7 +185,8 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
       CreateClaim,
       MetaInfo,
       Checkbox,
-      DatePicker
+      DatePicker,
+      IconButton
     },
     computed: {
       ...mapGetters({
@@ -238,6 +241,25 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
             .catch((err) => (this.loadingError =apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
 
+      },
+      confirmDelete(id){
+        this.$confirm(this.$t('do_you_want_to_delete_this_claim'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/deleteSingleClaim',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_deleted_successfully"),
+          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+         });
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
+        });
       },
       handleCommand(command,id){
       if(command=="mark_as_paid"){
