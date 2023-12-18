@@ -138,9 +138,9 @@
         >
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
-          <!--
+        
           <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }"/>
-          -->
+        
         </sidebar-item>
 <!--
         <sidebar-item
@@ -415,13 +415,13 @@
     },
     mounted() {
       this.initScrollbar();
-        /*if(this.kycStatuses.length == 0){
+        if(this.kycStatuses.length == 0){
               this.$store.dispatch("clients/getKycStatuses").then(res=>{
                 this.fetchClientData();
         });
       }else{
         this.fetchClientData();
-      }*/
+      }
     }
   }
 </script>
