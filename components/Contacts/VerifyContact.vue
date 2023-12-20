@@ -164,7 +164,32 @@ export default ({
       this.$store
         .dispatch("clients/submitClient", data)
         .then((response) => {
-          this.$refs.upload.submit();
+          if(this.file){
+            this.$refs.upload.submit();
+          }
+          else{
+            const url = process.env.productApiUrl + `/contacts/${this.client.id}/verify`;
+            var formData = new FormData();
+          this.$axios.post(url, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then((res) => {
+            this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("client_verified_successfully"),
+            });
+
+            this.cancelUpload();
+            location.reload();
+          }).catch((err) => {
+            apiErrorHandler(err, this.$notify);
+          }).finally(() => {
+            this.isSubmitting = false;
+          });
+          }
+          
 
         })
         .catch((err) => {

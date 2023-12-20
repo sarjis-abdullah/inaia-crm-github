@@ -181,7 +181,7 @@
           <sidebar-item :link="{ name: $t('claims'), path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
         </sidebar-item>
         <sidebar-item
-          v-if="adminAccess"
+          v-if="superAdmin"
           :link="{
             name: $t('reports'),
             icon: 'lnir lnir-sales-report text-primary',
@@ -333,7 +333,7 @@
   import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
   import {canViewOrder,
-    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin} from '~/permissions';
+    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin} from '~/permissions';
   export default {
     components: {
       DashboardNavbar,
@@ -350,6 +350,9 @@
       ...mapGetters({
             kycStatuses: "clients/kycStatuses"
         }),
+        superAdmin(){
+          return canViewAdmin() && canEditAdmin()
+        },
       adminAccess() {
         return canViewAdmin();
       },
