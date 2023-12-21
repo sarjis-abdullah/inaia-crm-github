@@ -368,7 +368,7 @@
 <script>
 import { mapGetters } from "vuex"
 import { DatePicker } from 'element-ui';
-import { formatDate } from "@fullcalendar/core";
+import {formatDateToApiFormat} from '@/helpers/helpers'
 export default({
     components: {
         DatePicker
@@ -394,7 +394,7 @@ export default({
             let payload = '';
             
             if(this.startDate && this.endDate){
-                payload= `start_date=${formatDate(this.startDate)}&end_date=${formatDate(this.endDate)}`;
+                payload= `start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
             }
             this.$store.dispatch('statistic/getMonthlyPeformance',payload).finally(()=>{
                 console.log(this.data);
