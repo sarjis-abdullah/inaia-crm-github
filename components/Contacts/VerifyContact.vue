@@ -44,7 +44,7 @@
         <div class="el-upload__text">
           Drop file here or <em>click to upload</em>
         </div>
-        <div class="el-upload__tip" slot="tip">jpeg, png or pdf files under 1 MB of size</div>
+        <div class="el-upload__tip" slot="tip">jpeg, png or pdf files under 2 MB of size</div>
 
       </Upload>
       <div class="text-danger text-sm-left mt-2">{{ errorText }}</div>
@@ -116,7 +116,7 @@ export default ({
       this.$emit('closed');
     },
     onChange(file, fileList) {
-      const maxSize = 1048576
+      const maxSize = 2097152
       if (file.size <= maxSize)
         this.file= file;
       else {
