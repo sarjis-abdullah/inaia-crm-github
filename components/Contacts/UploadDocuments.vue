@@ -26,6 +26,7 @@
           :http-request="uploadFileRequest"
           :disabled="isSubmitting"
           :on-change="onChange"
+          
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">
@@ -33,6 +34,7 @@
           </div>
           <div class="el-upload__tip" slot="tip">CSV,pdf,images files...</div>
         </Upload>
+        <div class="text-danger text-sm-left mt-2">{{ errorText }}</div>
       </div>
       <template slot="footer">
         <base-button type="link" class="ml-auto" @click="cancelUpload()">
@@ -41,7 +43,7 @@
         <base-button
           type="primary"
           @click="() => submitUpload()"
-          :disabled="isSubmitting || files.length == 0 || !title || title.length<5 || !description"
+          :disabled="isSubmitting || files.length == 0"
         >
           {{ $t("upload") }}
         </base-button>
@@ -72,7 +74,8 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
         uploadUrl: process.env.productApiUrl + "/documents",
         files: [],
         title:'',
-        description:''
+        description:'',
+        errorText:''
       };
     },
     methods: {
@@ -81,7 +84,17 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
         this.$emit("canceled");
       },
       onChange(file, fileList) {
-        this.files.push(file);
+        const maxSize = 2097152
+        this.errorText = '';
+          if (file.size <= maxSize)
+              this.files.push(file);
+              else {
+            this.errorText = this.$t('file_is_too_big')+" max size 2MB";
+            let index = fileList.findIndex(f=>f.name==file.name);
+            if(index>-1){
+                fileList.splice(index,1);
+            }
+          }
       },
       onRemove(file,fileList){
         let index = this.files.findIndex(f=>f.name==file.name);
