@@ -118,13 +118,13 @@
         <el-table-column v-bind:label="$t('ref') + '/' +$t('comment')"  prop="type" min-width="150">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
-              <div v-if="row.reference">
-                {{ $t('ref') }} : <span class="orderType text-body"
-                  >{{
+              <div v-if="row.reference || row.comment">
+                 <span v-if="row.reference" class="orderType text-body"
+                  >{{ $t('ref') }} : {{
                     row.reference
                   }}</span
                 >
-                <span class="orderType text-body"
+                <span class="orderType text-body" v-if="row.comment"
                   >{{
                     row.comment
                   }}</span

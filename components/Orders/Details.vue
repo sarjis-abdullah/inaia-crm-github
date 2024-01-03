@@ -52,7 +52,9 @@
                         </base-button>
                          <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
                             :disabled="shouldDisableCompleteButton() || isSubmitting">
-                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('preview_order')}}</span>
+                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">
+                            <span v-if="isOrderGoldSale(selectedResource)">{{$t('complete_order')}}</span><span v-else>{{$t('preview_order')}}</span>
+                        </span>
                             <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
                          </base-button>
                          <base-button type="white" @click="() => refundOrder(selectedResource)"
@@ -136,6 +138,7 @@ export default {
     methods :{
         isOrderPending,
         isOrderPaid,
+        isOrderGoldSale,
          removeOrder(resource) {
             if(this.selectedResourceScreen != orderDetailScreens.delete)
             {
@@ -387,7 +390,7 @@ export default {
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return (isOrderPending(resource) || isOrderPaymentFailed(resource) || isOrderOutstanding(resource) || isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) || isOrderGoldSale(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource) ||  isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
         },
         setCancelPaymentAccount(account)
         {
@@ -435,7 +438,7 @@ export default {
                 .dispatch('orders/sellGold', data)
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
-                    this.selectedResource = null;
+                    
                     //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
                     this.selectedResourceScreen = orderDetailScreens.detail;
