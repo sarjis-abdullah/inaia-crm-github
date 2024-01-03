@@ -203,6 +203,7 @@ export const actions = {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=${includes}`,payload.data)
             .then(res => {
+                debugger;
                 context.commit('update', res.data.data)
                 return res.data.data.order_status
             })
