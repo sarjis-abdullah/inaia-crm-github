@@ -34,11 +34,14 @@
                       <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                         <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                       </button>
-                    
+                      <button @click.prevent="createBatch()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_batch')}}</span>
+                      </button>
                   
                 </div>
               </div>
               <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach"/>
             </div>
 
             
@@ -53,8 +56,6 @@
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
-            <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
-            <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
           </template>
         </el-table-column>
           <el-table-column
@@ -135,6 +136,8 @@
         </el-table-column>
         <el-table-column>
             <template v-slot="{ row }" >
+              <IconButton type="info" @click="()=>showClaimDetail(row)"/>
+                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
               <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
                   <span class="btn btn-sm btn-icon-only text-light">
                       <i class="fas fa-ellipsis-v mt-2"></i>
@@ -144,7 +147,7 @@
                       <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
                   </DropdownMenu>
                   </Dropdown>
-                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
+                  
             </template>
           </el-table-column>
       </el-table>
@@ -199,6 +202,8 @@
       </base-button>
     </template>
     </modal>
+    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail"/>
+    
 </div>
   </template>
   <script>
@@ -214,6 +219,9 @@
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import CreateClaim from "@/components/Claims/CreateClaim";
 import ClaimFilter from "@/components/Claims/ClaimFilter";
+import ClaimDetail from "@/components/Claims/ClaimDetail";
+import Modal from '../argon-core/Modal.vue';
+import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
   export default {
     props: {
 
@@ -231,7 +239,10 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       Checkbox,
       DatePicker,
       CreateClaim,
-      ClaimFilter
+      ClaimFilter,
+      ClaimDetail,
+        Modal,
+        CreateBatchClaims
     },
     computed: {
       ...mapGetters({
@@ -272,7 +283,10 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
         showCreateNewClaim:false,
         isDeleting:false,
         showFilter:false,
-        filterQuery:''
+        filterQuery:'',
+        selectedClaim:null,
+        showDetail:false,
+        showCreateForm:false
       };
     },
     mounted(){
@@ -288,6 +302,14 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
             .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
 
+      },
+      showClaimDetail(claim){
+        this.selectedClaim = claim;
+        this.showDetail = true;
+      },
+     onClaimCloseDetail(){
+        this.selectedClaim = null;
+        this.showDetail = false;
       },
       toggleAddClaim(){
         this.showCreateNewClaim = true;
@@ -418,6 +440,12 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
+        createBatch(){
+          this.showCreateForm = true
+        },
+        cancelCreateBtach(){
+          this.showCreateForm = false
+        }
     },
 
   };
