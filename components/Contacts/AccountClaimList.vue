@@ -11,7 +11,7 @@
             <span class="btn-inner--text">{{$t('initiate_payment_for_all')}}</span>
           </button>
           <button @click.prevent="toggleCreateBatch()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasEditAccess && !isCreatingBatch">
-            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_Batch')}}</span>
+            <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_batch')}}</span>
           </button>
           <button @click.prevent="cancelCreatingBatch()" type="button" class="btn base-button btn-icon btn-fab btn-secondary btn-sm" v-if="hasEditAccess && isCreatingBatch" :disabled="isSubmitting">
             <span class="btn-inner--text">{{$t('cancel')}}</span>

@@ -451,7 +451,6 @@ export default {
     this.showExecuteBankPayment = false;
   },
   displayExecuteBankPayment(){
-    debugger;
     this.showExecuteBankPayment = true;
   },
   onOrderUpdated(order)

@@ -762,5 +762,7 @@ export default {
     batch_claims:'Batch claims',
     batch_orders:'Batch orders',
     batch_claim_created_successfully:'Batch claims was created succesfully',
-    create_Batch:'Create batch'
+    create_batch:'Create batch',
+    total_claim_count:'Total number of claims',
+    total_amount:"Total amount",
 }

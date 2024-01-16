@@ -28,5 +28,12 @@ export const actions = {
                     
                     return res.data;
                 })
+    },
+    getDetailsOfBatch(context,payload){
+        return this.$axios
+                .get(`${process.env.golddinarApiUrl}/claim-batch-processes/${payload}`)
+                .then(res=>{
+                    return res.data.data;
+                })
     }
 }

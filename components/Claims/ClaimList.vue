@@ -4,7 +4,7 @@
         <div class="col">
 
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" v-if="batch_process_id==-1">
               <div class="row align-items-center">
                 <div class="col text-right">
 
@@ -43,7 +43,15 @@
               <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
               <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach"/>
             </div>
-
+            <div class="card-header" v-else>
+              <div class="row align-items-center">
+                <div class="col text-right">
+                  <button @click.prevent="initiateBatchProcessPayment()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--text">{{$t('initiate_payment')}}</span>
+                      </button>
+                  </div>
+              </div>
+            </div>
             
       <el-table
         class="table-hover table-responsive table-flush"
@@ -224,7 +232,9 @@ import Modal from '../argon-core/Modal.vue';
 import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
   export default {
     props: {
-
+      batch_process_id:{
+        default:-1
+      }
     },
     components: {
       [Table.name]: Table,
@@ -251,7 +261,7 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
       searchQuery() {
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}${this.filterQuery}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}&${this.batch_process_id>-1?"claim_batch_process_id="+this.batch_process_id:''}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -388,12 +398,18 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
                 execution_date: formatDateToApiFormat(this.paymentExecutionDate)
 
             };
-            if(this.selectedClaims.length > 0){
+            if(this.batch_process_id == -1){
+              if(this.selectedClaims.length > 0){
                 data.claim_ids = this.selectedClaims
+              }
+              else{
+                  data.no_of_claims = 999;
+              }
             }
             else{
-                data.no_of_claims = 999;
+              data.claim_batch_process_id = this.batch_process_id;
             }
+            
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
 
                 this.paymentExecutionDate = null;
@@ -445,6 +461,10 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         },
         cancelCreateBtach(){
           this.showCreateForm = false
+        },
+        initiateBatchProcessPayment(){
+          this.showExecutionDate = true;
+          this.paymentExecutionDate = null;
         }
     },
 

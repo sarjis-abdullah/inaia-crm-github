@@ -73,7 +73,7 @@
 
                 <el-table-column>
                     <template v-slot="{row}">
-                        <icon-button type="info" @click="() => $router.push('/orders/batch-processing/details/'+row.id)"></icon-button>
+                        <icon-button type="info" @click="() => $router.push('/accounting/claims/batch-claims/details/'+row.id)"></icon-button>
         
                     </template>
                 </el-table-column>
