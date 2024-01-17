@@ -4,7 +4,7 @@
         <div class="col">
 
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" v-if="batch_process_id==-1">
               <div class="row align-items-center">
                 <div class="col text-right">
 
@@ -34,13 +34,24 @@
                       <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                         <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                       </button>
-                    
+                      <button @click.prevent="createBatch()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_batch')}}</span>
+                      </button>
                   
                 </div>
               </div>
               <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach"/>
             </div>
-
+            <div class="card-header" v-else>
+              <div class="row align-items-center">
+                <div class="col text-right">
+                  <button @click.prevent="initiateBatchProcessPayment()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--text">{{$t('initiate_payment')}}</span>
+                      </button>
+                  </div>
+              </div>
+            </div>
             
       <el-table
         class="table-hover table-responsive table-flush"
@@ -53,8 +64,6 @@
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
-            <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
-            <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
           </template>
         </el-table-column>
           <el-table-column
@@ -135,16 +144,8 @@
         </el-table-column>
         <el-table-column>
             <template v-slot="{ row }" >
-              <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
-                  <span class="btn btn-sm btn-icon-only text-light">
-                      <i class="fas fa-ellipsis-v mt-2"></i>
-                  </span>
-                  <DropdownMenu  slot="dropdown">
-                      <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
-                      <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
-                  </DropdownMenu>
-                  </Dropdown>
-                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
+              <IconButton type="info" @click="()=>showClaimDetail(row)"/>
+                  
             </template>
           </el-table-column>
       </el-table>
@@ -199,6 +200,8 @@
       </base-button>
     </template>
     </modal>
+    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail"/>
+    
 </div>
   </template>
   <script>
@@ -214,9 +217,14 @@
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import CreateClaim from "@/components/Claims/CreateClaim";
 import ClaimFilter from "@/components/Claims/ClaimFilter";
+import ClaimDetail from "@/components/Claims/ClaimDetail";
+import Modal from '../argon-core/Modal.vue';
+import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
   export default {
     props: {
-
+      batch_process_id:{
+        default:-1
+      }
     },
     components: {
       [Table.name]: Table,
@@ -231,7 +239,10 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       Checkbox,
       DatePicker,
       CreateClaim,
-      ClaimFilter
+      ClaimFilter,
+      ClaimDetail,
+        Modal,
+        CreateBatchClaims
     },
     computed: {
       ...mapGetters({
@@ -240,7 +251,7 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       searchQuery() {
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}${this.filterQuery}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}&${this.batch_process_id>-1?"claim_batch_process_id="+this.batch_process_id:''}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -272,7 +283,10 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
         showCreateNewClaim:false,
         isDeleting:false,
         showFilter:false,
-        filterQuery:''
+        filterQuery:'',
+        selectedClaim:null,
+        showDetail:false,
+        showCreateForm:false
       };
     },
     mounted(){
@@ -288,6 +302,14 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
             .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
 
+      },
+      showClaimDetail(claim){
+        this.selectedClaim = claim;
+        this.showDetail = true;
+      },
+     onClaimCloseDetail(){
+        this.selectedClaim = null;
+        this.showDetail = false;
       },
       toggleAddClaim(){
         this.showCreateNewClaim = true;
@@ -366,12 +388,18 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
                 execution_date: formatDateToApiFormat(this.paymentExecutionDate)
 
             };
-            if(this.selectedClaims.length > 0){
+            if(this.batch_process_id == -1){
+              if(this.selectedClaims.length > 0){
                 data.claim_ids = this.selectedClaims
+              }
+              else{
+                  data.no_of_claims = 999;
+              }
             }
             else{
-                data.no_of_claims = 999;
+              data.claim_batch_process_id = this.batch_process_id;
             }
+            
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
 
                 this.paymentExecutionDate = null;
@@ -418,6 +446,16 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
+        createBatch(){
+          this.showCreateForm = true
+        },
+        cancelCreateBtach(){
+          this.showCreateForm = false
+        },
+        initiateBatchProcessPayment(){
+          this.showExecutionDate = true;
+          this.paymentExecutionDate = null;
+        }
     },
 
   };

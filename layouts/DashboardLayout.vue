@@ -165,7 +165,7 @@
         >
           <sidebar-item :link="{ name: $t('depots'), path: '/depots' }" v-if="hasDepotViewAccess"/>
           <sidebar-item :link="{ name: $t('orders'), path: '/orders' }" v-if="hasOrderViewAccess"/>
-          <sidebar-item :link="{ name: $t('batch_processing'), path: '/orders/batch-processing' }" v-if="hasPatchProcessingAccess"/>
+          <sidebar-item :link="{ name: $t('batch_orders'), path: '/orders/batch-processing' }" v-if="hasPatchProcessingAccess"/>
           <sidebar-item :link="{ name: $t('stocks'), path: '/stocks' }" v-if="hasStocksAccess"/>
         </sidebar-item>
 
@@ -179,6 +179,7 @@
         >
         <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }" v-if="hasInaiaAccountAccess"/>
           <sidebar-item :link="{ name: $t('claims'), path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
+          <sidebar-item :link="{ name: $t('batch_claims'), path: '/accounting/claims/batch-claims' }" v-if="hasClaimsAccess"/>
         </sidebar-item>
         <sidebar-item
           v-if="superAdmin"

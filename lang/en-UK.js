@@ -757,5 +757,13 @@ export default {
     change_payment_method:'Change payment method',
     client_declined_successfully:'Client declined successfully',
     do_you_want_to_decline_client:'Do you confirm declining this client?',
-    do_you_want_to_delete_document:'Do you confirm deleting the document?'
+    do_you_want_to_delete_document:'Do you confirm deleting the document?',
+    cancel_claim:'Cancel claim',
+    batch_claims:'Batch claims',
+    batch_orders:'Batch orders',
+    batch_claim_created_successfully:'Batch claims was created succesfully',
+    create_batch:'Create batch',
+    total_claim_count:'Total number of claims',
+    total_amount:"Total amount",
+    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim'
 }

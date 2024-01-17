@@ -144,6 +144,14 @@ export const actions = {
                     return res.data.data;
                 })
     },
+    cancelClaim(context,payload){
+        return this.$axios
+                .put(`${process.env.golddinarApiUrl}/claims/${payload}/cancel?include=claim_type,claim_status`)
+                .then(res=>{
+                    context.commit('updateClaim',res.data.data);
+                    return res.data.data;
+                })
+    },
     initiateAggregatedClaimDirectDebit(context,payload){
         return this.$axios.post(`${process.env.golddinarApiUrl}/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
             return res.data.data.url;

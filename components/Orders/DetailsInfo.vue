@@ -34,7 +34,7 @@
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
                 <div>
-                  <h4>{{$tc('confirm_cancel_order', resource.id)}}</h4>
+                  <h4>{{$t('confirm_cancel_order')}} {{ resource.id }}</h4>
 
                   <div class="mt-4 mb-1" v-if="!hasMoneyTransfered">{{ $t('choose_payment_account_for_payback') }}:</div>
                   <select-payment-account :account_id="resource.depot.account_id"
@@ -45,7 +45,7 @@
                 </div>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">
-            <h4>{{$tc('confirm_delete_order', resource.id)}}</h4>
+            <h4>{{$t('confirm_delete_order')}} {{ resource.id }}</h4>
             <Input :placeholder="$t('order_id_delete_placeholder')" class="mt-2" v-model="deleteOrderId"/>
         </div>
 
