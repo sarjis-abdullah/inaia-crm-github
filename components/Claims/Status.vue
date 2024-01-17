@@ -12,7 +12,7 @@
 </template>
 <script>
     import {Badge} from '@/components/argon-core';
-    import {PAYMENT_PENDING,PAYMENT_PAID,PAYMENT_FAILED} from '../../helpers/claims';
+    import {PAYMENT_PENDING,PAYMENT_PAID,PAYMENT_FAILED,CANCELED} from '../../helpers/claims';
     export default {
         components:{
             Badge
@@ -36,6 +36,10 @@
             if(this.status == PAYMENT_FAILED)
             {
                 return 'badge badge-danger'
+            }
+            if(this.status == CANCELED)
+            {
+                return 'badge  badge-warning'
             }
         }
     }

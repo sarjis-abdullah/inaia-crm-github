@@ -755,5 +755,5 @@ export default {
     create_batch:'Create batch',
     total_claim_count:'Total number of claims',
     total_amount:"Total amount",
-
+    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim'
 }

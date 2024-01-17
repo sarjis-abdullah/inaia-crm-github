@@ -34,6 +34,20 @@
                   }}
                     </div>
                 </detail-list-item>
+                <detail-list-item :title="$t('payment_method')" v-if="claim && claim.payment_method">
+                    <div slot="value">
+                        {{
+                    $t(claim.payment_method)
+                  }}
+                    </div>
+                </detail-list-item>
+                <detail-list-item :title="$t('batch_claims')" v-if="claim && claim.claim_batch_process_id">
+                    <div slot="value">
+                        <nuxt-link :to="'/accounting/claims/batch-claims/details/'+claim.claim_batch_process_id">{{
+                    claim.claim_batch_process_id
+                  }}</nuxt-link>
+                    </div>
+                </detail-list-item>
                 <detail-list-item :title="$t('comment')" >
                     <div slot="value">
                         {{

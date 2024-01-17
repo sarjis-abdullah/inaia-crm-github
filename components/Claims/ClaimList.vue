@@ -145,16 +145,6 @@
         <el-table-column>
             <template v-slot="{ row }" >
               <IconButton type="info" @click="()=>showClaimDetail(row)"/>
-                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
-              <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
-                  <span class="btn btn-sm btn-icon-only text-light">
-                      <i class="fas fa-ellipsis-v mt-2"></i>
-                  </span>
-                  <DropdownMenu  slot="dropdown">
-                      <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
-                      <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
-                  </DropdownMenu>
-                  </Dropdown>
                   
             </template>
           </el-table-column>
