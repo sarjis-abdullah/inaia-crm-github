@@ -241,7 +241,7 @@ export default {
     resume_savings_plan:'Fortsetzen',
     Depot_paused_successfully:'Saving plan paused successfully',
     Depot_paused_unsuccessfully:"We couldn't oause the saving plan due to an error",
-    resume_saving_plan_question:'Are you sure you want to resume this saving plan?',
+    resume_saving_plan_question:'Are you sure you want to resume/activate this contract?',
     Depot_resumed_successfully: 'Saving plan resumed successfully',
     Depot_resumed_unsuccessfully: "We couldn't resume the saving plan due to an error",
     cancel_saving_plan_question:'Are you sure want to cancel the contract of this saing plan?',
@@ -757,5 +757,12 @@ export default {
     total_claim_count:'Total number of claims',
     total_amount:"Total amount",
     do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim',
-    show_only_unverified:'Show only unverified customers'
+    show_only_unverified:'Show only unverified customers',
+    withdraw_contract:'Withdraw contract',
+    withdraw_contract_question:'Are you sure you want to withdraw the current contract?',
+    Depot_withdrawn_successfully:'Contract withdrawn successfully',
+    complete_contract:'Complete contract',
+    complete_contract_question:'Are you sure you want to complete the current contract?',
+    depot_compeleted_successfully:'The contract completed successfully',
+    activate_contract:'Activate contract'
 }

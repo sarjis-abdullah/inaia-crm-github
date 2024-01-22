@@ -128,6 +128,12 @@
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmWithdraw()"
+                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-times"></i>{{ $t("withdraw_contract") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmComplete()"
+                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-close"></i>{{ $t("complete_contract") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmResume()"
                         v-if="(depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled')  && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
@@ -135,6 +141,9 @@
                         <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'  && hadSavingPlanStatusEditAccess">
                         <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
+                        <a class="dropdown-item" @click.prevent="confirmResume()"
+                        v-if="(depot.status.name_translation_key=='depot_status_completed' || depot.status.name_translation_key=='depot_status_withdrawn')  && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-play-circle"></i>{{ $t("activate_contract") }}</a>
                     </base-dropdown>
                   </div>
                 </div>
@@ -233,6 +242,42 @@
                 <base-button type="primary" @click="() => resumeSavinPlan()"
                     :disabled="isSubmitting">
                     <span>{{$t('resume')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showWithdrawConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('withdraw_contract_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelWithdraw()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => withdrawContract()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('withdraw_contract')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showCompleteContract" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('complete_contract_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelComplete()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => completeContract()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('complete_contract')}}</span>
                   </base-button>
             </template>
         </modal>
@@ -367,6 +412,9 @@ export default {
             showAddDeposit:false,
             showDepotHistory:false,
             showEditSalesAdvisor:false,
+            showWithdrawConfirm:false,
+            showCompleteContract:false,
+            showConfirmActivate:false
         }
     },
     components: {
@@ -490,8 +538,48 @@ export default {
         cancelPause(){
           this.showPauseConfirm = false;
         },
-        confirmPause(){
-          this.showPauseConfirm = true;
+        confirmWithdraw(){
+          this.showWithdrawConfirm = true;
+        },
+        cancelWithdraw(){
+          this.showWithdrawConfirm = false;
+        },
+       
+        withdrawContract(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/withdrawContract',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_withdrawn_successfully')});
+             this.showWithdrawConfirm = false;
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        confirmComplete(){
+          this.showCompleteContract = true;
+        },
+        completeContract(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/completeContract',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('depot_compeleted_successfully')});
+             this.showCompleteContract = false;
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelComplete(){
+          this.showCompleteContract = false;
         },
         pauseSavinPlan(){
           const data = {
@@ -535,6 +623,9 @@ export default {
         },
         confirmCancel(){
           this.showCancelConfirm = true;
+        },
+        cancelCompete(){
+          this.showCancelConfirm = false;
         },
         confirmContractConfirm (){
           this.$confirm(this.$t('do_you_want_to_confirm_contract','Warning',{
