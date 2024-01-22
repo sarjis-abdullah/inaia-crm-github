@@ -53,6 +53,11 @@
                                     </Select>
                                 </div>
                           </div>
+                          <div class="row mt-3">
+                            <div class="col">
+                                <Checkbox @change="showOnlyUnverified">{{ $t('show_only_unverified') }}</Checkbox>
+                            </div>
+                          </div>
                         </div>
 
                         <el-table class="table-hover table-responsive table-flush"
@@ -215,7 +220,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option,Checkbox } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
 import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/helpers';
@@ -235,7 +240,8 @@ export default {
         AmlStatus,
         Select,
         Option,
-        MetaInfo
+        MetaInfo,
+        Checkbox
     },
     data() {
         return {
@@ -261,7 +267,8 @@ export default {
             searchWords:null,
             selectedAmlStatus:null,
             selectedSalesAdvisor:null,
-            meta:null
+            meta:null,
+            isVerified:false,
         }
     },
 
@@ -279,6 +286,7 @@ export default {
             return (
                 (this.search ? '&' + this.search : '') +
                 ( this.selectedSalesAdvisor ? `&sales_advisor_id=${ this.selectedSalesAdvisor }`:'')+
+                ( this.isVerified ? `&is_verified=0`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
                 `&page=${this.page}` +
                 `&per_page=${this.perPage}&type=customer`
@@ -319,6 +327,14 @@ export default {
             const url = "http://"+window.location.host+part+resource.id;
             window.open(url,'_blank');
           //this.$router.push('/customers/details/'+resource.id)
+        },
+        showOnlyUnverified(value){
+            if(value){
+                this.isVerified  = true;
+            }
+            else{
+                this.isVerified = false;
+            }
         },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {

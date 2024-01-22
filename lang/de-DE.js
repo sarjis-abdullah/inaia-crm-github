@@ -66,6 +66,7 @@ export default {
     gold_withdrawal: 'Goldabhebung',
     gold_delivery:'Auslieferung',
     gold_gift:'Gutschrift',
+    assets_gift:'Assets gift',
     gold_purchase_interval:'Goldkauf - Sparplan',
     gold_transfer_out:'Goldtransfer',
     gold_transfer_in:'Goldtransfer',
@@ -755,5 +756,6 @@ export default {
     create_batch:'Create batch',
     total_claim_count:'Total number of claims',
     total_amount:"Total amount",
-    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim'
+    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim',
+    show_only_unverified:'Show only unverified customers'
 }

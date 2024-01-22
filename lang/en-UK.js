@@ -69,7 +69,8 @@ export default {
     gold_sell:'Gold sale',
     gold_withdrawal: 'Gold withdrawal',
     gold_delivery:'Gold delivery',
-    gold_gift:'Asset gift',
+    gold_gift:'Gold gift',
+    assets_gift:'Assets gift',
     gold_purchase_interval:'Gold Purchase - Recurring',
     gold_transfer_out:'Gold transfer out',
     gold_transfer_in:'Gold transfer in',
@@ -765,5 +766,6 @@ export default {
     create_batch:'Create batch',
     total_claim_count:'Total number of claims',
     total_amount:"Total amount",
-    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim'
+    do_you_want_to_cancel_this_claim:'Are you sure you want to cancel this claim',
+    show_only_unverified:'Show only unverified customers'
 }
