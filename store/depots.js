@@ -276,6 +276,57 @@ export const actions = {
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
     },
+    withdrawContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_withdrawn');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_withdrawn');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    completeContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_completed');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_completed');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    activateContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_active');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_active');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
     cancelSavingPlan(context,payload)
     {
         let status = context.getters.depotStatuses;
