@@ -535,6 +535,9 @@ export default {
         onGoldGiftClose(){
           this.showGoldGift =  false;
         },
+        confirmPause(){
+          this.showPauseConfirm = true;
+        },
         cancelPause(){
           this.showPauseConfirm = false;
         },
