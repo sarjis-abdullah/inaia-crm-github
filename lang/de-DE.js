@@ -764,5 +764,8 @@ export default {
     complete_contract:'Complete contract',
     complete_contract_question:'Are you sure you want to complete the current contract?',
     depot_compeleted_successfully:'The contract completed successfully',
-    activate_contract:'Activate contract'
+    activate_contract:'Activate contract',
+    are_you_sure_you_want_to_delete_this_account_permanently:'Are you sure you want to delete this client and its data permanently?',
+    client_deleted_successfully:'The client deleted successfully',
+    delete_account:'Delete account'
 }

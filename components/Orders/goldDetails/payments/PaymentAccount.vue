@@ -21,7 +21,7 @@
                 </template>
                 <div class="list-group list-group-flush">
                     <PaymentAccountItem
-                    :paymentAccount="account.payment_account"
+                    :paymentAccount="getTheRightPaymentAccount(account)"
                     :paymentMethod="account && account.method && account.method.name_translation_key"
                     :isEditable="activateEdit"
                     :account_id="order.depot.account_id" :order="order"
@@ -39,9 +39,8 @@ import Collapse from '@/components/argon-core/Collapse/Collapse';
 import CollapseItem from '@/components/argon-core/Collapse/CollapseItem';
 import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
 import {Badge} from '@/components/argon-core';
-import { isOrderPending,isOrderPaymentFailed,isOrderOutstanding} from '~/helpers/order';
+import { isOrderPending,isOrderPaymentFailed,isOrderOutstanding,isOrderGoldSale, isOrderSilverSale} from '~/helpers/order';
 import Loader from '@/components/common/Loader/Loader.vue';
-
 export default {
     components:{
         Collapse,
@@ -116,6 +115,14 @@ export default {
         onPaymentAccountUpdated(order){
             this.order = order;
             this.init();
+        },
+        getTheRightPaymentAccount(paymentAccount){
+            if(isOrderGoldSale(this.order) || isOrderSilverSale(this.order)){
+                return paymentAccount.recipient_payment_account;
+            }
+            else{
+                return paymentAccount.payment_account
+            }
         }
     }
 }

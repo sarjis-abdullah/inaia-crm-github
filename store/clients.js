@@ -328,5 +328,9 @@ export const actions = {
             .then(response => {
                 return true;
             })
+    },
+    deleteAccountPermanently(context,payload){
+        return this.$axios.delete(`/accounts/permanently-delete/${payload}`);
+        
     }
 }
