@@ -385,7 +385,7 @@ export default {
         shouldDisplayOrderCancelButton(resource)
         {
           if (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.cancel)
-            return isOrderPaid(resource);
+            return isOrderPaid(resource) || isOrderPending(resource);
           else return false;
         },
         shouldDisplayOrderPaidButton(resource)

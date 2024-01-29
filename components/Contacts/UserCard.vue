@@ -45,6 +45,7 @@
             <a class="dropdown-item" @click.prevent="unLockAccount" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
             <a class="dropdown-item"  @click.prevent="desactvateAccount" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
             <a class="dropdown-item" @click.prevent="activateAccount" v-if="!info.is_active">{{ $t("activate_account") }}</a>
+            <a class="dropdown-item" @click.prevent="deleteAccount">{{ $t("delete_account") }}</a>
           </base-dropdown>
         </div>
 
@@ -378,6 +379,28 @@ export default {
       },
       editSalesAdvisor (){
         this.showEditSalesAdvisor = true;
+      },
+      deleteAccount(){
+        this.$confirm(this.$t('are_you_sure_you_want_to_delete_this_account_permanently'),'danger',{
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+           this.$store.dispatch('clients/deleteAccountPermanently',this.info.account.id).then(()=>{
+            this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("client_deleted_successfully"),
+            });
+            setTimeout(()=>{
+              window.close()
+            },6000)
+           }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+           });
+          }).catch((err) => {
+            apiErrorHandler(err,this.$notify);
+          });
       }
 
     }

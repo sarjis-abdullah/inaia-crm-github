@@ -272,7 +272,7 @@ export default {
       else{
         return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0 
         || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)
-        || (this.inaiaStockAmount*1000 + this.operationStockAmount*1000) != parseInt(this.batchProcessPreview.gram_amount)
+        || parseInt(this.inaiaStockAmount*1000 + this.operationStockAmount*1000) != parseInt(this.batchProcessPreview.gram_amount)
         
         ;
       }
