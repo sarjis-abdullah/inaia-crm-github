@@ -35,13 +35,14 @@
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
                 <div>
                   <h4>{{$t('confirm_cancel_order')}} {{ resource.id }}</h4>
-
+                    <div v-if="resource && !isOrderPending(resource)">
                   <div class="mt-4 mb-1" v-if="!hasMoneyTransfered">{{ $t('choose_payment_account_for_payback') }}:</div>
                   <select-payment-account :account_id="resource.depot.account_id"
                                           v-if="resource && !hasMoneyTransfered"
                                           @paymentaccountselected="setCancelPaymentAccount"
                   />
                   <Checkbox v-model="hasMoneyTransfered" class="mt-3" @change="hasMoneyTranferedChanged">{{ $t('money_was_tranfered') }}</Checkbox>
+                </div>
                 </div>
         </div>
         <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.delete">

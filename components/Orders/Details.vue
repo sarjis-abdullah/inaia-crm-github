@@ -46,7 +46,7 @@
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
                         <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
-                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete"
+                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete && selectedResourceScreen!=orderDetailsSceens.cancel"
                             :disabled="isSubmitting">
                           {{$t('mark_as_paid')}}
                         </base-button>
