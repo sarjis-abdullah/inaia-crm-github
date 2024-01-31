@@ -41,7 +41,7 @@
                         </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
-                            :disabled="(!hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            :disabled="(selectedResource && !isOrderPending(selectedResource) && !hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
                             >
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
