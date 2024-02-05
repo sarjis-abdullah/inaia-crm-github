@@ -83,6 +83,15 @@
                 <div v-if="selectedAction == 'cancel'">
                     {{$t('do_you_want_to_cancel_this_claim')}}
                 </div>
+                <div v-if="selectedAction == 'initiatepayment'">
+                    <date-picker
+            size="large"
+            v-model="paymentExecutionDate"
+            type="date"
+            :placeholder="$t('select_execution_date')"
+          >
+          </date-picker>
+                </div>
             </div>
         <template slot="footer" v-if="!confirming">
             
@@ -98,12 +107,15 @@
                         <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
                         {{$t('mark_as_paid')}}
                         </base-button>
+                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
+                        {{$t('initiate_payment')}}
+                        </base-button>
         </template>
         <template v-else slot="footer">
             <base-button type="link" class="ml-auto" @click="cancelConfirmation">
                           {{$t('cancel')}}
                         </base-button>
-                        <base-button type="primary" class="ml-auto" @click="confirmAction()">
+                        <base-button type="primary" class="ml-auto" @click="confirmAction()" :disabled="isSubmitting || (selectedAction == 'initiatepayment' && !paymentExecutionDate)">
                           {{$t('confirm')}}
                         </base-button>
         </template>
@@ -113,6 +125,8 @@
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import Status from "@/components/Claims/Status";
 import UserInfo from '@/components/Contacts/UserInfo';
+import { DatePicker } from "element-ui";
+import { formatDateToApiFormat } from '../../helpers/helpers';
 export default {
     props:{
         showDetail:{
@@ -127,13 +141,15 @@ export default {
     components:{
         DetailListItem,
         Status,
-        UserInfo
+        UserInfo,
+        DatePicker
     },
     data(){
         return{
             confirming:false,
             selectedAction:'',
-            isSubmitting:false
+            isSubmitting:false,
+            paymentExecutionDate:null
 
         }
     },
@@ -191,6 +207,23 @@ export default {
             }).finally(()=>{
                     this.isSubmitting = false;
                 });;
+            }
+            if(this.selectedAction == "initiatepayment"){
+                this.isSubmitting = true;
+                let data = {
+                    execution_date: formatDateToApiFormat(this.paymentExecutionDate),
+                    claim_ids:[this.claim.id]
+                };
+                this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
+
+                    this.paymentExecutionDate = null;
+                    window.open(res,'_blank');
+
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify)
+                }).finally(()=>{
+                    this.isSubmitting = false;
+                })
             }
             
         },
