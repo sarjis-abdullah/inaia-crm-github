@@ -27,14 +27,14 @@
                     </base-button>
 
                   </div>
-                  <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
+                  <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3" v-if="!makingManyAsPaid && !initiatePaymentForMany">
                     <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
                   </base-button>
                   
-                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
                         <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                       </button>
-                      <button @click.prevent="createBatch()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                      <button @click.prevent="createBatch()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
                         <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_batch')}}</span>
                       </button>
                   
@@ -60,7 +60,7 @@
       >
         <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
-            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="(row && row.claim_status && row.claim_status.name_translation_key == 'pending' && row.payment_method=='bank_account') && (makingManyAsPaid || initiatePaymentForMany)">
+            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="(row && row.claim_status && row.claim_status.name_translation_key == 'pending') && (makingManyAsPaid || initiatePaymentForMany)">
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
