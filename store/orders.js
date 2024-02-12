@@ -230,6 +230,14 @@ export const actions = {
             return res.data.message.data.url;
         })
     },
+    executeSellBankPayment(context,payload){
+        
+        return this.$axios
+        .post(`${ process.env.golddinarApiUrl }/orders/sell/initiate-money-transfer`,payload)
+        .then(res => {
+            return res.data.data.url;
+        })
+    },
     fetchCommissionList(context,payload){
         return this.$axios.get(`${ process.env.golddinarApiUrl }/sales-commission/orders?include=${includes}${ payload }`).then(res=>{
             context.commit('commissionList',res.data.data)

@@ -26,7 +26,7 @@
                             {{accountHolder}}
                         </div>
                 </detail-list-item>
-                <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account'">
+                <detail-list-item :title="$t('payment_date')" v-if="shouldDisplayExecutePayment() && paymentAccount!=null && paymentAccount.payment_method!=null && paymentAccount.payment_method.name_translation_key=='bank_account' && activateUpdatePyament">
                     <div slot="value">
 
                         <DatePicker v-model="paymentDate"/>
@@ -68,11 +68,16 @@
             <base-button type="link" @click="cancelEdit" v-if="editActive">
                 {{$t('cancel')}}
             </base-button>
-            <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting">
-                <span v-if="!editActive && !isNew && !failed">{{$t('change_payment_method')}}</span>
+            <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting" v-if="activateUpdatePyament">
+                <span v-if="!editActive && !isNew && !failed  ">{{$t('change_payment_method')}}</span>
                 <span v-if="editActive">{{$t('save')}}</span>
                 <span v-if="isNew">{{$t('set_Payment_method')}}</span>
             </base-button>
+            <base-button type="secondary" @click="editInfo" :disabled="((isNew || editActive) && selectedPaymentMethod==null) || isSubmitting" v-if="isNew">
+                
+                <span >{{$t('set_Payment_method')}}</span>
+            </base-button>
+            
             <base-button type="secondary" @click="executePayment" v-if="shouldDisplayExecutePayment()" :disabled="isSubmitting">
                 <span>{{$t('execute_payment')}}</span>
             </base-button>
@@ -87,7 +92,7 @@ import TextError from '@/components/common/Errors/TextError.vue';
 import { mapGetters } from "vuex";
 import {Select,Option, DatePicker} from 'element-ui';
 import SelectPaymentAccount from './SelectPaymentAccount.vue';
-import { isOrderPending,isOrderPaymentFailed} from '~/helpers/order';
+import { isOrderPending,isOrderPaymentFailed,isOrderOutstanding,isOrderGoldSale,isOrderSilverSale} from '~/helpers/order';
 import {formatDateToApiFormat} from '~/helpers/helpers';
 import moment from "moment"
 import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
@@ -143,6 +148,9 @@ export default {
             else{
                 return false;
             }
+        },
+        activateUpdatePyament(){
+            return !(isOrderGoldSale(this.order) || isOrderSilverSale(this.order))
         }
     },
     data: function(){
@@ -174,6 +182,8 @@ export default {
 
     },
     methods:{
+        isOrderGoldSale,
+        isOrderSilverSale,
         initView(){
             if(this.paymentAccount && this.paymentAccount.payment_account_specs && this.paymentAccount.payment_account_specs.length>0)
             {
@@ -292,7 +302,7 @@ export default {
                 return false;
             }
             else{
-                return (isOrderPending(this.order) ) && this.isTheLatest &&
+                return (isOrderPending(this.order) || isOrderOutstanding(this.order) ) && this.isTheLatest &&
                 (this.paymentAccount.payment_method && this.paymentAccount.payment_method.name_translation_key=="pps" || this.paymentAccount.payment_method.name_translation_key=="bank_account") &&
                 !this.editActive && !this.isNew;
             }
@@ -316,29 +326,43 @@ export default {
                 }
                 if(this.paymentAccount.payment_method.name_translation_key=="bank_account")
                 {
-                    const minimumDate = moment().add(1);
-                    const selectedDate = moment(this.paymentDate);
-                    if(selectedDate<minimumDate){
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('choose_proper_date')})
-                    }
-                    else{
+                    
                         this.isSubmitting = true;
                         const payload = {
                             order_ids:[this.order.id],
-                            execution_date:formatDateToApiFormat(this.paymentDate)
                         }
-
-                        this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
-                        window.open(res,'_blank');
-                        //window.location.href = res;
-                        }).catch((err)=>{
-                            apiErrorHandler(err,this.$notify);
-                        }).finally(()=>{
-                            this.isSubmitting = false;
-                        })
+                        if(!(isOrderGoldSale(this.order) || isOrderSilverSale(this.order))){
+                            const minimumDate = moment().add(1);
+                    const selectedDate = moment(this.paymentDate);
+                            if(selectedDate<minimumDate){
+                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('choose_proper_date')})
+                    }else{
+                        payload.execution_date = formatDateToApiFormat(this.paymentDate)
+                            this.$store.dispatch('orders/executeBankPayment',payload).then((res)=>{
+                                window.open(res,'_blank');
+                                //window.location.href = res;
+                                }).catch((err)=>{
+                                    apiErrorHandler(err,this.$notify);
+                                }).finally(()=>{
+                                    this.isSubmitting = false;
+                                })
+                    }
+                           
+                        }
+                        else{
+                            this.$store.dispatch('orders/executeSellBankPayment',payload).then((res)=>{
+                                window.open(res,'_blank');
+                                //window.location.href = res;
+                                }).catch((err)=>{
+                                    apiErrorHandler(err,this.$notify);
+                                }).finally(()=>{
+                                    this.isSubmitting = false;
+                                })
+                        }
+                        
                     }
                     
-                }
+                
             }
 
 
