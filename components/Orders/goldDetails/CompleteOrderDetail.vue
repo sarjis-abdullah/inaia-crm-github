@@ -96,7 +96,7 @@ export default {
             this.error = null;
             this.isLoading = true;
             this.$emit('dateselected',formatDateToApiFormat(this.selectedDate));
-            this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate),transaction_fee:(this.doDiscount  && !isNaN(this.transactionFee))?parseInt(this.transactionFee*100):0}).then(res=>{
+            this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate),transaction_fee:(this.doDiscount  && !isNaN(this.transactionFee))?parseInt(this.transactionFee*100):undefined}).then(res=>{
                 this.preview = res;
             }).catch((err)=>{
                 
@@ -118,7 +118,9 @@ export default {
         },
         makediscount:function(value){
             if(!value){
+                this.transactionFee - null;
                 this.$emit('setTransactionFee',null);
+                this.getPreview();
             }
         }
     }
