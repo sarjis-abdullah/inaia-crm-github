@@ -156,6 +156,7 @@ import {Select,Option,Checkbox} from 'element-ui'
 import {formatWithSpaces} from '../../helpers/helpers';
 import { BLOCKREASONS} from '../../helpers/cards'
 import Modal from '../argon-core/Modal.vue';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   components: { Modal,Select,Option,Checkbox },
   props: {
@@ -241,8 +242,9 @@ export default {
             Object.assign(c,res);
             this.$notify({type: 'success', timeout: 5000, message: this.$t('card_blocked_successfully')})
             this.cancelBlockCard();
-          }).catch(()=>{
-            this.$notify({type: 'danger', timeout: 5000, message: this.$t('card_blocked_unsuccessfully')})
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+            
           }).finally(()=>{
             this.isSubmitting = false;
           })

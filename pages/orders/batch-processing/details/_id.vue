@@ -35,7 +35,7 @@
                       menu-on-right
                       :has-toggle="false"
                       v-if="
-                        shouldShowCsv()
+                        shouldShowCsv() && hasEditAccess
                       "
                     >
                       <template slot="title">
@@ -101,7 +101,7 @@
                       menu-on-right
                       :has-toggle="false"
                       v-if="
-                        shouldDisplayProgressActions()
+                        shouldDisplayProgressActions() && hasEditAccess
                       "
                     >
                       <template slot="title">
@@ -269,6 +269,7 @@ import UploadCsv from "@/components/Csv-file/UploadCsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
 import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
+import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
 export default {
   layout: "DashboardLayout",
@@ -327,6 +328,9 @@ export default {
       else{
         return 0;
       }
+    },
+    hasEditAccess(){
+       return canEditDepot();
     }
   },
   destroyed(){
@@ -396,8 +400,9 @@ export default {
                             .name_translation_key == ORDER_PROCESS_STATUS_FAILED);
   },
   shouldDisplayRetry(){
-    return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED;
+    /*return this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_FAILED;*/
+                            return false;
   },
   shouldDisplayComplete(){
     return this.batchProcess.order_process_status
@@ -446,7 +451,6 @@ export default {
     this.showExecuteBankPayment = false;
   },
   displayExecuteBankPayment(){
-    debugger;
     this.showExecuteBankPayment = true;
   },
   onOrderUpdated(order)

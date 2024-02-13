@@ -1,4 +1,5 @@
 export default {
+    my_profile: 'My profile',
     date: 'Date',
 
     trade: 'Commerce',

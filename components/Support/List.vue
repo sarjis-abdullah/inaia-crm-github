@@ -2,7 +2,7 @@
     <div class="card the-box">
       <div class="d-flex h-100">
         <div class="border-right pr-0 overflow-hidden" style="width:400px; min-width:400px;">
-           <ListTickets :selctedTicket="selectedTicket" @onselectedTicket="onTicketSelected"/>
+           <ListTickets :selctedTicket="selectedTicket" @onselectedTicket="onTicketSelected" :account_id="account_id"/>
         </div>
         <div class="flex-grow-1">
             <MessageBox :ticket="selectedTicket"></MessageBox>
@@ -15,9 +15,18 @@
 import ListTickets from '@/components/Support/ListTickets';
 import MessageBox from '@/components/Support/MessageBox';
 export default {
+    props:{
+        account_id:{
+            type:Number,
+            default:-1
+        }
+    },
     components:{
         ListTickets,
         MessageBox
+    },
+    mounted(){
+        this.selectedTicket = null;
     },
     data(){
         return {

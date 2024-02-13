@@ -43,7 +43,7 @@ export function mapCountriesNationalities(list) {
 export function mapCountryCode(list){
     let countyList = [];
     list.forEach(item=>{
-        if(item.allow){
+        if(item.allow && item.calling_code){
             countyList.push({
                 id:item.id,
                 value:item.calling_code.replace('00','+'),
@@ -160,4 +160,15 @@ export function getMonthName(monthNumber)
     const month = objDate.toLocaleString(locale, { month: "long" });
     return month;
 }
+export function checkIfItIsAccountNumber(number){
+    const re = /^GD\d+$/;
+    return re.test(number);
+}
+export const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+});
+
 

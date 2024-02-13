@@ -1,14 +1,14 @@
 
 <template>
   <div>
-    {{ $t("client") }}:
+   
       <el-popover
-      v-if="info && info.account"
+      
     placement="bottom"
     width="400"
     trigger="click"
     >
-    <div>
+    <div v-if="info && info.account">
 
         <div class="row">
           <div class="col-sm-6 _col-xl-3" v-if="info.account">
@@ -16,7 +16,7 @@
             <div class="account_data text-sm mt-1">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('account_data')}}</div>
               <div>{{$t('name')}}:
-                <a href="" v-if="singleClientData && singleClientData.customer" @click.prevent="$router.push('/customers/details/' + singleClientData.customer.id)">{{getName}}</a>
+                <a href="" v-if="singleClientData && singleClientData.customer" @click.prevent="gotoDetails">{{getName}}</a>
               </div>
               <div>{{$t('status')}}:
                 <badge :type="`${info.is_active ? 'success' : 'danger'}`" class="ml-1">{{info.is_active ? $t('active') : $t('inactive')}}</badge>
@@ -32,7 +32,7 @@
               <div class="h5 text-muted text-uppercase ls-1">{{$t('person_data')}}</div>
               <div>{{$t('gender')}}: <i v-if="info.person_data" class="lnir ml-1" :class="`${info.person_data.gender == 'male' ? 'lnir-male rotate-45' : 'lnir-female lnir-rotate-180'}`" /></div>
               <div>{{$t('birthdate')}}: {{$d(new Date(info.person_data.birthdate),'narrow')}}</div>
-              <div>{{$t('nationality')}}: {{ (info.person_data && info.person_data.nationality ? info.person_data.nationality.name_translation_key : '' ) }}</div>
+              <div>{{$t('nationality')}}: {{ (info.person_data && info.person_data.nationality_details ? info.person_data.nationality_details.nationality_translation_key : '' ) }}</div>
             </div>
 
           </div>
@@ -48,7 +48,7 @@
         </div>
 
     </div>
-    <a href="#" slot="reference">{{ singleClientData.customer.account.account_number }}</a>
+    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ (!isLazy && singleClientData && singleClientData.customer && singleClientData.customer.account)?singleClientData.customer.account.account_number:accountId?accountId:customerId }}</a>
   </el-popover>
   </div>
 </template>
@@ -69,6 +69,9 @@ export default {
     accountId:{
         type: Number,
       default: -1,
+    },
+    isLazy:{
+      default:false
     }
   },
   computed: {
@@ -102,22 +105,30 @@ export default {
     },
   },
   mounted() {
-    if (!this.singleClientData)
-    {
-        if(this.accountId!=-1)
-        {
-            this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
-                      this.$store.dispatch("clients/clientDetailsData", res.contact_id);
-                  })
-        }
-        if(this.customerId!=-1)
-        {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId);
-        }
-    }
+   
+      if(!this.isLazy){
+        this.loadCustomer();
+      }
+        
+    
 
   },
   methods: {
+    loadCustomer(){
+      if (!this.singleClientData)
+    {
+        if(this.accountId!=-1)
+          {
+              this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
+                        this.$store.dispatch("clients/clientDetailsData", res.contact_id);
+                    })
+          }
+          if(this.customerId!=-1)
+          {
+              this.$store.dispatch("clients/clientDetailsData", this.customerId);
+          }
+        }
+    },
     getChannelInfo(type) {
       let channel =
         this.info.channels &&
@@ -128,6 +139,20 @@ export default {
       }
       return null;
     },
+    gotoDetails() {
+            const part = "/customers/details/";
+            const url = "http://"+window.location.host+part+this.singleClientData.customer.id;
+            window.open(url,'_blank');
+        },
   },
 };
 </script>
+
+<style scoped>
+
+.rotate-45 {
+  filter: none;
+  transform: rotate(45deg);
+}
+
+</style>

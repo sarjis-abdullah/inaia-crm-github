@@ -22,7 +22,7 @@
       v-if="
         selectedOrderProcess &&
         (isOrderGoldPurchase(selectedOrderProcess) ||
-          isOrderGoldPurchaseInterval(selectedOrderProcess))
+          isOrderGoldPurchaseInterval(selectedOrderProcess) || isOrderSilverPurchase(selectedOrderProcess) || isOrderSilverPurchaseInterval(selectedOrderProcess))
       "
     >
       <DatePicker v-model="selectedDate" class="mt-3" @change="getBatchProcessPreview" :placeholder="$t('select_price_date')"/>
@@ -62,7 +62,7 @@
             {{ batchProcessPreview.total_orders_count }}
           </div></detail-list-item
         >
-        <div v-if="batchProcessPreview.inaia_stock_balance && batchProcessPreview.operation_stock_balance">
+        <div v-if="batchProcessPreview.inaia_stock_balance >=0 && batchProcessPreview.operation_stock_balance >=0">
         <div class="my-4">
           <span class=" text-black-100 text-uppercase">Asset sources</span>
           <div class="text-danger" v-if="batchProcessPreview.gram_amount > (batchProcessPreview.operation_stock_balance+batchProcessPreview.inaia_stock_balance)">
@@ -109,6 +109,8 @@ import {
   isOrderGoldPurchase,
   isOrderGoldPurchaseInterval,
   isOrderGoldSale,
+  isOrderSilverPurchase,
+  isOrderSilverPurchaseInterval
 } from "../../helpers/order";
 import { DatePicker,Input } from "element-ui";
 import { formatDateToApiFormat } from "../../helpers/helpers";
@@ -116,6 +118,7 @@ import DetailListItem from "@/components/common/DetailListItem.vue";
 import Loader from '@/components/common/Loader/Loader';
 import { mapGetters } from "vuex";
 import { assetTypes } from '@/helpers/depots'
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   components: {
     DatePicker,
@@ -167,6 +170,8 @@ export default {
     isOrderGoldPurchase,
     isOrderGoldPurchaseInterval,
     isOrderGoldSale,
+    isOrderSilverPurchase,
+    isOrderSilverPurchaseInterval,
     cancelConfirmComplete() {
       this.showConfirmComplete = false;
       this.selectedOrderProcess = null;
@@ -186,11 +191,7 @@ export default {
           this.batchProcessPreview = res;
         })
         .catch((err) => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("this_date_has_not_goldprice"),
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;
@@ -230,12 +231,8 @@ export default {
           this.cancelConfirmComplete();
           this.$emit("completed");
         })
-        .catch(() => {
-          this.$notify({
-            type: "danger",
-            timeout: 5000,
-            message: this.$t("order_batch_completed_unsuccessfully"),
-          });
+        .catch((err) => {
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSubmitting = false;
@@ -261,12 +258,9 @@ export default {
                 }
                 this.$store.dispatch('stocks/transferStock',{data:data}).then((res)=>{
                     this.markAsComplete();
-                }).catch(()=>{
+                }).catch((err)=>{
                     this.isSubmitting =  false;
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                    apiErrorHandler(err,this.$notify);
                 })
       }
     },
@@ -278,7 +272,7 @@ export default {
       else{
         return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0 
         || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)
-        || (this.inaiaStockAmount*1000 + this.operationStockAmount*1000) != parseInt(this.batchProcessPreview.gram_amount)
+        || parseInt(this.inaiaStockAmount*1000 + this.operationStockAmount*1000) != parseInt(this.batchProcessPreview.gram_amount)
         
         ;
       }

@@ -113,6 +113,7 @@ import moment from "moment";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import AddSaleAdvisorItem from '@/components/SalesCommission/AddSaleAdvisorItem';
 import IconButton from '@/components/common/Buttons/IconButton';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 
 export default{
   components: { BaseButton,Form,Select,Option,Input,FormItem,AddSaleAdvisorItem,IconButton },
@@ -150,7 +151,7 @@ export default{
             rate:null,
             directions:[{id:1,name:'credit'},{id:2,name:'debit'}],
             selectedDirection:null,
-            reasons:[{id:1,name:'new_contract'},{id:2,name:'contract_canceled'}],
+            reasons:[{id:1,name:'new_contract'},{id:2,name:'contract_canceled'},{id:3,name:'contract_data_changed'}],
             selectedReason:null,
             isSubmitting:false,
             hideStaticElements:false,
@@ -223,7 +224,7 @@ export default{
                             this.target_amount = parseFloat(depot.target_amount/100);
                         }
                     }
-                    const payload = "per_page=500&depot_ids="+this.selectedDepots+
+                    const payload = "per_page=500&depot_id="+this.selectedDepots;
                     this.$store.dispatch('orders/fetchCommissionList',payload);
                 }
             },
@@ -374,7 +375,7 @@ export default{
                         
                     }).catch(err=>{
                         this.isSubmitting = false;
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('new_commission_created_unsuccessfully')})
+                        apiErrorHandler(err,this.$notify);
                     })
                 })
                 
@@ -400,7 +401,7 @@ export default{
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('commission_edited_successfully')});
                     this.onClose();
                 }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('commission_edited_unsuccessfully')})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting = false;
                 })

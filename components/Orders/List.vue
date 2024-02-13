@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <div class="row">
         <div class="col">
             <div class="card">
@@ -16,10 +15,9 @@
                     </div>
                   </div>
 
+                  <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
 
                 </div>
-
-                <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
 
                 <el-table class="table-hover table-responsive table-flush"
                         header-row-class-name="thead-light"
@@ -39,6 +37,7 @@
                                     </Checkbox>
                                     </div>
                                     <div class="font-weight-300 name" v-else>{{row.id}}</div>
+                                    
                                 </div>
                             </div>
                         </template>
@@ -67,7 +66,7 @@
                                     >
                                     <template v-slot="{row}">
                                         <span>{{row.depotName}}</span>
-                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.id : ''}}</div>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.depot_number : ''}}</div>
                                     </template>
                     </el-table-column>
 
@@ -92,7 +91,7 @@
                                     min-width="140px"
                                     >
                         <template v-slot="{row}">
-                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}} {{row.comment ? '('+row.comment+')' : null}}</Status>
+                          <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
                         </template>
                     </el-table-column>
 
@@ -104,9 +103,11 @@
 
                 </el-table>
 
-                <div class="card-footer py-4 d-flex justify-content-end">
-                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
+                <div class="card-footer py-4 d-flex align-items-center">
+                    <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
                 </div>
+
                 <Details
                         :selectedResource="selectedResource"
                         :showPopup="showPopup"
@@ -132,9 +133,10 @@ import { paddingFractionTo3,paddingFractionTo2 } from '~/helpers/helpers'
 
 import {BaseButton} from '@/components/argon-core';
 import IconButton from '@/components/common/Buttons/IconButton';
+import MetaInfo from '@/components/common/MetaInfo';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
-import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale } from '../../helpers/order';
+import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale, isOrderSilverPurchase, isOrderSilverSale } from '../../helpers/order';
 export default {
     components: {
         [Table.name]: Table,
@@ -147,7 +149,8 @@ export default {
         IconButton,
         OrderFilter,
         SelectPaymentAccount,
-        Checkbox
+        Checkbox,
+        MetaInfo
     },
     props:{
         isDepotSet:{
@@ -181,7 +184,7 @@ export default {
             selectedResource: null,
             showPopup: false,
             pageTitle: 'Orders',
-            perPage: 10,
+            perPage: 50,
             page: 1,
             totalTableData: 0,
             sortedBy: { customer: "asc" },
@@ -192,7 +195,8 @@ export default {
             selectedOrders:{
                 type:'',
                 orders:[]
-            }
+            },
+            meta:null
         }
     },
     computed: {
@@ -234,6 +238,7 @@ export default {
                         this.data = response.data.data
 
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta
                     }).catch(() => {
                         this.data = [];
                     })
@@ -265,9 +270,8 @@ export default {
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {
                         this.data = response.data.data
-
                         this.totalTableData = response.data.meta.total
-
+                        this.meta = response.data.meta
                         this.isLoading = false
                     }).finally(() => {
                         this.initiated  = false
@@ -359,7 +363,7 @@ export default {
         },
         allowAddToOrderProcess(order)
         {
-            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order));
+            return order.order_type && order.order_status && isOrderPending(order) && (isOrderGoldPurchase(order) || isOrderGoldSale(order) || isOrderSilverPurchase(order) || isOrderSilverSale(order));
         },
         onOrderUpdated(order)
         {

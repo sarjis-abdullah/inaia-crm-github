@@ -140,7 +140,7 @@
                                     accept=".png,.jpeg,.jpg"
                                     :limit="1"
                                     :multiple="false"
-                                    
+
                                     :disabled="isSubmitting"
                                     :on-change="saveImage"
                                 >
@@ -148,7 +148,7 @@
                                     <div class="el-upload__text">
                                     {{ $t('drop_image_here') }} <em>{{ $t('click_to_upload') }}</em>
                                     </div>
-                                    
+
                                 </Upload>
                                 <Upload
                                     class="upload-demo mx-3"
@@ -158,7 +158,7 @@
                                     accept=".png,.jpeg,.jpg"
                                     :limit="1"
                                     :multiple="false"
-                                    
+
                                     :disabled="isSubmitting"
                                     :on-change="saveImageThumbnail"
                                 >
@@ -166,14 +166,14 @@
                                     <div class="el-upload__text">
                                     {{ $t('drop_thumbnail_here') }} <em>{{ $t('click_to_upload') }}</em>
                                     </div>
-                                    
+
                                 </Upload>
                             </div>
                         <div class="row float-right">
                             <div class="pr-3">
                                 <base-button type="secondary" native-type="button" @click="() => $router.push('/news-feeds')">{{ $t('cancel') }}</base-button>
                                 <base-button type="primary" native-type="submit" :disabled="isRequesting">{{ $t('submit') }}</base-button>
-                                
+
                             </div>
                         </div>
                     </validation-observer>
@@ -219,9 +219,7 @@ export default {
         },
         locales: [
             { text: 'Deutsch',  value: 'de' },
-            { text: 'English',  value: 'en' },
-            { text: 'Français', value: 'fr' },
-            { text: 'Español',  value: 'es' },
+            { text: 'English',  value: 'en' }
         ],
         statuses: [
             { text: 'Yes', value: 1 },
@@ -323,7 +321,7 @@ export default {
                     this.resource.image_thumbnail   = reader.result
                 };
             reader.readAsDataURL(f.raw);
-            
+
         }
     }
 }

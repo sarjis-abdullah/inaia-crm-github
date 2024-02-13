@@ -27,14 +27,14 @@
     <div class="container-fluid mt--6">
       <div class="row">
 
-        <div class="col-xl-4 col-md-6">
-          <ExternalBankAmountCard />
-        </div>
+        
 
-        <div class="col-xl-4 col-md-6">
-          
+        <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
+          <gold-dinar-stat/>
         </div>
-
+        <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
+          <customer-stat/>
+        </div>
         <!--
         <div class="col-xl-4 col-md-6">
           <stats-card title="Goldbestand Kunden"
@@ -103,6 +103,7 @@
         </div>
         -->
       </div>
+      
     </div>
 
     <!--Charts-->
@@ -335,7 +336,10 @@
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
   import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
   import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
-
+  import { canViewInaiaBankAccount,canViewAdmin } from '@/permissions'
+  import { mapGetters } from "vuex"
+  import GoldDinarStat from '@/components/Statistics/GoldDinarStat';
+  import CustomerStat from '@/components/Statistics/CustomerStat';
   export default {
     layout: 'DashboardLayout',
     components: {
@@ -354,7 +358,14 @@
       ProgressTrackList,
       GoldPrice,
       MasterAmountCard,
-      SilverPrice
+      SilverPrice,
+      GoldDinarStat,
+      CustomerStat
+    },
+    computed:{
+      ...mapGetters({
+        user: "auth/user"
+      }),
     },
     data() {
       return {
@@ -390,6 +401,8 @@
       };
     },
     methods: {
+      canViewInaiaBankAccount,
+      canViewAdmin,
       initBigChart(index) {
         let chartData = {
           datasets: [

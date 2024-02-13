@@ -1,5 +1,5 @@
 <template>
-    <div style="height:40px" class="w-100 d-flex justify-content-center align-items-center">
+    <div class="w-100 d-flex justify-content-center align-items-center">
         <span class="loading__anim" v-if="isLoading"></span>
         <a v-else-if="currentPage<lastPage"  @click.prevent="clicked"><span class="loadmore">{{$t('load_more')}}</span></a>
     </div>

@@ -34,6 +34,26 @@
                     >
                     </Option>
                 </Select>
+                <Select
+                :placeholder="$t('transction_direction')"
+                v-model="transactionType"
+                class="mb-3"
+                >
+                    <Option
+                    
+                    :value="'CREDIT'"
+                    :label="'CREDIT'"
+                    :key="'CREDIT'"
+                    >
+                    </Option>
+                    <Option
+                    
+                    :value="'DEBIT'"
+                    :label="'DEBIT'"
+                    :key="'DEBIT'"
+                    >
+                    </Option>
+                </Select>
                 <date-picker
                     size="large"
                     class="my-2"
@@ -45,21 +65,17 @@
                 </date-picker>
                 <div class="mt--1 mb-3 row">
                     <div v-if="fixingPriceGram > -1" class="col text-sm text-muted">
-                        {{$t('gram_price')}} : {{$n(fixingPriceGram)}} €
+                        {{$t('fixing_price')}} : {{$n(fixingPriceGram)}} € / g
                     </div>
                     <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
-                        {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} €
+                        {{$n(fixingPriceOunce)}} € / Ounce
                     </div>
                     <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
                         {{$t('this_date_has_not_goldprice')}}
                     </div>
                 </div>
-                <div class="row mb-3"  v-if="isRefinerySource()">
-                    <Input v-model="unitPrice" :placeholder="$t('buying_gram_price')" class="col"/>
-                    <Input v-model="totalMoneyAmount" :placeholder="$t('total_buying_amount')" class="col"/>
-                </div>
-                <span class=" text-sm-center text-muted mb-3">{{ $t('stock_bought_amount_explanation') }}</span>
-                <div class="row" v-if="isNewOperations()">
+                <span class=" text-sm-center text-muted mb-3" v-if="isCredit">{{ $t('stock_bought_amount_explanation') }}</span>
+                <div class="row" v-if="isNewOperations() && isCredit">
                     <div class="col-3">
                         <Input v-model="amount" :placeholder="$t('stock_bought_amount')"/>
                     
@@ -82,10 +98,17 @@
                     </div>
                 </div>
                 <Input v-model="amount" :placeholder="$t('stock_bought_amount')" v-else class="mb-3"/>
+
+                <Input v-model="totalMoneyAmount" :placeholder="$t('total_buying_amount')"  v-if="isRefinerySource() && isCredit" />
+                <div class="mb-3 text-sm text-muted" v-if="isRefinerySource() && isCredit">
+                    {{ $t('buying_unit_price') }} : {{ unitPrice }} € / g
+                </div>
                 
-                <SelectSuppliers v-if="isRefinerySource()" @change="onSupplierChange"/>
-                <Input v-model="reference" :placeholder="$t('reference')" v-if="isRefinerySource()" class="mb-3"/>
-                <div class="d-flex justify-content-center" v-if="isRefinerySource()">
+                
+                <SelectSuppliers v-if="isRefinerySource() && isCredit" @change="onSupplierChange"/>
+                <Input v-model="reference" :placeholder="isCredit?$t('reference'):$t('comment')" v-if="isRefinerySource() || !isCredit" max="100"/>
+                <span class="mb-3 text-sm text-muted" v-if="isCredit">Max length 100 chars</span>
+                <div class="d-flex justify-content-center" v-if="isRefinerySource() && isCredit">
                     <Upload
                         class="upload-demo"
                         drag
@@ -132,7 +155,10 @@ import { stockTypes } from '@/helpers/stocks';
 import { formatDateToApiFormat } from '@/helpers/helpers';
 import { Upload } from "element-ui";
 import SelectSuppliers from "@/components/Suppliers/SelectSuppliers";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 const REFINERY = 'refinery';
+const credit = "CREDIT";
+const debit = "DEBIT";
 export default {
     props:{
         show:{
@@ -146,7 +172,11 @@ export default {
         assetType:{
             type: String,
             default: null
-        }
+        },
+        assetTypeId:{
+            type: Number,
+            default: -1
+        },
     },
     components: {
         Select,
@@ -160,12 +190,17 @@ export default {
         SelectSuppliers
     },
     mounted(){
-        
+        if(this.assetTypeId != -1 && this.depotTypes.length > 0){
+
+        }
     },
     computed:{
         ...mapGetters({
             depotTypes : 'depots/depotTypes'
-        })
+        }),
+        isCredit(){
+            return this.transactionType == credit;
+        }
     },
     data(){
         return {
@@ -187,6 +222,7 @@ export default {
             supplierId:null,
             totalMoneyAmount:null,
             unitPrice:null,
+            transactionType : credit
         }
     },
     watch:{
@@ -202,10 +238,10 @@ export default {
             },
             immediate: true
         },
-        unitPrice:{
+        amount:{
             handler(){
-                if(parseFloat(this.unitPrice)> 0 && this.totalMoneyAmount!=null){
-                    this.amount = (parseFloat(this.totalMoneyAmount)/parseFloat(this.unitPrice)).toFixed(3);
+                if(parseFloat(this.amount)> 0 && this.totalMoneyAmount!=null){
+                    this.unitPrice = (parseFloat(this.totalMoneyAmount)/parseFloat(this.amount));
                 }
                 
             },
@@ -213,8 +249,8 @@ export default {
         },
         totalMoneyAmount:{
             handler(){
-                if(parseFloat(this.unitPrice)> 0 && this.totalMoneyAmount!=null){
-                    this.amount = (parseFloat(this.totalMoneyAmount)/parseFloat(this.unitPrice)).toFixed(3);
+                if(parseFloat(this.amount)> 0 && this.totalMoneyAmount!=null){
+                    this.unitPrice = (parseFloat(this.totalMoneyAmount)/parseFloat(this.amount));
                 }
                 
             },
@@ -250,12 +286,20 @@ export default {
             this.$emit('closed');
         },
         initDepotType(){
-            let theSelectedOne = this.depotTypes.find(x=>x.name_translation_key == this.assetType);
+            let theSelectedOne = null;
+            if(this.assetTypeId > -1){
+                theSelectedOne = this.depotTypes.find(x=>x.id == this.assetTypeId);
+            }
+            if(this.assetType){
+                theSelectedOne = this.depotTypes.find(x=>x.name_translation_key == this.assetType);
+            }
             if(theSelectedOne)
             {
                 this.selectedDepotType = theSelectedOne.id;
+                this.assetType = theSelectedOne.name_translation_key
                 this.disableDepotType =  true;
             }
+            
         },
         initDate()
         {
@@ -316,16 +360,21 @@ export default {
         isValid(){
             
             let essentials = (this.selectedStockType && this.selectedDepotType && this.fixingPriceGram >0 && this.amount >0);
-           
-            if(this.selectedSource != REFINERY && essentials)
-            {
-                return true;
+            if(!this.isCredit){
+                return this.reference!=null;
             }
-            if(this.selectedSource == REFINERY && essentials)
-            {
-                
-                return (this.reference!=null && this.unitPrice > 0 && this.totalMoneyAmount > 0);  
+            else{
+                    if(this.selectedSource != REFINERY && essentials)
+                {
+                    return true;
+                }
+                if(this.selectedSource == REFINERY && essentials)
+                {
+                    
+                    return (this.reference!=null && this.unitPrice > 0 && this.totalMoneyAmount > 0);  
+                }
             }
+            
             return false;
         },
         onChange(file, fileList) {
@@ -339,12 +388,11 @@ export default {
                 let data = new FormData();
                 data.append('stock_type',this.selectedStockType);
                 data.append('depot_type_id',this.selectedDepotType);
-                data.append('transaction_type','CREDIT');
-                data.append('amount',this.amount*1000);
+                data.append('transaction_type',this.transactionType);
+                data.append('amount',parseInt(this.amount*1000));
                 data.append('fixing_price',parseInt(this.fixingPriceGram*100));
                 data.append('fixing_date',formatDateToApiFormat(this.fixingDate));
-                data.append('money_amount',(this.totalMoneyAmount*100));
-                data.append('fixing_trading',(this.unitPrice*100));
+                data.append('money_amount',(parseInt(this.totalMoneyAmount*100)));
                 if(this.reference)
                     data.append('external_ref_number',this.reference);
                 if(this.file)
@@ -376,17 +424,15 @@ export default {
                     this.supplierId=null;
                     this.totalMoneyAmount=null;
                     this.unitPrice=null;
+                    this.transactionType = credit;
                 this.$emit('added');
                     this.onClose();
                     this.$notify({
                     type:'success',
                     message:this.$t('success_adding_stock'),
                     duration:5000})
-                }).catch(()=>{
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting =  false;
                 })
@@ -394,8 +440,8 @@ export default {
             else{
                 let data = {
                     depot_type_id:this.selectedDepotType,
-                    amount:this.amount*1000,
-                    fixing_price:parseInt(this.fixingPrice*100),
+                    amount:parseInt(this.amount*1000),
+                    fixing_price:parseInt(this.fixingPriceGram*100),
                     fixing_date:formatDateToApiFormat(this.fixingDate)
                 }
                 let payload = {
@@ -410,11 +456,8 @@ export default {
                     type:'success',
                     message:this.$t('success_adding_stock'),
                     duration:5000})
-                }).catch(()=>{
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('error_adding_stock'),
-                    duration:5000})
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting =  false;
                 })

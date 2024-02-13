@@ -33,6 +33,9 @@
                 </Option>
               </Select>
             </div>
+            <div class="col">
+              <SelectCustomer @selected="filterByCustomer" @cleared="clearCustomer"/>
+            </div>
             <div class="col" v-if="!month">
               <date-picker
                 size="large"
@@ -52,11 +55,11 @@
           header-row-class-name="thead-light"
           :data="aggregatedClaims"
         >
-          <el-table-column label="#" min-width="100px" prop="id">
+          <el-table-column label="#"  prop="id">
             <template v-slot="{ row }">
               <div class="media align-items-center">
                 <div class="media-body">
-                  <div class="font-weight-300 name" v-if="markManyAsPaid" >
+                  <div class="font-weight-300 name" v-if="markMany" >
                     <Checkbox :value="shouldCheck(row.id)" :label="row.id" @change="(value)=>addMarkAsPaid(value,row)" :disabled="isPaid(row.claim_status.name_translation_key)">
                         
                     </Checkbox>
@@ -88,7 +91,7 @@
               {{ $d(new Date(row.claim_date), "short") }}
             </template>
           </el-table-column>
-          <el-table-column v-bind:label="$t('status')" min-width="140px">
+          <el-table-column v-bind:label="$t('status')">
             <template v-slot="{ row }">
               <Status
                 :status="
@@ -103,6 +106,15 @@
                 type="info"
                 @click="() => displayDetails(row)"
               ></icon-button>
+              <Dropdown trigger="click" v-if="!isPaid(row.claim_status.name_translation_key)" @command="(command)=>handleCommand(command,row.id)">
+                <span class="btn btn-sm btn-icon-only text-light">
+                    <i class="fas fa-ellipsis-v mt-2"></i>
+                </span>
+                <DropdownMenu  slot="dropdown">
+                    <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
+                    <DropdownItem command="initiate_payment" >{{$t('initiate_payment')}}</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -127,7 +139,7 @@
           size="lg"
           @close="selectedAggregated = null"
         >
-          <template slot="header" class="pb-0">
+          <template slot="header">
             <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
             <span></span>
           </template>
@@ -166,12 +178,15 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn,Checkbox } from "element-ui";
 import Status from "@/components/Claims/Status";
 import Claims from "@/components/Claims/Claims";
-import { Select, Option, DatePicker } from "element-ui";
+import { Select, Option, DatePicker,Dropdown,DropdownMenu,DropdownItem } from "element-ui";
 import IconButton from "@/components/common/Buttons/IconButton";
 import { formatDateToApiFormat } from "../../helpers/helpers";
 import CustomerFilter from '@/components/common/CustomerFilter';
 import moment from 'moment';
 import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
+import { MessageBox } from "element-ui";
+import SelectCustomer from "@/components/Contacts/SelectCustomer";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     account_id: {
@@ -188,7 +203,7 @@ export default {
     status:{
       type:String
     },
-    markManyAsPaid:{
+    markMany:{
       type:Boolean,
       default:false
     }
@@ -203,9 +218,14 @@ export default {
     DatePicker,
     Claims,
     Checkbox,
-    CustomerFilter
+    CustomerFilter,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem,
+    SelectCustomer
   },
   mounted() {
+    this.$confirm = MessageBox.confirm
     if (this.claimStatuses.length == 0) {
       this.$store.dispatch("claims/getClaimStatuses").then(()=>{
         if(this.status == PAYMENT_PENDING)
@@ -232,7 +252,7 @@ export default {
       let base = `&page=${
         this.page
       }&per_page=${this.perPage}`;
-      if(this.selectedCustomer)
+      if(this.selectedCustomer > 0)
       {
         base+=`&account_id=${this.selectedCustomer}`;
       }
@@ -320,7 +340,7 @@ export default {
             this.amounts = res.total_amounts
           }
         })
-        .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+        .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
         .finally(() => (this.isLoading = false));
     },
     displayDetails(resource) {
@@ -348,7 +368,7 @@ export default {
       if(value)
       {
         this.selectedToBeMarked.push(row.id);
-        this.$emit('markAsPayedAdded',row)
+        this.$emit('markAdded',row)
       }
       else
       {
@@ -356,7 +376,7 @@ export default {
         if(index> -1)
         {
           this.selectedToBeMarked.splice(index,1);
-          this.$emit('markAsPayedDeleted',row)
+          this.$emit('markDeleted',row)
         }
       }
       
@@ -371,7 +391,57 @@ export default {
     refresh(){
       this.page = 1;
       this.fetchAggregatedClaims();
-    }
+    },
+    handleCommand(command,id){
+      if(command=="mark_as_paid"){
+        this.markAspaid(id)
+      }
+      else{
+        this.initiatePayment(id);
+      }
+    },
+    markAspaid(id){
+        this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          let data = [];
+      data.push(id);
+      this.$store.dispatch('claims/markManyAspaid',data).then(()=>{
+        this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
+        this.$emit("markedAsPaid");
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
+      });
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
+        });
+      },
+      filterByCustomer(id){
+        this.selectedCustomer = id;
+        this.page = 1;
+      },
+      clearCustomer(){
+        this.selectedCustomer = null;
+        this.page = 1;
+      },
+      initiatePayment(id){
+          this.isSubmitting = true;
+          let aggregated_claims = [];
+          aggregated_claims.push({id:id});
+          const executionDate = moment().add('1','day').toDate();
+          const data = {
+            aggregated_claims:aggregated_claims,
+            execution_date : formatDateToApiFormat(executionDate)
+          }
+          this.$store.dispatch('claims/initiateAggregatedClaimDirectDebit',data).then((res)=>{
+          window.open(res,'_blanc');
+           
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          })
+        }
   },
 };
 </script>

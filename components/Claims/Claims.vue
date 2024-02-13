@@ -9,7 +9,7 @@
                 </p>
       </div>
       <div class="col-4 text-right">
-        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="isPending() && !confirming" @click="confirming=true">
+        <button type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="(isPending() || isFailed()) && !confirming" @click="confirming=true">
           <span class="btn-inner--icon"><i class="fas fa-check"></i></span><span class="btn-inner--text">{{$t('mark_as_paid')}}</span>
         </button>
         <div class="d-flex justify-content-end" v-else-if="confirming">
@@ -29,7 +29,7 @@
       header-row-class-name="thead-light"
       :data="aggregatedClaims"
     >
-      <el-table-column label="#" min-width="100px" prop="id">
+      <el-table-column label="#" prop="id">
         <template v-slot="{ row }">
           <div class="media align-items-center">
             <div class="media-body">
@@ -40,7 +40,7 @@
       </el-table-column>
         <el-table-column
         v-bind:label="$t('amount')"
-        min-width="180px"
+       
         align="right"
         prop="amount"
       >
@@ -48,7 +48,7 @@
           <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
         </template>
       </el-table-column>
-        <el-table-column v-bind:label="$t('type')" min-width="180px" prop="type">
+        <el-table-column v-bind:label="$t('type')"  prop="type" min-width="150">
         <template v-slot="{ row }">
           <div class="d-flex align-items-center">
             <div>
@@ -62,7 +62,17 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column v-bind:label="$t('date')" min-width="180px" prop="created_at">
+      <el-table-column v-bind:label="$t('status')" prop="status">
+        <template v-slot="{ row }">
+          <div class="d-flex align-items-center">
+            <div>
+             <Status :status='row.claim_status ? $t(row.claim_status.name_translation_key) : ""'/>
+
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column v-bind:label="$t('date')"  prop="created_at">
         <template v-slot="{ row }">
           <div class="d-flex align-items-center">
             <div>
@@ -72,7 +82,20 @@
           </div>
         </template>
       </el-table-column>
-
+      <el-table-column>
+          <template v-slot="{ row }" >
+            <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
+                <span class="btn btn-sm btn-icon-only text-light">
+                    <i class="fas fa-ellipsis-v mt-2"></i>
+                </span>
+                <DropdownMenu  slot="dropdown">
+                    <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
+                   
+                </DropdownMenu>
+                </Dropdown>
+                <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting"/>
+          </template>
+        </el-table-column>
     </el-table>
 
     <div class="py-1 d-flex justify-content-end" v-if="totalTableData>1">
@@ -86,11 +109,14 @@
   </div>
 </template>
 <script>
-import { Table, TableColumn } from "element-ui";
-import Status from "@/components/Depots/Status";
+import { Table, TableColumn,Dropdown,DropdownItem,DropdownMenu } from "element-ui";
+import Status from "@/components/Claims/Status";
 import { mapGetters } from "vuex";
 import UserInfo from '@/components/Contacts/UserInfo';
-import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
+import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims';
+import { MessageBox } from "element-ui";
+import IconButton from "@/components/common/Buttons/IconButton";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     aggregated_id: {
@@ -109,7 +135,11 @@ export default {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     Status,
-    UserInfo
+    UserInfo,
+    IconButton,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu
   },
   computed: {
     ...mapGetters({
@@ -140,9 +170,13 @@ export default {
       isLoading: false,
       loadingError: null,
       confirming:false,
-      isSubmitting: false
+      isSubmitting: false,
+      isDeleting:false
     };
   },
+  mounted(){
+      this.$confirm = MessageBox.confirm
+    },
   methods: {
     fetchClaims() {
       if (this.aggregated_id > -1) {
@@ -150,12 +184,20 @@ export default {
         this.$store
           .dispatch("claims/getClientClaims", this.searchQuery)
           .then((res) => (this.totalTableData = res.meta.total))
-          .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+          .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
           .finally(() => (this.isLoading = false));
+      }
+    },
+    handleCommand(command,id){
+      if(command=="mark_as_paid"){
+        this.markAspaid(id);
       }
     },
     isPending(){
       return this.aggregated_status == PAYMENT_PENDING;
+    },
+    isFailed(){
+      return this.aggregated_status == PAYMENT_FAILED;
     },
     completeAsPaid()
     {
@@ -166,12 +208,50 @@ export default {
         this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
         this.$emit("markedAsPaid");
         this.confirming = false;
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify)
       }).finally(()=>{
         this.isSubmitting = false;
       })
-    }
+    },
+    markAspaid(id){
+        this.$confirm(this.$t('do_you_want_to_mark_claim_as_paid'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/markSingleClaimAsPaid',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_marked_paid_successfully"),
+          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+         });
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
+        });
+      },
+      confirmDelete(id){
+        this.$confirm(this.$t('do_you_want_to_delete_this_claim'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('claims/deleteSingleClaim',id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("claim_marked_paid_successfully"),
+          });
+         }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+         });
+        }).catch((err) => {
+          apiErrorHandler(err,this.$notify);
+        });
+      }
   },
 };
 </script>

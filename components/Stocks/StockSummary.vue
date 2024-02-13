@@ -36,7 +36,7 @@
                         <el-table-column>
                             <template v-slot="{row}">
                               <icon-button type="info" @click="() => gotoDetails(row)" :disabled="depotTypes.length == 0"></icon-button>
-                              <icon-button type="add" @click="() => addStock(row)"></icon-button>
+                              <icon-button type="add" @click="() => addStock(row)" v-if="hasEditAccess"></icon-button>
                             </template>
                         </el-table-column>
                         </el-table>
@@ -54,6 +54,8 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import {assetTypes} from '@/helpers/depots'
 import PieChart from '@/components/argon-core/Charts/PieChart';
 import AddStock from '@/components/Stocks/AddStock';
+import { canEditDepot } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         stockType:{
@@ -87,7 +89,10 @@ export default {
         }),
         totalAmount(){
             return 
-        }
+        },
+        hasEditAccess(){
+        return canEditDepot();
+      }
     },
     data(){
         return {
@@ -104,7 +109,7 @@ export default {
                 chartData.datasets = [
                     {
 
-                        data:[this.inaiaGoldSock/1000,this.operationGoldSock/1000],
+                        data:[this.inaiaGoldSock>0?this.inaiaGoldSock/1000:0,this.operationGoldSock>0?this.operationGoldSock/1000:0],
                         backgroundColor:['#0065D3','#4DA1FF']
                     }
                 ];
@@ -113,7 +118,7 @@ export default {
             {
                 chartData.datasets = [
                     {
-                        data:[this.inaiaSilverSock/1000,this.operationSilverSock/1000],
+                        data:[this.inaiaSilverSock>0?this.inaiaSilverSock/1000:0,this.operationSilverSock>0?this.operationSilverSock/1000:0],
                         backgroundColor:['#0065D3','#4DA1FF']
                     }
                 ];
@@ -163,7 +168,7 @@ export default {
         getAmounts() {
             this.isLoading = true;
             this.$store.dispatch('stocks/getStocksBalance').catch(err=>{
-                        console.log('Error getting stocks balance');
+                apiErrorHandler(err,this.$notify);
                     }).finally(
                         ()=>{
 

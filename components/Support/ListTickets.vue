@@ -1,9 +1,19 @@
 <template>
     <div class="position-relative d-flex flex-column h-100">
-        <div class="search bg-white p-3 border-bottom w-100">
-            <div class="px-0 pt-1 pb-0">
-              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject"/>
+        <div class="search bg-white p-3 border-bottom w-100" v-if="account_id==-1">
+          <div class="d-flex">
+            <div class="pl-0 pr-3 pb-0 flex-grow-1">
+              <el-input prefix-icon="el-icon-search" :placeholder="$t('search_by_subject_or_client_name')" clearable v-model="supportTicketSearch" @change="doSearchBySubject" @clear="clearSearchBySubject" />
             </div>
+            <div class="m-auto">
+              <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                <span class="btn-inner--icon"><i class="fas fa-filter"></i></span>
+              </button>
+            </div>
+          </div>
+
+          <SupportFilter :showFilter="showFilter" @filter="applyFilter"></SupportFilter>
+
         </div>
 
         <div class="flex-fill overflow-auto">
@@ -25,6 +35,12 @@ import TicketItem from '@/components/Support/TicketItem';
 import SupportFilter from '@/components/Support/SupportFilter';
 import LoadMore from "@/components/common/Loader/LoadMore";
 export default {
+    props:{
+        account_id:{
+            type:Number,
+            default:-1
+        }
+    },
     components:{
         TicketItem,
         SupportFilter,
@@ -39,7 +55,8 @@ export default {
             return (
                 '&order_by=updated_at' +
                 `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')+
-                (this.search ? `&search=${this.search}` : '')
+                (this.search ? `&search=${this.search}` : '')+
+                (this.account_id > -1 ?'&account_ids='+this.account_id : '')
             )
         },
         totalPages() {
@@ -74,7 +91,10 @@ export default {
     mounted(){
         if(this.statuses.length == 0)
         {
-            this.$store.dispatch("support/fetchStatuses");
+            this.$store.dispatch("support/fetchStatuses").then(()=>{
+                this.fetchList();
+            });
+
         }
     },
     methods:{
@@ -104,6 +124,13 @@ export default {
         },
         applyFilter(query){
             this.page = 1;
+            if(query!='')
+            {
+                this.includeClosed = true;
+            }
+            else{
+                this.includeClosed = false;
+            }
             this.filterQuery = query;
         },
         loadMore(){
@@ -120,6 +147,10 @@ export default {
         },
         fetchList(){
             this.isLoading = true;
+            if(this.statuses.length == 0)
+            {
+                return;
+            }
             this.$store
                     .dispatch("support/fetchList", this.searchQuery+'&page='+this.page+this.getClosedParam())
                     .then(data => {
@@ -135,7 +166,7 @@ export default {
             this.$emit('onselectedTicket',ticket);
         },
         getClosedParam(){
-            if(this.statuses.length>0 && !this.includeClosed)
+            if(this.statuses.length>0 && !this.includeClosed && this.account_id == -1)
             {
                 let closedStatus = null;
                 this.statuses.forEach(element => {

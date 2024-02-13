@@ -9,9 +9,7 @@
           <h6 class="h2 text-white d-inline-block mb-0">{{$t('customer') + ' '+$t('number_short') + ' ' + getAccountNumber }}</h6>
 
         </div>
-        <div class="col-lg-6 col-5 text-right">
-          <base-button size="sm" type="neutral" @click.prevent="() => $router.push('/customers/edit/'+info.id)">Edit Profile</base-button>
-        </div>
+
 
       </div>
     </base-header>
@@ -23,6 +21,95 @@
 
           <UserCard :resource="resource" />
 
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('depot')" name="depots">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('depots') }} </h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <DepotList :accountId="info.account.id" v-if="shouldLoadDepots"/>
+              </collapse-item>
+            </collapse>
+          </div>
+
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('recent_transactions')" name="lastTransactions" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('recent_transactions') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <LatestTransactions :account_id="info.account.id" v-if="shouldLoadlastTransactions"/>
+              </collapse-item>
+            </collapse>
+          </div>
+
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item ::title="$t('claims')" name="aggregatedClaims" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('claims') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <Claims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims" style="width: 100%;"/>
+              </collapse-item>
+            </collapse>
+          </div>
+
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('bank_accounts')" name="bankAccount" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('bank_accounts') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <UserBankAccounts :account_id="info.account.id" v-if="shouldLoadBankAccounts" class="p-3"/>
+              </collapse-item>
+            </collapse>
+          </div>
+
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('inbox_messages')" name="inboxMessages" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('inbox_messages') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
+              </collapse-item>
+            </collapse>
+          </div>
+          <div class="mycollapse">
+            <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
+              <collapse-item :title="$t('support_ticket')" name="support" class="mycollapse">
+                <template v-slot:title>
+                  <div>
+                    <h3 class="mb-0">{{ $t('support_ticket') }}</h3>
+                    <span class="tim-icons icon-minimal-down"></span>
+                  </div>
+                </template>
+
+                <List :account_id="info.account.id" v-if="shouldLoadSupport" class="p-3"/>
+              </collapse-item>
+            </collapse>
+          </div>
+
         </div>
 
         <div class="col-lg-4">
@@ -31,77 +118,16 @@
 
           <BankingAmountCard  v-if="hasBankingAcoount && resource && resource.customer && resource.customer.account" :balance="bankingAccountBalance" :iban="bankingAccountIban" :customerId="info.account.id" -->
 
-            <UserComment :account="info"/>
+          <UserComment :account="info"/>
+
         </div>
 
       </div>
 
-
-      <div class="card">
-        <div class="card-body">
-          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item :title="$t('depot')" name="depots" class="mycollapse">
-              <template v-slot:title>
-                <div>
-                  <h3>{{ $t('depots') }}</h3>
-                  <span class="tim-icons icon-minimal-down"></span>
-                </div>
-              </template>
-
-              <DepotList   :accountId="info.account.id" v-if="shouldLoadDepots"/>
-            </collapse-item>
-          </collapse>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item :title="$t('recent_transactions')" name="lastTransactions" class="mycollapse">
-              <template v-slot:title>
-                <div>
-                  <h3>{{ $t('recent_transactions') }}</h3>
-                  <span class="tim-icons icon-minimal-down"></span>
-                </div>
-              </template>
-
-              <LatestTransactions :account_id="info.account.id" v-if="shouldLoadlastTransactions"/>
-            </collapse-item>
-          </collapse>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item ::title="$t('aggregated_claims')" name="aggregatedClaims" class="mycollapse">
-              <template v-slot:title>
-                <div>
-                  <h3>{{ $t('aggregated_claims') }}</h3>
-                  <span class="tim-icons icon-minimal-down"></span>
-                </div>
-              </template>
-
-              <AggregatedClaims :account_id="info.account.id" v-if="shouldLoadAggregatedClaims" style="width: 100%;"/>
-            </collapse-item>
-          </collapse>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <collapse multipleActive v-if="resource && resource.customer && resource.customer.account" @change="handleChange">
-            <collapse-item :title="$t('inbox_messages')" name="inboxMessages" class="mycollapse">
-              <template v-slot:title>
-                <div>
-                  <h3>{{ $t('inbox_messages') }}</h3>
-                  <span class="tim-icons icon-minimal-down"></span>
-                </div>
-              </template>
-
-              <InboxMessageList :account="info.account" v-if="shouldLoadInboxMessages"/>
-            </collapse-item>
-          </collapse>
-        </div>
-      </div>
     </div>
+
+
+
 
   </div>
 </template>
@@ -111,37 +137,41 @@ import { mapGetters } from "vuex"
 import Loader from "../common/Loader/Loader";
 import Form from "@/components/Contacts/Form";
 import UserCard from "@/components/Contacts/UserCard";
-import Products from '@/components/Contacts/Products';
+//import Products from '@/components/Contacts/Products';
 import DepotList from "@/components/Depots/List";
 import LatestTransactions from "@/components/Contacts/LatestTransactions"
-import BankingAmountCard from "@/components/Banking/BankingAmountCard"
-import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
-import AggregatedClaims from '@/components/Claims/AggregatedClaims';
+import Claims from '@/components/Contacts/AccountClaimList';
 import InboxMessageList from '@/components/InboxMessage/List';
-import {Collapse,CollapseItem} from 'element-ui';
+import {Collapse,CollapseItem,MessageBox} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
-
+import List from "@/components/Support/List";
+//import BankingAmountCard from "@/components/Banking/BankingAmountCard"
+//import ProductClassCard from "@/components/ProductClasses/ProductClassCard"
+import UserBankAccounts from "@/components/Contacts/BankAccounts"
 export default {
     components: {
         Loader,
         Form,
         UserCard,
-        Products,
+        //Products,
         DepotList,
         LatestTransactions,
-        BankingAmountCard,
-        ProductClassCard,
-        AggregatedClaims,
+        Claims,
         InboxMessageList,
         Collapse,
         CollapseItem,
-        UserComment
+        UserComment,
+        List,
+        //BankingAmountCard,
+        //ProductClassCard,
+        UserBankAccounts
     },
     props: {
         resource: {
             type: Object
         }
     },
+    
     data() {
       return {
         bankingAccountDetails: {
@@ -152,7 +182,9 @@ export default {
         shouldLoadlastTransactions:false,
         shouldLoadAggregatedClaims:false,
         shouldLoadInboxMessages:false,
-        hasBankingAcoount:false
+        hasBankingAcoount:false,
+        shouldLoadBankAccounts:false,
+        shouldLoadSupport:false
       }
     },
 
@@ -233,16 +265,16 @@ export default {
           if(element == "inboxMessages" && !this.shouldLoadInboxMessages){
             this.shouldLoadInboxMessages = true;
           }
+          if(element == "bankAccount" && !this.shouldLoadBankAccounts){
+            this.shouldLoadBankAccounts = true;
+          }
+          if(element == "support" && !this.shouldLoadSupport){
+            this.shouldLoadSupport = true;
+          }
         });
-      }
+      },
     }
 
 }
 </script>
 
-<style scoped>
-.el-collapse .el-icon-arrow-right:before,
-.mycollapse i:before {
-  display: none;
-}
-</style>

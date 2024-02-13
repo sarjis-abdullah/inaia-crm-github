@@ -36,12 +36,17 @@ export const mutations = {
         Object.assign(item.order_status, order.order_status)
     },
     update(state, order) {
-        const item  = state.list.find( i => i.id == order.id)
-        Object.assign(item, order)
+      
+            const item  = state.list.find( i => i.id == order.id)
+            Object.assign(item, order)
+        
+       
     },
     updateShippment(state, shippment) {
+        
         const item  = state.list.find( i => i.id == shippment.order_id)
         Object.assign(item.order_shipping_details, shippment.data)
+        
     },
     pairs(state, data) {
         state.pairs = data
@@ -54,7 +59,7 @@ export const mutations = {
     },
     commissionList(state,list){
         state.commissionList = list;
-    }
+    },
 }
 
 export const actions = {
@@ -134,6 +139,14 @@ export const actions = {
                 return res.data.data.order_status
             })
     },
+    failed(context, payload) {
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/orders/${ payload }/failed?include=${includes}`)
+            .then(res => {
+                context.commit('update', res.data.data)
+                return res.data.data.order_status
+            })
+    },
     cancel(context, payload) {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/cancel?include=${includes}`,payload.data)
@@ -166,7 +179,7 @@ export const actions = {
     },
     getCompleteOrderPreview(context,payload) {
         return this.$axios
-                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}`).then(res=>{
+                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}${payload.transaction_fee?'&transaction_fee='+payload.transaction_fee:''}`).then(res=>{
                     return res.data;
                 })
     },
@@ -190,6 +203,7 @@ export const actions = {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=${includes}`,payload.data)
             .then(res => {
+                debugger;
                 context.commit('update', res.data.data)
                 return res.data.data.order_status
             })
@@ -220,5 +234,20 @@ export const actions = {
         return this.$axios.get(`${ process.env.golddinarApiUrl }/sales-commission/orders?include=${includes}${ payload }`).then(res=>{
             context.commit('commissionList',res.data.data)
         })
-    }
+    },
+    deposit(context,payload){
+        return this.$axios
+        .post(`${ process.env.golddinarApiUrl }/orders/deposit?include=${includes}`,payload)
+        .then(res => {
+            return res.data.data;
+        })
+    },
+    getClientLatestTransactions(context,payload) {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=${includes}&${payload}`)
+            .then(res=>{
+                context.commit('list',res.data.data);
+                return res.data;
+            })
+    },
 }

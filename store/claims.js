@@ -14,7 +14,8 @@ export const state = () =>{
         loadedSummariesByYear : [],
         claimStatuses : [],
         aggregatedClaims : [],
-        claims:[]
+        claims:[],
+        claimTypes : [],
     }
 }
 
@@ -33,6 +34,7 @@ export const getters = {
     aggregatedClaims:state=>state.aggregatedClaims,
     claimStatuses:state=>state.claimStatuses,
     claims:state=> state.claims,
+    claimTypes:state=>state.claimTypes,
 }
 
 export const mutations = {
@@ -42,6 +44,9 @@ export const mutations = {
     },
     claimStatuses(state,list) {
         state.claimStatuses = list;
+    },
+    claimTypes(state,list) {
+        state.claimTypes = list;
     },
     claims(state,list) {
         state.claims = list;
@@ -56,13 +61,28 @@ export const mutations = {
             let aggClaim = state.aggregatedClaims.find(x=>x.id == id);
             aggClaim.claim_status = newStatus;
         });
+    },
+    updateClaim(state,data){
+        let existingClaim  = state.claims.find( x => data.id == x.id  )
+        if (existingClaim) {
+            Object.assign(existingClaim, data)
+        }
+    },
+    newclaim(state,data){
+        state.claims.unshift(data)
+    },
+    deleteclaim(state,id){
+        let index = state.claims.findIndex(x=>x.id==id);
+        if(index>-1){
+            state.claims.splice(index,1);
+        }
     }
 }
 
 export const actions = {
     getClientAggregatedClaims(context,payload){
         return this.$axios
-                .get(`/aggregated-claims?include=claim_status${payload}`)
+                .get(`${process.env.golddinarApiUrl}/aggregated-claims?include=claim_status${payload}`)
                 .then(res=>{
                     context.commit('aggregatedClaims',res.data.data);
                     return res.data;
@@ -71,16 +91,25 @@ export const actions = {
     getClaimStatuses(context)
     {
         return this.$axios
-            .get(`/claim-statuses`)
+            .get(`${process.env.golddinarApiUrl}/claim-statuses`)
             .then(response => {
                 context.commit('claimStatuses', response.data.data)
+                return response
+            })
+    },
+    getClaimTypes(context)
+    {
+        return this.$axios
+            .get(`${process.env.golddinarApiUrl}/claim-types`)
+            .then(response => {
+                context.commit('claimTypes', response.data.data)
                 return response
             })
     },
     getClientClaims(context,payload)
     {
         return this.$axios
-                .get(`/claims?include=claim_type${payload}`)
+                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status${payload}`)
                 .then(res=>{
                     context.commit('claims',res.data.data);
                     return res.data;
@@ -89,7 +118,7 @@ export const actions = {
     getClaimSummaryByYear(context,payload)
     {
         return this.$axios
-                .get(`/aggregated-claims/summary/${payload}`)
+                .get(`${process.env.golddinarApiUrl}/aggregated-claims/summary/${payload}`)
                 .then(res=>{
                     context.commit('summaryByYear',{
                         data:res.data.data,
@@ -101,10 +130,52 @@ export const actions = {
     },
     markManyAspaid(context,payload){
         return this.$axios
-                .post(`/aggregated-claims/mark/paid`,{'aggregated_claims_ids':payload})
+                .post(`${process.env.golddinarApiUrl}/aggregated-claims/mark/paid`,{'aggregated_claims_ids':payload})
                 .then(res=>{
                     context.commit('updateStatus',res.data.data);
                     return res.data.data;
                 })
+    },
+    markSingleClaimAsPaid(context,payload){
+        return this.$axios
+                .put(`${process.env.golddinarApiUrl}/claims/mark-paid/${payload}?include=claim_type,claim_status`)
+                .then(res=>{
+                    context.commit('updateClaim',res.data.data);
+                    return res.data.data;
+                })
+    },
+    cancelClaim(context,payload){
+        return this.$axios
+                .put(`${process.env.golddinarApiUrl}/claims/${payload}/cancel?include=claim_type,claim_status`)
+                .then(res=>{
+                    context.commit('updateClaim',res.data.data);
+                    return res.data.data;
+                })
+    },
+    initiateAggregatedClaimDirectDebit(context,payload){
+        return this.$axios.post(`${process.env.golddinarApiUrl}/aggregated-claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
+            return res.data.data.url;
+        })
+    },
+    createNewClaim(context,payload){
+        return this.$axios
+                .post(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status`,payload)
+                .then(res=>{
+                    context.commit('newclaim',res.data.data);
+                    return res.data;
+                })
+    },
+    deleteSingleClaim(context,payload){
+        return this.$axios
+                .delete(`${process.env.golddinarApiUrl}/claims/${payload}`)
+                .then(()=>{
+                    context.commit('deleteclaim',payload);
+                    return true;
+                })
+    },
+    initiateClaimPayment(context,payload){
+        return this.$axios.post(`${process.env.golddinarApiUrl}/claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
+            return res.data.message.data.url;
+        })
     }
 }

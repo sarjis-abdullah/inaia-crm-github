@@ -11,14 +11,23 @@
           </nav>
           -->
         </div>
-        <div class="col-lg-6 col-5 text-right">
-          <base-button size="sm" type="neutral" @click="actDecMarkAsMany" v-if="!markManyAsPaid">{{$t('mark_many_as_paid')}}</base-button>
+        <div class="col-lg-6 col-5 text-right" v-if="hasEditAccess">
+          <Dropdown  v-if="!markMany" @command="handleCommand" trigger="click">
+            <base-button size="sm" type="neutral">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
+                                        <DropdownMenu  slot="dropdown">
+                                            <DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem>
+                                            <DropdownItem command="initiate_payment_for_this_month" >{{$t('initiate_payment_for_this_month')}}</DropdownItem>
+                                            <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many')}}</DropdownItem>
+                                            
+                                        </DropdownMenu>
+                                    </Dropdown>
+          
           <div class="d-flex justify-content-end" v-else>
                 <base-button size="sm" type="neutral" @click="cancelMarkMany">
                     {{$t('cancel')}}
                 </base-button>
-                <base-button size="sm" type="neutral" @click="completeMarkManyAsPaid" :disabled="selectedAggregatedClaims.length==0">
-                    {{$t('mark_as_paid')}}
+                <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedAggregatedClaims.length==0">
+                    {{$t('confirm')}}
                 </base-button>
                 
             </div>
@@ -30,21 +39,21 @@
         <AggregatedClaims ref="list" 
         :month="month" :perPage="10" 
         :status="status" 
-        :markManyAsPaid="markManyAsPaid"
-        @markAsPayedAdded="markAsPayedAdded"
-        @markAsPayedDeleted="markAsPayedDeleted"
+        :markMany="markMany"
+        @markAdded="markAdded"
+        @markDeleted="markDeleted"
         />
     </div>
     <modal
-      :show.sync="showConfirmMarAsPaid"
+      :show.sync="showConfirmMany"
       bodyClasses="pt-0"
       footerClasses="border-top bg-secondary"
       :allowOutSideClose="false"
       size="lg"
-      @close="showConfirmMarAsPaid = false"
+      @close="showConfirmMany = false"
       >
-      <template slot="header" class="pb-0">
-        <h5 class="modal-title" id="exampleModalLabel">{{$t('confirm_as_paid')}}</h5>
+      <template slot="header">
+        <h5 class="modal-title" id="exampleModalLabel">{{$t('confirm')}}</h5>
       </template>
       <el-table
           class="table-hover table-responsive table-flush"
@@ -88,9 +97,9 @@
         <base-button type="link" class="ml-auto" @click="showConfirmMarAsPaid = false">
                           {{$t('cancel')}}
                         </base-button>
-        <base-button type="primary" @click="() => confirmMarlAllAsPaid()"
+        <base-button type="primary" @click="() => confirmAction()"
                             :disabled="isSubmitting">
-                          {{$t('mark_as_paid')}}
+                          {{$t('confirm')}}
                         </base-button>
       </template>
     </modal>
@@ -98,23 +107,30 @@
 </template>
 <script>
 import AggregatedClaims from '@/components/Claims/AggregatedClaims';
-import { getMonthName } from "../../../../helpers/helpers";
-import { Table, TableColumn } from "element-ui";
+import { formatDateToApiFormat, getMonthName } from "../../../../helpers/helpers";
+import { Table, TableColumn,Dropdown,DropdownMenu,DropdownItem } from "element-ui";
+import { canEditClaims } from '@/permissions';
+import moment from 'moment';
+import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
 export default {
   layout: "DashboardLayout",
   components: {
     AggregatedClaims,
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
+    Dropdown,
+    DropdownMenu,
+    DropdownItem
   },
   data(){
       return {
           month:this.$route.params.month,
           status:this.$route.query.status,
-          markManyAsPaid:false,
+          markMany:false,
           selectedAggregatedClaims:[],
-          showConfirmMarAsPaid: false,
-          isSubmitting:false
+          showConfirmMany: false,
+          isSubmitting:false,
+          selectedCommand:null
       }
   },
   computed:{
@@ -122,29 +138,50 @@ export default {
           let dates = this.month.split('-');
           const monthName = getMonthName(dates[1]);
           return monthName + ' ' + dates[0];
-      }
+      },
+    hasEditAccess(){
+      return canEditClaims()
+    }
   },
   methods:{
     actDecMarkAsMany(){
-      this.markManyAsPaid = !this.markManyAsPaid;
+      this.markMany = !this.markMany;
     },
     cancelMarkMany(){
-       this.markManyAsPaid = false;
+       this.markMany = false;
        this.$refs.list.cancelAddingMany();
        this.selectedAggregatedClaims=[];
+       this.selectedCommand = null;
     },
-    completeMarkManyAsPaid(){
-      this.showConfirmMarAsPaid = true;
+    completeManyAction(){
+      this.showConfirmMany = true;
     },
-    markAsPayedAdded(aggregatedClaim)
+    markAdded(aggregatedClaim)
     {
       this.selectedAggregatedClaims.push(aggregatedClaim);
       
     },
-    markAsPayedDeleted(aggregatedClaim)
+    markDeleted(aggregatedClaim)
     {
       let index = this.selectedAggregatedClaims.indexOf(aggregatedClaim);
       this.selectedAggregatedClaims.splice(index,1);
+    },
+    handleCommand(command) {
+        this.selectedCommand = command;
+        if(command == 'initiate_payment_for_this_month'){
+
+        }
+        if(command == 'mark_many_as_paid' || command == 'initiate_payment_for_many'){
+          this.markMany = !this.markMany;
+        }
+    },
+    confirmAction(){
+      if(this.selectedCommand == 'mark_many_as_paid'){
+        this.confirmMarlAllAsPaid()
+      }
+      if(this.selectedCommand == 'initiate_payment_for_many'){
+        this.initiatePaymentforAll()
+      }
     },
     confirmMarlAllAsPaid()
     {
@@ -157,10 +194,32 @@ export default {
       this.$store.dispatch('claims/markManyAspaid',data).then(()=>{
         this.$notify({type: 'success', timeout: 5000, message: this.$t('mark_many_as_paid_successfully')})
         this.$refs.list.refresh();
-        this.showConfirmMarAsPaid = false;
+        this.showConfirmMany = false;
         this.cancelMarkMany();
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('mark_many_as_paid_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
+      }).finally(()=>{
+        this.isSubmitting = false;
+      })
+    },
+    initiatePaymentforAll(){
+      this.isSubmitting = true;
+      let aggregated_claims = [];
+      this.selectedAggregatedClaims.forEach(element => {
+        aggregated_claims.push({id:element.id});
+      });
+      const executionDate = moment().add('1','day').toDate();
+      const data = {
+        aggregated_claims:aggregated_claims,
+        execution_date : formatDateToApiFormat(executionDate)
+      }
+
+      this.$store.dispatch('claims/initiateAggregatedClaimDirectDebit',data).then((res)=>{
+       window.open(res,'_blanc');
+        this.showConfirmMany = false;
+        this.cancelMarkMany();
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       }).finally(()=>{
         this.isSubmitting = false;
       })

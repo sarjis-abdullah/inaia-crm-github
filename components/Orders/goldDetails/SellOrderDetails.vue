@@ -42,6 +42,7 @@ import {DatePicker} from 'element-ui';
 import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
 import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
+import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 export default {
     components:{
         DatePicker,
@@ -66,8 +67,18 @@ export default {
     },
     mounted:function(){
         const today = new Date();
+        const dayOfTheWeek = today.getDay();
         this.selectedDate = new Date(today);
-        this.selectedDate.setDate(this.selectedDate.getDate()-1);
+        debugger;
+        if(dayOfTheWeek == 1){
+            this.selectedDate.setDate(this.selectedDate.getDate()-3);
+        }
+        else if(dayOfTheWeek == 0){
+            this.selectedDate.setDate(this.selectedDate.getDate()-2);
+        }
+        else{
+            this.selectedDate.setDate(this.selectedDate.getDate()-1);
+        }
         this.getPreview();
     },
     methods:{
@@ -85,7 +96,7 @@ export default {
             this.$store.dispatch('orders/getCompleteOrderPreview',{id:this.order.id,date:formatDateToApiFormat(this.selectedDate)}).then(res=>{
                 this.preview = res;
             }).catch(err=>{
-                this.error = 'cant_load_preview'
+                this.error = apiErrorHandler(err,null);
             }).finally(()=>{
                 this.isLoading = false;
             })

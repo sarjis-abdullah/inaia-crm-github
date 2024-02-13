@@ -79,14 +79,13 @@
           </div>
           <div class="col-md-1"></div>
           <div class="col-md-5" v-if="customer.address.country">
-            <base-input
-              :label="$t('country')"
-              name="Country"
-              v-model="customer.address.country.name_translation_key"
-              :placeholder="$t('country')"
-              ref="countryProvider"
-              :disabled="true"
-            />
+            <base-input :label="$t('country')" name="Country" :placeholder="$t('country')" ref="countryProvider" rules="required">
+                                    <template #default="slotProps">
+                                        <select class="form-control" :class="[{'is-invalid': slotProps.invalid && slotProps.validated}]" v-model="country">
+                                            <option v-for="(i, idx) in countryOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                        </select>
+                                    </template>
+                                </base-input>
           </div>
         </div>
         <div class="row">
@@ -113,6 +112,7 @@
 <script>
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { updateAddressAndGetObject } from '../../helpers/customer';
+import { mapGetters } from "vuex"
 export default {
   props: {
     showModal: {
@@ -128,6 +128,12 @@ export default {
     ValidationObserver,
     ValidationProvider,
   },
+  computed: {
+  ...mapGetters({
+            countryList: "clients/countryList",
+            countryListLoaded: "clients/countryListLoaded",
+        }),
+      },
   data() {
     return {
         isRequesting:false,
@@ -136,9 +142,20 @@ export default {
         line2:'',
         postal_code:'',
         city:'',
-        region:''
-    };
+        region:'',
+        country:-1,
+        countryOptions: [],
+    }
   },
+  watch: {
+        countryList: {
+            handler(value) {
+                if (this.countryList) {
+                    this.constructCountryOptions(value)
+                }
+            }
+        }
+    },
   mounted(){
       if(this.customer && this.customer.address)
       {
@@ -147,7 +164,13 @@ export default {
           this.city = this.customer.address.city;
           this.region = this.customer.address.region;
           this.postal_code = this.customer.address.postal_code;
+          this.country = this.customer.address ? this.customer.address.country_id:-1
       }
+      if (this.countryList.length < 200) {
+            this.initCountryList();
+        } else {
+            this.constructCountryOptions(this.countryList);
+        }
   },
   methods: {
     async validate() {
@@ -159,9 +182,26 @@ export default {
         this.isRequesting = false;
       }
     },
+    constructCountryOptions(countries) {
+            const countryList     = [];
+
+            countries.forEach(item => {
+                countryList[countryList.length] = {
+                    text: item.name_translation_key,
+                    value: item.id
+                };
+
+            });
+
+            this.countryOptions     = countryList;
+            //debugger;
+        },
+        initCountryList() {
+            this.$store.dispatch("clients/initCountryList");
+        },
     submitClient() {
       this.isRequesting = true;
-      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region})
+      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region,country_id:this.country>0?this.country:undefined})
       if (data.customer.account && !data.customer.account.password) {
         // if empty then keep the account table intact
         delete data.customer["account"];
@@ -179,6 +219,9 @@ export default {
             timeout: 5000,
             message: this.$t('address_updated_successfully'),
           });
+          setTimeout(()=>{
+            window.location.reload();
+          },5000)
         })
         .catch((err) => {
           this.failed = err.response.data.message;

@@ -4,7 +4,8 @@ export const ORDER_STATUS_PENDING   = 'order_status_pending'
 export const ORDER_STATUS_PAID      = 'order_status_paid'
 export const ORDER_STATUS_PAYMENT_FAILED      = 'order_status_payment_failed'
 export const ORDER_STATUS_COMPLETED     = 'order_status_completed'
-export const ORDER_STATUS_OUTSTANDING = "order_status_payment_outstanding"
+export const ORDER_STATUS_OUTSTANDING = "order_status_payment_outstanding";
+export const ORDER_STATUS_PAYMENT_IN_PROGRESS = "order_status_payment_inprogress";
 export const GOLD_PURCHASE_TYPE = "gold_purchase";
 export const GOLD_SELL_TYPE = "gold_sell";
 export const GOLD_PURCHASE_INTERVAL_TYPE = "gold_purchase_interval";
@@ -78,4 +79,9 @@ export function isIntervalPurchaseOrder(order){
 export function isDeliveryOrder(order){
     return isOrderGoldDelivery(order) || isOrderSilverDelivery(order);
 }
-
+export function isPaymentInProgressOrder(order){
+    if (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_PAYMENT_IN_PROGRESS) {
+        return true
+    }
+    return false
+}

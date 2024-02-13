@@ -6,7 +6,7 @@
         <h5 class="h2 mb-0">{{ $t("agio_history") }}</h5>
       </div>
       <div class="col-4 text-right" v-if="!showAddTransaction">
-          <button @click.prevent="toggleAddTransaction()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm">
+          <button @click.prevent="toggleAddTransaction()" type="button" class="btn base-button btn-icon btn-fab btn-primary btn-sm" v-if="hasDepotEditAccess">
             <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_transaction')}}</span>
           </button>
       </div>
@@ -41,6 +41,8 @@
           <div class="media align-items-center">
             <div class="media-body">
               <div class="font-weight-300 name">{{ row.id }}</div>
+              <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
+              <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
             </div>
           </div>
         </template>
@@ -140,6 +142,8 @@ import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
+import { canEditDepot} from '@/permissions'; 
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 
 export default {
   props: {
@@ -162,13 +166,16 @@ export default {
       agioTransactions: "depots/agioTransactions",
     }),
     searchQuery() {
-      return `&depot_id=${this.depot_id}&page=${this.page | 1}&per_page=${
-        this.perPage | 5
+      return `&depot_id=${this.depot_id}&page=${this.page}&per_page=${
+        this.perPage
       }`;
     },
     totalPages() {
       return Math.floor(this.totalTableData / this.perPage);
     },
+    hasDepotEditAccess(){
+      return canEditDepot();
+    }
   },
   watch: {
     searchQuery: {
@@ -195,10 +202,11 @@ export default {
   methods: {
     fetchAgioTransactions() {
       this.isLoading = true;
+      console.log(this.searchQuery);
       this.$store
         .dispatch("depots/fetchAgioTransactionList", this.searchQuery)
         .then((res) => (this.totalTableData = res.meta.total))
-        .catch((err) => (this.loadingError = this.$t("cant_load_list")))
+        .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
         .finally(() => (this.isLoading = false));
     },
     toggleAddTransaction() {
@@ -209,7 +217,7 @@ export default {
       let creationDate = moment(transaction.created_at);
       const numberOfDays = creationDate.diff(moment(),'days');
       const lastTransaction = this.agioTransactions[0];
-      return transaction.type.name_translation_key!='claim' && numberOfDays<=30 && transaction.id == lastTransaction.id;
+      return this.hasDepotEditAccess && numberOfDays<=30 && transaction.id == lastTransaction.id;
     },
     deleteAgioTransaction(transaction) {
       this.selectedAgioTransaction = transaction;
@@ -234,11 +242,11 @@ export default {
     },
     confirmDeletion()
     {
-      this.$store.dispatch('depots/deleteAgioTransaction').then(()=>{
+      this.$store.dispatch('depots/deleteAgioTransaction',this.selectedAgioTransaction.id).then(()=>{
         this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
         this.cancelDeletion();
-      }).catch(()=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('agio_transaction_deleted_unsuccessfully')})
+      }).catch((err)=>{
+        apiErrorHandler(err,this.$notify);
       })
     }
   },

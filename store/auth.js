@@ -14,9 +14,7 @@ export const state = () => ({
     locale: initLocale,
     locales: [
         { text: 'Deutsch',  value: 'de' },
-        { text: 'English',  value: 'en' },
-        { text: 'Français', value: 'fr' },
-        { text: 'Español',  value: 'es' },
+        { text: 'English',  value: 'en' }
     ],
     auth: initAuth,
     user: initUser,
@@ -36,7 +34,7 @@ export const getters = {
     user(state) {
 		return state.user
     },
-    
+
 	auth(state) {
 		return state.auth
     },
@@ -88,7 +86,7 @@ export const mutations = {
     authorize(state, bool) {
         state.authorized = bool
     },
-  
+
     loading(state, bool) {
         state.loading = bool
     }
@@ -109,7 +107,7 @@ export const actions = {
     },
     fetchLoggedIn(context) {
         context.commit('loading', 1)
-    
+
         return this.$axios
             .get('/me?include=account,type,person_data,address,country,channels,account.roles,role.permissions,apps')
             .then(response => {

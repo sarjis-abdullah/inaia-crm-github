@@ -23,183 +23,195 @@
             <div class="row">
                 <div class="col">
                     <div class="card">
-                        <div class="border-0 card-header">
+
+                        <div class="card-header">
                             <div class="row">
                                 <div class="col">
-                                    <el-input prefix-icon="el-icon-search" 
-                                    :placeholder="$t('search_customer')" clearable 
-                                    style="width: 500px" @change="onSearch" 
+                                    <el-input prefix-icon="el-icon-search"
+                                    :placeholder="$t('search_customer')" clearable
+                                    style="width: 500px" @change="onSearch"
                                     v-model="searchWords"
                                     @clear="clearSearch"
                                     />
                                 </div>
                                 <div class="col">
-                                   <!--  <Select
-                                        placeholder="AML"
-                                        v-model="selectedAmlStatus"
+                                  <Select
+                                        :placeholder="$t('sales_advisors')"
+                                        v-model="selectedSalesAdvisor"
                                         clearable
-                                        @clear="clearDepot"
+                                        @clear="clearSalesAdvisor"
                                         :multiple="false"
                                         class="float-right"
                                     >
                                         <Option
-                                        v-for="option in amlStatuses"
+                                        v-for="option in salesAdvisors"
                                         :value="option.id"
-                                        :label="$t(option.name)"
+                                        :label="formatSalesAdvisorLabel(option)"
                                         :key="option.id"
                                         >
                                         </Option>
-                                    </Select> -->
+                                    </Select>
                                 </div>
+                          </div>
+                          <div class="row mt-3">
+                            <div class="col">
+                                <Checkbox @change="showOnlyUnverified">{{ $t('show_only_unverified') }}</Checkbox>
+                            </div>
                           </div>
                         </div>
 
                         <el-table class="table-hover table-responsive table-flush"
-                                header-row-class-name="thead-light"
-                                :data="data">
-                            <!-- <el-table-column label="ID"
-                                            min-width="110px"
-                                            prop="id"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <div class="media-body">
-                                            <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column> -->
-
-                            <el-table-column label="Name"
-                                            min-width="260px">
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <div class="avatar mr-3">
-                                            <img v-bind:src="avatar(row)" alt="" />
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="font-weight-600 name mb-0 text-sm">{{ row.contact.name + (row.contact.person_data ? ' ' + row.contact.person_data.surname : '') }}</div>
-       
-                                                <div class="name mb-0 text-xs text-muted d-inline-block mr-2">
-                                                    <i class="fa mr-1" :class="`${row.contact.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.contact.is_verified ? $t('verified') : $t('not_verified') }}
-                                                </div>
-                                                <AmlStatus  class="d-inline-block" :amlStatus="row.contact.aml_status.name"/>
-                                           
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column label="Account No."
-                                            min-width="160px"
-                                            prop="row.account.account_number"
-                                            sortable>
-                                <template v-slot="{row}">
-                                    <span class="status">{{ row.account_number ? row.account_number : 'N/A' }}</span>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('mobile')"
-                                            min-width="160px"
-                                            >
-                                <template v-slot="{row}">
-                                    <div v-if="getChannelInfo(row.contact.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'mobile')}}</div>
-                                </template>
-                            </el-table-column>
-
-                            <el-table-column :label="$t('email')"
-                                             min-width="160px">
+                              header-row-class-name="thead-light"
+                              :data="data"
+                              v-if="!loading">
+                          <!-- <el-table-column label="ID"
+                                          min-width="110px"
+                                          prop="id"
+                                          sortable>
                               <template v-slot="{row}">
-                                <div v-if="getChannelInfo(row.contact.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'email')}}</div>
+                                  <div class="media align-items-center">
+                                      <div class="media-body">
+                                          <span class="font-weight-600 name mb-0 text-sm">{{row.id}}</span>
+                                      </div>
+                                  </div>
                               </template>
-                            </el-table-column>
+                          </el-table-column> -->
 
-                            <!--
-                            <el-table-column :label="$t('address')"
-                                             min-width="160px">
+                          <el-table-column label="Name"
+                                          min-width="260px">
                               <template v-slot="{row}">
-                                <div>{{row.address ? row.address.line1 : ''}}</div>
-                                <div>{{row.address ? row.address.country.name_translation_key : ''}}</div>
-                              </template>
-                            </el-table-column>
-                            -->
+                                  <div class="media align-items-center">
+                                      <div class="avatar mr-3">
+                                          <img v-bind:src="avatar(row)" alt="" />
+                                      </div>
+                                      <div class="media-body">
+                                          <div class="font-weight-600 name mb-0 text-sm">{{ row.contact.name + (row.contact.person_data ? ' ' + row.contact.person_data.surname : '') }}</div>
 
-                            <el-table-column label="Status"
-                                            min-width="160px"
-                                            prop="is_active"
-                                            sortable
-                                            >
-                                <template v-slot="{row}">
-                                  <badge :type="`${row.contact.is_active ? 'success' : 'danger'}`">{{row.contact.is_active ? $t('active') : $t('inactive')}}</badge>
-
-                                  <badge v-if="row.contact.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
-
-                                </template>
-                            </el-table-column>
-
-                            <!-- <el-table-column label="Type"
-                                            min-width="190px">
-                                <template v-slot="{row}">
-                                    <span class="status">{{getAccountType(row)}}</span>
-                                </template>
-                            </el-table-column> -->
-
-
-                            <el-table-column>
-                                <template v-slot="{row}">
-
-                                  <icon-button type="info" @click="gotoDetails(row.contact)"></icon-button>
-
-                                </template>
-                            </el-table-column>
-
-                          <!--
-                          <el-table-column min-width="180px" >
-                              <template v-slot="{row}">
-                                  <el-dropdown trigger="click" class="dropdown ml-2">
-                                      <span class="btn btn-sm btn-icon-only text-light">
-                                          <i class="fas fa-ellipsis-v mt-2"></i>
-                                      </span>
-                                      <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                          <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
-                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
-                                          <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
-                                          <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
-                                      </el-dropdown-menu>
-                                  </el-dropdown>
+                                              <div class="name mb-0 text-xs text-muted d-inline-block mr-2">
+                                                  <i class="fa mr-1" :class="`${row.contact.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ row.contact.is_verified ? $t('verified') : $t('not_verified') }}
+                                              </div>
+                                              <!--<AmlStatus  class="d-inline-block" :amlStatus="row.contact.aml_status.name"/>-->
+                                      </div>
+                                  </div>
                               </template>
                           </el-table-column>
+
+                          <el-table-column label="Account No."
+                                          min-width="160px"
+                                          prop="row.account.account_number"
+                                          sortable>
+                              <template v-slot="{row}">
+                                  <span class="status">{{ row.account_number ? row.account_number : 'N/A' }}</span>
+                              </template>
+                          </el-table-column>
+
+                          <el-table-column :label="$t('mobile')"
+                                          min-width="160px"
+                                          >
+                              <template v-slot="{row}">
+                                  <div v-if="getChannelInfo(row.contact.channels, 'mobile')"><i class="lnir lnir-mobile-alt-1 text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'mobile')}}</div>
+                              </template>
+                          </el-table-column>
+
+                          <el-table-column :label="$t('email')"
+                                           min-width="160px">
+                            <template v-slot="{row}">
+                              <div v-if="getChannelInfo(row.contact.channels, 'email')"><i class="lnir lnir-envelope text-muted mr-1"></i>{{getChannelInfo(row.contact.channels, 'email')}}</div>
+                            </template>
+                          </el-table-column>
+
+                          <!--
+                          <el-table-column :label="$t('address')"
+                                           min-width="160px">
+                            <template v-slot="{row}">
+                              <div>{{row.address ? row.address.line1 : ''}}</div>
+                              <div>{{row.address ? row.address.country.name_translation_key : ''}}</div>
+                            </template>
+                          </el-table-column>
                           -->
-                        </el-table>
 
-                        <div class="card-footer py-4 d-flex justify-content-end">
-                            <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
-                        </div>
+                          <el-table-column label="Status"
+                                          min-width="160px"
+                                          prop="is_active"
+                                          sortable
+                                          >
+                              <template v-slot="{row}">
+                                <badge :type="`${row.contact.is_active ? 'success' : 'danger'}`">{{row.contact.is_active ? $t('active') : $t('inactive')}}</badge>
 
-                        <modal :show.sync="showPopup">
-                            <template slot="header">
-                                <h5 class="modal-title" id="exampleModalLabel">Contact details</h5>
-                            </template>
-                            <div>
-                                <Details :resource="selectedResource" v-if="showPopup" />
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showPopup = false">Close</base-button>
-                            </template>
-                        </modal>
+                                <badge v-if="row.contact.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
 
-                        <modal :show.sync="showConfirm">
-                            <template slot="header">
-                                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                              </template>
+                          </el-table-column>
+
+                          <!-- <el-table-column label="Type"
+                                          min-width="190px">
+                              <template v-slot="{row}">
+                                  <span class="status">{{getAccountType(row)}}</span>
+                              </template>
+                          </el-table-column> -->
+
+
+                          <el-table-column>
+                              <template v-slot="{row}">
+
+                                <icon-button type="info" @click="gotoDetails(row.contact)"></icon-button>
+
+                              </template>
+                          </el-table-column>
+
+                        <!--
+                        <el-table-column min-width="180px" >
+                            <template v-slot="{row}">
+                                <el-dropdown trigger="click" class="dropdown ml-2">
+                                    <span class="btn btn-sm btn-icon-only text-light">
+                                        <i class="fas fa-ellipsis-v mt-2"></i>
+                                    </span>
+                                    <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
+                                        <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">Details</a>
+                                        <a class="dropdown-item" @click.prevent="() => $router.push('/customers/details/'+row.id)" href="#">{{ $t('details') }}</a>
+                                        <a class="dropdown-item" @click.prevent="() => $router.push('/customers/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
+                                        <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
                             </template>
-                            <div>
-                                Are you sure to delete contact with id "{{ selectedResource ? selectedResource.id : '' }}"?
-                            </div>
-                            <template slot="footer">
-                                <base-button type="secondary" @click="showConfirm = false">Close</base-button>
-                                <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
-                            </template>
-                        </modal>
+                        </el-table-column>
+                        -->
+                      </el-table>
+
+                      <!-- Loading: Spinner -->
+                      <div v-else class="text-center py-4"><Loader /></div>
+
+
+                      <div class="card-footer py-4 d-flex align-items-center" v-if="meta && meta.total>0">
+                        <MetaInfo :meta="meta" class="d-flex"/>
+                        <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
+                      </div>
+
+                      <modal :show.sync="showPopup">
+                          <template slot="header">
+                              <h5 class="modal-title" id="exampleModalLabel">Contact details</h5>
+                          </template>
+                          <div>
+                              <Details :resource="selectedResource" v-if="showPopup" />
+                          </div>
+                          <template slot="footer">
+                              <base-button type="secondary" @click="showPopup = false">Close</base-button>
+                          </template>
+                      </modal>
+
+                      <modal :show.sync="showConfirm">
+                          <template slot="header">
+                              <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                          </template>
+                          <div>
+                              Are you sure to delete contact with id "{{ selectedResource ? selectedResource.id : '' }}"?
+                          </div>
+                          <template slot="footer">
+                              <base-button type="secondary" @click="showConfirm = false">Close</base-button>
+                              <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
+                          </template>
+                      </modal>
+
                     </div>
                 </div>
             </div>
@@ -208,13 +220,16 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option } from 'element-ui'
+import { Table, TableColumn, DropdownMenu, DropdownItem, Dropdown,Select,Option,Checkbox } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
 import Details from '@/components/Contacts/Details'
-import { isEmail,isPhoneNumber } from '../../helpers/helpers';
+import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/helpers';
 import AmlStatus from '@/components/Contacts/AmlStatus';
+import MetaInfo from '@/components/common/MetaInfo';
+import Loader from "../common/Loader/Loader";
 export default {
     components: {
+      Loader,
         [Table.name]: Table,
         [TableColumn.name]: TableColumn,
         [Dropdown.name]: Dropdown,
@@ -224,11 +239,14 @@ export default {
         IconButton,
         AmlStatus,
         Select,
-        Option
+        Option,
+        MetaInfo,
+        Checkbox
     },
     data() {
         return {
             data: [],
+            loading: true,
             search: null,
             sort: 'id',
             order: 'desc',
@@ -247,10 +265,13 @@ export default {
             totalTableData: 0,
             sortedBy: { customer: "asc" },
             searchWords:null,
-            selectedAmlStatus:null
+            selectedAmlStatus:null,
+            selectedSalesAdvisor:null,
+            meta:null,
+            isVerified:false,
         }
     },
-   
+
     computed: {
         ...mapGetters({
             types: "types/pairs"
@@ -258,13 +279,17 @@ export default {
         ...mapGetters({
             amlStatuses: "clients/amlStatuses"
         }),
+        ...mapGetters("salesCommission", {
+            salesAdvisors: "salesAdvisors",
+        }),
         searchQuery() {
             return (
                 (this.search ? '&' + this.search : '') +
-                ( this.selectedAmlStatus ? `&aml_status_id=${ this.selectedAmlStatus }`:'')+
+                ( this.selectedSalesAdvisor ? `&sales_advisor_id=${ this.selectedSalesAdvisor }`:'')+
+                ( this.isVerified ? `&is_verified=0`:'')+
                 `&order_by=${ this.sort }&order_direction=${ this.order }` +
-                `&page=${this.page || 1}` +
-                `&per_page=${this.perPage || 5}&type=customer`
+                `&page=${this.page}` +
+                `&per_page=${this.perPage}&type=customer`
                 // `&type_id=${ this.types && this.types.person ? this.types.person : 0 }`
             )
         },
@@ -273,9 +298,9 @@ export default {
         },
     },
      mounted(){
-        if(this.amlStatuses.length == 0)
+        if(this.salesAdvisors.length == 0)
         {
-            this.$store.dispatch('clients/getAmlStatuses')
+            this.$store.dispatch("salesCommission/fetchSalesAdvisors")
         }
     },
     watch: {
@@ -298,7 +323,18 @@ export default {
             this.showPopup      = true
         },
         gotoDetails(resource) {
-          this.$router.push('/customers/details/'+resource.id)
+            const part = "/customers/details/";
+            const url = "http://"+window.location.host+part+resource.id;
+            window.open(url,'_blank');
+          //this.$router.push('/customers/details/'+resource.id)
+        },
+        showOnlyUnverified(value){
+            if(value){
+                this.isVerified  = true;
+            }
+            else{
+                this.isVerified = false;
+            }
         },
         fetchClientData(pageQuery) {
             if (!this.initiated && this.types && this.types.person) {
@@ -308,6 +344,8 @@ export default {
                     .then(response => {
                         this.data = response.data.data
                         this.totalTableData = response.data.meta.total
+                        this.meta = response.data.meta;
+                        this.loading = false;
                     }).finally(() => {
                         this.initiated  = false
                     })
@@ -375,19 +413,55 @@ export default {
         onSearch(value){
             if(value!="")
             {
-                this.search = "name="+value;
+                if(checkIfItIsAccountNumber(value))
+                {
+                    this.search = "account_number="+value;
+                }
+                else if(isEmail(value))
+                {
+                    this.search = "email="+value;
+                }
+                else if(isPhoneNumber(value))
+                {
+                    this.search = "phone="+value;
+                }
+                else{
+                    this.search = "name="+value;
+                }
+
                 this.page = 1;
             }
             else{
                 this.clearSearch();
             }
-            
+
         },
         clearSearch()
         {
             this.search = "";
             this.page = 1;
-        }
+        },
+        clearSalesAdvisor(){
+            this.selectedSalesAdvisor = null;
+        },
+        formatSalesAdvisorLabel: function (client) {
+            if (client) {
+                let email = null;
+                if (client.contact.channels) {
+                    client.contact.channels.forEach((element) => {
+                        if (element.type == "email") {
+                            email = element.value;
+                        }
+                    });
+                }
+                let label =
+                    client.contact.name + " " + client.contact.person_data.surname;
+                if (email) {
+                    label += ` (${email})`;
+                }
+                return label;
+            }
+        },
     }
 }
 </script>

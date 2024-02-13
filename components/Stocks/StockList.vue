@@ -13,6 +13,9 @@
                   <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                     <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                   </button>
+                  <button @click.prevent="addStock()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                    <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('new_transaction')}}</span>
+                  </button>
                 </div>
               </div>
 
@@ -34,6 +37,8 @@
                         <div class="media align-items-center">
                             <div class="media-body">
                                 <div class="font-weight-300 name">{{row.id}}</div>
+                                <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
+                                <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
                             </div>
                         </div>
                     </template>
@@ -121,22 +126,26 @@
                 </el-table-column>
             </el-table>
 
-            <div class="card-footer py-4 d-flex justify-content-end">
-                <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
-            </div>
+            <div class="card-footer py-4 d-flex align-items-center">
+                    <MetaInfo :meta="meta" class="d-flex"/>
+                    <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
+                </div>
 
         </div>
 
     </div>
 
 </div>
-
+<AddStock :show="showAddStock" :assetTypeId="depotType" :target="stockType" @closed="onClosed" @added="loadData"/>
 </div>
+
 </template>
 <script>
 import {stockTypes} from '@/helpers/stocks';
 import { Table, TableColumn,Input } from 'element-ui';
 import StockFilter from '@/components/Stocks/StockFilter';
+import AddStock from '@/components/Stocks/AddStock';
+import MetaInfo from '@/components/common/MetaInfo';
 export default {
     props:{
         depotType:{
@@ -152,7 +161,9 @@ export default {
         [Table.name]: Table,
         [TableColumn.name]: TableColumn,
         StockFilter,
-        Input
+        Input,
+        AddStock,
+        MetaInfo
     },
     data(){
         return{
@@ -163,7 +174,9 @@ export default {
             perPage:10,
             totalTableData:1,
             filterQuery:null,
-            data:[]
+            data:[],
+            showAddStock:false,
+            meta:null
         }
     },
     computed:{
@@ -177,6 +190,14 @@ export default {
                 query+=this.filterQuery;
             }
             return query;
+        }
+    },
+    watch: {
+        searchQuery: {
+            handler() {
+                this.loadData()
+            },
+            immediate: true,
         }
     },
     mounted(){
@@ -210,9 +231,16 @@ export default {
                 this.page = res.meta.current_page;
                 this.totalTableData = res.meta.total;
                 this.data = res.data;
+                this.meta = res.meta
             }).finally(()=>{
                 this.isLoading = false;
             })
+        },
+        onClosed(){
+            this.showAddStock = false;
+        },
+        addStock(){
+            this.showAddStock = true;
         }
     }
 }

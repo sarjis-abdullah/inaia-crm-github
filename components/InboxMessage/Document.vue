@@ -32,6 +32,7 @@
 import { Upload,Button } from "element-ui";
 import IconButton from '@/components/common/Buttons/IconButton';
 import { json } from 'd3';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         document:{
@@ -110,12 +111,9 @@ export default {
                         duration:5000
                     })
                     
-                }).catch(()=>{
-                    this.$notify({
-                    type:'error',
-                    message:this.$t('document_saved_unsuccessfully'),
-                    duration:5000
-                })
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
+                    
                 }).finally(()=>{
                     this.isSubmitting = false;
                 })
@@ -148,12 +146,8 @@ export default {
                         message:this.$t('document_deleted_successfully'),
                         duration:5000
                     })
-                }).catch(()=>{
-                 this.$notify({
-                    type:'error',
-                    message:this.$t('document_deleted_unsuccessfully'),
-                    duration:5000
-                })
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>{
                     this.isSubmitting = false;
                 })

@@ -50,6 +50,7 @@
         <template v-if="addLink">
           <i v-if="link.icon" :class="link.icon"></i>
           <span class="nav-link-text">{{ link.name }}</span>
+          <span v-if="link.badge && link.badge > 0" class="ml-1 badge badge-danger">{{ link.badge }}</span>
         </template>
         <template v-else>
           <i v-if="link.icon" :class="link.icon"></i>

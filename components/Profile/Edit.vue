@@ -57,24 +57,16 @@
                     rules="required|email"
                     v-model="customer.channels.email.value"
                   /> -->
-
-
-
-
-                        <div class="row">
+                  <div class="row">
                             <div class="col-md-6">
-                                <base-input label="Customer Type" name="Customer Type" placeholder="Select contact type">
-                                    <select class="form-control" v-model="selectedContactType">
-                                        <option v-for="(i, idx) in contactTypes" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
-                                </base-input>
-                            </div>
-                            <div class="col-md-6" v-if="selectedContactType == 'person'">
                                 <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider">
                                     <select class="form-control" v-model="customer.person_data.nationality.id">
                                         <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
                                     </select>
                                 </base-input>
+                            </div>
+                            <div class="col-md-6" v-if="selectedContactType == 'person'">
+                               
                             </div>
                         </div>
                         <div class="row">
@@ -355,7 +347,32 @@ export default {
         if (!this.auth || !this.account) {
             this.$router.push('/logout')
         }
-
+        else{
+            console.log(this.account);
+            const accountData = JSON.parse(JSON.stringify(this.account));
+            //this.customer = this.account;
+            this.customer.id = accountData.id;
+            this.customer.type_id = accountData.account.type_id;
+            this.customer.account = accountData.account;
+            this.customer.person_data = accountData.person_data;
+            if(!accountData.person_data.nationality){
+                this.customer.person_data.nationality = {
+                    id:-1
+                }
+            }
+            this.customer.name = accountData.name;
+            this.customer.address = accountData.address;
+            accountData.channels.forEach(channel=>{
+                if(channel && channel.type){
+                    if(channel.type.name_translation_key == 'email_channel_type'){
+                        this.customer.channels.email = channel;
+                    }
+                    if(channel.type.name_translation_key == 'mobile_channel_type'){
+                        this.customer.channels.mobile = channel;
+                    }
+                }
+            });
+        }
         this.initTypes();
         if (!this.countryListLoaded || this.countryList.length < 200) {
             this.initCountryList();

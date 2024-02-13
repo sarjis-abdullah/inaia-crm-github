@@ -29,7 +29,7 @@
                             </el-table-column>
 
                             <el-table-column v-bind:label="$t('type')"
-                                    min-width="180px"
+                                    min-width="240px"
                                     >
                                 <template v-slot="{row}">
                                     <div class="d-flex align-items-center">
@@ -44,7 +44,15 @@
                                     </div>
                                 </template>
                             </el-table-column>
-
+                            <el-table-column v-bind:label="$t('depot')"
+                                    prop="depotName"
+                                    min-width="140"
+                                    >
+                                    <template v-slot="{row}">
+                                        <span>{{row.depotName}}</span>
+                                        <div class="dateStyle">{{row.depot ? '# '+row.depot.depot_number : ''}}</div>
+                                    </template>
+                    </el-table-column>
                             <el-table-column v-bind:label="$t('amount')"
                                     min-width="140px"
                                     align="right"
@@ -60,7 +68,7 @@
                                         <span>{{row.direction=='CREDIT'?'- ':''}}</span><i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
                                     </span>
                                 </template>
-                               
+
                             </el-table-column>
                             <el-table-column v-bind:label="$t('status')"
                                     min-width="140px"
@@ -71,7 +79,7 @@
                                     </div>
                                     <div v-else>
                                         <BankStatus :status="row.status"  :lifecycle_status="row.lifecycle_status"/>
-                                    </div>                              
+                                    </div>
                                 </template>
                             </el-table-column>
                             <el-table-column>
@@ -86,15 +94,15 @@
                         <div class="card-footer py-4 d-flex justify-content-end">
                             <base-pagination v-model="page" :per-page="perPage" :total="totalTableData"></base-pagination>
                         </div>
-                        <OrderDetails 
-                            :showPopup="showOrderDetails" 
-                            :selectedResource="selectedOrder" 
+                        <OrderDetails
+                            :showPopup="showOrderDetails"
+                            :selectedResource="selectedOrder"
                             @onClose="onOrderDetailsClosed"
                         />
                         <BankingTransactionDetail v-if="showBankTransactionDetail" :showModal="showBankTransactionDetail" :transaction="selectedOrder" @closed="onOrderDetailsClosed"/>
                     </div>
                 </div>
-                
+
             </div>
 </template>
 <script>
@@ -106,6 +114,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import OrderDetails from '@/components/Orders/Details';
 import BankStatus from '@/components/Banking/TransactionStatus';
 import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         account_id:{
@@ -125,15 +134,15 @@ export default {
     },
     computed: {
         ...mapGetters({
-            lastTransactions: "clients/latestTransactions"
+            lastTransactions: "orders/list"
         }),
         searchQuery() {
             return (
-                `&account_id=${this.account_id}&page=${this.page | 1}&per_page=${this.perPage | 5}`
+                `&account_id=${this.account_id}&page=${this.page || 1}&per_page=${this.perPage || 5}`
             )
         },
         totalPages() {
-            return Math.ceil(this.totalTableData / this.perPage) 
+            return Math.ceil(this.totalTableData / this.perPage)
         }
     },
     watch: {
@@ -159,9 +168,9 @@ export default {
     methods:{
         fetchLatestTransactions(){
             this.isLoading = true;
-            this.$store.dispatch('clients/getClientLatestTransactions',this.searchQuery)
+            this.$store.dispatch('orders/getClientLatestTransactions',this.searchQuery)
                 .then(res=>this.totalTableData = res.total)
-                .catch(err=>this.loadingError=this.$t('cant_load_list'))
+                .catch(err=>this.loadingError=apiErrorHandler(err,null))
                 .finally(()=>this.isLoading=false)
         },
         displayDetails(resource)
@@ -169,7 +178,7 @@ export default {
             this.selectedOrder = resource;
             if(resource && resource.order_status)
             {
-                
+
                 this.showOrderDetails = true;
             }
             else

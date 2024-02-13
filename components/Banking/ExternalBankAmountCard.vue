@@ -15,7 +15,7 @@
           <div class="col-auto">
             <base-dropdown title-classes="btn btn-sm btn-link mr-0"
                            menu-on-right
-                           :has-toggle="false">
+                           :has-toggle="false" v-if="hasEditAccess">
 
               <template slot="title">
                 <i class="fas fa-ellipsis-v"></i>
@@ -36,7 +36,8 @@
 </template>
 <script>
 import Loader from "../common/Loader/Loader";
-
+import { canEditInaiaBankAccount } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   components: {
     Loader
@@ -51,6 +52,9 @@ export default {
     iban(){
         return this.bankAccount && this.bankAccount.iban.match(/.{1,4}/g).join(' ')
 
+    },
+    hasEditAccess(){
+      return canEditInaiaBankAccount()
     }
   },
   methods: {
@@ -60,7 +64,7 @@ export default {
         this.bankAccount = res;
         this.$emit('loaded',this.bankAccount.id)
       }).catch((err)=>{
-        console.log('Error while loading bank account summary');
+        apiErrorHandler(err,this.$notify);
       }).finally(()=>{
         this.isLoading = false
       })
@@ -77,7 +81,7 @@ export default {
           });
         }
       }).catch((err)=>{
-        this.$notify({type: 'danger', timeout: 5000, message: this.$t('bank_connection_unsuccessfully')})
+        apiErrorHandler(err,this.$notify);
       }).finally(()=>{
         this.isLoading = false
       })

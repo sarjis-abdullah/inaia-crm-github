@@ -31,21 +31,23 @@
         </div>
         <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" @click="loadMore"/>
       </div>
-     
-        
-      
-      <div class="write-aria">
+
+
+
+      <div class="write-area">
         <textarea
           type="text"
           class="chat-input mt-3"
           :placeholder="$t('type')"
           rows="5"
           v-model="note"
+          v-if="hasEditAccess"
         >
         </textarea>
         <base-button
           type="primary"
           class="float-right mt-2"
+          v-if="hasEditAccess"
           @click="sendNote"
           :disabled="isSending || !note || note == ''"
           >Send<span class="btn-inner--icon"
@@ -58,6 +60,8 @@
 <script>
 import { mapGetters } from "vuex";
 import LoadMore from "@/components/common/Loader/LoadMore";
+import { canEditDepot } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
   props: {
     account: {
@@ -86,6 +90,9 @@ export default {
         (this.account.person_data ? " " + this.account.person_data.surname : "")
       );
     },
+    hasEditAccess(){
+        return canEditDepot();
+      }
   },
   data() {
     return {
@@ -149,11 +156,7 @@ export default {
           this.note = null;
         })
         .catch((err) => {
-          this.$notify({
-            message: this.$t("cant_create_new_note"),
-            type: "error",
-            duration: 5000,
-          });
+          apiErrorHandler(err,this.$notify);
         })
         .finally(() => {
           this.isSending = false;
@@ -186,7 +189,7 @@ export default {
   margin: 0 auto;
   margin-bottom: 10px;
 }
-.write-aria {
+.write-area {
   margin: 0 auto;
   position: relative;
   bottom: 0;

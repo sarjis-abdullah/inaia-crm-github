@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-4 text-truncate">
                     <div><small>{{$t('client')}}</small></div>
-                    <h4 class="mt--1 mb-0">{{name}}</h4>
+                    <h4 class="mt--1 mb-0"><a @click.prevent="$router.push('/customers/details/'+ticket.account.contact.id)" v-if="ticket && ticket.account && ticket.account.contact">{{name}}</a></h4>
                 </div>
                 <div class="col-4 text-truncate mx-auto text-center">
                     <h4 class="mb-0">{{ticket.subject}}</h4>
@@ -17,7 +17,7 @@
             title-classes="btn btn-sm mr-0"
             menu-on-right
             :has-toggle="false"
-
+            v-if="hasEditAccess"
 
           >
             <template slot="title">
@@ -66,7 +66,7 @@
               <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
             </div>
 
-            <div class="write-aria" v-if="shouldShowMessageBoxAndCloseTicket()">
+            <div class="write-area" v-if="shouldShowMessageBoxAndCloseTicket()">
               <textarea type="text" class="chat-input mt-3" :placeholder="$t('write_answer')" rows="5" v-model="messageText"></textarea>
               <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">{{$t('send_message')}}<span class="btn-inner--icon ml-1"><i class="fa fa-paper-plane"></i></span></base-button>
             </div>
@@ -86,7 +86,9 @@ import moment from 'moment';
 import MessageElement from '@/components/Support/MessageElement';
 import Status from '@/components/Support/Status';
 import { mapGetters } from "vuex";
- import {  MessageBox } from 'element-ui'
+ import {  MessageBox } from 'element-ui';
+import { canEditCustomers } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
         ticket:{
@@ -156,13 +158,16 @@ export default {
                 return '';
             }
         },
+        hasEditAccess(){
+          return canEditCustomers();
+        }
     },
     watch:{
         ticket:{
             handler(newval, oldval){
                 if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
                 {
-                    this.fetchDetails(newval.id)
+                    this.fetchDetails(this.ticket.id)
                 }
             },immediate:true
         }
@@ -215,7 +220,7 @@ export default {
         },
         shouldShowMessageBoxAndCloseTicket()
         {
-            return this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed';
+            return (this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed' && this.hasEditAccess);
         },
         sendMessage(){
             const user = this.$store.getters["auth/user"];
@@ -229,8 +234,8 @@ export default {
                 this.groupedMessages = [];
                 this.groupMessages();
                 this.messageText = null;
-            }).catch(()=>{
-                this.$notify({type:'error',message:this.$t('cant_send_message'),duration:5000})
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
             }).finally(()=>{
                 this.isSending = false;
             })
@@ -251,8 +256,8 @@ export default {
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
                         this.ticket = data;
                         this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
-                    }).catch(()=>{
-                        this.$notify({type:'danger',message:this.$t('ticket_closed_unsuccessfully'),duration:5000});
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSending = false
                     })
@@ -275,8 +280,8 @@ export default {
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
                         this.ticket = data;
                         this.$notify({type:'success',message:this.$t('ticket_opened_successfully'),duration:5000});
-                    }).catch(()=>{
-                        this.$notify({type:'danger',message:this.$t('ticket_opened_unsuccessfully'),duration:5000});
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>{
                         this.isSending = false
                     })
@@ -362,7 +367,7 @@ export default {
 
     margin: 0 auto;
 }
-.write-aria {
+.write-area {
      margin: 0 auto;
   position: relative;
   bottom: 0;

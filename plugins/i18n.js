@@ -24,18 +24,6 @@ export default ({ app, store }, inject) => {
             code: 'en',
             iso: 'en-UK',
             file: 'en-UK.js'
-        },
-        {
-            name: 'Español',
-            code: 'es',
-            iso: 'es-ES',
-            file: 'es-ES.js'
-        },
-        {
-            name: 'French',
-            code: 'fr',
-            iso: 'fr-FR',
-            file: 'fr-FR.js'
         }
         // 'de', 'en', 'fr'
     ],
@@ -49,15 +37,7 @@ export default ({ app, store }, inject) => {
         en: {
             style: 'currency',
             currency: 'USD'
-        },
-        es: {
-            style: 'currency',
-            currency: 'EUR'
-        },
-        fr: {
-            style: 'currency',
-            currency: 'EUR'
-        },
+        }
     },
     dateTimeFormats: {
         de: {
@@ -83,31 +63,7 @@ export default ({ app, store }, inject) => {
                 year: 'numeric', month: 'short', day: 'numeric',
                 weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false
             },
-        },
-        es: {
-            narrow: {
-                year: 'numeric', month: 'numeric', day: 'numeric'
-            },
-            short: {
-                year: 'numeric', month: 'short', day: 'numeric'
-            },
-            long: {
-                year: 'numeric', month: 'short', day: 'numeric',
-                weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false
-            },
-        },
-        fr: {
-            narrow: {
-                year: 'numeric', month: 'numeric', day: 'numeric'
-            },
-            short: {
-                year: 'numeric', month: 'short', day: 'numeric'
-            },
-            long: {
-                year: 'numeric', month: 'short', day: 'numeric',
-                weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false
-            },
-        },
+        }
     },
     strategy: 'no_prefix',
     // lazy: true,

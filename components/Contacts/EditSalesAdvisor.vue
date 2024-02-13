@@ -52,6 +52,7 @@
   import { updateSalesAdvisorAndGetObject } from '../../helpers/customer';
   import { Select,Option } from 'element-ui';
   import { mapGetters } from "vuex";
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
   export default {
     props: {
       showModal: {
@@ -124,11 +125,7 @@
             });
           })
           .catch((err) => {
-            this.$notify({
-              type: "danger",
-              timeout: 5000,
-              message: this.$t('salesadvisor_updated_unsuccessfully'),
-            });
+            apiErrorHandler(err,this.$notify);
           })
           .finally(() => {
             this.isRequesting = false;

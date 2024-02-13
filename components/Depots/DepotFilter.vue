@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="card-header border-0" v-if="showFilter">
+    <form class="pt-4" v-if="showFilter">
       <div class="row">
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
@@ -55,6 +55,21 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('payment_method')"
+            v-model="selectedPaymentMethod"
+            clearable
+            class="filterElement"
+            @clear="removeSelectedPaymentMethod"
+          >
+            <Option
+              v-for="option in paymentmethods"
+              :value="option.value"
+              :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
@@ -73,15 +88,49 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('status')"
+            v-model="selectedDepotStatus"
+            filterable
+            class="mb-3"
+            @remove-tag="applyFilter"
+            multiple
+            @clear="removeSelectedDepotStatus"
+          >
+            <Option
+              v-for="option in depotStatus"
+              :value="option.id"
+              :label="$t(option.name_translation_key)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+          <Select
+            :placeholder="$t('interval_day')"
+            v-model="selectedIntervalDay"
+
+            class="mb-3"
+            clearable
+            @clear="removeIntervalDay"
+          >
+            <Option
+              v-for="option in intervalDays"
+              :value="option.value"
+              :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+        </div>
+        <div class="col-md displayFlex flex-column align-content-center">
           <el-input
             v-model="selectedAgio"
             type="number"
             :placeholder="$t('agio')"
             clearable
             @clear="removeAgio"
+            class="filterElement"
           />
-        </div>
-        <div class="col-md displayFlex flex-column align-content-center">
           <date-picker
             size="large"
             class="filterElement"
@@ -131,6 +180,16 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-for="stat in selectedDepotStatus"
+        v-bind:key="stat"
+        >{{ $t(getStatusTranslationKey(stat))
+        }}<a class="pointer badgeIcon" @click.prevent="removeStatus(stat)"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedDepotType != null"
         >{{ formatDepotType()
         }}<a class="badgeIcon" @click.prevent="removeDepotType()"
@@ -149,9 +208,27 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-if="selectedIntervalDay != null"
+        >{{ $t(selectedIntervalDay)
+        }}<a class="badgeIcon" @click.prevent="removeIntervalDay()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedAgioPaymentPlan != null"
         >{{ $t(selectedAgioPaymentPlan)
         }}<a class="badgeIcon" @click.prevent="removeAgioPaymentPlan()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="selectedPaymentMethod != null"
+        >{{ $t(selectedPaymentMethod)
+        }}<a class="badgeIcon" @click.prevent="removeSelectedPaymentMethod()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
       <Badge
@@ -167,9 +244,9 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
-        v-if="intervalstartDate && intervalendDate"
-        >{{ $t("from") }}: {{ $d(intervalstartDate) }} {{ $t("until") }}:
-        {{ $d(intervalendDate) }}
+        v-if="intervalstartDate"
+        >{{ $t("from") }}: {{ $d(intervalstartDate) }} <span  v-if="intervalendDate">{{ $t("until") }}:
+        {{ $d(intervalendDate) }}</span>
         <a class="badgeIcon" @click.prevent="removeDate()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
@@ -223,20 +300,35 @@ export default {
       selectedDepotType:null,
       timer: null,
       customerQuery: "",
+      selectedDepotStatus:[],
       savinplans: [
         { id: 1, value: true, label: "saving_plan" },
         { id: 2, value: false, label: "no_saving_plan" },
+      ],
+      paymentmethods: [
+        { id: 1, value: "bank_transfer", label: "bank_transfer" },
+        { id: 2, value: "bank_account", label: "bank_account" },
       ],
       agioPaymentPlans: [
         { id: 1, value: "onetime", label: "onetime" },
         { id: 2, value: "installment", label: "installment" },
       ],
+      intervalDays:[
+      { id: 1, value: 1, label: "1" },
+        { id: 2, value: 15, label: "15" },
+      ],
+      selectedIntervalDay:null,
+      selectedPaymentMethod:null
     };
   },
   mounted() {
     if(this.depotTypes.length == 0)
     {
       this.$store.dispatch('depots/getDepotTypes')
+    }
+    if(this.depotStatus.length == 0)
+    {
+      this.$store.dispatch('depots/getDepotStatuses')
     }
   },
   computed: {
@@ -245,6 +337,9 @@ export default {
     }),
     ...mapGetters("depots", {
       depotTypes: "depotTypes",
+    }),
+    ...mapGetters("depots", {
+      depotStatus: "depotStatuses",
     }),
   },
   methods: {
@@ -335,7 +430,10 @@ export default {
     quiryBuilder: function () {
       let query = "";
       if (this.selectedAgio && !isNaN(this.selectedAgio)) {
-        query += "&agio=" + parseInt(this.selectedAgio);
+        query += "&agio=" + parseInt(this.selectedAgio * 100);
+      }
+      if (this.selectedDepotStatus.length>0) {
+        query += "&depot_status_ids=" + this.selectedDepotStatus.join(',');
       }
       if (this.selectedAgioPaymentPlan != null) {
         query += "&agio_payment_option=" + this.selectedAgioPaymentPlan;
@@ -350,18 +448,26 @@ export default {
         if (this.selectedSavingPlan) query += "&is_savings_plan=1";
         else query += "&is_savings_plan=0";
       }
-      if (this.intervalstartDate != null && this.intervalendDate != null) {
+      if (this.intervalstartDate != null) {
         query +=
           "&interval_startdate=" +
           this.formatDateToApiFormat(this.intervalstartDate);
+      }
+      if (this.intervalendDate != null) {
         query +=
           "&interval_enddate=" +
           this.formatDateToApiFormat(this.intervalendDate);
       }
+      if(this.selectedIntervalDay){
+        query+='&interval_day='+this.selectedIntervalDay;
+      }
+      if(this.selectedPaymentMethod){
+        query+='&payment_method='+this.selectedPaymentMethod;
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
-      
+
       return query;
     },
     applyFilter: function () {
@@ -376,6 +482,10 @@ export default {
     getTypeTranslationKey: function (id) {
       let type = this.types.find((x) => x.id == id);
       return type.name_translation_key;
+    },
+    removeSelectedPaymentMethod: function (){
+      this.selectedPaymentMethod = null;
+      if (this.filterIsActive) this.applyFilter();
     },
     removeAgioPaymentPlan: function () {
       this.selectedAgioPaymentPlan = null;
@@ -394,6 +504,13 @@ export default {
         const query = this.quiryBuilder();
         this.$emit("filter", query);
       }
+    },
+    removeSelectedDepotStatus:function (){
+
+    },
+    removeIntervalDay:function(){
+      this.selectedIntervalDay = null;
+      if (this.filterIsActive) this.applyFilter();
     },
     removeDate: function () {
       this.intervalstartDate = null;
@@ -421,6 +538,15 @@ export default {
         return '';
       }
     },
+    getStatusTranslationKey: function (id) {
+      let stat = this.depotStatus.find((x) => x.id == id);
+      return stat.name_translation_key;
+    },
+    removeStatus: function (id) {
+      this.selectedDepotStatus = this.selectedDepotStatus.filter((sta) => sta != id);
+      const query = this.quiryBuilder();
+      this.$emit("filter", query);
+    },
     clearFilter() {
       this.selectedAgioPaymentPlan = null;
       this.selectedAgio = null;
@@ -431,6 +557,9 @@ export default {
       this.selectedSavingPlan = null;
       this.selectedDepotType = null;
       this.filterIsActive = false;
+      this.selectedDepotStatus = [];
+      this.selectedIntervalDay = null;
+      this.selectedPaymentMethod = null;
       this.$emit("filter", "");
     },
   },

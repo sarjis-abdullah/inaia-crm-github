@@ -129,7 +129,7 @@
         />
 
         <sidebar-item
-          v-if="accountingAccess"
+          v-if="hasCrmAccess"
           :link="{
             name: 'CRM',
             icon: 'lnir lnir-users text-primary',
@@ -137,7 +137,10 @@
           }"
         >
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
-          <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }"/>
+          <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
+        
+          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }"/>
+        
         </sidebar-item>
 <!--
         <sidebar-item
@@ -153,35 +156,46 @@
         </sidebar-item>
 -->
         <sidebar-item
-          v-if="accountingAccess"
+          v-if="hasDepotViewAccess || hasOrderViewAccess || hasPatchProcessingAccess || hasStocksAccess"
           :link="{
             name: 'Assets',
             icon: 'lnir lnir-gold-bar text-primary',
             collapsed: true
           }"
         >
-          <sidebar-item :link="{ name: $t('depots'), path: '/depots' }"/>
-          <sidebar-item :link="{ name: $t('orders'), path: '/orders' }"/>
-          <sidebar-item :link="{ name: $t('batch_processing'), path: '/orders/batch-processing' }"/>
-          <sidebar-item :link="{ name: $t('stocks'), path: '/stocks' }"/>
+          <sidebar-item :link="{ name: $t('depots'), path: '/depots' }" v-if="hasDepotViewAccess"/>
+          <sidebar-item :link="{ name: $t('orders'), path: '/orders' }" v-if="hasOrderViewAccess"/>
+          <sidebar-item :link="{ name: $t('batch_orders'), path: '/orders/batch-processing' }" v-if="hasPatchProcessingAccess"/>
+          <sidebar-item :link="{ name: $t('stocks'), path: '/stocks' }" v-if="hasStocksAccess"/>
         </sidebar-item>
 
         <sidebar-item
-          v-if="accountingAccess"
+          v-if="hasInaiaAccountAccess || hasClaimsAccess"
           :link="{
             name: 'Accounting',
             icon: 'lnir lnir-calculator text-primary',
             collapsed: true
           }"
         >
-        <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }"/>
-          <sidebar-item :link="{ name: 'Claims', path: '/accounting/claims' }"/>
+        <sidebar-item :link="{ name: $t('inaia_banking_account'), path: '/accounting/inaia-account' }" v-if="hasInaiaAccountAccess"/>
+          <sidebar-item :link="{ name: $t('claims'), path: '/accounting/claims' }" v-if="hasClaimsAccess"/>
+          <sidebar-item :link="{ name: $t('batch_claims'), path: '/accounting/claims/batch-claims' }" v-if="hasClaimsAccess"/>
+        </sidebar-item>
+        <sidebar-item
+          v-if="superAdmin"
+          :link="{
+            name: $t('reports'),
+            icon: 'lnir lnir-sales-report text-primary',
+            collapsed: true
+          }"
+        >
+          <sidebar-item :link="{ name: $t('monthly'), path: '/reports/monthly' }"/>
         </sidebar-item>
         <sidebar-item
           v-if="hasSalesCommissionAccess"
           :link="{
             name: $t('sales_commission'),
-            icon: 'lnir lnir-calculator text-primary',
+            icon: 'lnir lnir-consulting text-primary',
             path:'/sales-commission'
           }"
         >
@@ -193,6 +207,7 @@
             icon: 'lnir lnir-bullhorn text-primary',
             collapsed: true
           }"
+          v-if="hasMarketingAccess"
         >
           <sidebar-item :link="{ name: 'Newsfeed', path: '/news-feeds' }"/>
         </sidebar-item>
@@ -318,45 +333,64 @@
   import DashboardContent from '~/components/layouts/argon/Content.vue';
   import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
-
+  import {canViewOrder,
+    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin} from '~/permissions';
   export default {
     components: {
       DashboardNavbar,
       ContentFooter,
-      DashboardContent
+      DashboardContent,
+  
     },
-    middleware: ['auth'],
+    middleware: ['auth','guard'],
     computed: {
       ...mapGetters({
         token: "auth/auth",
         user: "auth/user"
       }),
-      apps() {
-        return this.user && getAppsAccess(this.user.account)
-      },
-      hasMaxAccess() {
-        return this.user && hasMaxAccess(this.user.account)
-      },
-      accounting() {
-        return process.env.entryPoints.accounting + '?token=' + this.token
-      },
-      accountingAccess() {
-        return this.hasMaxAccess || (this.apps && this.apps.accounting_access)
-      },
-      goldAdmin() {
-        return process.env.entryPoints.golddinar + '?token=' + this.token
-      },
-      goldAdminAccess() {
-        return this.hasMaxAccess || (this.apps && this.apps.goldadmin_access)
-      },
-      admin() {
-        return process.env.entryPoints.admin + '?token=' + this.token
-      },
+      ...mapGetters({
+            kycStatuses: "clients/kycStatuses"
+        }),
+        superAdmin(){
+          return canViewAdmin() && canEditAdmin()
+        },
       adminAccess() {
-        return this.hasMaxAccess || (this.apps && this.apps.adminpanel_access)
+        return canViewAdmin();
+      },
+      hasOrderViewAccess(){
+        return canViewOrder();
+      },
+      hasDepotViewAccess(){
+        return canViewDepot();
+      },
+      hasPatchProcessingAccess(){
+        return canViewBatchProcess();
+      },
+      hasStocksAccess(){
+        return canViewStocks();
+      },
+      hasCrmAccess(){
+        return canViewCustomers();
+      },
+      hasSupportTicketAccess(){
+        return canViewSupportTicket();
+      },
+      hasInaiaAccountAccess(){
+        return canViewInaiaBankAccount();
+      },
+      hasClaimsAccess(){
+        return canViewClaims();
       },
       hasSalesCommissionAccess(){
-        return this.user && (hasMaxAccess(this.user.account) || isSalesAdvisor(this.user.account));
+        return canViewSalesCimmission();
+      },
+      hasMarketingAccess(){
+        return canViewMarketing();
+      }
+    },
+    data(){
+      return{
+        totalPendingVerifications:0
       }
     },
     methods: {
@@ -365,12 +399,35 @@
         if (isWindows) {
           initScrollbar('scrollbar-inner');
         }
-      }
+      },
+      fetchClientData() {
+            let pendingStatus = this.kycStatuses.find(x=>x.name=='pending');
+            if (pendingStatus) {
+                this.initiated  = true
+                let fullQuery = `per_page=1&type=customer&is_verified=0&kyc_status_id=${pendingStatus.id}`;
+                this.$store
+                    .dispatch("clients/initClientData", fullQuery)
+                    .then(response => {
+                        
+                        this.totalPendingVerifications = response.data.meta.total
+                        
+                    }).finally(() => {
+                        
+                    })
+            }
+        },
     },
     mounted() {
-      this.initScrollbar()
+      this.initScrollbar();
+        if(this.kycStatuses.length == 0){
+              this.$store.dispatch("clients/getKycStatuses").then(res=>{
+                this.fetchClientData();
+        });
+      }else{
+        this.fetchClientData();
+      }
     }
-  };
+  }
 </script>
 <style lang="scss">
 </style>

@@ -102,7 +102,7 @@ export const actions = {
     initCountryList(context) {
         context.commit('countryListLoaded', 1)
         return this.$axios
-            .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
+            .get('/countries?order_direction=asc&per_page=250', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
                 context.commit('initCountryList', response.data)
                 context.commit('countryListLoaded', 2)

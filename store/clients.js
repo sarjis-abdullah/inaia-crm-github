@@ -12,7 +12,8 @@ export const state = () => {
         countryCodeList:[],
         loadedClients:[],
         amlStatuses:[],
-        kycDocuments:[]
+        kycDocuments:[],
+        kycStatuses:[],
     }
 }
 
@@ -52,7 +53,8 @@ export const getters = {
     latestTransactions:state=>state.latestTransactions,
     countryCodeList:state=>state.countryCodeList,
     amlStatuses: state=>state.amlStatuses,
-    kycDocuments: state=>state.kycDocuments
+    kycDocuments: state=>state.kycDocuments,
+    kycStatuses : state => state.kycStatuses
 }
 export const mutations = {
 
@@ -121,6 +123,9 @@ export const mutations = {
     },
     updateAccount(state,account){
         state.singleClientData.account = account;
+    },
+    kycStatuses(state,list){
+        state.kycStatuses = list;
     }
 }
 export const actions = {
@@ -179,7 +184,7 @@ export const actions = {
     },
     getClientListBySurname(context, payload) {
         return this.$axios
-            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=500`)
+            .get(`/accounts?include=contacts,person_data,channels&only=contacts.name,person_data.surname,channels.value&name=${payload}&type=customer&per_page=250`)
             .then(response => {
                 const clientData = response.data.data;
                 context.commit('orderFilterList', clientData)
@@ -246,7 +251,7 @@ export const actions = {
     initCountryList(context) {
         context.commit('countryListLoaded', 1)
         return this.$axios
-            .get('/countries?order_direction=asc&per_page=500', {headers: {'Content-Language': context.rootState.auth.locale}})
+            .get('/countries?order_direction=asc&per_page=250', {headers: {'Content-Language': context.rootState.auth.locale}})
             .then(response => {
                 const countryList = response.data
                 context.commit('initCountryList', countryList)
@@ -257,7 +262,7 @@ export const actions = {
     },
     clientDetailsData(context, payload) {
         return this.$axios
-            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs,nationality_details,sales_advisor`)
+            .get(`/contacts/${payload}?include=account,type,person_data,address,country,channels,account_product_class_specs,product_class_specs,nationality_details,sales_advisor,referred_by`)
             .then(response => {
                 const singleClientData = response.data.data
                 context.commit('singleClientData', singleClientData);
@@ -291,7 +296,7 @@ export const actions = {
     },
     getKycDocument(context,payload){
         return this.$axios
-            .get(`/documents?account_id=${payload}&per_page=500`)
+            .get(`/documents?account_id=${payload}&per_page=250`)
             .then(response => {
                 context.commit('kycDocuments',response.data.data);
                 return response.data.data;
@@ -308,6 +313,24 @@ export const actions = {
     },
     resetAccountPin(context,payload){
         return this.$axios.get(`/accounts/${payload}/pin-reset-request-by-staff`);
+    },
+    getKycStatuses(context){
+        return this.$axios
+            .get(`/kyc-statuses`)
+            .then(response => {
+                context.commit('kycStatuses',response.data.data);
+                return response.data.data;
+            })
+    },
+    removeDocument(context,payload){
+        return this.$axios
+            .delete(`/documents/${payload}`)
+            .then(response => {
+                return true;
+            })
+    },
+    deleteAccountPermanently(context,payload){
+        return this.$axios.delete(`/accounts/permanently-delete/${payload}`);
+        
     }
-
 }

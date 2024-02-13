@@ -64,7 +64,13 @@ export function isAdmin(account) {
     return foundAccess
 }
 export function isSalesAdvisor(account){
-    return Array.isArray(account.roles) && account.roles.account.findIndex(role=>(role.is_active &&role.short_name.indexOf('sales_advisor') > -1)>-1 );
+    let result = false;
+    if(Array.isArray(account.roles)){
+        const role = account.roles.find(role=>(role.is_active && role.short_name == 'sales_advisor'))
+        if(role)
+            return true;
+    }
+    return result;
 }
 export function hasMaxAccess(account) {
     return isAdmin(account)

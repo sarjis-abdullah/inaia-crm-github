@@ -19,32 +19,42 @@
                         @sellingPaymentAccountSelected="onSellingPaymentAccountSelected"
                         @isMoneyRefunded="setIsMoneyRefunded"
                         @revertorderdateselected="setRevertDate"
+                        @makediscount="doMakeDiscount"
+                        @hasMoneyTransfered="setHasMoneyTranfered"
+                        @setTransactionFee="onSetTransactionFee"
                         />
                     </div>
-                    <template slot="footer">
+                    <template slot="footer" v-if="hasEditAccess">
                         <base-button type="link" class="ml-auto" @click="backToDetailScreen()"
                             v-if="selectedResourceScreen!=orderDetailsSceens.detail">
                           {{$t('cancel')}}
                         </base-button>
+                       
                         <base-button type="white" class="text-danger" @click="() => removeOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderDeleteButton(selectedResource)"
                             :disabled="(!enableDeleting && selectedResourceScreen==orderDetailsSceens.delete) || isSubmitting">
                           <i class="lnir lnir-trash mr-1"></i>{{$t('delete_order')}}
                         </base-button>
+                        <base-button type="danger"  @click="markOrderAsfailed(selectedResource)"
+                            v-if="selectedResource && shouldDisplayOrderFailedButton(selectedResource)">
+                          {{$t('mark_failed')}}
+                        </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
-                            :disabled="(selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            :disabled="(selectedResource && !isOrderPending(selectedResource) && !hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
                             >
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
                         <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
-                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete"
+                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete && selectedResourceScreen!=orderDetailsSceens.cancel"
                             :disabled="isSubmitting">
                           {{$t('mark_as_paid')}}
                         </base-button>
                          <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
                             :disabled="shouldDisableCompleteButton() || isSubmitting">
-                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('preview_order')}}</span>
+                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">
+                            <span v-if="isOrderGoldSale(selectedResource)">{{$t('complete_order')}}</span><span v-else>{{$t('preview_order')}}</span>
+                        </span>
                             <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
                          </base-button>
                          <base-button type="white" @click="() => refundOrder(selectedResource)"
@@ -70,7 +80,10 @@
 <script>
 import {orderDetailScreens} from '../../helpers/constans';
 import DetailsInfo from '@/components/Orders/DetailsInfo';
-import { isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order'
+import {  isPaymentInProgressOrder,isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
+import { canEditOrder } from '@/permissions';
+import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { isOrderGoldSale } from '../../helpers/order';
 export default {
     props:{
         showPopup:{
@@ -98,11 +111,19 @@ export default {
             isSubmitting: false,
             selectedResourceScreen:orderDetailScreens.detail,
             isMoneyRefunded: 0,
-            revertDate:null
+            revertDate:null,
+            makeDiscount:false,
+            hasMoneyTransfered:false,
+            transactionFee:null
         }
     },
      created (){
         this.orderDetailsSceens = orderDetailScreens;
+    },
+    computed : {
+        hasEditAccess(){
+          return canEditOrder();
+        }
     },
     watch:{
         showPopup:{
@@ -117,6 +138,7 @@ export default {
     methods :{
         isOrderPending,
         isOrderPaid,
+        isOrderGoldSale,
          removeOrder(resource) {
             if(this.selectedResourceScreen != orderDetailScreens.delete)
             {
@@ -134,7 +156,7 @@ export default {
                         this.$emit('orderUpdated',resource);
                         this.showPopup = false;
                         this.onDetailClose();
-                    }).catch((err)=>{console.error(err);this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_deleted_unsuccessfully')})})
+                    }).catch((err)=>{apiErrorHandler(err,this.$notify);})
                     .finally(()=>this.isSubmitting = false)
             }
         },
@@ -146,28 +168,36 @@ export default {
             else if(this.selectedResourceScreen == orderDetailScreens.cancel){
                 let data = {
                     id:resource.id,
-                    data:{
-                        payment_account_id:this.selectedCancelPaymentAccount
+                }
+                if(this.hasMoneyTransfered){
+                    data.data = {
+                        
+                        has_money_transferred:true
+                    }
+                }
+                else{
+                    data.data = {
+                        payment_account_id:this.selectedCancelPaymentAccount,
+                        has_money_transferred:false
                     }
                 }
                 this.isSubmitting =  true;
                 this.$store
                     .dispatch('orders/cancel', data)
                     .then( res => {
-                        console.log(res);
                         let data = res.data.data;
                         if(data.fin_api_webform_url){
-                            window.location.href = data.fin_api_webform_url
+                            window.open(data.fin_api_webform_url,'_blank')
                         }
                         else{
-                            this.showPopup = false;
+                            //this.showPopup = false;
                             this.$emit('orderUpdated',resource);
-                            this.onDetailClose();
+                            this.selectedResourceScreen = orderDetailScreens.detail;
                             this.$notify({type: 'success', timeout: 5000, message: this.$t('order_canceled_successfully')})
                         }
                         
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_canceled_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -187,6 +217,12 @@ export default {
        {
           this.isMoneyRefunded = isMoneyRefunded;
        },
+       doMakeDiscount(value){
+        this.makeDiscount = value;
+       },
+       setHasMoneyTranfered(value){
+        this.hasMoneyTransfered = value;
+       },
         onDetailClose ()
         {
             this.selectedResourceScreen = orderDetailScreens.detail;
@@ -197,6 +233,10 @@ export default {
             this.sellGoldDate = null;
             this.selectedSellingPaymentAccount = null;
             this.isMoneyRefunded = 0;
+            this.revertDate = null;
+            this.makeDiscount = false;
+            this.hasMoneyTransfered = false;
+            this.transactionFee = null;
         },
         shouldDisplayOrderDeleteButton(resource)
         {
@@ -216,6 +256,11 @@ export default {
             && (this.selectedResourceScreen == orderDetailScreens.complete || this.selectedResourceScreen == orderDetailScreens.detail)
             ;
         },
+        shouldDisplayOrderFailedButton(resource){
+            return ((isOrderPending(resource)))
+            && (this.selectedResourceScreen == orderDetailScreens.failed || this.selectedResourceScreen == orderDetailScreens.detail)
+            ;
+        },
         completeOrder(resource)
         {
             if(this.selectedResourceScreen == orderDetailScreens.detail)
@@ -230,7 +275,10 @@ export default {
                 }
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
-                    data.data = {price_date:this.completeOrderInfo.date}
+                    data.data = {price_date:this.completeOrderInfo.date};
+                    if(!isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
+                        data.data.transaction_fee = this.transactionFee * 100;
+                    }
                 }
                 if(isDeliveryOrder(resource))
                 {
@@ -244,18 +292,19 @@ export default {
                         }
                     }
                 }
+               
                 this.isSubmitting = true;
                 this.$store
                 .dispatch('orders/complete', data)
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_completed_successfully')})
-                    this.selectedResource = null;
-                    this.showPopup = false;
+                    //this.selectedResource = null;
+                    //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
-                    this.onDetailClose();
+                    this.selectedResourceScreen = orderDetailScreens.detail;
 
                 }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_completed_unsuccessfully')})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>this.isSubmitting = false)
             }
 
@@ -270,13 +319,14 @@ export default {
                 this.$store
                     .dispatch('orders/paid', resource.id)
                     .then( res => {
-                        this.showPopup = false;
+                        //this.showPopup = false;
                         this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
+                        this.selectedResourceScreen = orderDetailScreens.detail;
+                        //this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})
                         // console.error('order->', res.data.data)
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_paid_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -298,12 +348,12 @@ export default {
                 this.$store
                     .dispatch('orders/refund', data)
                     .then( res => {
-                        this.showPopup = false;
+                        //this.showPopup = false;
                         this.$emit('orderUpdated',resource);
-                        this.onDetailClose();
+                        this.selectedResourceScreen = orderDetailScreens.detail;
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_refunded_successfully')})
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_refunded_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -335,12 +385,12 @@ export default {
         shouldDisplayOrderCancelButton(resource)
         {
           if (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.cancel)
-            return isOrderPaid(resource);
+            return isOrderPaid(resource) || isOrderPending(resource);
           else return false;
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return isOrderPending(resource) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource));
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource) ||  isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
         },
         setCancelPaymentAccount(account)
         {
@@ -388,13 +438,13 @@ export default {
                 .dispatch('orders/sellGold', data)
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
-                    this.selectedResource = null;
-                    this.showPopup = false;
+                    
+                    //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
-                    this.onDetailClose();
+                    this.selectedResourceScreen = orderDetailScreens.detail;
 
                 }).catch(err=>{
-                    this.$notify({type: 'danger', timeout: 5000, message: this.$t('Order_sold_unsuccessfully')})
+                    apiErrorHandler(err,this.$notify);
                 }).finally(()=>this.isSubmitting = false)
             }
         },
@@ -421,7 +471,6 @@ export default {
                 this.selectedResourceScreen = orderDetailScreens.revert;
             }
             else{
-                debugger;
                 let data = {
                     id:resource.id,
                     data:{
@@ -436,10 +485,34 @@ export default {
                         this.$emit('orderUpdated',resource);
                         this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('order_reverted_successfully')})
-                    }).catch(()=>{
-                        this.$notify({type: 'danger', timeout: 5000, message: this.$t('order_reverted_unsuccessfully')})
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
                     }).finally(()=>this.isSubmitting = false)
             }
+        },
+        markOrderAsfailed(resource){
+            if(this.selectedResourceScreen != orderDetailScreens.failed)
+            {
+                this.selectedResourceScreen = orderDetailScreens.failed;
+            }
+            else{
+                this.isSubmitting = true;
+                this.$store
+                    .dispatch('orders/failed', resource.id)
+                    .then( res => {
+                        //this.showPopup = false;
+                        this.$emit('orderUpdated',resource);
+                        this.selectedResourceScreen = orderDetailScreens.detail;
+                        this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_marked_failed_successfully')})
+                        // console.error('order->', res.data.data)
+                    }).catch((err)=>{
+                        apiErrorHandler(err,this.$notify);
+                    }).finally(()=>this.isSubmitting = false)
+            }
+            
+        },
+        onSetTransactionFee(value){
+            this.transactionFee = value;
         }
     }
 }
