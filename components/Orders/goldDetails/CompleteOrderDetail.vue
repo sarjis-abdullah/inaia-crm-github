@@ -118,7 +118,9 @@ export default {
         },
         makediscount:function(value){
             if(!value){
+                this.transactionFee = null;
                 this.$emit('setTransactionFee',null);
+                this.getPreview();
             }
         }
     }

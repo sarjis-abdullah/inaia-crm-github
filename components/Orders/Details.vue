@@ -276,7 +276,7 @@ export default {
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
                     data.data = {price_date:this.completeOrderInfo.date};
-                    if(!isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
+                    if(this.transactionFee && !isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
                         data.data.transaction_fee = this.transactionFee * 100;
                     }
                 }
