@@ -106,19 +106,31 @@ export default {
             })
         },
         setTransactionFee:function(value){
-            if(!value || (!isNaN(value) && value>=0 && value<=100)){
-                this.transactionFeeBadValue = false;
-                this.$emit('setTransactionFee',value);
+            
+            if(!value){
+                this.$emit('setTransactionFee',null);
+                this.transactionFee = null;
                 this.getPreview();
             }
             else{
-                this.transactionFeeBadValue = true;
+                if((!isNaN(value) && parseFloat(value)>=0 && parseFloat(value)<=100)){
+                this.transactionFeeBadValue = false;
+                this.$emit('setTransactionFee',value);
+                this.getPreview();
+                    }
+                    else{
+                        this.transactionFeeBadValue = true;
+                        this.$emit('setTransactionFee',null);
+                        this.transactionFee = null;
+                        this.getPreview();
+                    }
             }
+            
            
         },
         makediscount:function(value){
             if(!value){
-                this.transactionFee - null;
+                this.transactionFee = null;
                 this.$emit('setTransactionFee',null);
                 this.getPreview();
             }
