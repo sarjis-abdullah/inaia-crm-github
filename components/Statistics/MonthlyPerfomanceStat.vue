@@ -25,8 +25,11 @@
         <div id="chart">
         <div v-if="data && !loading">
             <div v-if="groupBySalesPerson">
-                <div v-for="sales in salesAdvisors" :key="sales.id">
-                    <div class="font-weight-bold mt-6 mb-3 text-primary" v-if="sales.id!='unassigned'">Sales advisor data</div>
+                <div class="row" >
+                    
+
+                    <div class="col" v-for="sales in salesAdvisors" :key="sales.id">
+                    <div class="font-weight-bold mt-6 mb-3 text-primary" v-if="sales.id!='unassigned'">Sales advisor {{ sales.name }}</div>
                     <div class="font-weight-bold mt-6 mb-3 text-primary" v-else>Unassigned data</div>
                     <table v-if="sales.id!='unassigned'">
                         <tr v-for="[key,value] in Object.entries(sales)" :key="key">
@@ -41,6 +44,19 @@
                     <div v-for="asset in assets" :key="asset" class="mt-3">
                         <div class="font-weight-bold text-info">{{ asset.id }} data</div>
                         <div class="font-weight-bold my-3">
+                            Depots:
+                        </div>
+                        <table v-for="depot in depots.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="depot.asset">
+                            <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key)}} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
                             Agio:
                         </div>
                         <table v-for="agio in agios.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="agio.asset">
@@ -50,6 +66,21 @@
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
                                     {{ value }} €
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        
+                        <div class="font-weight-bold my-3">
+                            Transactions:
+                        </div>
+                        <table v-for="transaction in transactions.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="transaction.asset">
+                            <tr v-for="[key,value] in Object.entries(transaction)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ key }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
                                 </td>
                             </tr>
                         </table>
@@ -66,67 +97,18 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="font-weight-bold my-3">
-                            Depots:
-                        </div>
-                        <table v-for="depot in depots.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="depot.asset">
-                            <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key)}} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="font-weight-bold my-3">
-                            Transactions:
-                        </div>
-                        <table v-for="transaction in transactions.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="transaction.asset">
-                            <tr v-for="[key,value] in Object.entries(transaction)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ key }} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
-                            </tr>
-                        </table>
                     </div>
+                
+                </div>
                 </div>
 
             </div>
-            <div v-else>
+            <div v-else class="row">
                 
                     
-                    <div v-for="asset in assets" :key="asset" class="mt-3">
+                    <div v-for="asset in assets" :key="asset" class="mt-3 col">
+                        
                         <div class="font-weight-bold text-info">{{ asset.id }} data</div>
-                        <div class="font-weight-bold my-3">
-                            Agio:
-                        </div>
-                        <table v-for="agio in agios.filter(a=>a.asset == asset.id)" :key="agio.asset">
-                            <tr v-for="[key,value] in Object.entries(agio)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key) }} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="font-weight-bold my-3">
-                            Claims:
-                        </div>
-                        <table v-for="claim in claims.filter(a=>a.asset == asset.id)" :key="claim.asset">
-                            <tr v-for="[key,value] in Object.entries(claim)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key) }} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
-                                </td>
-                            </tr>
-                        </table>
                         <div class="font-weight-bold my-3">
                             Depots:
                         </div>
@@ -137,6 +119,19 @@
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
                                     {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Agio:
+                        </div>
+                        <table v-for="agio in agios.filter(a=>a.asset == asset.id)" :key="agio.asset">
+                            <tr v-for="[key,value] in Object.entries(agio)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
                                 </td>
                             </tr>
                         </table>
@@ -153,7 +148,23 @@
                                 </td>
                             </tr>
                         </table>
+                        <div class="font-weight-bold my-3">
+                            Claims:
+                        </div>
+                        <table v-for="claim in claims.filter(a=>a.asset == asset.id)" :key="claim.asset">
+                            <tr v-for="[key,value] in Object.entries(claim)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        
                     </div>
+                
                 </div>
             
         </div>
