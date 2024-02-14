@@ -13,6 +13,9 @@
             <div class="col-md">
                 <date-picker type="date" v-model="endDate" :placeholder="$t('select_end_date_placeholder')"></date-picker>
             </div>
+            <div class="col-md">
+                <Checkbox v-model="groupBySalesPerson">Group by sales advisor</Checkbox>
+            </div>
             <div class="col-md text-right">
                 <button @click.prevent="changeDate()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                             <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
@@ -21,342 +24,138 @@
             </div>
         <div id="chart">
         <div v-if="data && !loading">
-            <div v-if="data.gold">
-                <h3 class="my-3">Gold</h3>
-                <div class="my-3" v-if="data.gold.agio">
-                    <h5>Agio</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Claim</th>
-                            <th>Discounts</th>
-                            <th>Discount from advisor</th>
-                            <th>Discount inaia special offer</th>
-                            <th>Discount pay immediately</th>
-                            <th>Payment</th>
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>{{ $n(data.gold.agio.claim.amount) }}</td>
-                               
-                                <td>{{ data.gold.agio.discount.amount }}</td>
-                                <td>{{ data.gold.agio.discount_from_advisor.amount }}</td>
-                                <td>{{ data.gold.agio.discount_inaia_special_offer.amount }}</td>
-                                <td>{{ data.gold.agio.discount_pay_immediately.amount }}</td>
-                                <td>{{ data.gold.agio.payment.amount }}</td>
-                            </tr>
-                        </tbody>
+            <div v-if="groupBySalesPerson">
+                <div v-for="sales in salesAdvisors" :key="sales.id">
+                    <div class="font-weight-bold mt-6 mb-3 text-primary" v-if="sales.id!='unassigned'">Sales advisor data</div>
+                    <div class="font-weight-bold mt-6 mb-3 text-primary" v-else>Unassigned data</div>
+                    <table v-if="sales.id!='unassigned'">
+                        <tr v-for="[key,value] in Object.entries(sales)" :key="key">
+                            <td v-if="key!='id'">
+                                {{ $t(key) }} : 
+                            </td>
+                            <td class="px-3" v-if="key!='id'">
+                                {{ value }}
+                            </td>
+                        </tr>
                     </table>
+                    <div v-for="asset in assets" :key="asset" class="mt-3">
+                        <div class="font-weight-bold text-info">{{ asset.id }} data</div>
+                        <div class="font-weight-bold my-3">
+                            Agio:
+                        </div>
+                        <table v-for="agio in agios.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="agio.asset">
+                            <tr v-for="[key,value] in Object.entries(agio)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Claims:
+                        </div>
+                        <table v-for="claim in claims.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="claim.asset">
+                            <tr v-for="[key,value] in Object.entries(claim)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Depots:
+                        </div>
+                        <table v-for="depot in depots.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="depot.asset">
+                            <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key)}} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Transactions:
+                        </div>
+                        <table v-for="transaction in transactions.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="transaction.asset">
+                            <tr v-for="[key,value] in Object.entries(transaction)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ key }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <div class="my-3" v-if="data.gold.claims">
-                    <h5>Claims</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Direct debit return</th>
-                            <th>Gold delivery charge</th>
-                            <th>Gold storage fee</th>
-                            <th>Order reverted</th>
-                            <th>Silver storage fee</th>
-                           
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>{{ $n(data.gold.claims.direct_debit_return.amount) }}</td>
-                               
-                                <td>{{ $n(data.gold.claims.gold_delivery_charge.amount) }}</td>
-                                <td>{{ $n(data.gold.claims.gold_storage_fee.amount) }}</td>
-                                <td></td>
-                                <td>{{ $n(data.gold.claims.silver_storage_fee.amount) }}</td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="my-3" v-if="data.gold.transactions">
-                    <h5>Transactions</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                            <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Agio</th>
-                            <th>Delivery</th>
-                            <th>Deposit</th>
-                            <th>Gift</th>
-                            <th>Purchase</th>
-                            <th>Refund</th>
-                            
-                           
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.agio.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.agio.gram_amount) }} g</div>
-                                </td>
-                               
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.delivery.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.delivery.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.deposit.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.deposit.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.gift.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.gift.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.purchase.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.purchase.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.refund.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.refund.gram_amount) }} g</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="text-sm">
-                        <colgroup>
-                            <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Sell</th>
-                            <th>Storage fee</th>
-                            <th>Transaction fee</th>
-                            <th>Transfer in</th>
-                            <th>Transfer out</th>
-                            <th>Withdrawal</th>
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.sell.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.sell.gram_amount) }} g</div>
-                                </td>
-                               
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.storage_fee.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.storage_fee.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.transaction_fee.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.transaction_fee.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.transfer_in.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.transfer_in.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.transfer_out.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.transfer_out.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.gold.transactions.withdrawal.money_amount) }} €</div>
-                                    <div>{{ $n(data.gold.transactions.withdrawal.gram_amount) }} g</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+
             </div>
-            <div v-if="data.silver">
-                <h3 class="my-3">Silver</h3>
-                <div class="my-3" v-if="data.silver.agio">
-                    <h5>Agio</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Claim</th>
-                            <th>Discounts</th>
-                            <th>Discount from advisor</th>
-                            <th>Discount inaia special offer</th>
-                            <th>Discount pay immediately</th>
-                            <th>Payment</th>
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>{{ $n(data.silver.agio.claim.amount) }}</td>
-                               
-                                <td>{{ data.silver.agio.discount.amount }}</td>
-                                <td>{{ data.silver.agio.discount_from_advisor.amount }}</td>
-                                <td>{{ data.silver.agio.discount_inaia_special_offer.amount }}</td>
-                                <td>{{ data.silver.agio.discount_pay_immediately.amount }}</td>
-                                <td>{{ data.silver.agio.payment.amount }}</td>
+            <div v-else>
+                
+                    
+                    <div v-for="asset in assets" :key="asset" class="mt-3">
+                        <div class="font-weight-bold text-info">{{ asset.id }} data</div>
+                        <div class="font-weight-bold my-3">
+                            Agio:
+                        </div>
+                        <table v-for="agio in agios.filter(a=>a.asset == asset.id)" :key="agio.asset">
+                            <tr v-for="[key,value] in Object.entries(agio)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
+                                </td>
                             </tr>
-                        </tbody>
-                    </table>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Claims:
+                        </div>
+                        <table v-for="claim in claims.filter(a=>a.asset == asset.id)" :key="claim.asset">
+                            <tr v-for="[key,value] in Object.entries(claim)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key) }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} €
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Depots:
+                        </div>
+                        <table v-for="depot in depots.filter(a=>a.asset == asset.id)" :key="depot.asset">
+                            <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ $t(key)}} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="font-weight-bold my-3">
+                            Transactions:
+                        </div>
+                        <table v-for="transaction in transactions.filter(a=>a.asset == asset.id)" :key="transaction.asset">
+                            <tr v-for="[key,value] in Object.entries(transaction)" :key="key" >
+                                <td v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ key }} :
+                                </td>
+                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
+                                    {{ value }} 
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <div class="my-3" v-if="data.silver.claims">
-                    <h5>Claims</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        <col span="1" style="width: 20%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Direct debit return</th>
-                            <th>Gold delivery charge</th>
-                            <th>Gold storage fee</th>
-                            <th>Order reverted</th>
-                            <th>Silver storage fee</th>
-                           
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>{{ $n(data.silver.claims.direct_debit_return.amount) }}</td>
-                               
-                                <td>{{ $n(data.silver.claims.gold_delivery_charge.amount) }}</td>
-                                <td>{{ $n(data.silver.claims.gold_storage_fee.amount) }}</td>
-                                <td></td>
-                                <td>{{ $n(data.silver.claims.silver_storage_fee.amount) }}</td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="my-3" v-if="data.silver.transactions">
-                    <h5>Transactions</h5>
-                    <table class="text-sm">
-                        <colgroup>
-                            <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Agio</th>
-                            <th>Delivery</th>
-                            <th>Deposit</th>
-                            <th>Gift</th>
-                            <th>Purchase</th>
-                            <th>Refund</th>
-                            
-                           
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.agio.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.agio.gram_amount) }} g</div>
-                                </td>
-                               
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.delivery.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.delivery.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.deposit.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.deposit.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.gift.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.gift.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.purchase.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.purchase.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.refund.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.refund.gram_amount) }} g</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="text-sm">
-                        <colgroup>
-                            <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        <col span="1" style="width: 15%;">
-                        
-                        </colgroup>
-                        <thead class="text-sm-center">
-                            <th>Sell</th>
-                            <th>Storage fee</th>
-                            <th>Transaction fee</th>
-                            <th>Transfer in</th>
-                            <th>Transfer out</th>
-                            <th>Withdrawal</th>
-                        </thead>
-                        <tbody class="text-sm-center">
-                            <tr class="my-2">
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.sell.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.sell.gram_amount) }} g</div>
-                                </td>
-                               
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.storage_fee.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.storage_fee.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.transaction_fee.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.transaction_fee.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.transfer_in.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.transfer_in.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.transfer_out.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.transfer_out.gram_amount) }} g</div>
-                                </td>
-                                <td>
-                                    <div>{{ $n(data.silver.transactions.withdrawal.money_amount) }} €</div>
-                                    <div>{{ $n(data.silver.transactions.withdrawal.gram_amount) }} g</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            
         </div>
         <div class="d-flex justify-content-center align-items-center" style="height: 200px;" v-else>
           <Loader/>
@@ -367,26 +166,298 @@
 </template>
 <script>
 import { mapGetters } from "vuex"
-import { DatePicker } from 'element-ui';
+import { DatePicker,Checkbox } from 'element-ui';
 import {formatDateToApiFormat} from '@/helpers/helpers'
 export default({
     components: {
-        DatePicker
+        DatePicker,
+        Checkbox
     },
     computed: {
         ...mapGetters({
             data: "statistic/monthlyPeformance"
         }),
+        salesAdvisors(){
+            let advisors = [];
+            if(this.data){
+                if(this.data.sales_advisors){
+                    for(const [key,value] of Object.entries(this.data.sales_advisors)){
+                        let advisor = {
+                            id:key
+                        }
+                        for(const [key1,value1] of Object.entries(value)){
+                            if(key1!="gold" && key1!='silver'){
+                                advisor[key1] = value1
+                            }
+                        }
+                        advisors.push(advisor)
+                    }
+                }
+                
+            }
+            return advisors;
+        },
+        agios(){
+            let agios = [];
+            if(this.data){
+                if(this.data.sales_advisors){
+                    for(const [key,value] of Object.entries(this.data.sales_advisors)){
+                        
+                        for(const [key1,value1] of Object.entries(value)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='agio'){
+                                    let agio = {
+                                    sales_advisor:key,
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        agio[key3] = value3.amount/100
+                                    }
+                                    agios.push(agio)
+                                }
+                               }
+                            }
+                        }
+                        
+                    }
+                }
+                else{
+                    for(const [key1,value1] of Object.entries(this.data)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='agio'){
+                                    let agio = {
+                                    
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        agio[key3] = value3.amount/100
+                                    }
+                                    agios.push(agio)
+                                }
+                               }
+                            }
+                        }
+                }
+            }
+            return agios;
+        },
+        claims(){
+            let d = [];
+            if(this.data){
+                if(this.data.sales_advisors){
+                    for(const [key,value] of Object.entries(this.data.sales_advisors)){
+                        
+                        for(const [key1,value1] of Object.entries(value)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='claims'){
+                                    let entry = {
+                                    sales_advisor:key,
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        entry[key3] = value3.amount/100
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                        
+                    }
+                }
+                else{
+                    for(const [key1,value1] of Object.entries(this.data)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='claims'){
+                                    let entry = {
+                                    
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        entry[key3] = value3.amount/100
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                }
+            }
+            return d;
+        },
+        depots(){
+            let d = [];
+            if(this.data){
+                if(this.data.sales_advisors){
+                    for(const [key,value] of Object.entries(this.data.sales_advisors)){
+                        
+                        for(const [key1,value1] of Object.entries(value)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='depots'){
+                                    let entry = {
+                                    sales_advisor:key,
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        if(key3!='total_no_of_depots' && key3!='total_no_of_savings_plans')
+                                            entry[key3] = value3/100 +' €'
+                                        else{
+                                            entry[key3] = value3
+                                        }
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                        
+                    }
+                }
+                else{
+                    for(const [key1,value1] of Object.entries(this.data)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='depots'){
+                                    let entry = {
+                                    
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        if(key3!='total_no_of_depots' && key3!='total_no_of_savings_plans')
+                                            entry[key3] = value3/100 +' €'
+                                        else{
+                                            entry[key3] = value3
+                                        }
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                }
+            }
+            return d;
+        },
+        transactions(){
+            let d = [];
+            if(this.data){
+                if(this.data.sales_advisors){
+                    for(const [key,value] of Object.entries(this.data.sales_advisors)){
+                        
+                        for(const [key1,value1] of Object.entries(value)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='transactions'){
+                                    let entry = {
+                                    sales_advisor:key,
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        entry[key3]='';
+                                        for(const [key4,value4] of Object.entries(value3)){
+                                            if(key4 == 'gram_amount'){
+                                                if(entry[key3].length != 0){
+                                                    entry[key3]+=" / "
+                                                }
+                                                entry[key3]+=value4/1000 + " g"
+                                            }
+                                            if(key4 == 'money_amount'){
+                                                if(entry[key3].length != 0){
+                                                    entry[key3]+=" / "
+                                                }
+                                                entry[key3]+=value4/100 + " €"
+                                            }
+                                        }
+                                        
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                        
+                    }
+                }
+                else{
+                    for(const [key1,value1] of Object.entries(this.data)){
+                            if(key1=="gold" || key1=='silver'){
+                               
+                               for(const [key2,value2] of Object.entries(value1)){
+                                
+                                if(key2=='transactions'){
+                                    let entry = {
+                                    
+                                    asset:key1
+                                    }
+                                    for(const [key3,value3] of Object.entries(value2)){
+                                        entry[key3]='';
+                                        for(const [key4,value4] of Object.entries(value3)){
+                                            if(key4 == 'gram_amount'){
+                                                if(entry[key3].length != 0){
+                                                    entry[key3]+=" / "
+                                                }
+                                                entry[key3]+=value4/1000 + " g"
+                                            }
+                                            if(key4 == 'money_amount'){
+                                                if(entry[key3].length != 0){
+                                                    entry[key3]+=" / "
+                                                }
+                                                entry[key3]+=value4/100 + " €"
+                                            }
+                                        }
+                                    }
+                                    d.push(entry)
+                                }
+                               }
+                            }
+                        }
+                }
+            }
+            return d;
+        }
     },
     data(){
         return {
             startDate:null,
             endDate:null,
-            loading:false
+            loading:false,
+            groupBySalesPerson:false,
+            assets:[
+                {
+                    id:'gold'
+                },
+                {
+                    id:'silver'
+                }
+            ]
         }
     },
     mounted(){
         this.loadData();
+    },
+    watch:{
+        groupBySalesPerson:{
+            handler() {this.loadData()},immediate:true
+        }
     },
     methods:{
         loadData(){
@@ -396,9 +467,13 @@ export default({
             if(this.startDate && this.endDate){
                 payload= `start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
             }
+            if(this.groupBySalesPerson){
+                payload+=`&group_by=sales_advisor`;
+            }
             this.$store.dispatch('statistic/getMonthlyPeformance',payload).finally(()=>{
                 console.log(this.data);
                 this.loading = false
+                
             })
         },
         changeDate(){
