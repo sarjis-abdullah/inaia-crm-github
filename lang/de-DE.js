@@ -767,5 +767,6 @@ export default {
     activate_contract:'Activate contract',
     are_you_sure_you_want_to_delete_this_account_permanently:'Are you sure you want to delete this client and its data permanently?',
     client_deleted_successfully:'The client deleted successfully',
-    delete_account:'Delete account'
+    delete_account:'Delete account',
+    remove_claims:'Remove claims'
 }

@@ -45,10 +45,22 @@
             </div>
             <div class="card-header" v-else>
               <div class="row align-items-center">
-                <div class="col text-right">
+                <div class="col text-right" v-if="!removeClaims">
+                  <button @click.prevent="activateRemovingClaims()" type="button" class="btn base-button btn-icon btn-fab btn-danger btn-sm">
+                        <span class="btn-inner--text">{{$t('remove_claims')}}</span>
+                      </button>
                   <button @click.prevent="initiateBatchProcessPayment()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                         <span class="btn-inner--text">{{$t('initiate_payment')}}</span>
                       </button>
+                  </div>
+                  <div class="col text-right" v-else>
+                    <base-button size="sm" type="neutral" @click="cancelRemove">
+                      {{$t('cancel')}}
+                    </base-button>
+                    <base-button size="sm" type="neutral" @click="completeRemove" :disabled="selectedClaims.length==0">
+                      {{$t('confirm')}}
+                    </base-button>
+
                   </div>
               </div>
             </div>
@@ -60,7 +72,7 @@
       >
         <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
-            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="(row && row.claim_status && row.claim_status.name_translation_key == 'pending') && (makingManyAsPaid || initiatePaymentForMany)">
+            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="((row && row.claim_status && row.claim_status.name_translation_key == 'pending') && (makingManyAsPaid || initiatePaymentForMany)) || removeClaims">
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
@@ -286,7 +298,8 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         filterQuery:'',
         selectedClaim:null,
         showDetail:false,
-        showCreateForm:false
+        showCreateForm:false,
+        removeClaims:false
       };
     },
     mounted(){
@@ -316,6 +329,33 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
       },
       closeAddClaim(){
         this.showCreateNewClaim = false;
+      },
+      activateRemovingClaims(){
+        this.removeClaims = true;
+      },
+      cancelRemove(){
+        this.removeClaims = false;
+      },
+      completeRemove(){
+        const data = {
+          "claim_ids":this.selectedClaims
+        }
+        const payload = {
+          id:this.batch_process_id,
+          data:data
+        }
+        this.$store.dispatch('claims/removeClaimsFromBatch',payload).then(res=>{
+          this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("claim_removed_successfully"),
+            });
+            this.selectedClaim = [];
+            this.removeClaims = false;
+            this.fetchClaims();
+        }).catch(err=>{
+          apiErrorHandler(err,this.$notify)
+        })
       },
       handleCommand(command,id){
         if(command=="mark_as_paid"){

@@ -177,5 +177,10 @@ export const actions = {
         return this.$axios.post(`${process.env.golddinarApiUrl}/claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
             return res.data.message.data.url;
         })
+    },
+    removeClaimsFromBatch(context,payload){
+        return this.$axios.post(`${process.env.golddinarApiUrl}/claim-batch-processes/${payload.id}/remove-claims`,payload.data).then((res)=>{
+            return true;
+        })
     }
 }
