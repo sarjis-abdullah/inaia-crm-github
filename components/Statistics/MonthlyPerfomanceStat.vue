@@ -65,7 +65,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
+                                    {{ $n(value) }} €
                                 </td>
                             </tr>
                         </table>
@@ -93,7 +93,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
+                                    {{ $n(value) }} €
                                 </td>
                             </tr>
                         </table>
@@ -131,7 +131,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
+                                    {{ $n(value) }} €
                                 </td>
                             </tr>
                         </table>
@@ -157,7 +157,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} €
+                                    {{ $n(value) }} €
                                 </td>
                             </tr>
                         </table>
@@ -326,7 +326,7 @@ export default({
                                     }
                                     for(const [key3,value3] of Object.entries(value2)){
                                         if(key3!='total_no_of_depots' && key3!='total_no_of_savings_plans')
-                                            entry[key3] = value3/100 +' €'
+                                            entry[key3] = this.$n(value3/100) +' €'
                                         else{
                                             entry[key3] = value3
                                         }
@@ -352,7 +352,7 @@ export default({
                                     }
                                     for(const [key3,value3] of Object.entries(value2)){
                                         if(key3!='total_no_of_depots' && key3!='total_no_of_savings_plans')
-                                            entry[key3] = value3/100 +' €'
+                                            entry[key3] = this.$n(value3/100) +' €'
                                         else{
                                             entry[key3] = value3
                                         }
@@ -389,13 +389,13 @@ export default({
                                                 if(entry[key3].length != 0){
                                                     entry[key3]+=" / "
                                                 }
-                                                entry[key3]+=value4/1000 + " g"
+                                                entry[key3]+=this.$n(value4/1000) + " g"
                                             }
                                             if(key4 == 'money_amount'){
                                                 if(entry[key3].length != 0){
                                                     entry[key3]+=" / "
                                                 }
-                                                entry[key3]+=value4/100 + " €"
+                                                entry[key3]+=this.$n(value4/100) + " €"
                                             }
                                         }
                                         
@@ -426,13 +426,13 @@ export default({
                                                 if(entry[key3].length != 0){
                                                     entry[key3]+=" / "
                                                 }
-                                                entry[key3]+=value4/1000 + " g"
+                                                entry[key3]+=this.$n(value4/1000) + " g"
                                             }
                                             if(key4 == 'money_amount'){
                                                 if(entry[key3].length != 0){
                                                     entry[key3]+=" / "
                                                 }
-                                                entry[key3]+=value4/100 + " €"
+                                                entry[key3]+=this.$n(value4/100) + " €"
                                             }
                                         }
                                     }
@@ -468,7 +468,7 @@ export default({
     watch:{
         groupBySalesPerson:{
             handler() {this.loadData()},immediate:true
-        }
+        },
     },
     methods:{
         loadData(){
