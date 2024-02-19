@@ -350,7 +350,7 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
               timeout: 5000,
               message: this.$t("claim_removed_successfully"),
             });
-            this.selectedClaim = [];
+            this.selectedClaims = [];
             this.removeClaims = false;
             this.fetchClaims();
         }).catch(err=>{
