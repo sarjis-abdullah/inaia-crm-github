@@ -182,7 +182,7 @@
           <sidebar-item :link="{ name: $t('batch_claims'), path: '/accounting/claims/batch-claims' }" v-if="hasClaimsAccess"/>
         </sidebar-item>
         <sidebar-item
-          v-if="superAdmin"
+          v-if="hasStatisticsAccess"
           :link="{
             name: $t('reports'),
             icon: 'lnir lnir-sales-report text-primary',
@@ -334,7 +334,7 @@
   import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
   import {canViewOrder,
-    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin} from '~/permissions';
+    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin,canViewStatistics} from '~/permissions';
   export default {
     components: {
       DashboardNavbar,
@@ -386,6 +386,9 @@
       },
       hasMarketingAccess(){
         return canViewMarketing();
+      },
+      hasStatisticsAccess(){
+        return canViewStatistics();
       }
     },
     data(){

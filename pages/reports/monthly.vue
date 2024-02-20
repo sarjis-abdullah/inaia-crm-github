@@ -9,21 +9,21 @@
     </base-header>
 
     <div class="container-fluid mt--6">
-        <MonthlyPerfomanceStat v-if="superAdmin"/>
+        <MonthlyPerfomanceStat v-if="hasAccess"/>
     </div>
   </div>
 </template>
 <script>
 import MonthlyPerfomanceStat from '@/components/Statistics/MonthlyPerfomanceStat.vue'
-import {canViewAdmin,canEditAdmin} from '@/permissions';
+import {canViewStatistics} from '@/permissions';
 export default {
     layout: 'DashboardLayout',
     components:{
         MonthlyPerfomanceStat
     },
     computed:{
-      superAdmin(){
-          return canViewAdmin() && canEditAdmin()
+      hasAccess(){
+          return canViewStatistics() 
         },
     }
 }
