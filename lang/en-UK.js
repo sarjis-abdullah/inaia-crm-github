@@ -778,5 +778,9 @@ export default {
     are_you_sure_you_want_to_delete_this_account_permanently:'Are you sure you want to delete this client and its data permanently?',
     client_deleted_successfully:'The client deleted successfully',
     delete_account:'Delete account',
-    remove_claims:'Remove claims'
+    remove_claims:'Remove claims',
+    debit_date:'Debit date',
+    notify_user:'Notify user',
+    do_you_want_to_notify_the_user:'Are you sure you want to notify the client?',
+    user_notified__successfully:'User notified successfully'
 }

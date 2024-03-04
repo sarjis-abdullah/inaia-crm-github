@@ -48,7 +48,7 @@
         </div>
 
     </div>
-    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ (!isLazy && singleClientData && singleClientData.customer && singleClientData.customer.account)?singleClientData.customer.account.account_number:accountId?accountId:customerId }}</a>
+    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ displayText}}</a>
   </el-popover>
   </div>
 </template>
@@ -77,7 +77,7 @@ export default {
   computed: {
     ...mapGetters({
       client: "clients/singleClientData",
-    }),
+    },),
 
     singleClientData() {
       return this.client(this.customerId,this.accountId);
@@ -103,6 +103,24 @@ export default {
       }
       return "/img/theme/avatar_m.png";
     },
+    displayText(){
+      if((!this.isLazy && this.singleClientData && this.singleClientData.customer && this.singleClientData.customer.account)){
+        return this.singleClientData.customer.account.account_number;
+      }
+      else{
+        if(this.accountId == -1 && this.customerId == -1){
+          return "-"
+        }
+        else{
+          if(this.customerId > -1){
+            return this.customerId;
+          }
+          else if(this.accountId > -1){
+            return this.accountId;
+          }
+        }
+      }
+    }
   },
   mounted() {
    

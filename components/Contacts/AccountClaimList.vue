@@ -43,11 +43,11 @@
 
           align="right"
           prop="amount"
-          min-width="120"
+          min-width="180"
         >
           <template v-slot="{ row }">
             <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            <div>{{ $t(row.payment_method) }}</div>
+            <div v-if="row.possible_debit_date" class="text-xs text-muted">{{$t('debit_date')}} : {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</div>
           </template>
         </el-table-column>
           <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">

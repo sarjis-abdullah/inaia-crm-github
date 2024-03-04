@@ -72,7 +72,7 @@
       >
         <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
-            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="((row && row.claim_status && row.claim_status.name_translation_key == 'pending') && (makingManyAsPaid || initiatePaymentForMany)) || removeClaims">
+            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="shouldShowCheckBox(row)">
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
@@ -83,11 +83,12 @@
 
           align="right"
           prop="amount"
-          min-width="120"
+          min-width="180"
         >
           <template v-slot="{ row }">
             <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            <div>{{ $t(row.payment_method) }}</div>
+            <div v-if="row.possible_debit_date" class="text-xs text-muted">{{$t('debit_date')}} : {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</div>
+            
           </template>
         </el-table-column>
           <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">
@@ -315,6 +316,40 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
             .catch((err) => (this.loadingError = apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
 
+      },
+      shouldShowCheckBox(row){
+        if(this.makingManyAsPaid || this.initiatePaymentForMany)
+        {
+          if(row && row.claim_status){
+            if(row.claim_status.name_translation_key == 'payment_failed'){
+              return true;
+            }
+            if(row.claim_status.name_translation_key == 'pending'){
+              const now = Date.now();
+                    const dueDate = row.possible_debit_date?(new Date(row.possible_debit_date)):null;
+                    if(dueDate)
+                    {
+                        if(dueDate > now){
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
+                    }
+                    else{
+                        return true;
+                    }
+            }
+          }
+          else{
+            return false;
+          }
+        }
+        if(this.removeClaims)
+        {
+          return (row && row.claim_status && (row.claim_status.name_translation_key == 'pending'));
+        }
+        
       },
       showClaimDetail(claim){
         this.selectedClaim = claim;

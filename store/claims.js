@@ -182,5 +182,13 @@ export const actions = {
         return this.$axios.post(`${process.env.golddinarApiUrl}/claim-batch-processes/${payload.id}/remove-claims`,payload.data).then((res)=>{
             return true;
         })
-    }
+    },
+    notifyuser(context,payload){
+        return this.$axios
+                .post(`${process.env.golddinarApiUrl}/notifications/claims/debit`,payload)
+                .then(res=>{
+                    
+                    return true;
+                })
+    },
 }

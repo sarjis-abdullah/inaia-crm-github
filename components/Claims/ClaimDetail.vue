@@ -55,6 +55,11 @@
                   }}
                     </div>
                 </detail-list-item>
+                <detail-list-item :title="$t('debit_date')" v-if="claim.possible_debit_date">
+                    <div slot="value">
+                        {{claim.possible_debit_date?$d(new Date(claim.possible_debit_date),'short'):""}}  {{ numberOfDaysLeft }} 
+                    </div>
+                </detail-list-item>
                 <detail-list-item :title="$t('depot')" >
                     <div slot="value"><nuxt-link :to="'/depots/details/'+claim.depot_id">{{
                     claim.depot_number?claim.depot_number:claim.depot_id
@@ -83,6 +88,9 @@
                 <div v-if="selectedAction == 'cancel'">
                     {{$t('do_you_want_to_cancel_this_claim')}}
                 </div>
+                <div v-if="selectedAction == 'notifyuser'">
+                    {{$t('do_you_want_to_notify_the_user')}}
+                </div>
                 <div v-if="selectedAction == 'initiatepayment'">
                     <date-picker
             size="large"
@@ -104,11 +112,14 @@
                         <base-button @click="askToConfirm('cancel')" type="danger" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
                         {{$t('cancel_claim')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
+                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="showExecutePayment">
                         {{$t('mark_as_paid')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
+                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="showExecutePayment">
                         {{$t('initiate_payment')}}
+                        </base-button>
+                        <base-button type="primary" @click="askToConfirm('notifyuser')" :disabled="isSubmitting" v-if="!showExecutePayment && claim.claim_status.name_translation_key!='paid'">
+                        {{$t('notify_user')}}
                         </base-button>
         </template>
         <template v-else slot="footer">
@@ -127,6 +138,7 @@ import Status from "@/components/Claims/Status";
 import UserInfo from '@/components/Contacts/UserInfo';
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
+import moment from 'moment'
 export default {
     props:{
         showDetail:{
@@ -151,6 +163,45 @@ export default {
             isSubmitting:false,
             paymentExecutionDate:null
 
+        }
+    },
+    computed :{
+        showExecutePayment(){
+            if(this.claim && this.claim.claim_status){
+                if(this.claim.claim_status.name_translation_key == 'pending'){
+                    const now = Date.now();
+                    const dueDate = this.claim.possible_debit_date?(new Date(this.claim.possible_debit_date)):null;
+                    if(dueDate)
+                    {
+                        if(dueDate > now){
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
+                    }
+                    else{
+                        return true;
+                    }
+                    
+                }
+                if(this.claim.claim_status.name_translation_key == 'payment_failed'){
+                    return true;
+                }
+            }
+            return false;
+        },
+        numberOfDaysLeft(){
+            if(this.claim && this.claim.possible_debit_date){
+                let now = moment();
+                let dueDate = moment(this.claim.possible_debit_date);
+                const numOfDays = dueDate.diff(now,'days')
+                if(numOfDays>0) return '( in '+numOfDays+' days)';
+                else return ''
+            }
+            else{
+                return '';
+            }
         }
     },
     methods:{
@@ -224,6 +275,25 @@ export default {
                 }).finally(()=>{
                     this.isSubmitting = false;
                 })
+            }
+            if(this.selectedAction == "notifyuser"){
+                let data = {
+                    claim_ids:[this.claim.id]
+                };
+                this.isSubmitting = true;
+                this.$store.dispatch('claims/notifyuser',data).then(()=>{
+                this.$notify({
+                type: "success",
+                timeout: 5000,
+                message: this.$t("user_notified__successfully"),
+                
+                });
+                this.cancelConfirmation()
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
+            }).finally(()=>{
+                    this.isSubmitting = false;
+                });;
             }
             
         },
