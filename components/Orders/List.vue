@@ -15,7 +15,7 @@
                     </div>
                   </div>
 
-                  <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1"></OrderFilter>
+                  <OrderFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter' :isDepotSet="isDepotSet" :displayTypes="order_process_id==-1" :patchProcessId="order_process_id"></OrderFilter>
 
                 </div>
 
