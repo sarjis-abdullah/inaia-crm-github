@@ -16,9 +16,48 @@
 */
 
 const pkg = require('./package')
-const appEnv  = process.env.NODE_ENV || 'development'
-import EnvKeys from './config'
+const appEnv  = process.env.NODE_ENV || 'development';
+import appNames from './appNames';
+const appName  = process.env.CURRENT_APP || appNames.inaiaEu
+import EnvKeys from './config';
 
+import gggEnvKeys from './gggConfig';
+let selectedConfig = EnvKeys;
+let pageTitle = "CRM - INAIA Cloud";
+let css =[
+  'assets/css/nucleo/css/nucleo.css',
+  'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
+  //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
+  'assets/css/icomoon/style.css',
+  'assets/sass/argon.scss',
+]
+switch (appName) {
+  case appNames.inaiaEu:
+    selectedConfig = EnvKeys;
+    pageTitle = "CRM - INAIA Cloud"
+    css =[
+      'assets/css/nucleo/css/nucleo.css',
+      'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
+      //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
+      'assets/css/icomoon/style.css',
+      'assets/sass/argon.scss',
+    ]
+    break;
+    case appNames.getGreenGold:
+      selectedConfig = gggEnvKeys;
+      pageTitle = "CRM - Get Green Gold Cloud"
+      css =[
+        'assets/css/nucleo/css/nucleo.css',
+        'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
+        //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
+        'assets/css/icomoon/style.css',
+        'assets/sass/ggg-argon.scss',
+      ]
+      break;
+  default:
+    selectedConfig = EnvKeys;
+    break;
+}
 module.exports = {
   mode: 'spa',
 //   mode: 'universal',
@@ -30,7 +69,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'CRM - INAIA Cloud',
+    title: pageTitle,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -51,13 +90,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: [
-    'assets/css/nucleo/css/nucleo.css',
-    'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
-    //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
-    'assets/css/icomoon/style.css',
-    'assets/sass/argon.scss',
-  ],
+  css: css,
 
   /*
   ** Plugins to load before mounting the App
@@ -86,7 +119,7 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    ...EnvKeys[appEnv].axios
+    ...selectedConfig[appEnv].axios
     // See https://github.com/nuxt-community/axios-module#options
   },
 
@@ -95,14 +128,15 @@ module.exports = {
    * access from devices in the same network
    */
   server: {
-    ...EnvKeys[appEnv].server
+    ...selectedConfig[appEnv].server
   },
 
   /**
    * Environment configurations
    */
   env: {
-    ...EnvKeys[appEnv].env
+    ...selectedConfig[appEnv].env,
+    CURRENT_APP:appName
   },
 
   /*

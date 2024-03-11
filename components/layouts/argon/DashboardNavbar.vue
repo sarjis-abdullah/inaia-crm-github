@@ -2,7 +2,7 @@
   <base-nav
     container-classes="container-fluid"
     class="navbar-top border-bottom navbar-expand"
-    :class="{'bg-gradient-info navbar-dark': type === 'default'}"
+    :class="navVarBackground"
   >
 
     <!-- Search form -->
@@ -151,7 +151,7 @@
   import Modal from '@/components/argon-core/Modal.vue';
   import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
-
+  import appNames from '../../../appNames';
   export default {
     components: {
       CollapseTransition,
@@ -224,6 +224,13 @@
           return name;
         }
         return '';
+      },
+      navVarBackground(){
+        let app = process.env.CURRENT_APP;
+        if(app == appNames.getGreenGold)
+          return 'bg-gradient-default navbar-dark';
+        else
+        return 'bg-gradient-info navbar-dark';
       }
     },
     data() {
