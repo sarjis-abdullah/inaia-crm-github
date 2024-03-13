@@ -774,5 +774,7 @@ export default {
     do_you_want_to_notify_the_user:'Are you sure you want to notify the client?',
     user_notified__successfully:'User notified successfully',
     administrationPanelTitle:"Get Green Gold Cloud Administration",
-    companyName:'GetGreenGold GmbH'
+    companyName:'GetGreenGold GmbH',
+    unassigned:'Unassigned',
+    target:'Target'
 }

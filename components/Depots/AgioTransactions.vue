@@ -41,8 +41,8 @@
           <div class="media align-items-center">
             <div class="media-body">
               <div class="font-weight-300 name">{{ row.id }}</div>
-              <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : {{row.created_by}}</div>
-              <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : {{row.updated_by}}</div>
+              <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : <UserInfo :accountId="row.created_by" :isLazy="true"/></div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : <UserInfo :accountId="row.updated_by" :isLazy="true"/></div>
             </div>
           </div>
         </template>
@@ -144,7 +144,7 @@ import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
 import { canEditDepot} from '@/permissions'; 
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
-
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
   props: {
     depot_id: {
@@ -159,7 +159,8 @@ export default {
     IconButton,
     AddAgioTransaction,
     Input,
-    Button
+    Button,
+    UserInfo
   },
   computed: {
     ...mapGetters({

@@ -774,5 +774,7 @@ export default {
     do_you_want_to_notify_the_user:'Are you sure you want to notify the client?',
     user_notified__successfully:'User notified successfully',
     administrationPanelTitle:"INAIA Cloud Administration",
-    companyName:'INAIA GmbH'
+    companyName:'INAIA GmbH',
+    unassigned:'Unassigned',
+    target:'Target'
 }

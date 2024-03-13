@@ -53,6 +53,9 @@
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
+                <p class="mt-3 mb-0 text-sm" v-if="client!=null">
+                  {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                </p>
               </div>
             </div>
           </div>
