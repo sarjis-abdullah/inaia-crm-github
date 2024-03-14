@@ -53,8 +53,14 @@
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
-                <p class="mt-3 mb-0 text-sm" v-if="client!=null">
+                <p class="mt-3 mb-0 text-sm" >
                   {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                </p>
+                <p class="mb-0 text-sm" v-if="paymentMethod">
+                  {{ $t('payment_method') }} : {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
+                </p>
+                <p class="mb-0 text-sm" v-if="paymentAccount">
+                  {{ $t('account') }} : {{ paymentAccountDetails  }}
                 </p>
               </div>
             </div>
@@ -417,7 +423,9 @@ export default {
             showEditSalesAdvisor:false,
             showWithdrawConfirm:false,
             showCompleteContract:false,
-            showConfirmActivate:false
+            showConfirmActivate:false,
+            paymentMethod:null,
+            paymentAccount:null
         }
     },
     components: {
@@ -461,6 +469,22 @@ export default {
         },
         hadSavingPlanStatusEditAccess(){
           return canModifySavingPlanStatus();
+        },
+        paymentAccountDetails(){
+          if(this.paymentAccount){
+            let bank = "";
+            let iban = "";
+            this.paymentAccount.payment_account_specs.forEach(spec=>{
+              if(spec.name =='iban'){
+                iban = spec.value;
+              }
+              if(spec.name =='bank_name'){
+                bank = spec.value;
+              }
+            })
+            return bank + ' '+ iban
+          }
+          return ''
         }
 
     },
@@ -520,7 +544,16 @@ export default {
         {
             this.$store.dispatch('depots/details',this.depotId).then((res)=>{
 
-                this.initPrices()
+                this.initPrices();
+                this.paymentMethod = res.data.data.payment_method;
+                
+                if(res.data.data.payment_account_id!=null){
+                  this.$store.dispatch('payment-accounts/getPaymentAccountDetails',res.data.data.payment_account_id).then(res=>{
+                    
+                    this.paymentAccount = res;
+
+                  })
+                }
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
                       this.client = res;

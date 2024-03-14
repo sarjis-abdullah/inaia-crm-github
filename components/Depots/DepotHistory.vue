@@ -12,6 +12,14 @@
       :data="depotHistories"
     >
     <el-table-column
+        v-bind:label="$t('date')"
+        prop="created_at"
+      >
+        <template v-slot="{ row }">
+          {{ row.created_at ? $d(new Date(row.created_at)) : '' }}
+        </template>
+      </el-table-column>
+    <el-table-column
         v-bind:label="$t('saving_plan')"
         prop="is_savings_plan"
       >

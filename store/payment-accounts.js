@@ -53,5 +53,12 @@ export const actions = {
                     context.commit('addPaymentAccounts', res.data.data)
                     return res.data.data;
                 })
+    },
+    getPaymentAccountDetails(context,paylaod){
+        return this.$axios
+        .get(`${ process.env.paymentsApiUrl }/payment-account/${paylaod}`).then(res=>{
+            
+            return res.data.data;
+        })
     }
 }
