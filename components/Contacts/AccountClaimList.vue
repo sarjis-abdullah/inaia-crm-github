@@ -43,14 +43,14 @@
 
           align="right"
           prop="amount"
-          min-width="180"
+          
         >
           <template v-slot="{ row }">
             <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            <div v-if="row.possible_debit_date" class="text-xs text-muted">{{$t('debit_date')}} : {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</div>
+            
           </template>
         </el-table-column>
-          <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">
+          <el-table-column v-bind:label="$t('type')"  prop="type" min-width="180">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
 
@@ -63,7 +63,7 @@
 
 
             </div>
-            {{row.created_at?$d(new Date(row.created_at),'short'):""}}
+            
           </template>
         </el-table-column>
 
@@ -82,7 +82,11 @@
             </div>
           </template>
         </el-table-column>
-        
+        <el-table-column v-bind:label="$t('created_date') + ' / ' +$t('debit_date')"   min-width="150">
+          <template v-slot="{ row }">
+          {{row.created_at?$d(new Date(row.created_at),'short'):""}}<span v-if="row.possible_debit_date" > / {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</span>
+          </template>
+        </el-table-column>
         <el-table-column>
             <template v-slot="{ row }" >
               <IconButton type="info" @click="()=>showClaimDetail(row)"/>
@@ -138,7 +142,7 @@
       </base-button>
     </template>
     </modal>
-    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail"/>
+    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail" @onUserNotified="fetchClaims"/>
     </div>
   </template>
   <script>
@@ -227,7 +231,9 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
     },
     methods: {
       fetchClaims(searchQuery) {
-
+          if(!searchQuery){
+            searchQuery = this.searchQuery;
+          }
           this.isLoading = true;
           this.$store
             .dispatch("claims/getClientClaims", searchQuery)

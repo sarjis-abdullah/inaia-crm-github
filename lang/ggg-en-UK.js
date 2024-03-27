@@ -786,5 +786,6 @@ export default {
     administrationPanelTitle:"Get Green Gold Cloud Administration",
     companyName:'GetGreenGold GmbH',
     unassigned:'Unassigned',
-    target:'Target'
+    target:'Target',
+    created_date:'Created date'
 }

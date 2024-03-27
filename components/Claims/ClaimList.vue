@@ -52,6 +52,9 @@
                   <button @click.prevent="initiateBatchProcessPayment()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                         <span class="btn-inner--text">{{$t('initiate_payment')}}</span>
                       </button>
+                      <button @click.prevent="notifyUsers()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" :disabled="isSubmitting">
+                        <span class="btn-inner--text">{{$t('notify_user')}}</span>
+                      </button>
                   </div>
                   <div class="col text-right" v-else>
                     <base-button size="sm" type="neutral" @click="cancelRemove">
@@ -83,11 +86,11 @@
 
           align="right"
           prop="amount"
-          min-width="180"
+          
         >
           <template v-slot="{ row }">
             <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            <div v-if="row.possible_debit_date" class="text-xs text-muted">{{$t('debit_date')}} : {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</div>
+            
             
           </template>
         </el-table-column>
@@ -104,7 +107,7 @@
 
 
             </div>
-            {{row.created_at?$d(new Date(row.created_at),'short'):""}}
+            
           </template>
         </el-table-column>
 
@@ -127,11 +130,7 @@
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
               <div>
-                <span class="orderType text-body"
-                  >{{
-                    row.account_id
-                  }}</span
-                >
+                <UserInfo :accountId="row.account_id" slot="value" :isLazy="true"/>
 
               </div>
             </div>
@@ -153,6 +152,11 @@
                 >
               </div>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column v-bind:label="$t('created_date') + ' / ' +$t('debit_date')"   min-width="150">
+          <template v-slot="{ row }">
+          {{row.created_at?$d(new Date(row.created_at),'short'):""}}<span v-if="row.possible_debit_date" > / {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</span>
           </template>
         </el-table-column>
         <el-table-column>
@@ -213,7 +217,7 @@
       </base-button>
     </template>
     </modal>
-    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail"/>
+    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail" @onUserNotified="fetchClaims"/>
     
 </div>
   </template>
@@ -277,6 +281,17 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         },
         immediate: true,
       },
+      claims:{
+        handler(){
+          if(this.selectedClaim!=null){
+            const newClaim = this.claims.find(c=>c.id==this.selectedClaim.id);
+            if(newClaim){
+              this.selectedClaim = newClaim;
+            }
+          }
+        },
+        immediate:true
+      }
     },
     data() {
       return {
@@ -308,7 +323,6 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
       },
     methods: {
       fetchClaims() {
-
           this.isLoading = true;
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
@@ -512,6 +526,30 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         }).catch((err) => {
           apiErrorHandler(err,this.$notify);
         });
+      },
+      notifyUsers(){
+        let data = {
+          claim_batch_process_id:this.batch_process_id
+        }
+        this.isSubmitting = true
+        this.$store.dispatch('claims/notifyuser',data).then(()=>{
+                this.$notify({
+                type: "success",
+                timeout: 5000,
+                message: this.$t("user_notified__successfully"),
+                
+                });
+                setTimeout(()=>{
+                  this.fetchClaims();
+                  this.isSubmitting = false;
+                },5000)
+                
+            }).catch((err)=>{
+                apiErrorHandler(err,this.$notify);
+                this.isSubmitting = false;
+            }).finally(()=>{
+                    
+                });
       },
       applyFilter: function(query)
         {

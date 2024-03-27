@@ -118,7 +118,7 @@
                         <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="showExecutePayment">
                         {{$t('initiate_payment')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('notifyuser')" :disabled="isSubmitting" v-if="!showExecutePayment && claim.claim_status.name_translation_key!='paid'">
+                        <base-button type="primary" @click="askToConfirm('notifyuser')" :disabled="isSubmitting" v-if="shouldNotify">
                         {{$t('notify_user')}}
                         </base-button>
         </template>
@@ -139,6 +139,7 @@ import UserInfo from '@/components/Contacts/UserInfo';
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import moment from 'moment'
+import WithdrawalVue from '../Banking/BankingTransactionDetail/Withdrawal.vue';
 export default {
     props:{
         showDetail:{
@@ -180,10 +181,6 @@ export default {
                             return true;
                         }
                     }
-                    else{
-                        return true;
-                    }
-                    
                 }
                 if(this.claim.claim_status.name_translation_key == 'payment_failed'){
                     return true;
@@ -202,6 +199,12 @@ export default {
             else{
                 return '';
             }
+        },
+        shouldNotify(){
+            if(this.claim && this.claim.possible_debit_date==null && this.claim.claim_status.name_translation_key == 'pending'){
+                return true;
+            }
+            return false;
         }
     },
     methods:{
@@ -288,11 +291,18 @@ export default {
                 message: this.$t("user_notified__successfully"),
                 
                 });
+                setTimeout(()=>{
+                    this.$emit('onUserNotified')
+                    this.isSubmitting = false;
+                },5000)
+                
+                
                 this.cancelConfirmation()
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify);
+                this.isSubmitting = false;
             }).finally(()=>{
-                    this.isSubmitting = false;
+                    
                 });;
             }
             

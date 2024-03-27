@@ -786,5 +786,6 @@ export default {
     administrationPanelTitle:"INAIA Cloud Administration",
     companyName:'INAIA GmbH',
     unassigned:'Unassigned',
-    target:'Target'
+    target:'Target',
+    created_date:'Created date'
 }
