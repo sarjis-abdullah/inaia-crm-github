@@ -528,28 +528,37 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         });
       },
       notifyUsers(){
+        this.$confirm(this.$t('do_you_want_to_notify_users_about_claim'), 'Warning', {
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+            this.isSubmitting = true
+            this.$store.dispatch('claims/notifyuser',data).then(()=>{
+                    this.$notify({
+                    type: "success",
+                    timeout: 5000,
+                    message: this.$t("user_notified__successfully"),
+                    
+                    });
+                    setTimeout(()=>{
+                      this.fetchClaims();
+                      this.isSubmitting = false;
+                    },5000)
+                    
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
+                    this.isSubmitting = false;
+                }).finally(()=>{
+                        
+                    });
+          }).catch((err) => {
+            apiErrorHandler(err,this.$notify);
+          });
         let data = {
           claim_batch_process_id:this.batch_process_id
         }
-        this.isSubmitting = true
-        this.$store.dispatch('claims/notifyuser',data).then(()=>{
-                this.$notify({
-                type: "success",
-                timeout: 5000,
-                message: this.$t("user_notified__successfully"),
-                
-                });
-                setTimeout(()=>{
-                  this.fetchClaims();
-                  this.isSubmitting = false;
-                },5000)
-                
-            }).catch((err)=>{
-                apiErrorHandler(err,this.$notify);
-                this.isSubmitting = false;
-            }).finally(()=>{
-                    
-                });
+
       },
       applyFilter: function(query)
         {
