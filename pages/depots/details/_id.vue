@@ -45,6 +45,7 @@
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
+                      <a class="dropdown-item" @click.prevent="changeTargetType">{{ $t("change_target") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                       
                     </base-dropdown>
@@ -364,6 +365,7 @@
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
         <AssignSalesAdvisor :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
+        <UpdateTargetTypeModal :showModal="showEditTargetTypeModal" :depot="depot" @cancelEditAdvisor="showEditTargetTypeModal = false"/>
       </div>
     </div>
   </div>
@@ -376,6 +378,7 @@ import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
 import AssignSalesAdvisor from "@/components/Depots/AssignSalesAdvisor";
+import UpdateTargetTypeModal from "@/components/Depots/UpdateTargetTypeModal";
 import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
 import Status from '@/components/Depots/Status';
@@ -425,7 +428,8 @@ export default {
             showCompleteContract:false,
             showConfirmActivate:false,
             paymentMethod:null,
-            paymentAccount:null
+            paymentAccount:null,
+            showEditTargetTypeModal: false
         }
     },
     components: {
@@ -444,7 +448,8 @@ export default {
         AddDeposit,
         DepotHistory,
         Modal,
-        AssignSalesAdvisor
+        AssignSalesAdvisor,
+        UpdateTargetTypeModal
     },
     computed:
         {
@@ -511,6 +516,9 @@ export default {
       editSalesAdvisor (){
         this.showEditSalesAdvisor = true;
       },
+      changeTargetType (){
+        this.showEditTargetTypeModal = true;
+      },
       showEditSavingPlan(){
         this.showEditDepot = true;
       },
@@ -526,7 +534,7 @@ export default {
               if(this.goldPrice==0)
               {
                   this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                      this.goldPrice = res;
+                      // this.goldPrice = res;
                   })
               }
             }

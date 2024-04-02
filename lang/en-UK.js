@@ -788,5 +788,8 @@ export default {
     unassigned:'Unassigned',
     target:'Target',
     created_date:'Created date',
-    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date'
+    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date',
+    change_target: 'Change target',
+    depot_target_updated_successfully: 'Depot target updated successfully',
+    edit_depot_target_type: 'Edit depot target',
 }

@@ -66,5 +66,8 @@
     "nodemon": "^1.18.9",
     "sass-loader": "^7.1.0",
     "vue-server-renderer": "^2.6.12"
+  },
+  "engines": {
+    "node": "14.21.3"
   }
 }

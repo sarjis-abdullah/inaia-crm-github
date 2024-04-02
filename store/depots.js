@@ -36,7 +36,8 @@ export const state = () => ({
     depotStatuses:[],
     agioTransactions: [],
     agioTransactionTypes: [],
-    depotTypes:[]
+    depotTypes:[],
+    depotTargetTypes:[],
 })
 
 const initialState  = state()
@@ -56,7 +57,8 @@ export const getters = {
     agioTransactions: state=>state.agioTransactions,
     agioTransactionTypes: state=>state.agioTransactionTypes,
     depotTypes: state=>state.depotTypes,
-    silverPrice: state => state.silverPrice
+    silverPrice: state => state.silverPrice,
+    depotTargetTypes: state => state.depotTargetTypes
 }
 
 export const mutations = {
@@ -109,7 +111,11 @@ export const mutations = {
     silverPrice(state,price)
     {
         state.silverPrice  = price;
-    }
+    },
+    setDepotTargetTypes(state,depotTargetTypes)
+    {
+        state.depotTargetTypes  = depotTargetTypes;
+    },
 }
 
 export const actions = {
@@ -404,6 +410,16 @@ export const actions = {
         return this.$axios.get(`${process.env.golddinarApiUrl}/depot-types`)
             .then(res => {
                 context.commit('depotTypes',res.data.data)
+                return true
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
+    },
+    fetchDepotTargetTypes(context,payload)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/target-types`)
+            .then(res => {
+                context.commit('setDepotTargetTypes',res.data.data)
                 return true
             }).catch(err=>{
                 return Promise.reject(err)
