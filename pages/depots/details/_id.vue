@@ -45,7 +45,6 @@
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
-                      <a class="dropdown-item" @click.prevent="changeTargetType">{{ $t("change_target") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                       
                     </base-dropdown>
