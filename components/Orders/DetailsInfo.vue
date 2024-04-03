@@ -35,7 +35,7 @@
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.cancel">
                 <div>
                   <h4>{{$t('confirm_cancel_order')}} {{ resource.id }}</h4>
-                    <div v-if="resource && !isOrderPending(resource)">
+                    <div v-if="resource && !isOrderPending(resource) && !isGoldGift(resource)">
                   <div class="mt-4 mb-1" v-if="!hasMoneyTransfered">{{ $t('choose_payment_account_for_payback') }}:</div>
                   <select-payment-account :account_id="resource.depot.account_id"
                                           v-if="resource && !hasMoneyTransfered"
@@ -106,7 +106,7 @@ import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
 import GoldGift from '@/components/Orders/goldDetails/GoldGift';
 import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
 import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
-import { isOrderPending, isOrderPaid,isPurchaseOrder,isIntervalPurchaseOrder,isSellOrder,isDeliveryOrder } from '~/helpers/order';
+import { isOrderPending, isOrderPaid,isPurchaseOrder,isIntervalPurchaseOrder,isSellOrder,isDeliveryOrder,isGoldGift } from '~/helpers/order';
 import VueSlickCarousel from 'vue-slick-carousel';
 import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
 import CompleteGoldDelivery from '@/components/Orders/goldDetails/CompleteGoldDelivery';
@@ -183,6 +183,7 @@ export default {
         isIntervalPurchaseOrder,
         isSellOrder,
         isDeliveryOrder,
+        isGoldGift,
          onCompleteDateSelected(date)
          {
              this.$emit('completeDateSelected',date);

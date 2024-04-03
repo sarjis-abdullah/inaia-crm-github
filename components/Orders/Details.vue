@@ -83,7 +83,7 @@ import DetailsInfo from '@/components/Orders/DetailsInfo';
 import {  isPaymentInProgressOrder,isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
 import { canEditOrder } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
-import { isOrderGoldSale } from '../../helpers/order';
+import { isOrderGoldSale,isGoldGift,isOrderCanceled } from '../../helpers/order';
 export default {
     props:{
         showPopup:{
@@ -385,7 +385,7 @@ export default {
         shouldDisplayOrderCancelButton(resource)
         {
           if (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.cancel)
-            return isOrderPaid(resource) || isOrderPending(resource);
+            return isOrderPaid(resource) || isOrderPending(resource) || (isGoldGift(resource) && !isOrderCanceled(resource));
           else return false;
         },
         shouldDisplayOrderPaidButton(resource)
