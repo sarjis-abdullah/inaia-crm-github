@@ -26,7 +26,7 @@
                 </div>
 
             </div>
-            <div class="mt-4" v-if="!isLoading && error!=null">
+            <div class="mt-4" v-if="!isSubmitting && error!=null">
                 <TextError :textError="error"/>
             </div>
         </div>
@@ -60,7 +60,7 @@ export default {
     },
     data (){
         return {
-            
+
             amount:null,
             comment:'',
             isSubmitting:false,

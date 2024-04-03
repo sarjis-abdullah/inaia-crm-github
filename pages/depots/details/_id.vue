@@ -53,9 +53,14 @@
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
-                <p class="mt-3 mb-0 text-sm" >
-                  {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
-                </p>
+                <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
+                  <span>
+                    {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                  </span>
+                  <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
+                  <PencilOutlineIcon/>
+                  </span>
+                </div>
                 <p class="mb-0 text-sm" v-if="paymentMethod">
                   {{ $t('payment_method') }} : {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
                 </p>
@@ -364,6 +369,7 @@
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
         <AssignSalesAdvisor :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
+        <UpdateTargetTypeModal :showModal="showEditTargetTypeModal" :depot="depot" @cancelEditAdvisor="showEditTargetTypeModal = false"/>
       </div>
     </div>
   </div>
@@ -376,8 +382,10 @@ import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
 import AssignSalesAdvisor from "@/components/Depots/AssignSalesAdvisor";
+import UpdateTargetTypeModal from "@/components/Depots/UpdateTargetTypeModal";
 import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
+import PencilOutlineIcon from "@/components/common/Buttons/PencilOutlineIcon";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
@@ -425,7 +433,8 @@ export default {
             showCompleteContract:false,
             showConfirmActivate:false,
             paymentMethod:null,
-            paymentAccount:null
+            paymentAccount:null,
+            showEditTargetTypeModal: false
         }
     },
     components: {
@@ -444,7 +453,9 @@ export default {
         AddDeposit,
         DepotHistory,
         Modal,
-        AssignSalesAdvisor
+        AssignSalesAdvisor,
+        UpdateTargetTypeModal,
+        PencilOutlineIcon
     },
     computed:
         {
@@ -511,6 +522,9 @@ export default {
       editSalesAdvisor (){
         this.showEditSalesAdvisor = true;
       },
+      changeTargetType (){
+        this.showEditTargetTypeModal = true;
+      },
       showEditSavingPlan(){
         this.showEditDepot = true;
       },
@@ -526,7 +540,7 @@ export default {
               if(this.goldPrice==0)
               {
                   this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                      this.goldPrice = res;
+                      // this.goldPrice = res;
                   })
               }
             }
@@ -762,4 +776,5 @@ export default {
 </script>
 <style>
 .dropdown-item i { width: 16px; text-align: center}
+.cursor-pointer {cursor: pointer;}
 </style>
