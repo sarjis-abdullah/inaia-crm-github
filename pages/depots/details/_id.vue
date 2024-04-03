@@ -54,9 +54,14 @@
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
-                <p class="mt-3 mb-0 text-sm" >
-                  {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
-                </p>
+                <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
+                  <span>
+                    {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                  </span>
+                  <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
+                  <PencilOutlineIcon/>
+                  </span>
+                </div>
                 <p class="mb-0 text-sm" v-if="paymentMethod">
                   {{ $t('payment_method') }} : {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
                 </p>
@@ -381,6 +386,7 @@ import AssignSalesAdvisor from "@/components/Depots/AssignSalesAdvisor";
 import UpdateTargetTypeModal from "@/components/Depots/UpdateTargetTypeModal";
 import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
+import PencilOutlineIcon from "@/components/common/Buttons/PencilOutlineIcon";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
@@ -449,7 +455,8 @@ export default {
         DepotHistory,
         Modal,
         AssignSalesAdvisor,
-        UpdateTargetTypeModal
+        UpdateTargetTypeModal,
+        PencilOutlineIcon
     },
     computed:
         {
@@ -770,4 +777,5 @@ export default {
 </script>
 <style>
 .dropdown-item i { width: 16px; text-align: center}
+.cursor-pointer {cursor: pointer;}
 </style>
