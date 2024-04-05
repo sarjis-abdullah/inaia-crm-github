@@ -4,7 +4,7 @@
       <Select
         :placeholder="$t('sales_advisor')"
         v-model="sales_advisor_id"
-        :disabled="!!sales_advisor_id"
+        :disabled="disabledSelect"
       >
         <Option
           v-for="option in advisors"
@@ -44,12 +44,14 @@ export default {
     return {
       sales_advisor_id: null,
       isRequesting: false,
+      disabledSelect: false,
     };
   },
   watch: {
     salesAdvisorId: {
       handler() {
         if (this.salesAdvisorId) {
+          this.disabledSelect = true
           this.sales_advisor_id = this.salesAdvisorId;
         }
       },
@@ -71,6 +73,9 @@ export default {
     cancelEdit() {
       this.showModal = false;
       this.$emit("cancelEditAdvisor");
+    },
+    toggleDisabledSelect() {
+      this.disabledSelect = true;
     },
     formatClientLabel: function (client) {
       if (client) {

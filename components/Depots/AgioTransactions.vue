@@ -114,7 +114,7 @@
         prop="sales_advisor_id"
       >
         <template v-slot="{ row }">
-          <AgioTransactionSalesAdvisor :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
+          <AgioTransactionSalesAdvisor ref="agioTransactionSalesAdvisor" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
         </template>
       </el-table-column>
       <el-table-column
@@ -312,6 +312,9 @@ export default {
           .then(()=>{
             this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
             this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.filter(item => row.id != item.agioTransactionId)
+            this.$nextTick(()=> {
+              this.$refs.agioTransactionSalesAdvisor.toggleDisabledSelect()
+            })
           })
           .catch((err)=>{
             apiErrorHandler(err,this.$notify);
