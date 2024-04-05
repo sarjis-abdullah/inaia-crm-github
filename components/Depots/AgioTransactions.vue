@@ -109,21 +109,21 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-bind:label="$t('comment')"
-        min-width="150px"
-        prop="comment"
-      >
-        <template v-slot="{ row }">
-          {{ row.comment }}
-        </template>
-      </el-table-column>
-      <el-table-column
         v-bind:label="$t('sales_advisor')"
         min-width="150px"
         prop="sales_advisor_id"
       >
         <template v-slot="{ row }">
           <AgioTransactionSalesAdvisor :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('comment')"
+        min-width="150px"
+        prop="comment"
+      >
+        <template v-slot="{ row }">
+          <div class="ml-2">{{ row.comment }}</div>
         </template>
       </el-table-column>
       <el-table-column>
