@@ -129,7 +129,7 @@
       <el-table-column>
         <template v-slot="{row}">
           <icon-button type="delete" v-if="displayDelete(row) && !showDeleteTransaction" @click="deleteAgioTransaction(row)"></icon-button>
-          <span v-if="row.sales_advisor_id" @click="updateAgioTransaction(row)">
+          <span v-if="!row.sales_advisor_id" @click="updateAgioTransaction(row)">
             <CheckCircleOutlineIcon />
           </span>
         </template>
@@ -314,10 +314,10 @@ export default {
         this.$store.dispatch('depots/updateAgioTransaction', obj)
           .then(()=>{
             this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
-            // this.cancelDeletion();
+            this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.filter(item => row.id != item.agioTransactionId)
           })
           .catch((err)=>{
-            // apiErrorHandler(err,this.$notify);
+            apiErrorHandler(err,this.$notify);
           })
           .finally(()=> {
             this.updating = false

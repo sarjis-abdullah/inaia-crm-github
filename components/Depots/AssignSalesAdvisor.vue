@@ -16,6 +16,7 @@
                 <Select
             :placeholder="$t('sales_advisor')"
             v-model="sales_advisor_id"
+            :disabled="!!sales_advisor_id"
           >
             <Option
               v-for="option in advisors"
@@ -26,7 +27,7 @@
             </Option>
           </Select>
             </div>
-          <div class="row">
+          <div class="row" v-if="!sales_advisor_id">
             <div class="col-md-6"></div>
             <div class="col-md-6">
               <base-button
