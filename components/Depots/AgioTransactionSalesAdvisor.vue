@@ -18,10 +18,7 @@
   </div>
 </template>
 <script>
-import { updateSalesAdvisorAndGetObject } from "../../helpers/customer";
 import { Select, Option } from "element-ui";
-import { mapGetters } from "vuex";
-import { apiErrorHandler } from "../../helpers/apiErrorHandler";
 export default {
   props: {
     agioTransaction: {
@@ -43,11 +40,6 @@ export default {
     Select,
     Option,
   },
-  computed: {
-    // ...mapGetters("salesCommission", {
-    //   advisors: "salesAdvisors",
-    // }),
-  },
   data() {
     return {
       sales_advisor_id: null,
@@ -55,15 +47,6 @@ export default {
     };
   },
   watch: {
-    // advisors: {
-    //   handler(n, p) {
-    //     if (n?.length != p?.length) {
-    //       this.$store.dispatch("salesCommission/fetchSalesAdvisors");
-    //     }
-    //   },
-    //   deep: false,
-    //   immediate: true,
-    // },
     salesAdvisorId: {
       handler() {
         if (this.salesAdvisorId) {
@@ -85,29 +68,6 @@ export default {
     },
   },
   methods: {
-    assignSalesAdvivor() {
-      this.isRequesting = true;
-      let data = {
-        id: this.depot.id,
-        sales_advisor_id: this.sales_advisor_id,
-      };
-      this.$store
-        .dispatch("depots/submit", data)
-        .then((response) => {
-          this.cancelEdit();
-          this.$notify({
-            type: "success",
-            timeout: 5000,
-            message: this.$t("salesadvisor_updated_successfully"),
-          });
-        })
-        .catch((err) => {
-          apiErrorHandler(err, this.$notify);
-        })
-        .finally(() => {
-          this.isRequesting = false;
-        });
-    },
     cancelEdit() {
       this.showModal = false;
       this.$emit("cancelEditAdvisor");

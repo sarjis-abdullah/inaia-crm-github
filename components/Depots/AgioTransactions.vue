@@ -118,7 +118,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-bind:label="$t('sales_advisor_id')"
+        v-bind:label="$t('sales_advisor')"
         min-width="150px"
         prop="sales_advisor_id"
       >
@@ -187,9 +187,6 @@ export default {
       agioTransactions: "depots/agioTransactions",
       advisors: "salesCommission/salesAdvisors",
     }),
-    // ...mapGetters("salesCommission", {
-    //   advisors: "salesAdvisors",
-    // }),
     searchQuery() {
       return `&depot_id=${this.depot_id}&page=${this.page}&per_page=${
         this.perPage
