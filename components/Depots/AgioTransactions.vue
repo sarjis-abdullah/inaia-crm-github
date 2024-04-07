@@ -114,7 +114,12 @@
         prop="sales_advisor_id"
       >
         <template v-slot="{ row }">
+        <div class="d-flex align-items-center card mb-0" style="flex-direction: row;">
           <AgioTransactionSalesAdvisor ref="agioTransactionSalesAdvisor" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
+          <span v-if="row.sales_advisor_id" @click="updateAgioTransaction(row)" class="ml-1">
+            <CheckCircleOutlineIcon />
+          </span>
+        </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -123,15 +128,12 @@
         prop="comment"
       >
         <template v-slot="{ row }">
-          <div class="ml-2">{{ row.comment }}</div>
+          <div class="ml-3">{{ row.comment }}</div>
         </template>
       </el-table-column>
       <el-table-column>
         <template v-slot="{row}">
           <icon-button type="delete" v-if="displayDelete(row) && !showDeleteTransaction" @click="deleteAgioTransaction(row)"></icon-button>
-          <span v-if="!row.sales_advisor_id" @click="updateAgioTransaction(row)">
-            <CheckCircleOutlineIcon />
-          </span>
         </template>
       </el-table-column>
     </el-table>
