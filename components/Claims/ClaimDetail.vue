@@ -112,7 +112,7 @@
                         <base-button @click="askToConfirm('cancel')" type="danger" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
                         {{$t('cancel_claim')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="showExecutePayment">
+                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting">
                         {{$t('mark_as_paid')}}
                         </base-button>
                         <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="showExecutePayment">
