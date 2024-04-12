@@ -233,7 +233,6 @@ export default {
                 this.priceUp        = true
                 return
             }
-
             let availablePrice  = parseFloat(this.currentGoldPrice || this.series[0].data[0][1])
             // gold price series data are in descending order (latest is the first one)
             // ensure to return like 52.10 for number 52.09999994, where single "toFixed" will return 52.1
