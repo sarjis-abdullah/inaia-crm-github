@@ -83,7 +83,7 @@
            
           </div></detail-list-item
         >
-        <div class="text-danger" v-if="batchProcessPreview.gram_amount != (inaiaStockAmount+operationStockAmount)*1000">
+        <div class="text-danger" v-if="batchProcessPreview.gram_amount < (inaiaStockAmount+operationStockAmount)*1000">
             {{ $t('the_stock_amounts_must_be_equal_to_purchased_amout') }}
           </div>
       </div>
@@ -140,6 +140,7 @@ export default {
     if(this.depotTypes.length == 0)
       {
           this.$store.dispatch('depots/getDepotTypes');
+          
       }
   },
   data() {
