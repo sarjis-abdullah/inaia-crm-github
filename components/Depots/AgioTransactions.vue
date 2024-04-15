@@ -109,12 +109,26 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-bind:label="$t('sales_advisor')"
+        min-width="150px"
+        prop="sales_advisor_id"
+      >
+        <template v-slot="{ row }">
+        <div class="d-flex align-items-center card mb-0" style="flex-direction: row;">
+          <AgioTransactionSalesAdvisor ref="agioTransactionSalesAdvisor" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
+          <span v-if="row.sales_advisor_id" @click="updateAgioTransaction(row)" class="ml-1">
+            <CheckCircleOutlineIcon />
+          </span>
+        </div>
+        </template>
+      </el-table-column>
+      <el-table-column
         v-bind:label="$t('comment')"
         min-width="150px"
         prop="comment"
       >
         <template v-slot="{ row }">
-          {{ row.comment }}
+          <div class="ml-3">{{ row.comment }}</div>
         </template>
       </el-table-column>
       <el-table-column>
@@ -140,16 +154,22 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn,Input,Button } from "element-ui";
 import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
+import CheckCircleOutlineIcon from '@/components/common/Buttons/CheckCircleOutlineIcon';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
 import { canEditDepot} from '@/permissions'; 
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 import UserInfo from '@/components/Contacts/UserInfo';
+import AgioTransactionSalesAdvisor from '@/components/Depots/AgioTransactionSalesAdvisor'
 export default {
   props: {
     depot_id: {
       type: Number,
       default: null,
+    },
+    depot: {
+      type: Object,
+      default: ()=> ({}),
     },
   },
   components: {
@@ -160,11 +180,14 @@ export default {
     AddAgioTransaction,
     Input,
     Button,
-    UserInfo
+    UserInfo,
+    CheckCircleOutlineIcon,
+    AgioTransactionSalesAdvisor
   },
   computed: {
     ...mapGetters({
       agioTransactions: "depots/agioTransactions",
+      advisors: "salesCommission/salesAdvisors",
     }),
     searchQuery() {
       return `&depot_id=${this.depot_id}&page=${this.page}&per_page=${
@@ -185,6 +208,15 @@ export default {
       },
       immediate: true,
     },
+    advisors: {
+      handler(n, p) {
+        if (n?.length != p?.length) {
+          this.$store.dispatch("salesCommission/fetchSalesAdvisors");
+        }
+      },
+      deep: false,
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -197,7 +229,9 @@ export default {
       showDeleteTransaction:false,
       selectedAgioTransaction:null,
       deletedAgioTransactionId:null,
-      isDeleting:false
+      isDeleting:false,
+      updating: false,
+      agioTransactionSalesAdvisors: [],
     };
   },
   methods: {
@@ -249,6 +283,48 @@ export default {
       }).catch((err)=>{
         apiErrorHandler(err,this.$notify);
       })
+    },
+    updateSalesAdvisorId(obj)
+    {
+      if (!this.agioTransactionSalesAdvisors.length) {
+        this.agioTransactionSalesAdvisors = []
+      }
+      const found = this.agioTransactionSalesAdvisors.find(item=> item.agioTransactionId == obj.agioTransactionId)
+        if (found) {
+          this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.map(item=> {
+            if (item.agioTransactionId == obj.agioTransactionId) {
+              return obj
+            }
+            return item
+          })
+          return
+        }
+        this.agioTransactionSalesAdvisors.push(obj)
+    },
+    updateAgioTransaction(row)
+    {
+      const found = this.agioTransactionSalesAdvisors.find(item => row.id == item.agioTransactionId)
+      if (found) {
+        this.updating = true
+        const obj = {
+          agio_transaction_id: found.agioTransactionId,
+          sales_advisor_id: found.salesAdvisorId
+        }
+        this.$store.dispatch('depots/updateAgioTransaction', obj)
+          .then(()=>{
+            this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
+            this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.filter(item => row.id != item.agioTransactionId)
+            this.$nextTick(()=> {
+              this.$refs.agioTransactionSalesAdvisor.toggleDisabledSelect()
+            })
+          })
+          .catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          })
+          .finally(()=> {
+            this.updating = false
+          })
+      }
     }
   },
 };
