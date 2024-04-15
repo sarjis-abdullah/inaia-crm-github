@@ -98,7 +98,9 @@
             type="date"
             :placeholder="$t('select_execution_date')"
           >
+
           </date-picker>
+          <div class="text-danger mt-3" v-if="!isAfterOrEqualDueDate"> {{ $t('payment_date_after') }} {{ claim.possible_debit_date?$d(new Date(claim.possible_debit_date),'short'):"" }}</div>
                 </div>
             </div>
         <template slot="footer" v-if="!confirming">
@@ -112,10 +114,10 @@
                         <base-button @click="askToConfirm('cancel')" type="danger" :disabled="isSubmitting" v-if="claim.claim_status && (claim.claim_status.name_translation_key=='pending' || claim.claim_status.name_translation_key=='payment_failed')">
                         {{$t('cancel_claim')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting">
+                        <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="shouldShowAnyAction">
                         {{$t('mark_as_paid')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="showExecutePayment">
+                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="shouldShowAnyAction">
                         {{$t('initiate_payment')}}
                         </base-button>
                         <base-button type="primary" @click="askToConfirm('notifyuser')" :disabled="isSubmitting" v-if="shouldNotify">
@@ -126,7 +128,7 @@
             <base-button type="link" class="ml-auto" @click="cancelConfirmation">
                           {{$t('cancel')}}
                         </base-button>
-                        <base-button type="primary" class="ml-auto" @click="confirmAction()" :disabled="isSubmitting || (selectedAction == 'initiatepayment' && !paymentExecutionDate)">
+                        <base-button type="primary" class="ml-auto" @click="confirmAction()" :disabled="isSubmitting || (selectedAction == 'initiatepayment' && !isAfterOrEqualDueDate)">
                           {{$t('confirm')}}
                         </base-button>
         </template>
@@ -167,24 +169,23 @@ export default {
         }
     },
     computed :{
-        showExecutePayment(){
-            if(this.claim && this.claim.claim_status){
-                if(this.claim.claim_status.name_translation_key == 'pending'){
-                    const now = Date.now();
-                    const dueDate = this.claim.possible_debit_date?(new Date(this.claim.possible_debit_date)):null;
+        shouldShowAnyAction(){
+            return this.claim && this.claim.claim_status && (this.claim.claim_status.name_translation_key == 'pending' || this.claim.claim_status.name_translation_key == 'payment_failed')
+        },
+        isAfterOrEqualDueDate(){
+            if(this.paymentExecutionDate ){
+                let expDate = moment(this.paymentExecutionDate);
+                const dueDate = this.claim.possible_debit_date?(moment(this.claim.possible_debit_date)):null;
                     if(dueDate)
                     {
-                        if(dueDate > now){
-                            return false;
-                        }
-                        else{
+                        if(dueDate.isSameOrBefore(expDate)){
                             return true;
                         }
+                        else{
+                            return false;
+                        }
                     }
-                }
-                if(this.claim.claim_status.name_translation_key == 'payment_failed'){
                     return true;
-                }
             }
             return false;
         },

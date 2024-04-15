@@ -788,5 +788,6 @@ export default {
     unassigned:'Unassigned',
     target:'Target',
     created_date:'Created date',
-    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date'
+    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date',
+    payment_date_after:'The payment execution date should be the same or after'
 }
