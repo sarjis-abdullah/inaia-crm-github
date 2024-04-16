@@ -97,7 +97,7 @@ export const mutations = {
     },
     addAgioTransaction(state,agio)
     {
-        state.agioTransactions.push(agio);
+        state.agioTransactions.unshift(agio);
     },
     deleteAgioTransaction(state,id)
     {

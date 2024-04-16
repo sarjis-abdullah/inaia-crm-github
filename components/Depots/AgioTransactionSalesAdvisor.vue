@@ -4,7 +4,6 @@
       <Select
         :placeholder="$t('sales_advisor')"
         v-model="sales_advisor_id"
-        :disabled="disabledSelect"
       >
         <Option
           v-for="option in advisors"
