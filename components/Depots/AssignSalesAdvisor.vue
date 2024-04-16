@@ -8,15 +8,16 @@
       @close="cancelEdit"
     >
       <template slot="header" class="pb-0">
-        <h5 class="modal-title">{{ $t("edit_salesadvisor") }}</h5>
+        <h5 class="modal-title" v-if="depot?.sales_advisor_id">{{ $t("sales_advisor") }}</h5>
+        <h5 class="modal-title" v-else>{{ $t("edit_salesadvisor") }}</h5>
         <span></span>
       </template>
       <div>
             <div class="row m-auto pt-3 pb-5 d-flex justify-content-center">
                 <Select
-            :placeholder="$t('sales_advisor')"
+            :placeholder="$t('select_sales_advisor')"
             v-model="sales_advisor_id"
-            :disabled="!!sales_advisor_id"
+            :disabled="!!depot?.sales_advisor_id"
           >
             <Option
               v-for="option in advisors"
@@ -27,7 +28,7 @@
             </Option>
           </Select>
             </div>
-          <div class="row" v-if="!sales_advisor_id">
+          <div class="row" v-if="!depot?.sales_advisor_id">
             <div class="col-md-6"></div>
             <div class="col-md-6">
               <base-button
@@ -92,6 +93,10 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
         depot:{
             handler(){
                 if(this.depot ){
+                    if (this.depot.sales_advisor_id == 0) {
+                      this.sales_advisor_id = null
+                      return
+                    }
                     this.sales_advisor_id = this.depot.sales_advisor_id
                 }
             },
@@ -126,6 +131,7 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
       cancelEdit(){
           this.showModal = false;
           this.$emit('cancelEditAdvisor');
+          this.sales_advisor_id = null
       },
       formatClientLabel: function (client) {
             if (client) {
