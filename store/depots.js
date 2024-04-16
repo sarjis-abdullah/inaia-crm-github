@@ -441,5 +441,15 @@ export const actions = {
             const status_id = getStatusId(status,'depot_status_blocked');
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
+    },
+    updateAgioTransaction(context, payload)
+    {
+        return this.$axios.put(`${process.env.golddinarApiUrl}/sales-advisor`, payload)
+            .then(res => {
+                // context.commit('setDepotTargetTypes',res.data.data)
+                return res.data.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
     }
 }

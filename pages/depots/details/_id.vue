@@ -320,7 +320,7 @@
                 <span></span>
             </template>
             <div>
-              <AgioTransactions :depot_id="depotId"/>
+              <AgioTransactions :depot="depot" :depot_id="depotId"/>
            </div>
 
         </modal>
