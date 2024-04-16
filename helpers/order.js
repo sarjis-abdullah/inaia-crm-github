@@ -11,6 +11,7 @@ export const GOLD_SELL_TYPE = "gold_sell";
 export const GOLD_PURCHASE_INTERVAL_TYPE = "gold_purchase_interval";
 export const GOLD_DELIVERY_TYPE = "gold_delivery";
 export const GOLD_GIFT_TYPE = "gold_gift";
+export const SILVER_GIFT_TYPE = "silver_gift";
 export const SILVER_PURCHASE_TYPE = "silver_purchase";
 export const SILVER_SELL_TYPE = "silver_sell";
 export const SILVER_PURCHASE_INTERVAL_TYPE = "silver_purchase_interval";
@@ -87,7 +88,7 @@ export function isPaymentInProgressOrder(order){
     return false
 }
 export function isGoldGift(order){
-    return order && order.order_type && (order.order_type.name_translation_key==GOLD_GIFT_TYPE);
+    return order && order.order_type && (order.order_type.name_translation_key==GOLD_GIFT_TYPE || order.order_type.name_translation_key==SILVER_GIFT_TYPE);
 }
 export function isOrderCanceled(order){
     return order && order.order_status && order.order_status.name_translation_key == ORDER_STATUS_CANCELED

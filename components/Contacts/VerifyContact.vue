@@ -37,8 +37,13 @@
       <Input v-model="title" :placeholder="$t('document_title')" class="my-3" />
       <div class="text-danger text-sm-left" v-if="title && title.length < 5">{{ $t('title_must_be_at_least_five') }}</div>
       <Input v-model="description" :placeholder="$t('document_description')" class="my-3" />
-      <Upload class="upload-demo" drag ref="upload" :auto-upload="false" accept=".jpeg,.png,.pdf" :limit="3"
-        :multiple="false" :http-request="uploadFileRequest" :disabled="isSubmitting" :on-change="onChange"
+      <Upload class="upload-demo" drag ref="upload" :auto-upload="false" 
+      accept=".jpeg,.png,.pdf" :limit="3"
+        :multiple="true" 
+        :http-request="uploadFileRequest" 
+        :disabled="isSubmitting" 
+        :on-change="onChange"
+        :on-remove="onRemove"
         >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
@@ -88,13 +93,14 @@ export default ({
     return {
       title: null,
       description: null,
+      files: [],
       isSubmitting: false,
-      file: null,
       errorText: null,
       firstname: null,
       middlename: null,
       lastname: null,
-      birthdate: null
+      birthdate: null,
+      uplodedFiles:0
     }
   },
   watch: {
@@ -117,58 +123,26 @@ export default ({
     },
     onChange(file, fileList) {
       const maxSize = 2097152
-      if (file.size <= maxSize)
-        this.file= file;
-      else {
-        this.errorText = this.$t('file_is_too_big')
-      }
+        this.errorText = '';
+          if (file.size <= maxSize)
+              this.files.push(file);
+              else {
+            this.errorText = this.$t('file_is_too_big')+" max size 2MB";
+            let index = fileList.findIndex(f=>f.name==file.name);
+            if(index>-1){
+                fileList.splice(index,1);
+            }
+          }
     },
     onRemove(file, fileList) {
-      let index = this.file.findIndex(f => f.name == file.name);
-      if (index > -1) {
-        this.file.splice(index, 1);
-      }
-    },
-    uploadFileRequest(file) {
-      var formData = new FormData();
-      if (this.file)
-        formData.append("document", this.file.raw);
-      if (this.title)
-        formData.append("title", this.title);
-      if (this.description)
-        formData.append("description", this.description);
-      const url = process.env.productApiUrl + `/contacts/${this.client.id}/verify`;
-      this.$axios.post(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      debugger;
+      let index = this.files.findIndex(f=>f.name==file.name);
+        if(index>-1){
+            this.files.splice(index,1);
         }
-      }).then((res) => {
-        this.$notify({
-          type: "success",
-          timeout: 5000,
-          message: this.$t("client_verified_successfully"),
-        });
-
-        this.cancelUpload();
-        location.reload();
-      }).catch((err) => {
-        apiErrorHandler(err, this.$notify);
-      }).finally(() => {
-        this.isSubmitting = false;
-      });
-
     },
-    submitUpload() {
-      this.isSubmitting = true;
-      let data = functionUpdatePersonDataAndGetObject(this.client,this.lastname, this.middlename, this.firstname, formatDateToApiFormat(this.birthdate));
-      this.$store
-        .dispatch("clients/submitClient", data)
-        .then((response) => {
-          if(this.file){
-            this.$refs.upload.submit();
-          }
-          else{
-            const url = process.env.productApiUrl + `/contacts/${this.client.id}/verify`;
+    verfiyClient(){
+      const url = process.env.productApiUrl + `/contacts/${this.client.id}/verify`;
             var formData = new FormData();
           this.$axios.post(url, formData, {
             headers: {
@@ -188,6 +162,49 @@ export default ({
           }).finally(() => {
             this.isSubmitting = false;
           });
+    },
+    uploadFileRequest(file) {
+      var formData = new FormData();
+      if (this.files.length >0){
+        this.files.forEach(f=>{
+            formData.append("document", f.raw);
+        })
+      }
+      if (this.title)
+        formData.append("title", this.title);
+      if (this.description)
+        formData.append("description", this.description);
+      formData.append("type", 'customer_document');
+      formData.append("contact_id", this.client.id);
+      const url = process.env.productApiUrl + "/documents";
+      this.$axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+          
+          this.uplodedFiles++;
+          if(this.uplodedFiles == this.files.length){
+            this.verfiyClient();
+          }
+      }).catch((err) => {
+        apiErrorHandler(err, this.$notify);
+      }).finally(() => {
+            this.isSubmitting = false;
+          });
+
+    },
+    submitUpload() {
+      this.isSubmitting = true;
+      let data = functionUpdatePersonDataAndGetObject(this.client,this.lastname, this.middlename, this.firstname, formatDateToApiFormat(this.birthdate));
+      this.$store
+        .dispatch("clients/submitClient", data)
+        .then((response) => {
+          if(this.files.length > 0){
+            this.$refs.upload.submit();
+          }
+          else{
+            this.verfiyClient();
           }
           
 

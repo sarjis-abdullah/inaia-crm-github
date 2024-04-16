@@ -551,7 +551,7 @@ export default {
     internal_transactions:'Internal transaction',
     transaction_direction:'Transaction direction',
     not_enough_asset_please_buy:'There is no enough asset in stock, please buy more in order to be able to complete this operation',
-    the_stock_amounts_must_be_equal_to_purchased_amout:'The stock amounts must be equal to the purchased asset amout',
+    the_stock_amounts_must_be_equal_to_purchased_amout:'The stock amounts must be equal to or greater than the purchased asset amount',
     execute_pps_payment:"Execute PPS payments",
     execute_bank_payment:'Execute bank payments',
     choose_date_to_execute_payment:'Choose a date for payment execution',
@@ -788,5 +788,6 @@ export default {
     unassigned:'Unassigned',
     target:'Target',
     created_date:'Created date',
-    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date'
+    do_you_want_to_notify_users_about_claim:'Do you want to notify all users in this batch about debit date',
+    payment_date_after:'The payment execution date should be the same or after'
 }

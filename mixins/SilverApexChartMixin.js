@@ -139,7 +139,7 @@ export default {
                 return 0
             }
             // gold price series data are in descending order (latest is the first one)
-            let rp  = this.series[0].data[this.series[0].data.length - 1][1]
+            let rp  = this.series[0].data[0][1]
             return rp
         }
     },
@@ -233,7 +233,7 @@ export default {
                 return
             }
 
-            let availablePrice  = parseFloat(this.currentGoldPrice || this.series[0].data[0][1])
+            let availablePrice  = parseFloat(this.currentGoldPrice || this.series[0].data[this.series[0].data.length - 1][1])
             // gold price series data are in descending order (latest is the first one)
             // ensure to return like 52.10 for number 52.09999994, where single "toFixed" will return 52.1
             this.goldPrice      = parseFixed( pointed && i > -1 ? this.series[0].data[i][1] : availablePrice )

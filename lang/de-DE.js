@@ -540,7 +540,7 @@ export default {
     internal_transactions:'Internal transaction',
     transaction_direction:'Transaction direction',
     not_enough_asset_please_buy:'There is no enough asset in stock, please buy more in order to be able to complete this operation',
-    the_stock_amounts_must_be_equal_to_purchased_amout:'The stock amounts must be equal to the purchased asset amout',
+    the_stock_amounts_must_be_equal_to_purchased_amout:'The stock amounts must be equal to or greater than the purchased asset amout',
     execute_pps_payment:"Execute PPS payments",
     execute_bank_payment:'Execute bank payments',
     choose_date_to_execute_payment:'Choose a date for payment execution',

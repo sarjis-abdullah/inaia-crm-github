@@ -75,10 +75,11 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
         files: [],
         title:'',
         description:'',
-        errorText:''
+        errorText:'',
       };
     },
     methods: {
+      
       cancelUpload() {
         this.showUploadDialog = false;
         this.$emit("canceled");

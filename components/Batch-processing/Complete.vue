@@ -83,7 +83,7 @@
            
           </div></detail-list-item
         >
-        <div class="text-danger" v-if="batchProcessPreview.gram_amount != (inaiaStockAmount+operationStockAmount)*1000">
+        <div class="text-danger" v-if="batchProcessPreview.gram_amount > (parseInt(inaiaStockAmount*1000)+parseInt(operationStockAmount*1000))">
             {{ $t('the_stock_amounts_must_be_equal_to_purchased_amout') }}
           </div>
       </div>
@@ -140,6 +140,7 @@ export default {
     if(this.depotTypes.length == 0)
       {
           this.$store.dispatch('depots/getDepotTypes');
+          
       }
   },
   data() {
@@ -272,7 +273,7 @@ export default {
       else{
         return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0 
         || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)
-        || parseInt(this.inaiaStockAmount*1000 + this.operationStockAmount*1000) != parseInt(this.batchProcessPreview.gram_amount)
+        || parseInt(this.inaiaStockAmount*1000 + this.operationStockAmount*1000) < parseInt(this.batchProcessPreview.gram_amount)
         
         ;
       }
