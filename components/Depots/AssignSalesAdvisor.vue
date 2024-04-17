@@ -129,7 +129,6 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
           });
       },
       cancelEdit(){
-          this.showModal = false;
           this.$emit('cancelEditAdvisor');
           this.sales_advisor_id = null
       },

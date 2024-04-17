@@ -368,7 +368,7 @@
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
-        <AssignSalesAdvisor :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
+        <AssignSalesAdvisor v-if="showEditSalesAdvisor" :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
         <UpdateTargetTypeModal :showModal="showEditTargetTypeModal" :depot="depot" @cancelEditAdvisor="showEditTargetTypeModal = false"/>
       </div>
     </div>
