@@ -185,8 +185,8 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
       }),
       searchQuery() {
         return `&account_id=${this.account_id}&page=${
-          this.page | 1
-        }&per_page=${this.perPage | 10}`;
+          this.page
+        }&per_page=${this.perPage}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
