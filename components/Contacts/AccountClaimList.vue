@@ -66,7 +66,21 @@
             
           </template>
         </el-table-column>
+        <el-table-column v-bind:label="$t('payment_method')"  prop="type" min-width="100">
+          <template v-slot="{ row }">
+            <div >
+              <div>
+                <span class="orderType text-body"
+                  >{{
+                    $t(getPaymentMethod(row))
+                  }}</span
+                >
 
+              </div>
+              
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column v-bind:label="$t('depot')"  prop="type" min-width="100">
           <template v-slot="{ row }">
             <div >
@@ -241,6 +255,14 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
             .catch((err) => (this.loadingError =apiErrorHandler(err,null)))
             .finally(() => (this.isLoading = false));
 
+      },
+      getPaymentMethod(claim){
+        if(claim && claim.claim_payment_transactions && claim.claim_payment_transactions.length >0){
+          const transaction = claim.claim_payment_transactions[claim.claim_payment_transactions.length-1];
+          if(transaction){
+            return transaction.payment_method;
+          }
+        }
       },
       toggleCreateBatch(){
         let pendingStatus = this.status.find(x=>x.name_translation_key == 'pending');

@@ -1,14 +1,13 @@
 import {formatDateToApiFormat} from '~/helpers/helpers';
 function changeDepotStatus($axios,context,depot_id,status_id,account_id,date)
 {
-    if(!date){
-        date = formatDateToApiFormat(new Date());
-    }
     const data ={
         "status_id": status_id,
-        "account_id": account_id,
-        "end_date": date
+        "account_id": account_id
     };
+    if(date){
+        data.end_date = date;
+    }
     return $axios.put(`${process.env.golddinarApiUrl}/depots/${depot_id}/status?include=depot_status`,data).then((res)=>{
         context.commit('details', res.data.data);
         return res.data.data;

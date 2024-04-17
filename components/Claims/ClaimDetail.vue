@@ -4,7 +4,7 @@
                         <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
                         <span></span>
         </template>
-        
+        <div v-if="!iNotifying">
             <div class="list-group list-group-flush" v-if="!confirming">
                 <detail-list-item :title="$t('status')" >
                     <Status slot="value" :status='claim.claim_status ? claim.claim_status.name_translation_key : ""'/>
@@ -34,10 +34,10 @@
                   }}
                     </div>
                 </detail-list-item>
-                <detail-list-item :title="$t('payment_method')" v-if="claim && claim.payment_method">
+                <detail-list-item :title="$t('payment_method')" v-if="paymentmethod">
                     <div slot="value">
                         {{
-                    $t(claim.payment_method)
+                    $t(paymentmethod)
                   }}
                     </div>
                 </detail-list-item>
@@ -103,7 +103,16 @@
           <div class="text-danger mt-3" v-if="!isAfterOrEqualDueDate"> {{ $t('payment_date_after') }} {{ claim.possible_debit_date?$d(new Date(claim.possible_debit_date),'short'):"" }}</div>
                 </div>
             </div>
-        <template slot="footer" v-if="!confirming">
+        </div>
+        <div v-else>
+            <div class="d-flex justify-content-center align-items-center">
+                <loader class="mx-auto"/>
+            </div>
+            <div class="mt-3 text-center">
+                Please wait until the form get updated...
+            </div>
+        </div>
+        <template slot="footer" v-if="!confirming && !iNotifying">
             
                        
                         <base-button type="white" class="text-danger" 
@@ -117,14 +126,14 @@
                         <base-button type="primary" @click="askToConfirm('markpaid')" :disabled="isSubmitting" v-if="shouldShowAnyAction">
                         {{$t('mark_as_paid')}}
                         </base-button>
-                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="shouldShowAnyAction">
+                        <base-button type="primary" @click="askToConfirm('initiatepayment')" :disabled="isSubmitting" v-if="shouldShowAnyAction && paymentmethod!='bank_transfer'">
                         {{$t('initiate_payment')}}
                         </base-button>
                         <base-button type="primary" @click="askToConfirm('notifyuser')" :disabled="isSubmitting" v-if="shouldNotify">
                         {{$t('notify_user')}}
                         </base-button>
         </template>
-        <template v-else slot="footer">
+        <template v-else-if="!iNotifying" slot="footer">
             <base-button type="link" class="ml-auto" @click="cancelConfirmation">
                           {{$t('cancel')}}
                         </base-button>
@@ -141,7 +150,8 @@ import UserInfo from '@/components/Contacts/UserInfo';
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import moment from 'moment'
-import WithdrawalVue from '../Banking/BankingTransactionDetail/Withdrawal.vue';
+import LoaderVue from '@/components/common/Loader/Loader.vue';
+import Loader from '../common/Loader/Loader.vue';
 export default {
     props:{
         showDetail:{
@@ -157,14 +167,16 @@ export default {
         DetailListItem,
         Status,
         UserInfo,
-        DatePicker
+        DatePicker,
+        Loader
     },
     data(){
         return{
             confirming:false,
             selectedAction:'',
             isSubmitting:false,
-            paymentExecutionDate:null
+            paymentExecutionDate:null,
+            iNotifying:false
 
         }
     },
@@ -202,11 +214,19 @@ export default {
             }
         },
         shouldNotify(){
-            if(this.claim && this.claim.possible_debit_date==null && this.claim.claim_status.name_translation_key == 'pending'){
+            if(this.claim && this.claim.possible_debit_date==null && this.claim.claim_status.name_translation_key == 'pending' && this.paymentmethod!="bank_transfer"){
                 return true;
             }
             return false;
+        },
+        paymentmethod(){
+        if(this.claim && this.claim.claim_payment_transactions && this.claim.claim_payment_transactions.length >0){
+          const transaction = this.claim.claim_payment_transactions[this.claim.claim_payment_transactions.length-1];
+          if(transaction){
+            return transaction.payment_method;
+          }
         }
+      },
     },
     methods:{
         askToConfirm(action){
@@ -284,7 +304,7 @@ export default {
                 let data = {
                     claim_ids:[this.claim.id]
                 };
-                this.isSubmitting = true;
+                this.iNotifying = true;
                 this.$store.dispatch('claims/notifyuser',data).then(()=>{
                 this.$notify({
                 type: "success",
@@ -294,8 +314,8 @@ export default {
                 });
                 setTimeout(()=>{
                     this.$emit('onUserNotified')
-                    this.isSubmitting = false;
-                },5000)
+                    this.iNotifying = false;
+                },7000)
                 
                 
                 this.cancelConfirmation()
