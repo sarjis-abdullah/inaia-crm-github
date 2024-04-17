@@ -109,7 +109,7 @@ export const actions = {
     getClientClaims(context,payload)
     {
         return this.$axios
-                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status${payload}`)
+                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status,claim_payment_transactions${payload}`)
                 .then(res=>{
                     context.commit('claims',res.data.data);
                     return res.data;

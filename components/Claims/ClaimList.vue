@@ -71,7 +71,7 @@
       <el-table
         class="table-hover table-responsive table-flush"
         header-row-class-name="thead-light"
-        :data="claims"
+        :data="allMappedData"
       >
         <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
@@ -84,7 +84,7 @@
           <el-table-column
           v-bind:label="$t('amount')"
 
-          align="right"
+          align="center"
           prop="amount"
           
         >
@@ -153,6 +153,15 @@
               </div>
             </div>
           </template>
+        </el-table-column>
+        <el-table-column v-bind:label="$t('payment_method')"
+            prop="paymentMethod"
+            align="left"
+            min-width="130"
+            >
+            <template v-slot="{row}">
+                <span class="status">{{ $t(row.paymentMethod) }}</span>
+            </template>
         </el-table-column>
         <el-table-column v-bind:label="$t('created_date') + ' / ' +$t('debit_date')"   min-width="150">
           <template v-slot="{ row }">
@@ -273,6 +282,17 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
       },
+      allMappedData(){
+        return this.claims?.map(item=> {
+            let paymentMethod = 'not_assigned'
+            if (item.claim_payment_transactions.length) {
+                const transaction = item.claim_payment_transactions[0]
+                paymentMethod = transaction.payment_method
+                return {...item, paymentMethod}
+            }
+            return {...item, paymentMethod}
+        })
+      }
     },
     watch: {
       searchQuery: {
