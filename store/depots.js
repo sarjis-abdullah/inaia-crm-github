@@ -116,6 +116,18 @@ export const mutations = {
     {
         state.depotTargetTypes  = depotTargetTypes;
     },
+    updateAgioTransactionList(state, updatedTransaction)
+    {
+        state.agioTransactions  = state.agioTransactions.map(item=> {
+            if (item.id == updatedTransaction.agio_transaction_id) {
+                return {
+                    ...item,
+                    sales_advisor_id: updatedTransaction.sales_advisor_id
+                }
+            }
+            return item
+        });
+    },
 }
 
 export const actions = {
@@ -447,6 +459,7 @@ export const actions = {
         return this.$axios.put(`${process.env.golddinarApiUrl}/sales-advisor`, payload)
             .then(res => {
                 // context.commit('setDepotTargetTypes',res.data.data)
+                context.commit('updateAgioTransactionList', payload)
                 return res.data.data
             }).catch(err=>{
                 return Promise.reject(err)
