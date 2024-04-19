@@ -795,4 +795,6 @@ export default {
     payment_date_after:'The payment execution date should be the same or after',
     select_sales_advisor: 'Select sales advisor',
     sales_advisor:'Sales advisor',
+    update:'Update',
+    remove:'Remove',
 }

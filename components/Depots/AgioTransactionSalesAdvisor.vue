@@ -2,7 +2,10 @@
   <div>
     <div class="row m-auto d-flex justify-content-center">
       <Select
-        :placeholder="$t('sales_advisor')"
+        :placeholder="
+          salesAdvisorId ? $t('sales_advisor') : $t('select_sales_advisor')
+        "
+        @change="handleChange"
         v-model="sales_advisor_id"
       >
         <Option
@@ -14,10 +17,44 @@
         </Option>
       </Select>
     </div>
+    <div
+      class="d-flex justify-content-center mt-1"
+      style="flex-direction: row; gap: 0.5rem"
+    >
+      <div class="">
+        <button
+          v-if="!salesAdvisorId"
+          class="btn base-button btn-icon btn-fab btn-primary btn-sm"
+          @click="add"
+          :disabled="updating"
+        >
+          {{ updating ? $t('loading') : $t('add') }}
+        </button>
+        <button
+          v-else-if="changeSalesAdvisor && sales_advisor_id != salesAdvisorId && !removing"
+          class="btn base-button btn-icon btn-fab btn-primary btn-sm"
+          :disabled="updating"
+          @click="update(false)"
+        >
+          {{ updating ? $t('loading') : $t('update') }}
+        </button>
+      </div>
+      <div>
+        <button
+          v-if="sales_advisor_id"
+          :disabled="removing"
+          class="btn base-button btn-icon btn-fab btn-danger btn-sm"
+          @click="update(true)"
+        >
+          {{ removing ?  $t('loading') : $t('remove') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { Select, Option } from "element-ui";
+import { apiErrorHandler } from "../../helpers/apiErrorHandler";
 export default {
   props: {
     agioTransaction: {
@@ -44,28 +81,23 @@ export default {
       sales_advisor_id: null,
       isRequesting: false,
       disabledSelect: false,
+      updating: false,
+      removing: false,
+      changeSalesAdvisor: false,
+      addBrandNewAdvisor: false,
     };
   },
   watch: {
     salesAdvisorId: {
       handler() {
         if (this.salesAdvisorId) {
-          this.disabledSelect = true
           this.sales_advisor_id = this.salesAdvisorId;
+        }else {
+          this.sales_advisor_id = null;
         }
       },
-      immediate: true,
-    },
-    sales_advisor_id: {
-      handler() {
-        const obj = {
-          agioTransactionId: this.agioTransaction.id,
-          salesAdvisorId: this.sales_advisor_id
-        }
-        this.$emit('updateSalesAdvisorId', obj)
-      },
-      immediate: false,
       deep: true,
+      immediate: true,
     },
   },
   methods: {
@@ -94,6 +126,60 @@ export default {
         return label;
       }
     },
+    add() {
+      if (!this.sales_advisor_id) {
+        return;
+      }
+      this.addBrandNewAdvisor = false
+      const obj = {
+        agio_transaction_id: this.agioTransaction.id,
+        sales_advisor_id: this.sales_advisor_id,
+      };
+      this.updating = true;
+      this.updateAgioTransaction(obj);
+    },
+    update(isRemove = false) {
+      if (isRemove) {
+        this.sales_advisor_id = null;
+      }
+      if (!this.salesAdvisorId) {
+        return;
+      }
+      const obj = {
+        agio_transaction_id: this.agioTransaction.id,
+        sales_advisor_id: this.sales_advisor_id,
+      };
+      if (isRemove) {
+        obj.sales_advisor_id = 0;
+        this.removing = true
+      }else {
+        this.updating = true;
+      }
+      this.updateAgioTransaction(obj);
+    },
+    updateAgioTransaction(obj) {
+      
+      this.$store
+        .dispatch("depots/updateAgioTransaction", obj)
+        .then(() => {
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("agio_transaction_deleted_successfully"),
+          });
+          this.$emit('updateListKey')
+        })
+        .catch((err) => {
+          apiErrorHandler(err, this.$notify);
+        })
+        .finally(() => {
+          this.updating = false;
+          this.removing = false;
+        });
+    },
+    handleChange(){
+      this.changeSalesAdvisor = true
+    }
   },
 };
 </script>
