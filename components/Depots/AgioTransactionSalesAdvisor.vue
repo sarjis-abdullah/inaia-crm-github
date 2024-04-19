@@ -84,7 +84,6 @@ export default {
       updating: false,
       removing: false,
       changeSalesAdvisor: false,
-      addBrandNewAdvisor: false,
     };
   },
   watch: {
@@ -130,7 +129,6 @@ export default {
       if (!this.sales_advisor_id) {
         return;
       }
-      this.addBrandNewAdvisor = false
       const obj = {
         agio_transaction_id: this.agioTransaction.id,
         sales_advisor_id: this.sales_advisor_id,
