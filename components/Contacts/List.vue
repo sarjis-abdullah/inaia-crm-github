@@ -227,7 +227,7 @@ import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/h
 import AmlStatus from '@/components/Contacts/AmlStatus';
 import MetaInfo from '@/components/common/MetaInfo';
 import Loader from "../common/Loader/Loader";
-import {ifHasSalesAdvisorAccess} from '@/permissions'
+import {ifHasSalesAdvisorAccess,canViewAdmin} from '@/permissions'
 export default {
     components: {
       Loader,
@@ -298,7 +298,7 @@ export default {
             return Math.ceil(this.totalTableData / this.perPage)
         },
         isSalesAdvisor(){
-            return ifHasSalesAdvisorAccess()
+            return ifHasSalesAdvisorAccess() && !canViewAdmin()
         }
     },
      mounted(){

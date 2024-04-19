@@ -391,7 +391,7 @@
         return canViewStatistics();
       },
       isSalesAdvirsor(){
-        return ifHasSalesAdvisorAccess();
+        return ifHasSalesAdvisorAccess() && !canViewAdmin();
       }
     },
     data(){
