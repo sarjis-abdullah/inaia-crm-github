@@ -284,7 +284,6 @@ export default {
         // this.initClientData()
     },
     methods: {
-        avatar,
         anonymousUserAvatar,
         notifyError,
         redirectPost,
