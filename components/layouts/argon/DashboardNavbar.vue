@@ -251,7 +251,11 @@
       },
       editProfile() {
         // window.location.href    = process.env.universalLogin+'/profile'
-        this.$router.push('/profile')
+        // this.$router.push('/profile')
+        //Todo
+        const part = "/profile";
+        const url = "http://"+window.location.host+part
+        window.location.href = url;
       },
       logout() {
         // this.$store.dispatch('auth/logout')
