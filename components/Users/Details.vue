@@ -52,7 +52,7 @@ export default {
         },
         getAddress() {
             return this.resource.address ?
-                    this.resource.address.line1 + (this.resource.address.line2 ? ' ' + this.resource.address.line2 : '') +
+                    this.resource.address?.line1 + (this.resource.address?.line2 ? ' ' + this.resource.address.line2 : '') +
                     (this.resource.address.city ? ', ' + this.resource.address.city : '') +
                     (this.resource.address.region ? ', ' + this.resource.address.region : '') +
                     (this.resource.address.postal_code ? ', ' + this.resource.address.postal_code : '')
