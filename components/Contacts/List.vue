@@ -34,7 +34,7 @@
                                     @clear="clearSearch"
                                     />
                                 </div>
-                                <div class="col">
+                                <div class="col" v-if="!isSalesAdvisor">
                                   <Select
                                         :placeholder="$t('sales_advisors')"
                                         v-model="selectedSalesAdvisor"
@@ -227,6 +227,7 @@ import { isEmail,isPhoneNumber, checkIfItIsAccountNumber } from '../../helpers/h
 import AmlStatus from '@/components/Contacts/AmlStatus';
 import MetaInfo from '@/components/common/MetaInfo';
 import Loader from "../common/Loader/Loader";
+import {ifHasSalesAdvisorAccess,canViewAdmin} from '@/permissions'
 export default {
     components: {
       Loader,
@@ -296,6 +297,9 @@ export default {
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
         },
+        isSalesAdvisor(){
+            return ifHasSalesAdvisorAccess() && !canViewAdmin()
+        }
     },
      mounted(){
         if(this.salesAdvisors.length == 0)

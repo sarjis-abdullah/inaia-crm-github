@@ -229,6 +229,7 @@
             :placeholder="$t('select_end_pause_date_placeholder')"
           />
                 </div>
+                <div v-if="disablePauseButton" class="mt-3 text-danger">End pause date should be after today</div>
                     </div>
                     <template slot="footer">
                         <base-button type="link" class="ml-auto" @click="cancelPause()">
@@ -236,7 +237,7 @@
                         </base-button>
                         <base-button type="primary" @click="() => pauseSavinPlan()"
 
-                            :disabled="isSubmitting">
+                            :disabled="isSubmitting || disablePauseButton ">
                             <span>{{$t('pause')}}</span>
                          </base-button>
                     </template>
@@ -464,6 +465,10 @@ export default {
             goldPrice:"getGoldPrice",
             silverPrice:'silverPrice'
         }),
+        disablePauseButton(){
+          const today = Date.now();
+          return !this.endPauseDate || this.endPauseDate<=today;
+        },
         pauseEndDate(){
           let pausedDate = '';
           if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused'

@@ -87,7 +87,7 @@ import MessageElement from '@/components/Support/MessageElement';
 import Status from '@/components/Support/Status';
 import { mapGetters } from "vuex";
  import {  MessageBox } from 'element-ui';
-import { canEditCustomers } from '@/permissions';
+import { canEditSupportTicket } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
@@ -159,7 +159,7 @@ export default {
             }
         },
         hasEditAccess(){
-          return canEditCustomers();
+          return canEditSupportTicket() ;
         }
     },
     watch:{

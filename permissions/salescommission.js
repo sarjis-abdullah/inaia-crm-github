@@ -9,3 +9,7 @@ export const canEditSalesCimmission=()=>{
     const permissions = userPermissions();
     return (permissions.indexOf(adminEdit)>-1 || permissions.indexOf(SalesAdvisorEdit)>-1);
 }
+export const ifHasSalesAdvisorAccess=()=>{
+    const permissions = userPermissions();
+    return permissions.indexOf(SalesAdvisorEdit)>-1;
+}
