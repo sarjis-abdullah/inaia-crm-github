@@ -139,7 +139,7 @@
           <sidebar-item :link="{ name: $t('customers'), path: '/customers' }"/>
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
         
-          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }"/>
+          <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }" v-if="!isSalesAdvirsor"/>
         
         </sidebar-item>
 <!--
@@ -192,7 +192,7 @@
           <sidebar-item :link="{ name: $t('monthly'), path: '/reports/monthly' }"/>
         </sidebar-item>
         <sidebar-item
-          v-if="hasSalesCommissionAccess"
+          v-if="hasAdmin"
           :link="{
             name: $t('sales_commission'),
             icon: 'lnir lnir-consulting text-primary',
@@ -334,7 +334,7 @@
   import { hasMaxAccess, getAppsAccess,isSalesAdvisor } from '~/helpers/auth';
   import { mapGetters } from "vuex"
   import {canViewOrder,
-    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin,canViewStatistics} from '~/permissions';
+    canViewDepot, canViewBatchProcess,canViewStocks, canViewCustomers,canViewSupportTicket,canViewInaiaBankAccount,canViewClaims,canViewSalesCimmission,canViewMarketing,canViewAdmin,canEditAdmin,canViewStatistics,ifHasSalesAdvisorAccess} from '~/permissions';
   export default {
     components: {
       DashboardNavbar,
@@ -361,7 +361,7 @@
         return canViewOrder();
       },
       hasDepotViewAccess(){
-        return canViewDepot();
+        return canViewDepot() || canViewSalesCimmission();
       },
       hasPatchProcessingAccess(){
         return canViewBatchProcess();
@@ -389,6 +389,9 @@
       },
       hasStatisticsAccess(){
         return canViewStatistics();
+      },
+      isSalesAdvirsor(){
+        return ifHasSalesAdvisorAccess() && !canViewAdmin();
       }
     },
     data(){

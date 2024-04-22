@@ -211,7 +211,7 @@ export default {
         },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
-        },
+        }
     },
     watch: {
         searchQuery: {

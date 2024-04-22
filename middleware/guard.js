@@ -14,7 +14,7 @@ export default function({ route, redirect }) {
             if(!canViewSupportTicket()) return redirect(404, '/Error404')
             break;
         case "depots":
-            if(!canViewDepot()) return redirect(404, '/Error404')
+            if(!(canViewDepot() || canViewSalesCimmission())) return redirect(404, '/Error404')
             break;
         case 'depots-details-id':
             if(!canViewDepot() && !canViewSalesCimmission()) return redirect(404, '/Error404')
