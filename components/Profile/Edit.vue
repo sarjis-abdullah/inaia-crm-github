@@ -232,8 +232,6 @@ export default {
                     type_id: 0,
                     is_primary: 1,
                     is_active: 1,
-                    line1: '',
-                    line2: '',
                 },
                 channels: {
                     email: {},
