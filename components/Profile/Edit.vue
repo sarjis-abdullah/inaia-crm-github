@@ -276,7 +276,7 @@ export default {
             return this.client(this.account.id);
         },
         updatedClientData() {
-            return {
+            const obj = {
                 id: this.customer.id,
                 customer: {
                     contact: {
@@ -300,6 +300,10 @@ export default {
                     channels: this.customer.channels
                 }
             }
+            if(!this.customer.address.type_id){
+                delete obj.customer.address.type_id
+            }
+            return obj
         }
     },
     watch: {
