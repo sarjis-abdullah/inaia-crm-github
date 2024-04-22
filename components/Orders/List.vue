@@ -23,7 +23,7 @@
                         header-row-class-name="thead-light"
                         :empty-text="$t('no_data')"
                         v-loading="isLoading"
-                        :data="allMappedData">
+                        :data="data">
                     <el-table-column label="#"
                                    min-width="100px"
                                     prop="id"
@@ -92,16 +92,6 @@
                                     >
                         <template v-slot="{row}">
                           <Status v-bind:status='row.order_status.name_translation_key'>{{row.order_status ? $t(row.order_status.name_translation_key) : row.order_status_id}}</Status>
-                        </template>
-                    </el-table-column>
-
-                    <el-table-column v-bind:label="$t('payment_method')"
-                                    prop="paymentMethod"
-                                    align="left"
-                                    min-width="130"
-                                    >
-                        <template v-slot="{row}">
-                            <span class="status">{{$t(row.paymentMethod)}}</span>
                         </template>
                     </el-table-column>
 
@@ -222,16 +212,6 @@ export default {
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage)
         },
-        allMappedData(){
-            return this.data?.map(item=> {
-                let paymentMethod = 'not_assigned'
-                if (item.orders_payment_transactions.length) {
-                    const transaction = item.orders_payment_transactions[0]
-                    paymentMethod = transaction.payment_method
-                }
-                return {...item, paymentMethod}
-            })
-        }
     },
     watch: {
         searchQuery: {
