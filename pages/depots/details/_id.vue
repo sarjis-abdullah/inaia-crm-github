@@ -43,7 +43,8 @@
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
+                     
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                       
@@ -135,7 +136,7 @@
                       </template>
                       <a class="dropdown-item" @click.prevent="showEditSavingPlan()" v-if="hadDepotEditAccess"
                       >{{ $t("edit_saving_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
 
