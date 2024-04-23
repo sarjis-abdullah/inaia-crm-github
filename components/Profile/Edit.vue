@@ -211,7 +211,14 @@
 import { mapGetters } from "vuex"
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-
+const defaultAddress = {
+    type_id: 0,
+    is_primary: 1,
+    is_active: 1,
+    line1: '',
+    line2: '',
+    country_id: null
+}
 export default {
     components: {
         Loading
@@ -228,11 +235,7 @@ export default {
                 person_data: {
                     nationality: {}
                 },
-                address: {
-                    type_id: 0,
-                    is_primary: 1,
-                    is_active: 1,
-                },
+                address: defaultAddress,
                 channels: {
                     email: {},
                     mobile: {}
@@ -273,7 +276,7 @@ export default {
             return this.client(this.account.id);
         },
         updatedClientData() {
-            return {
+            const obj = {
                 id: this.customer.id,
                 customer: {
                     contact: {
@@ -297,6 +300,10 @@ export default {
                     channels: this.customer.channels
                 }
             }
+            if(!this.customer.address.type_id){
+                delete obj.customer.address.type_id
+            }
+            return obj
         }
     },
     watch: {
@@ -316,6 +323,7 @@ export default {
                     }
                     if (!this.customer.address) {
                         this.customer.address = {
+                            ...defaultAddress,
                             is_primary: 1,
                             is_active: 1
                         }
@@ -361,7 +369,9 @@ export default {
                 }
             }
             this.customer.name = accountData.name;
-            this.customer.address = accountData.address;
+            if (accountData.address) {
+                this.customer.address = {...defaultAddress, ...accountData.address};
+            }
             accountData.channels.forEach(channel=>{
                 if(channel && channel.type){
                     if(channel.type.name_translation_key == 'email_channel_type'){
