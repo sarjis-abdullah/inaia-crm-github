@@ -792,5 +792,9 @@ export default {
     change_target: 'Change target',
     depot_target_updated_successfully: 'Depot target updated successfully',
     edit_depot_target_type: 'Edit depot target',
-    payment_date_after:'The payment execution date should be the same or after'
+    payment_date_after:'The payment execution date should be the same or after',
+    select_sales_advisor: 'Select sales advisor',
+    sales_advisor:'Sales advisor',
+    update:'Update',
+    remove:'Remove',
 }
