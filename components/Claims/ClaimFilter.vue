@@ -6,6 +6,7 @@
             class="col-md displayFlex flex-column align-content-center"
             v-if="!isDepotSet"
           >
+            <el-input :placeholder="$t('search_by')+`: Amount`" class="mb-1rem" clearable v-model="claimAmount"/>
             <Select
               v-model="selectedCustomer"
               remote
@@ -223,7 +224,8 @@
           { id: 1, value: "bank_transfer", label: "bank_transfer" },
           { id: 2, value: "bank_account", label: "bank_account" },
         ],
-        selectedPaymentMethod:null
+        selectedPaymentMethod:null,
+        claimAmount: null
       };
     },
     mounted() {
@@ -370,6 +372,9 @@
         if(this.selectedPaymentMethod){
           query+='&payment_method='+this.selectedPaymentMethod;
         }
+        if (this.claimAmount) {
+          query+='&amount_eq='+parseFloat(this.claimAmount)*100
+        }
         if (query == "") {
           this.filterIsActive = false;
         } else this.filterIsActive = true;
@@ -423,6 +428,7 @@
         this.selectedDepots = null;
         this.selectedPaymentMethod = null;
         this.filterIsActive = false;
+        this.claimAmount = null
         this.$emit("filter", "");
       },
     },
@@ -472,6 +478,9 @@
   
   .pointer {
     cursor: pointer;
+  }
+  .mb-1rem{
+    margin-bottom: 16px;
   }
   </style>
   

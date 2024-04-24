@@ -6,6 +6,7 @@
           <div class="card">
             <div class="card-header" v-if="batch_process_id==-1">
               <div class="row align-items-center">
+                <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: ID`" clearable style="width: 200px" class="ml-0" v-model="claimId"/>
                 <div class="col text-right">
 
 
@@ -281,9 +282,13 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         claims: "claims/claims",
       }),
       searchQuery() {
+        let filterByClaimId = ''
+        if (this.claimId) {
+          filterByClaimId += '&id=' + this.claimId
+        }
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}${this.filterQuery}&${this.batch_process_id>-1?"claim_batch_process_id="+this.batch_process_id:''}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}${this.batch_process_id>-1?"&claim_batch_process_id="+this.batch_process_id:''}${filterByClaimId}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -311,7 +316,7 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
     data() {
       return {
         page: 1,
-        perPage: 10,
+        perPage: 50,
         totalTableData: 1,
         isLoading: false,
         loadingError: null,
@@ -330,7 +335,8 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         selectedClaim:null,
         showDetail:false,
         showCreateForm:false,
-        removeClaims:false
+        removeClaims:false,
+        claimId:null,
       };
     },
     mounted(){
@@ -636,5 +642,8 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
   }
   .actionBtnStyle {
     color: #8898aa;
+  }
+  .ml-0{
+    margin-left: 15px !important;
   }
   </style>

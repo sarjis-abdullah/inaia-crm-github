@@ -59,10 +59,12 @@
                   /> -->
                   <div class="row">
                             <div class="col-md-6">
-                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider">
-                                    <select class="form-control" v-model="customer.person_data.nationality.id">
-                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider" rules="required">
+                                    <template #default="slotProps">  
+                                        <select class="form-control" :class="[{'is-invalid': slotProps.invalid && slotProps.validated}]" v-model="customer.person_data.nationality.id">
+                                            <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                        </select>
+                                    </template>  
                                 </base-input>
                             </div>
                             <div class="col-md-6" v-if="selectedContactType == 'person'">
@@ -233,7 +235,9 @@ export default {
                     is_active: 0,
                 },
                 person_data: {
-                    nationality: {}
+                    nationality: {
+                        id: null
+                    }
                 },
                 address: defaultAddress,
                 channels: {
@@ -334,10 +338,14 @@ export default {
                     this.customer.channels  = this.filterChannels(this.customer.channels)
                     if (!this.customer.person_data) {
                         this.customer.person_data = {
-                            nationality: {}
+                            nationality: {
+                                id: null
+                            }
                         }
                     } else if (!this.customer.person_data.nationality) {
-                        this.customer.person_data.nationality = {}
+                        this.customer.person_data.nationality = {
+                            id: null
+                        }
                     }
                 }
             },
@@ -365,7 +373,7 @@ export default {
             this.customer.person_data = accountData.person_data;
             if(!accountData.person_data.nationality){
                 this.customer.person_data.nationality = {
-                    id:-1
+                    id: null
                 }
             }
             this.customer.name = accountData.name;
