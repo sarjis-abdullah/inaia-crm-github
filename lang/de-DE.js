@@ -787,4 +787,5 @@ export default {
     sales_advisor:'Sales advisor',
     update:'Update',
     remove:'Remove',
+    search_by:'Search by',
 }
