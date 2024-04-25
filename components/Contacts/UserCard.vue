@@ -82,8 +82,8 @@
 
             <div class="address text-sm mt-3">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('address_data')}}</div>
-              <div><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address.line1}}</div>
-              <div v-if="info.address.line2" class="pl-4">{{info.address.line2}}</div>
+              <div><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address?.line1}}</div>
+              <div v-if="info.address?.line2" class="pl-4">{{info.address.line2}}</div>
               <div><i class="lnir lnir-map mr-2 text-muted" />{{info.address.postal_code}} {{info.address.city}}</div>
               <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + getCountryName(info)}}</div>
             </div>
@@ -173,8 +173,8 @@ export default {
         },
         getAddress() {
           return this.info.address ?
-            this.info.address.line1 +
-            (this.info.address.line2 ? "\n" + this.info.address.line2 : '') +
+            this.info.address?.line1 +
+            (this.info.address?.line2 ? "\n" + this.info.address.line2 : '') +
             (this.info.address.postal_code ? '<br>' + this.info.address.postal_code : '') +
             (this.info.address.city ? ' ' + this.info.address.city : '') +
             (this.info.address.region ? '<br>' + this.info.address.region : '') +

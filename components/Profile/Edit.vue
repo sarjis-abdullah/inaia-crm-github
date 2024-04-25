@@ -59,10 +59,12 @@
                   /> -->
                   <div class="row">
                             <div class="col-md-6">
-                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider">
-                                    <select class="form-control" v-model="customer.person_data.nationality.id">
-                                        <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
-                                    </select>
+                                <base-input label="Nationality" name="Nationality" placeholder="Select nationality" ref="nationalityProvider" rules="required">
+                                    <template #default="slotProps">  
+                                        <select class="form-control" :class="[{'is-invalid': slotProps.invalid && slotProps.validated}]" v-model="customer.person_data.nationality.id">
+                                            <option v-for="(i, idx) in nationalityOptions" :key="idx" :value="i.value">{{i.text}}</option>
+                                        </select>
+                                    </template>  
                                 </base-input>
                             </div>
                             <div class="col-md-6" v-if="selectedContactType == 'person'">
@@ -211,7 +213,14 @@
 import { mapGetters } from "vuex"
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
-
+const defaultAddress = {
+    type_id: 0,
+    is_primary: 1,
+    is_active: 1,
+    line1: '',
+    line2: '',
+    country_id: null
+}
 export default {
     components: {
         Loading
@@ -226,13 +235,11 @@ export default {
                     is_active: 0,
                 },
                 person_data: {
-                    nationality: {}
+                    nationality: {
+                        id: null
+                    }
                 },
-                address: {
-                    type_id: 0,
-                    is_primary: 1,
-                    is_active: 1,
-                },
+                address: defaultAddress,
                 channels: {
                     email: {},
                     mobile: {}
@@ -273,7 +280,7 @@ export default {
             return this.client(this.account.id);
         },
         updatedClientData() {
-            return {
+            const obj = {
                 id: this.customer.id,
                 customer: {
                     contact: {
@@ -297,6 +304,10 @@ export default {
                     channels: this.customer.channels
                 }
             }
+            if(!this.customer.address.type_id){
+                delete obj.customer.address.type_id
+            }
+            return obj
         }
     },
     watch: {
@@ -316,6 +327,7 @@ export default {
                     }
                     if (!this.customer.address) {
                         this.customer.address = {
+                            ...defaultAddress,
                             is_primary: 1,
                             is_active: 1
                         }
@@ -326,10 +338,14 @@ export default {
                     this.customer.channels  = this.filterChannels(this.customer.channels)
                     if (!this.customer.person_data) {
                         this.customer.person_data = {
-                            nationality: {}
+                            nationality: {
+                                id: null
+                            }
                         }
                     } else if (!this.customer.person_data.nationality) {
-                        this.customer.person_data.nationality = {}
+                        this.customer.person_data.nationality = {
+                            id: null
+                        }
                     }
                 }
             },
@@ -357,11 +373,13 @@ export default {
             this.customer.person_data = accountData.person_data;
             if(!accountData.person_data.nationality){
                 this.customer.person_data.nationality = {
-                    id:-1
+                    id: null
                 }
             }
             this.customer.name = accountData.name;
-            this.customer.address = accountData.address;
+            if (accountData.address) {
+                this.customer.address = {...defaultAddress, ...accountData.address};
+            }
             accountData.channels.forEach(channel=>{
                 if(channel && channel.type){
                     if(channel.type.name_translation_key == 'email_channel_type'){

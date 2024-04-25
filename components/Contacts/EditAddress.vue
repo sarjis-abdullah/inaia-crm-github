@@ -159,12 +159,12 @@ export default {
   mounted(){
       if(this.customer && this.customer.address)
       {
-          this.line1 = this.customer.address.line1;
-          this.line2 = this.customer.address.line2;
+          this.line1 = this.customer.address?.line1;
+          this.line2 = this.customer.address?.line2;
           this.city = this.customer.address.city;
           this.region = this.customer.address.region;
           this.postal_code = this.customer.address.postal_code;
-          this.country = this.customer.address ? this.customer.address.country_id:-1
+          this.country = this.customer?.address?.country_id? this.customer.address.country_id:-1
       }
       if (this.countryList.length < 200) {
             this.initCountryList();

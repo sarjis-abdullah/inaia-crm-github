@@ -35,6 +35,7 @@
       class="table-hover table-responsive table-flush mb-3"
       header-row-class-name="thead-light"
       :data="agioTransactions"
+      :key="agioTransactionsKey"
     >
       <el-table-column label="#" min-width="100px" prop="id">
         <template v-slot="{ row }">
@@ -114,11 +115,8 @@
         prop="sales_advisor_id"
       >
         <template v-slot="{ row }">
-        <div class="d-flex align-items-center card mb-0" style="flex-direction: row;">
-          <AgioTransactionSalesAdvisor ref="agioTransactionSalesAdvisor" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors" @updateSalesAdvisorId="updateSalesAdvisorId"/>
-          <span v-if="row.sales_advisor_id" @click="updateAgioTransaction(row)" class="ml-1">
-            <CheckCircleOutlineIcon />
-          </span>
+        <div class="card mb-0">
+          <AgioTransactionSalesAdvisor @updateListKey="agioTransactionsKey++" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors"/>
         </div>
         </template>
       </el-table-column>
@@ -230,14 +228,12 @@ export default {
       selectedAgioTransaction:null,
       deletedAgioTransactionId:null,
       isDeleting:false,
-      updating: false,
-      agioTransactionSalesAdvisors: [],
+      agioTransactionsKey: 1,
     };
   },
   methods: {
     fetchAgioTransactions() {
       this.isLoading = true;
-      console.log(this.searchQuery);
       this.$store
         .dispatch("depots/fetchAgioTransactionList", this.searchQuery)
         .then((res) => (this.totalTableData = res.meta.total))
@@ -284,48 +280,6 @@ export default {
         apiErrorHandler(err,this.$notify);
       })
     },
-    updateSalesAdvisorId(obj)
-    {
-      if (!this.agioTransactionSalesAdvisors.length) {
-        this.agioTransactionSalesAdvisors = []
-      }
-      const found = this.agioTransactionSalesAdvisors.find(item=> item.agioTransactionId == obj.agioTransactionId)
-        if (found) {
-          this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.map(item=> {
-            if (item.agioTransactionId == obj.agioTransactionId) {
-              return obj
-            }
-            return item
-          })
-          return
-        }
-        this.agioTransactionSalesAdvisors.push(obj)
-    },
-    updateAgioTransaction(row)
-    {
-      const found = this.agioTransactionSalesAdvisors.find(item => row.id == item.agioTransactionId)
-      if (found) {
-        this.updating = true
-        const obj = {
-          agio_transaction_id: found.agioTransactionId,
-          sales_advisor_id: found.salesAdvisorId
-        }
-        this.$store.dispatch('depots/updateAgioTransaction', obj)
-          .then(()=>{
-            this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
-            this.agioTransactionSalesAdvisors = this.agioTransactionSalesAdvisors.filter(item => row.id != item.agioTransactionId)
-            this.$nextTick(()=> {
-              this.$refs.agioTransactionSalesAdvisor.toggleDisabledSelect()
-            })
-          })
-          .catch((err)=>{
-            apiErrorHandler(err,this.$notify);
-          })
-          .finally(()=> {
-            this.updating = false
-          })
-      }
-    }
   },
 };
 </script>
