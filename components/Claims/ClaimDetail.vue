@@ -214,7 +214,7 @@ export default {
             }
         },
         shouldNotify(){
-            if(this.claim && this.claim.possible_debit_date==null && this.claim.claim_status.name_translation_key == 'pending' && this.paymentmethod!="bank_transfer"){
+            if(this.claim && this.claim.possible_debit_date==null && this.claim.claim_status.name_translation_key == 'pending'){
                 return true;
             }
             return false;

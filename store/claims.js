@@ -185,7 +185,7 @@ export const actions = {
     },
     notifyuser(context,payload){
         return this.$axios
-                .post(`${process.env.golddinarApiUrl}/notifications/claims/debit`,payload)
+                .post(`${process.env.golddinarApiUrl}/notifications/claims/payment`,payload)
                 .then(res=>{
                     
                     return true;
