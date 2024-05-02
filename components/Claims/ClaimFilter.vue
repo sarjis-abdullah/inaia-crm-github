@@ -6,7 +6,8 @@
             class="col-md displayFlex flex-column align-content-center"
             v-if="!isDepotSet"
           >
-            <el-input :placeholder="$t('search_by')+`: Amount`" class="mb-1rem" clearable v-model="claimAmount"/>
+            <el-input v-if="isFiltersVisible('id')" :placeholder="$t('search_by')+`: ID`" class="mb-1rem" clearable v-model="claimId"/>
+            <el-input v-if="isFiltersVisible('amount')" :placeholder="$t('search_by')+`: Amount`" class="mb-1rem" clearable v-model="claimAmount"/>
             <Select
               v-model="selectedCustomer"
               remote
@@ -19,6 +20,7 @@
               @change="customerSelected"
               @clear="clearCustomer"
               clearable
+              v-if="isFiltersVisible('customer')"
             >
               <Option
                 v-for="option in customers"
@@ -37,6 +39,7 @@
               @clear="clearDepot"
               class="filterElement"
               :disabled="selectedCustomer == null"
+              v-if="isFiltersVisible('depots')"
             >
               <Option
                 v-for="option in depots"
@@ -52,7 +55,7 @@
               :placeholder="$t('status')"
               v-model="selectedStatus"
               filterable
-              
+              v-if="isFiltersVisible('status')"
               class="mb-3"
               @remove-tag="applyFilter"
               :loading="loadingStatus"
@@ -73,7 +76,7 @@
               class="mb-3"
               @remove-tag="applyFilter"
               :loading="loadingTypes"
-              v-if="displayTypes"
+              v-if="isFiltersVisible('types') && displayTypes"
             >
               <Option
                 v-for="option in types"
@@ -89,6 +92,7 @@
               clearable
               class="filterElement"
               @clear="removeSelectedPaymentMethod"
+              v-if="isFiltersVisible('payment_method')"
             >
               <Option
                 v-for="option in paymentmethods"
@@ -196,6 +200,10 @@
         type: Boolean,
         default: true,
       },
+      showSelectedFilters: {
+        type: Array,
+        default: ['status', 'customer','depots', 'payment_method', 'types'],
+      },
     },
     components: {
       Badge,
@@ -225,7 +233,8 @@
           { id: 2, value: "bank_account", label: "bank_account" },
         ],
         selectedPaymentMethod:null,
-        claimAmount: null
+        claimAmount: null,
+        claimId: null
       };
     },
     mounted() {
@@ -375,6 +384,9 @@
         if (this.claimAmount) {
           query+='&amount_eq='+parseFloat(this.claimAmount)*100
         }
+        if (this.claimId) {
+          query+='&id='+this.claimId
+        }
         if (query == "") {
           this.filterIsActive = false;
         } else this.filterIsActive = true;
@@ -429,8 +441,16 @@
         this.selectedPaymentMethod = null;
         this.filterIsActive = false;
         this.claimAmount = null
+        this.claimId = null
         this.$emit("filter", "");
       },
+      isFiltersVisible(key){
+        const found = this.showSelectedFilters.find(item=> item == key)
+        if (found) {
+          return true
+        }
+        return false
+      }
     },
   };
   </script>

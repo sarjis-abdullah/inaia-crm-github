@@ -46,7 +46,11 @@
             </div>
             <div class="card-header" v-else>
               <div class="row align-items-center">
+                
                 <div class="col text-right" v-if="!removeClaims">
+                  <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
+                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                      </button>
                   <button @click.prevent="activateRemovingClaims()" type="button" class="btn base-button btn-icon btn-fab btn-danger btn-sm">
                         <span class="btn-inner--text">{{$t('remove_claims')}}</span>
                       </button>
@@ -67,6 +71,7 @@
 
                   </div>
               </div>
+              <ClaimFilter :showSelectedFilters="['status', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
             </div>
             
       <el-table
