@@ -8,7 +8,7 @@
       @close="cancelEdit"
     >
       <template slot="header" class="pb-0">
-        <h5 class="modal-title" v-if="depot?.sales_advisor_id">{{ $t("sales_advisor") }}</h5>
+        <h5 class="modal-title" v-if="depot && depot.sales_advisor_id">{{ $t("sales_advisor") }}</h5>
         <h5 class="modal-title" v-else>{{ $t("edit_salesadvisor") }}</h5>
         <span></span>
       </template>
@@ -17,7 +17,7 @@
                 <Select
             :placeholder="$t('select_sales_advisor')"
             v-model="sales_advisor_id"
-            :disabled="!!depot?.sales_advisor_id"
+            :disabled="(depot && depot.sales_advisor_id) ? true : false"
           >
             <Option
               v-for="option in advisors"
@@ -28,7 +28,7 @@
             </Option>
           </Select>
             </div>
-          <div class="row" v-if="!depot?.sales_advisor_id">
+          <div class="row" v-if="!(depot && depot.sales_advisor_id)">
             <div class="col-md-6"></div>
             <div class="col-md-6">
               <base-button

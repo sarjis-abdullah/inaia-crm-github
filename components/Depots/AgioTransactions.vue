@@ -208,7 +208,7 @@ export default {
     },
     advisors: {
       handler(n, p) {
-        if (n?.length != p?.length) {
+        if ((n && n.length) != (p && p.length)) {
           this.$store.dispatch("salesCommission/fetchSalesAdvisors");
         }
       },
