@@ -202,7 +202,7 @@
       },
       showSelectedFilters: {
         type: Array,
-        default: ()=> (['status', 'customer','depots', 'payment_method', 'types']),
+        default: ()=> (['status', 'customer','depots', 'payment_method', 'types', 'id', 'amount']),
       },
     },
     components: {
