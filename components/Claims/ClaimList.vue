@@ -71,7 +71,7 @@
 
                   </div>
               </div>
-              <ClaimFilter :showSelectedFilters="['status', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              <ClaimFilter :showSelectedFilters="['status', 'customer','depots', 'payment_method', 'types', 'amount', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
             </div>
             
       <el-table
