@@ -28,6 +28,7 @@
 
 <script>
 import { mapGetters } from "vuex"
+import { getFormattedAddress } from "@/helpers/address"
 
 export default {
     props: {
@@ -51,12 +52,7 @@ export default {
             return null
         },
         getAddress() {
-            return this.resource.address ?
-                    this.resource.address?.line1 + (this.resource.address?.line2 ? ' ' + this.resource.address.line2 : '') +
-                    (this.resource.address.city ? ', ' + this.resource.address.city : '') +
-                    (this.resource.address.region ? ', ' + this.resource.address.region : '') +
-                    (this.resource.address.postal_code ? ', ' + this.resource.address.postal_code : '')
-                : ''
+            return getFormattedAddress(this.resource.address)
         },
         getChannelInfo(type) {
             let channel = this.resource.channels && this.resource.channels.length && this.resource.channels.find( c => c.type.value == type )

@@ -6,7 +6,6 @@
           <div class="card">
             <div class="card-header" v-if="batch_process_id==-1">
               <div class="row align-items-center">
-                <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: ID`" clearable style="width: 200px" class="ml-0" v-model="claimId"/>
                 <div class="col text-right">
 
 
@@ -71,7 +70,7 @@
 
                   </div>
               </div>
-              <ClaimFilter :showSelectedFilters="['status', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              <ClaimFilter :showSelectedFilters="['status', 'customer','depots', 'payment_method', 'types', 'amount', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
             </div>
             
       <el-table
@@ -287,13 +286,9 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         claims: "claims/claims",
       }),
       searchQuery() {
-        let filterByClaimId = ''
-        if (this.claimId) {
-          filterByClaimId += '&id=' + this.claimId
-        }
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}${this.filterQuery}${this.batch_process_id>-1?"&claim_batch_process_id="+this.batch_process_id:''}${filterByClaimId}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}${this.batch_process_id>-1?"&claim_batch_process_id="+this.batch_process_id:''}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -341,7 +336,6 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         showDetail:false,
         showCreateForm:false,
         removeClaims:false,
-        claimId:null,
       };
     },
     mounted(){
