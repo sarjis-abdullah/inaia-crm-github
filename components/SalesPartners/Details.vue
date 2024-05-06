@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { getFormattedAddress } from "../../helpers/address"
+import { getFormattedAddress } from "@/helpers/address"
 
 export default {
     props: {
