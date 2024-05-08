@@ -256,7 +256,7 @@ export const actions = {
         }
         else{
             const status_id = getStatusId(status,'depot_status_paused');
-            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id,payload.end_date);
         }
     },
     confirmSavingPlanContract(context,payload)
