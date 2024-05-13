@@ -76,7 +76,7 @@
             :placeholder="$t('agio_payment_plan')"
             v-model="selectedAgioPaymentPlan"
             filterable
-            class="mb-3"
+            class="filterElement"
             clearable
             @clear="removeAgioPaymentPlan"
           >
@@ -92,7 +92,7 @@
             :placeholder="$t('status')"
             v-model="selectedDepotStatus"
             filterable
-            class="mb-3"
+            class="filterElement"
             @remove-tag="applyFilter"
             multiple
             @clear="removeSelectedDepotStatus"
@@ -109,7 +109,7 @@
             :placeholder="$t('interval_day')"
             v-model="selectedIntervalDay"
 
-            class="mb-3"
+            class="filterElement"
             clearable
             @clear="removeIntervalDay"
           >
@@ -117,6 +117,21 @@
               v-for="option in intervalDays"
               :value="option.value"
               :label="$t(option.label)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
+          <Select
+            :placeholder="$t('select_sales_advisor')"
+            v-model="salesAdvisorId"
+            clearable
+            class="filterElement"
+            @clear="salesAdvisorId = null"
+          >
+            <Option
+              v-for="option in salesAdvisors"
+              :value="option.id"
+              :label="formatClientLabel(option)"
               :key="option.id"
             >
             </Option>
@@ -145,6 +160,14 @@
             v-model="intervalendDate"
             type="date"
             :placeholder="$t('select_interval_end_date_placeholder')"
+            @clear="removeDate"
+          >
+          </date-picker>
+          <date-picker
+            class="filterElement"
+            v-model="createdDate"
+            type="date"
+            :placeholder="$t('created_date')"
             @clear="removeDate"
           >
           </date-picker>
@@ -250,6 +273,15 @@
         <a class="badgeIcon" @click.prevent="removeDate()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="createdDate"
+        > {{ $d(createdDate) }}
+        <a class="badgeIcon" @click.prevent="removeCreatedDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
       <ClearFilter @cleared="clearFilter" />
     </div>
   </div>
@@ -318,7 +350,9 @@ export default {
         { id: 2, value: 15, label: "15" },
       ],
       selectedIntervalDay:null,
-      selectedPaymentMethod:null
+      selectedPaymentMethod:null,
+      createdDate: null,
+      salesAdvisorId:null
     };
   },
   mounted() {
@@ -330,6 +364,9 @@ export default {
     {
       this.$store.dispatch('depots/getDepotStatuses')
     }
+    if (this.salesAdvisors && this.salesAdvisors.length == 0) {
+      this.$store.dispatch("salesCommission/fetchSalesAdvisors")
+    }
   },
   computed: {
     ...mapGetters("clients", {
@@ -340,6 +377,9 @@ export default {
     }),
     ...mapGetters("depots", {
       depotStatus: "depotStatuses",
+    }),
+    ...mapGetters("salesCommission", {
+      salesAdvisors: "salesAdvisors",
     }),
   },
   methods: {
@@ -464,6 +504,12 @@ export default {
       if(this.selectedPaymentMethod){
         query+='&payment_method='+this.selectedPaymentMethod;
       }
+      if(this.salesAdvisorId){
+        query+='&sales_advisor_id='+this.salesAdvisorId;
+      }
+      if(this.createdDate){
+        query+='&created_at='+this.formatDateToApiFormat(this.createdDate);
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -510,6 +556,10 @@ export default {
     },
     removeIntervalDay:function(){
       this.selectedIntervalDay = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
+    removeCreatedDate: function () {
+      this.createdDate = null;
       if (this.filterIsActive) this.applyFilter();
     },
     removeDate: function () {
@@ -560,6 +610,8 @@ export default {
       this.selectedDepotStatus = [];
       this.selectedIntervalDay = null;
       this.selectedPaymentMethod = null;
+      this.salesAdvisorId = null;
+      this.createdDate = null;
       this.$emit("filter", "");
     },
   },
