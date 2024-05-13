@@ -114,6 +114,21 @@
             :placeholder="$t('select_end_date_placeholder')"
           >
           </date-picker>
+          <Select
+            :placeholder="$t('select_sales_advisor')"
+            v-model="salesAdvisorId"
+            clearable
+            class="filterElement"
+            @clear="salesAdvisorId = null"
+          >
+            <Option
+              v-for="option in salesAdvisors"
+              :value="option.id"
+              :label="formatClientLabel(option)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
       </div>
       <div
@@ -256,7 +271,8 @@ export default {
         { id: 1, value: "bank_transfer", label: "bank_transfer" },
         { id: 2, value: "bank_account", label: "bank_account" },
       ],
-      selectedPaymentMethod:null
+      selectedPaymentMethod:null,
+      salesAdvisorId:null
     };
   },
   mounted() {
@@ -277,6 +293,9 @@ export default {
     }),
     ...mapGetters("clients", {
       customers: "orderFilterList",
+    }),
+    ...mapGetters("salesCommission", {
+      salesAdvisors: "salesAdvisors",
     }),
   },
   watch: {
@@ -412,6 +431,9 @@ export default {
       if(this.selectedPaymentMethod){
         query+='&payment_method='+this.selectedPaymentMethod;
       }
+      if(this.salesAdvisorId){
+        query+='&sales_advisor_id='+this.salesAdvisorId;
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -473,6 +495,7 @@ export default {
       this.selectedDepots = null;
       this.selectedPaymentMethod = null;
       this.filterIsActive = false;
+      this.salesAdvisorId = null;
       this.$emit("filter", "");
     },
   },
