@@ -277,7 +277,7 @@ export default {
     }),
     ...mapGetters("clients", {
       customers: "orderFilterList",
-    })
+    }),
   },
   watch: {
     selectedCustomer: {
@@ -411,9 +411,6 @@ export default {
       }
       if(this.selectedPaymentMethod){
         query+='&payment_method='+this.selectedPaymentMethod;
-      }
-      if(this.salesAdvisorId){
-        query+='&sales_advisor_id='+this.salesAdvisorId;
       }
       if (query == "") {
         this.filterIsActive = false;
