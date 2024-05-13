@@ -267,6 +267,15 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-if="salesAdvisorId != null"
+        >{{ salesAdvisorName
+        }}<a class="badgeIcon" @click.prevent="removeSalesAdviserFilter()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedAgio != null"
         >{{ selectedAgio
         }}<a class="badgeIcon" @click.prevent="removeAgio()"
@@ -407,6 +416,13 @@ export default {
     ...mapGetters("salesCommission", {
       salesAdvisors: "salesAdvisors",
     }),
+    salesAdvisorName(){
+      if (this.salesAdvisorId) {
+        const advisor = this.salesAdvisors.find(item=> item.id == this.salesAdvisorId)
+        return this.formatClientLabel(advisor)
+      }
+      return ''
+    }
   },
   methods: {
     formatDateToApiFormat,
@@ -564,6 +580,10 @@ export default {
     },
     removeAgioPaymentPlan: function () {
       this.selectedAgioPaymentPlan = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
+    removeSalesAdviserFilter: function () {
+      this.salesAdvisorId = null;
       if (this.filterIsActive) this.applyFilter();
     },
     removeAgio: function () {
