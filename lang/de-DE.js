@@ -788,4 +788,6 @@ export default {
     update:'Update',
     remove:'Remove',
     search_by:'Search by',
+    from_created_date:'From created date',
+    to_created_date:'To created date',
 }
