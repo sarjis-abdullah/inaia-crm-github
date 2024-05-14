@@ -70,13 +70,28 @@
             >
             </Option>
           </Select>
+          <Select
+            :placeholder="$t('select_sales_advisor')"
+            v-model="salesAdvisorId"
+            clearable
+            class="filterElement"
+            @clear="salesAdvisorId = null"
+          >
+            <Option
+              v-for="option in salesAdvisors"
+              :value="option.id"
+              :label="formatClientLabel(option)"
+              :key="option.id"
+            >
+            </Option>
+          </Select>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <Select
             :placeholder="$t('agio_payment_plan')"
             v-model="selectedAgioPaymentPlan"
             filterable
-            class="mb-3"
+            class="filterElement"
             clearable
             @clear="removeAgioPaymentPlan"
           >
@@ -92,7 +107,7 @@
             :placeholder="$t('status')"
             v-model="selectedDepotStatus"
             filterable
-            class="mb-3"
+            class="filterElement"
             @remove-tag="applyFilter"
             multiple
             @clear="removeSelectedDepotStatus"
@@ -109,7 +124,7 @@
             :placeholder="$t('interval_day')"
             v-model="selectedIntervalDay"
 
-            class="mb-3"
+            class="filterElement"
             clearable
             @clear="removeIntervalDay"
           >
@@ -121,6 +136,15 @@
             >
             </Option>
           </Select>
+          
+          <date-picker
+            class="filterElement"
+            v-model="fromCreatedDate"
+            type="date"
+            :placeholder="$t('from_created_date')"
+            @clear="removeCreatedDateFilters"
+          >
+          </date-picker>
         </div>
         <div class="col-md displayFlex flex-column align-content-center">
           <el-input
@@ -146,6 +170,14 @@
             type="date"
             :placeholder="$t('select_interval_end_date_placeholder')"
             @clear="removeDate"
+          >
+          </date-picker>
+          <date-picker
+            class="filterElement"
+            v-model="toCreatedDate"
+            type="date"
+            :placeholder="$t('to_created_date')"
+            @clear="removeToCreatedDate"
           >
           </date-picker>
         </div>
@@ -235,6 +267,15 @@
         type="secondary"
         size="md"
         style="margin-right: 10px"
+        v-if="salesAdvisorId != null"
+        >{{ salesAdvisorName
+        }}<a class="badgeIcon" @click.prevent="removeSalesAdviserFilter()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
         v-if="selectedAgio != null"
         >{{ selectedAgio
         }}<a class="badgeIcon" @click.prevent="removeAgio()"
@@ -250,6 +291,31 @@
         <a class="badgeIcon" @click.prevent="removeDate()"
           ><i class="fas fa-window-close"></i></a
       ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="fromCreatedDate"
+        > 
+        <span>{{ $t("from") + ' ' + $t("created_date") }} : {{ $d(fromCreatedDate) }}</span>
+        <span v-if="toCreatedDate">{{' - ' + $t("to") + ' ' + $t("created_date")}} : {{ $d(toCreatedDate) }}</span>
+        <a class="badgeIcon" @click.prevent="removeCreatedDateFilters()">
+          <i class="fas fa-window-close"></i>
+        </a>
+      </Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="toCreatedDate && !fromCreatedDate"
+        > 
+        <span v-if="!fromCreatedDate">
+          {{ $t("to") + ' ' + $t("created_date") }} : {{ $d(toCreatedDate) }}
+        </span>
+        <a class="badgeIcon" @click.prevent="removeToCreatedDate()">
+          <i class="fas fa-window-close"></i>
+        </a>
+        </Badge>
       <ClearFilter @cleared="clearFilter" />
     </div>
   </div>
@@ -318,7 +384,10 @@ export default {
         { id: 2, value: 15, label: "15" },
       ],
       selectedIntervalDay:null,
-      selectedPaymentMethod:null
+      selectedPaymentMethod:null,
+      fromCreatedDate: null,
+      toCreatedDate: null,
+      salesAdvisorId:null
     };
   },
   mounted() {
@@ -329,6 +398,9 @@ export default {
     if(this.depotStatus.length == 0)
     {
       this.$store.dispatch('depots/getDepotStatuses')
+    }
+    if (this.salesAdvisors && this.salesAdvisors.length == 0) {
+      this.$store.dispatch("salesCommission/fetchSalesAdvisors")
     }
   },
   computed: {
@@ -341,6 +413,16 @@ export default {
     ...mapGetters("depots", {
       depotStatus: "depotStatuses",
     }),
+    ...mapGetters("salesCommission", {
+      salesAdvisors: "salesAdvisors",
+    }),
+    salesAdvisorName(){
+      if (this.salesAdvisorId) {
+        const advisor = this.salesAdvisors.find(item=> item.id == this.salesAdvisorId)
+        return this.formatClientLabel(advisor)
+      }
+      return ''
+    }
   },
   methods: {
     formatDateToApiFormat,
@@ -464,6 +546,15 @@ export default {
       if(this.selectedPaymentMethod){
         query+='&payment_method='+this.selectedPaymentMethod;
       }
+      if(this.salesAdvisorId){
+        query+='&sales_advisor_id='+this.salesAdvisorId;
+      }
+      if(this.fromCreatedDate){
+        query+='&from_date='+this.formatDateToApiFormat(this.fromCreatedDate);
+      }
+      if(this.toCreatedDate){
+        query+='&to_date='+this.formatDateToApiFormat(this.toCreatedDate);
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -491,6 +582,10 @@ export default {
       this.selectedAgioPaymentPlan = null;
       if (this.filterIsActive) this.applyFilter();
     },
+    removeSalesAdviserFilter: function () {
+      this.salesAdvisorId = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
     removeAgio: function () {
       this.selectedAgio = null;
       if (this.filterIsActive) {
@@ -510,6 +605,15 @@ export default {
     },
     removeIntervalDay:function(){
       this.selectedIntervalDay = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
+    removeCreatedDateFilters: function () {
+      this.fromCreatedDate = null;
+      this.toCreatedDate = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
+    removeToCreatedDate: function () {
+      this.toCreatedDate = null;
       if (this.filterIsActive) this.applyFilter();
     },
     removeDate: function () {
@@ -560,6 +664,9 @@ export default {
       this.selectedDepotStatus = [];
       this.selectedIntervalDay = null;
       this.selectedPaymentMethod = null;
+      this.salesAdvisorId = null;
+      this.toCreatedDate = null;
+      this.fromCreatedDate = null;
       this.$emit("filter", "");
     },
   },
