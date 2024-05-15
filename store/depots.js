@@ -67,6 +67,9 @@ export const mutations = {
     details(state, data) {
         state.details   = data
     },
+    updateDepot(state, data) {
+        state.details.name = data.name
+    },
     remove(state, idx) {
         state.list = state.list.splice(idx, 1)
     },
@@ -181,6 +184,15 @@ export const actions = {
                     return Promise.reject(err)
                 })
         }
+    },
+    updateDepot(context, payload) {
+        return this.$axios.put(process.env.golddinarApiUrl + '/depots/' + payload.id, payload)
+            .then(res => {
+                context.commit('updateDepot', res.data.data);
+                return res.data.data;
+            }).catch(err => {
+                return Promise.reject(err)
+            })
     },
     remove(context, payload) {
         return this.$axios
