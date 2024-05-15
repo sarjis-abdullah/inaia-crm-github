@@ -1,50 +1,18 @@
 <template>
       <form class="pt-4" v-if="showForm">
-        <div class="row">
+        <div class="row my-3">
+          <div class="col">
+           Do you confirm creation of batch process with those criteria ?
+          </div>
             <div class="col">
            
-            <Select
-              :placeholder="$t('types')"
-              v-model="selectedType"
-              filterable
-              @change="onFilterChange"
-             
-              clearable
-              :loading="loadingTypes"
-              
-            >
-              <Option
-                v-for="option in types"
-                :value="option.id"
-                :label="$t(option.name_translation_key)"
-                :key="option.id"
-              >
-              </Option>
-            </Select>
+            Total number : <i18n-n :value="parseInt(total)"></i18n-n>
             
           </div>
           <div class="col">
-            <date-picker
-            size="large"
-            class="filterElement"
-            v-model="startDate"
-            @change="onFilterChange"
-            type="date"
-            :placeholder="$t('select_start_date_placeholder')"
-          >
-          </date-picker>
-
+            Total amount : <i18n-n :value="parseInt(totalAmount) / 100"></i18n-n> €
           </div>
-          <div class="col">
-            <date-picker
-            class="filterElement"
-            v-model="endDate"
-            @change="onFilterChange"
-            type="date"
-            :placeholder="$t('select_end_date_placeholder')"
-          >
-          </date-picker>
-          </div>
+          
         </div>
         <div
           class="
@@ -59,7 +27,7 @@
         <base-button type="secondary" @click="cancelCreation" :disabled="isSubmitting">{{
             $t("cancel")
           }}</base-button>
-          <base-button type="primary" @click="createBtach" :disabled="(!selectedType && !startDate && !endDate) || startDate>endDate || isSubmitting">{{
+          <base-button type="primary" @click="createBtach" :disabled="isSubmitting || total==0">{{
             $t("create_Batch")
           }}</base-button>
         </div>
@@ -84,6 +52,14 @@ import { Theme } from '@fullcalendar/core';
         type: Boolean,
         default: false,
       },
+      metaData:{
+        type:Object,
+        default:null
+      },
+      query:{
+        type:String,
+        default:''
+      }
     },
     components: {
       Select,
@@ -94,9 +70,7 @@ import { Theme } from '@fullcalendar/core';
     },
     data: function () {
       return {
-        selectedType: null,
-        startDate:null,
-        endDate:null,
+        
         isSubmitting:false
       };
     },
@@ -112,42 +86,87 @@ import { Theme } from '@fullcalendar/core';
         types: "claimTypes",
         status: "claimStatuses",
       }),
+      totalAmount(){
+        if(this.metaData){
+          return this.metaData.total_amount
+        }
+        return 0
+      },
+      total(){
+        if(this.metaData){
+          return this.metaData.total
+        }
+        return 0
+      }
     },
     methods: {
-      quiryBuilder: function () {
-        let pendingStatus = this.status.find(x=>x.name_translation_key == 'pending');
+      _getQuaryValue(p){
+        const keyValues= p.split('=');
+        debugger;
+        if(keyValues && keyValues.length==2){
+          return keyValues[1];
+        }
+      },
 
-        let query = "&is_part_of_a_process=0";
-        if(pendingStatus){
-            query+="&claim_status_id="+pendingStatus.id
-        }
-        if (this.selectedType) {
-          query += "&claim_type_id=" + this.selectedType;
-        }
-        if (this.startDate) {
-          query += "&create_data_range_start=" + formatDateToApiFormat(this.startDate);
-        }
-        if (this.endDate) {
-          query += "&create_data_range_end=" + formatDateToApiFormat(this.endDate);
-        }
-        return query;
-      },
-      onFilterChange(){
-        const query = this.quiryBuilder();
-  
-        this.$emit("filter", query);
-      },
       createBtach: function () {
         let data = {};
-        if(this.selectedType){
-            data.claim_type_id = this.selectedType;
-        }
-        if(this.startDate){
-            data.create_data_range_start = formatDateToApiFormat(this.startDate)
-        }
-        if(this.endDate){
-            data.create_data_range_end = formatDateToApiFormat(this.endDate)
-        }
+        let params = this.query.split('&');
+        params.forEach(p=>{
+          if(p.includes("claim_type_id")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.claim_type_id = value;
+            }
+          }
+          if(p.includes("create_data_range_start")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.create_data_range_start = value;
+            }
+          }
+          if(p.includes("create_data_range_end")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.create_data_range_end = value;
+            }
+          }
+          if(p.includes("amount_eq")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.amount_eq = value;
+            }
+          }
+          if(p.includes("amount_lte")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.amount_lte = value;
+            }
+          }
+          if(p.includes("amount_gte")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.amount_gte = value;
+            }
+          }
+          if(p.includes("depot_id")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.depot_id = value;
+            }
+          }
+          if(p.includes("account_id")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.account_id = value;
+            }
+          }
+          if(p.includes("payment_method")){
+            const value = this._getQuaryValue(p);
+            if(value){
+              data.payment_method = value;
+            }
+          }
+        })
         this.isSubmitting = true;
         this.$store.dispatch('batch-claims/createNewBatchProcess',data).then(()=>{
             this.$notify({
@@ -167,10 +186,7 @@ import { Theme } from '@fullcalendar/core';
         })
       },
       cancelCreation(){
-        this.selectedType = null;
-        this.startDate = null;
-        this.endDate = null;
-        this.$emit("filter", "");
+        
         this.$emit("done");
       }
     },

@@ -9,24 +9,7 @@
                 <div class="col text-right">
 
 
-                  <Dropdown  v-if="!makingManyAsPaid && !initiatePaymentForMany" @command="handleCommand" trigger="click">
-                    <base-button size="sm" type="neutral" class="mr-0">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
-                    <DropdownMenu  slot="dropdown">
-                      <!--DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem-->
-                      <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many_claims')}}</DropdownItem>
-                      <DropdownItem command="initiate_payment_for_all" >{{$t('initiate_payment_for_all')}}</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-
-                  <div class="d-flex justify-content-end" v-else>
-                    <base-button size="sm" type="neutral" @click="cancelMarkMany">
-                      {{$t('cancel')}}
-                    </base-button>
-                    <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedClaims.length==0">
-                      {{$t('confirm')}}
-                    </base-button>
-
-                  </div>
+                  
                   <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3" v-if="!makingManyAsPaid && !initiatePaymentForMany">
                     <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
                   </base-button>
@@ -40,8 +23,9 @@
                   
                 </div>
               </div>
+              <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach" :metaData="meta" :query="filterQuery"/>
               <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
-              <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach"/>
+              
             </div>
             <div class="card-header" v-else>
               <div class="row align-items-center">
@@ -284,6 +268,8 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
     computed: {
       ...mapGetters({
         claims: "claims/claims",
+        loadingStatus: "claims/loading",
+        status: "claims/claimStatuses",
       }),
       searchQuery() {
         return `&page=${
@@ -340,6 +326,10 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
     },
     mounted(){
         this.$confirm = MessageBox.confirm
+        if(!this.status || this.status.length==0){
+          
+          this.$store.dispatch("claims/getClaimStatuses", "");
+        }
       },
     methods: {
       fetchClaims() {
@@ -590,13 +580,27 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
       },
       applyFilter: function(query)
         {
+          this.showCreateForm = false;
             this.page = 1;
             this.filterQuery = query;
         },
       toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
-        createBatch(){
+        async createBatch(){
+          let params = this.filterQuery.split('&');
+          const statusIndex = params.findIndex(x=>x.includes('claim_status_id'));
+          
+          if(statusIndex>-1){
+            params.splice(statusIndex,1)
+          }
+         
+          let pendingStatus = this.status.find(s=>s.name_translation_key=="pending");
+          if(pendingStatus){
+            this.page = 1;
+            this.filterQuery = params.join('&')+"&claim_status_id="+pendingStatus.id+'&is_part_of_a_process=0';
+          }
+           
           this.showCreateForm = true
         },
         cancelCreateBtach(){

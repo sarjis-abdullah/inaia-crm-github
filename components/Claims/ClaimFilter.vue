@@ -102,6 +102,21 @@
               >
               </Option>
             </Select>
+            <date-picker
+            size="large"
+            class="filterElement"
+            v-model="startDate"
+            type="date"
+            :placeholder="$t('select_start_date_placeholder')"
+          >
+          </date-picker>
+          <date-picker
+            class="filterElement"
+            v-model="endDate"
+            type="date"
+            :placeholder="$t('select_end_date_placeholder')"
+          >
+          </date-picker>
           </div>
          
         </div>
@@ -167,7 +182,34 @@
           }}<a class="pointer badgeIcon" @click.prevent="removeType()"
             ><i class="fas fa-window-close"></i></a
         ></Badge>
-        
+        <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="startDate && endDate"
+        >{{ $t("from") }}: {{ $d(startDate) }} {{ $t("until") }}:
+        {{ $d(endDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-else-if="startDate"
+        >{{ $t("from") }}: {{ $d(startDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-else-if="endDate"
+        >{{ $t("until") }}:{{ $d(endDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
         <ClearFilter @cleared="clearFilter" />
       </div>
     </div>
@@ -234,12 +276,17 @@
         ],
         selectedPaymentMethod:null,
         claimAmount: null,
-        claimId: null
+        claimId: null,
+        startDate:null,
+        endDate:null
       };
     },
     mounted() {
-      this.$store.dispatch("claims/getClaimTypes", "");
-      this.$store.dispatch("claims/getClaimStatuses", "");
+      if(!this.status || this.status.length==0){
+          
+          this.$store.dispatch("claims/getClaimStatuses", "");
+        }
+        this.$store.dispatch("claims/getClaimTypes", "");
     },
     computed: {
       ...mapGetters("claims", {
@@ -387,6 +434,10 @@
         if (this.claimId) {
           query+='&id='+this.claimId
         }
+        if (this.startDate && this.endDate) {
+          query+='&create_data_range_start='+formatDateToApiFormat(this.startDate)+'&create_data_range_end='+formatDateToApiFormat(this.endDate)
+        }
+        
         if (query == "") {
           this.filterIsActive = false;
         } else this.filterIsActive = true;
@@ -442,6 +493,8 @@
         this.filterIsActive = false;
         this.claimAmount = null
         this.claimId = null
+        this.startDate = null;
+        this.endDate = null;
         this.$emit("filter", "");
       },
       isFiltersVisible(key){
