@@ -103,11 +103,13 @@ export default {
           this.activateSelection = false;
       },
       onOrderAdded(order){
-        this.selectedOrders.push(order);
+        const index = this.selectedOrders.findIndex(o=>o==order)
+        if(index==-1)
+          this.selectedOrders.push(order);
       },
       onOrderRemoved(order){
         let index = this.selectedOrders.indexOf(order);
-        this.selectedOrders.slice(index);
+        this.selectedOrders.splice(index,1);
       },
       saveNewBatchOrderProcess(criteria){
         this.showPopupDate = true;
@@ -121,8 +123,14 @@ export default {
         let data = {};
         if(this.selectedOrders.length>0)
         {
+          let uniqueArray = this.selectedOrders.reduce((acc, value) => {
+          if (!acc.includes(value)) {
+            acc.push(value);
+          }
+          return acc;
+        }, []);
           data = {
-            "order_ids": this.selectedOrders,
+            "order_ids": uniqueArray,
             "order_type_id": this.newBatchSelectedCriteria.selectedType
           }
         }
