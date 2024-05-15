@@ -790,4 +790,5 @@ export default {
     search_by:'Search by',
     from_created_date:'From created date',
     to_created_date:'To created date',
+    update_depot_name:'Update depot name',
 }

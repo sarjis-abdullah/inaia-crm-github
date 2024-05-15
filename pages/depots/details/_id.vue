@@ -26,7 +26,15 @@
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">{{depot.name }} </span>
+                        <span class="h2 font-weight-bold mb-0">
+                          <span>{{depot.name }} </span>
+                          <span v-if="hadDepotEditAccess" class="ml-1 cursor-pointer" @click.prevent="()=> {
+                            editDepot = true
+                            depotName = depot.name
+                          }">
+                            <PencilOutlineIcon/>
+                          </span>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -367,6 +375,25 @@
            </div>
 
         </modal>
+        <modal :show.sync="editDepot" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="sm">
+          <template slot="header">
+                <h5 class="modal-title">{{$t('update_depot_name')}}</h5>
+            </template>
+            <div class="pb-3">
+              <el-input :placeholder="$t('depot_name')" clearable v-model="depotName"  />
+              
+            </div>
+           <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelDepotUpdate()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => updateDepot()"
+                  :disabled="isDepotUpdating">
+                  <span>{{$t('update')}}</span>
+                </base-button>
+              </template>
+
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
@@ -436,7 +463,10 @@ export default {
             showConfirmActivate:false,
             paymentMethod:null,
             paymentAccount:null,
-            showEditTargetTypeModal: false
+            showEditTargetTypeModal: false,
+            depotName: '',
+            editDepot: false,
+            isDepotUpdating: false,
         }
     },
     components: {
@@ -774,6 +804,26 @@ export default {
             value = this.depot.gram_amount/1000*this.silverPrice;
           }
           return value;
+        },
+        cancelDepotUpdate(){
+          this.editDepot = false
+        },
+        updateDepot(){
+          if (this.depotName == this.depot.name) {
+            this.editDepot = false
+            return
+          }
+          const payload = {
+            id: this.depotId,
+            name: this.depotName
+          }
+          this.isDepotUpdating = true
+          this.$store.dispatch('depots/updateDepot', payload).then(item=> {
+            this.isDepotUpdating = false
+            this.editDepot = false
+          }).catch(error => {
+            this.isDepotUpdating = false
+          })
         },
 
     }
