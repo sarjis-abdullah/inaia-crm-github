@@ -32,7 +32,7 @@
                             editDepot = true
                             depotName = depot.name
                           }">
-                            <PencilOutlineIcon/>
+                            <i class="fas fa-pen text-sm text-gray"></i>
                           </span>
                         </span>
                       </div>
@@ -50,7 +50,7 @@
                       </template>
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
-                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
+
 
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
@@ -64,17 +64,17 @@
                 </p>
                 <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
                   <span>
-                    {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                    {{ $t('target') }}: {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
                   </span>
                   <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
-                  <PencilOutlineIcon/>
+                    <i class="fas fa-pen text-xs text-gray"></i>
                   </span>
                 </div>
                 <p class="mb-0 text-sm" v-if="paymentMethod">
-                  {{ $t('payment_method') }} : {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
+                  {{ $t('payment_method') }}: {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
                 </p>
                 <p class="mb-0 text-sm" v-if="paymentAccount">
-                  {{ $t('account') }} : {{ paymentAccountDetails  }}
+                  {{ $t('account') }}: {{ paymentAccountDetails  }}
                 </p>
               </div>
             </div>
@@ -102,8 +102,9 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
+
                     </base-dropdown>
                   </div>
                 </div>
@@ -389,7 +390,7 @@
                 </base-button>
                 <base-button type="primary" @click="() => updateDepot()"
                   :disabled="isDepotUpdating">
-                  <span>{{$t('save')}}</span>
+                  <span>{{$t('update')}}</span>
                 </base-button>
               </template>
 

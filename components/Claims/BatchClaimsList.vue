@@ -7,10 +7,10 @@
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col-8">
-                  
+
                 </div>
                 <div class="col-4 text-right">
-                  
+
                 </div>
               </div>
 
@@ -38,17 +38,17 @@
                 </el-table-column>
 
                 <el-table-column v-bind:label="$t('Claim Numbers')"
-                               
+
                                 min-width="180px"
                                 >
                     <template v-slot="{row}">
                         <div class="d-flex align-items-center">
-                            {{ row.paid_claims }} {{ $t('paid') }} {{ $t('of') }} {{ row.total_claims }}
+                          {{ $t('paid') }} {{ row.paid_claims }} {{ $t('of') }} {{ row.total_claims }}
                         </div>
                     </template>
                 </el-table-column>
 
-                
+
 
                 <el-table-column v-bind:label="$t('amount')"
                                 prop="money_amount"
@@ -58,7 +58,7 @@
                     <template v-slot="{row}">
                         <Progress :percentage="Math.floor((row.paid_amount/row.total_amount) * 100)" color="#2dce89"></Progress>
                             <i18n-n :value="parseInt(row.paid_amount)/100"></i18n-n> € {{ $t('paid') }} {{ $t('of') }} <i18n-n :value="parseInt(row.total_amount)/100"></i18n-n> €
-                        
+
                     </template>
                 </el-table-column>
                 <el-table-column v-bind:label="$t('date')"
@@ -74,7 +74,7 @@
                 <el-table-column>
                     <template v-slot="{row}">
                         <icon-button type="info" @click="() => $router.push('/accounting/claims/batch-claims/details/'+row.id)"></icon-button>
-        
+
                     </template>
                 </el-table-column>
 
@@ -84,7 +84,7 @@
                 <MetaInfo :meta="meta" class="d-flex"/>
                 <base-pagination v-model="page" :per-page="perPage" :total="totalTableData" class="ml-auto"></base-pagination>
             </div>
-            
+
 
         </div>
 
@@ -119,7 +119,7 @@ export default {
         }),
         searchQuery() {
             return (
-                
+
                 `&page=${this.page}` +
                 `&per_page=${this.perPage}`
             )
