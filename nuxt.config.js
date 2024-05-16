@@ -24,7 +24,7 @@ import EnvKeys from './config';
 import gggEnvKeys from './gggConfig';
 let selectedConfig = EnvKeys;
 let favIcon = '/favicon.ico';
-let pageTitle = "CRM - INAIA Cloud";
+let pageTitle = "Adminpanel - INAIA Cloud";
 let css =[
   'assets/css/nucleo/css/nucleo.css',
   'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
@@ -35,7 +35,7 @@ let css =[
 switch (appName) {
   case appNames.inaiaEu:
     selectedConfig = EnvKeys;
-    pageTitle = "CRM - INAIA Cloud"
+    pageTitle = "Adminpanel - INAIA Cloud"
     favIcon = '/favicon.ico'
     css =[
       'assets/css/nucleo/css/nucleo.css',
