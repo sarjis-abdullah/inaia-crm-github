@@ -640,7 +640,7 @@ export default {
     pin_account_reset_successfully:'Pin account was reset successfully',
     pin_account_reset_unsuccessfully:"We couldn't reset the pin code",
     ounce_price:'Ounce price',
-    stock_bought_amount:'The total amount of assets bougth in gram',
+    stock_bought_amount:'Grams total',
     stock_bought_amount_explanation:'The amount of assets in gram that is bought and will be added to the stock',
     buying_gram_price:'Unit price by gram in euros',
     total_buying_amount:'Total buying amount in euros',
