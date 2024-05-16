@@ -51,11 +51,11 @@
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                     
+
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
-                      
+
                     </base-dropdown>
                   </div>
                 </div>
@@ -188,7 +188,7 @@
             <div v-else class="card border-0">
               <div class="card-body">
                 <div class="row">
-                  
+
                   <div class="col">
                     <h5 class="card-title text-uppercase text-muted mb-0">
                       <font-awesome-icon
@@ -209,10 +209,10 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-                     
+
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
-  
+
                     </base-dropdown>
                   </div>
                 </div>
@@ -381,7 +381,7 @@
             </template>
             <div class="pb-3">
               <el-input :placeholder="$t('depot_name')" clearable v-model="depotName"  />
-              
+
             </div>
            <template slot="footer">
                 <base-button type="link" class="ml-auto" @click="cancelDepotUpdate()">
@@ -389,7 +389,7 @@
                 </base-button>
                 <base-button type="primary" @click="() => updateDepot()"
                   :disabled="isDepotUpdating">
-                  <span>{{$t('update')}}</span>
+                  <span>{{$t('save')}}</span>
                 </base-button>
               </template>
 
@@ -596,10 +596,10 @@ export default {
 
                 this.initPrices();
                 this.paymentMethod = res.data.data.payment_method;
-                
+
                 if(res.data.data.payment_account_id!=null){
                   this.$store.dispatch('payment-accounts/getPaymentAccountDetails',res.data.data.payment_account_id).then(res=>{
-                    
+
                     this.paymentAccount = res;
 
                   })
@@ -633,7 +633,7 @@ export default {
         cancelWithdraw(){
           this.showWithdrawConfirm = false;
         },
-       
+
         withdrawContract(){
           const data = {
             depot_id:this.depot.id,

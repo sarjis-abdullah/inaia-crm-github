@@ -4,6 +4,7 @@
     headerClasses=""
     bodyClasses="pt-0"
     footerClasses="border-top bg-secondary"
+    size="sm"
     :allowOutSideClose="false"
     @close="cancelEdit"
   >
@@ -11,10 +12,10 @@
       <h5 class="modal-title">{{ $t("edit_depot_target_type") }}</h5>
       <span></span>
     </template>
-    
+
     <div>
-      <div v-if="!loading" class="row m-auto pt-3 pb-5 d-flex justify-content-center">
-        <Select :placeholder="$t('sales_advisor')" v-model="target_type_id">
+      <div v-if="!loading" class="row m-auto d-flex py-2 justify-content-center">
+        <Select :placeholder="$t('sales_advisor')" v-model="target_type_id" class="w-100">
           <Option
             v-for="option in depotTargetTypes"
             :value="option.id"
@@ -24,28 +25,23 @@
           </Option>
         </Select>
       </div>
-      <div v-else class="row m-auto pt-3 pb-5 d-flex justify-content-center">
+      <div v-else class="row m-auto py-2 d-flex justify-content-center">
         {{ $t("loading") }}
       </div>
-      <div class="row">
-        <div class="col-md-6"></div>
-        <div class="col-md-6">
-          <base-button
-            type="secondary"
-            native-type="button"
-            @click="() => cancelEdit()"
-            >{{ $t("cancel") }}</base-button
-          >
-          <base-button
-            type="primary"
-            native-type="submit"
-            :disabled="isRequesting || target_type_id == null"
-            @click="assignSalesAdvivor"
-            >{{ $t("save") }}</base-button
-          >
-        </div>
-      </div>
     </div>
+
+    <template slot="footer">
+      <base-button
+        type="link"
+        native-type="button"
+        @click="() => cancelEdit()">{{ $t("cancel") }}</base-button>
+      <base-button
+        type="primary"
+        native-type="submit"
+        :disabled="isRequesting || target_type_id == null"
+        @click="assignSalesAdvivor">{{ $t("save") }}</base-button>
+    </template>
+
   </modal>
 </template>
 <script>
