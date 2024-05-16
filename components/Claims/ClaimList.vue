@@ -4,43 +4,58 @@
         <div class="col">
 
           <div class="card">
-            <div class="card-header">
+            <div class="card-header" v-if="batch_process_id==-1">
               <div class="row align-items-center">
                 <div class="col text-right">
 
 
-                  <Dropdown  v-if="!makingManyAsPaid && !initiatePaymentForMany" @command="handleCommand" trigger="click">
-                    <base-button size="sm" type="neutral" class="mr-0">{{$t('manage_payments')}}<i class="el-icon-arrow-down el-icon--right"></i></base-button>
-                    <DropdownMenu  slot="dropdown">
-                      <!--DropdownItem command="mark_many_as_paid">{{$t('mark_many_as_paid')}}</DropdownItem-->
-                      <DropdownItem command="initiate_payment_for_many">{{$t('initiate_payment_for_many_claims')}}</DropdownItem>
-                      <DropdownItem command="initiate_payment_for_all" >{{$t('initiate_payment_for_all')}}</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-
-                  <div class="d-flex justify-content-end" v-else>
-                    <base-button size="sm" type="neutral" @click="cancelMarkMany">
+                  
+                  <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3" v-if="!makingManyAsPaid && !initiatePaymentForMany">
+                    <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
+                  </base-button>
+                  
+                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
+                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                      </button>
+                      <button @click.prevent="createBatch()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
+                        <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('create_batch')}}</span>
+                      </button>
+                  
+                </div>
+              </div>
+              <CreateBatchClaims :showForm="showCreateForm" v-on:filter='applyFilter' @done="cancelCreateBtach" :metaData="meta" :query="filterQuery"/>
+              <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              
+            </div>
+            <div class="card-header" v-else>
+              <div class="row align-items-center">
+                
+                <div class="col text-right" v-if="!removeClaims">
+                  <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" v-if="!makingManyAsPaid && !initiatePaymentForMany">
+                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
+                      </button>
+                  <button @click.prevent="activateRemovingClaims()" type="button" class="btn base-button btn-icon btn-fab btn-danger btn-sm">
+                        <span class="btn-inner--text">{{$t('remove_claims')}}</span>
+                      </button>
+                  <button @click.prevent="initiateBatchProcessPayment()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                        <span class="btn-inner--text">{{$t('initiate_payment')}}</span>
+                      </button>
+                      <button @click.prevent="notifyUsers()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm" :disabled="isSubmitting">
+                        <span class="btn-inner--text">{{$t('notify_user')}}</span>
+                      </button>
+                  </div>
+                  <div class="col text-right" v-else>
+                    <base-button size="sm" type="neutral" @click="cancelRemove">
                       {{$t('cancel')}}
                     </base-button>
-                    <base-button size="sm" type="neutral" @click="completeManyAction" :disabled="selectedClaims.length==0">
+                    <base-button size="sm" type="neutral" @click="completeRemove" :disabled="selectedClaims.length==0">
                       {{$t('confirm')}}
                     </base-button>
 
                   </div>
-                  <base-button @click.prevent="toggleAddClaim()" size="sm" type="neutral" class="ml-3">
-                    <span class="btn-inner--icon"><i class="fas fa-plus"></i></span><span class="btn-inner--text">{{$t('add_claim')}}</span>
-                  </base-button>
-                  
-                      <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
-                        <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
-                      </button>
-                    
-                  
-                </div>
               </div>
-              <ClaimFilter v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
+              <ClaimFilter :showSelectedFilters="['status', 'customer','depots', 'payment_method', 'types', 'amount', 'id']" v-bind:showFilter="showFilter" v-on:filter='applyFilter'></ClaimFilter>
             </div>
-
             
       <el-table
         class="table-hover table-responsive table-flush"
@@ -49,7 +64,7 @@
       >
         <el-table-column label="#" prop="id">
           <template v-slot="{ row }">
-            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="(row && row.claim_status && row.claim_status.name_translation_key == 'pending' && row.payment_method=='bank_account') && (makingManyAsPaid || initiatePaymentForMany)">
+            <Checkbox  :label="row.id" @change="(value)=>addClaim(value,row)" v-if="shouldShowCheckBox(row)">
 
             </Checkbox>
             <div class="font-weight-300 name" v-else>{{ row.id }}</div>
@@ -60,11 +75,12 @@
 
           align="right"
           prop="amount"
-          min-width="120"
+          
         >
           <template v-slot="{ row }">
             <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
-            <div>{{ $t(row.payment_method) }}</div>
+            
+            
           </template>
         </el-table-column>
           <el-table-column v-bind:label="$t('type')"  prop="type" min-width="200">
@@ -80,13 +96,28 @@
 
 
             </div>
-            {{row.created_at?$d(new Date(row.created_at),'short'):""}}
+            
+          </template>
+        </el-table-column>
+        <el-table-column v-bind:label="$t('payment_method')"  prop="type" min-width="100">
+          <template v-slot="{ row }">
+            <div >
+              <div>
+                <span class="orderType text-body"
+                  >{{
+                    $t(getPaymentMethod(row))
+                  }}</span
+                >
+
+              </div>
+              
+            </div>
           </template>
         </el-table-column>
 
         <el-table-column v-bind:label="$t('depot')"  prop="type" min-width="100">
           <template v-slot="{ row }">
-            <div class="d-flex align-items-center">
+            <div >
               <div>
                 <span class="orderType text-body"
                   >{{
@@ -95,6 +126,7 @@
                 >
 
               </div>
+              <div class="font-weight-300" v-if="row.order_id">{{$t('order')}} : {{row.order_id}}</div>
             </div>
           </template>
         </el-table-column>
@@ -102,11 +134,7 @@
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
               <div>
-                <span class="orderType text-body"
-                  >{{
-                    row.account_id
-                  }}</span
-                >
+                <UserInfo :accountId="row.account_id" slot="value" :isLazy="true"/>
 
               </div>
             </div>
@@ -115,13 +143,13 @@
         <el-table-column v-bind:label="$t('ref') + '/' +$t('comment')"  prop="type" min-width="150">
           <template v-slot="{ row }">
             <div class="d-flex align-items-center">
-              <div v-if="row.reference">
-                {{ $t('ref') }} : <span class="orderType text-body"
-                  >{{
+              <div v-if="row.reference || row.comment">
+                 <span v-if="row.reference" class="orderType text-body"
+                  >{{ $t('ref') }} : {{
                     row.reference
                   }}</span
                 >
-                <span class="orderType text-body"
+                <span class="orderType text-body" v-if="row.comment"
                   >{{
                     row.comment
                   }}</span
@@ -130,18 +158,15 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column v-bind:label="$t('created_date') + ' / ' +$t('debit_date')"   min-width="150">
+          <template v-slot="{ row }">
+          {{row.created_at?$d(new Date(row.created_at),'short'):""}}<span v-if="row.possible_debit_date" > / {{row.possible_debit_date?$d(new Date(row.possible_debit_date),'short'):""}}</span>
+          </template>
+        </el-table-column>
         <el-table-column>
             <template v-slot="{ row }" >
-              <Dropdown trigger="click" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')" @command="(command)=>handleCommand(command,row.id)">
-                  <span class="btn btn-sm btn-icon-only text-light">
-                      <i class="fas fa-ellipsis-v mt-2"></i>
-                  </span>
-                  <DropdownMenu  slot="dropdown">
-                      <DropdownItem command="mark_as_paid">{{$t('mark_as_paid')}}</DropdownItem>
-                      <DropdownItem command="initiate_payment" v-if="row.payment_method == 'bank_account'">{{$t('initiate_payment')}}</DropdownItem>
-                  </DropdownMenu>
-                  </Dropdown>
-                  <IconButton type="delete" @click="()=>confirmDelete(row.id)" :disabled="isDeleting" v-if="row.claim_status && (row.claim_status.name_translation_key=='pending' || row.claim_status.name_translation_key=='payment_failed')"/>
+              <IconButton type="info" @click="()=>showClaimDetail(row)"/>
+                  
             </template>
           </el-table-column>
       </el-table>
@@ -196,6 +221,8 @@
       </base-button>
     </template>
     </modal>
+    <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail" @onUserNotified="fetchClaims"/>
+    
 </div>
   </template>
   <script>
@@ -211,9 +238,14 @@
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import CreateClaim from "@/components/Claims/CreateClaim";
 import ClaimFilter from "@/components/Claims/ClaimFilter";
+import ClaimDetail from "@/components/Claims/ClaimDetail";
+import Modal from '../argon-core/Modal.vue';
+import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
   export default {
     props: {
-
+      batch_process_id:{
+        default:-1
+      }
     },
     components: {
       [Table.name]: Table,
@@ -228,16 +260,21 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
       Checkbox,
       DatePicker,
       CreateClaim,
-      ClaimFilter
+      ClaimFilter,
+      ClaimDetail,
+        Modal,
+        CreateBatchClaims
     },
     computed: {
       ...mapGetters({
         claims: "claims/claims",
+        loadingStatus: "claims/loading",
+        status: "claims/claimStatuses",
       }),
       searchQuery() {
         return `&page=${
           this.page || 1
-        }&per_page=${this.perPage || 10}${this.filterQuery}`;
+        }&per_page=${this.perPage || 10}${this.filterQuery}${this.batch_process_id>-1?"&claim_batch_process_id="+this.batch_process_id:''}`;
       },
       totalPages() {
         return Math.ceil(this.totalTableData / this.perPage);
@@ -250,11 +287,22 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
         },
         immediate: true,
       },
+      claims:{
+        handler(){
+          if(this.selectedClaim!=null){
+            const newClaim = this.claims.find(c=>c.id==this.selectedClaim.id);
+            if(newClaim){
+              this.selectedClaim = newClaim;
+            }
+          }
+        },
+        immediate:true
+      }
     },
     data() {
       return {
         page: 1,
-        perPage: 10,
+        perPage: 50,
         totalTableData: 1,
         isLoading: false,
         loadingError: null,
@@ -268,16 +316,23 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
         showExecutionDate:false,
         showCreateNewClaim:false,
         isDeleting:false,
-        showFilter:true,
-        filterQuery:''
+        showFilter:false,
+        filterQuery:'',
+        selectedClaim:null,
+        showDetail:false,
+        showCreateForm:false,
+        removeClaims:false,
       };
     },
     mounted(){
         this.$confirm = MessageBox.confirm
+        if(!this.status || this.status.length==0){
+          
+          this.$store.dispatch("claims/getClaimStatuses", "");
+        }
       },
     methods: {
       fetchClaims() {
-
           this.isLoading = true;
           this.$store
             .dispatch("claims/getClientClaims", this.searchQuery)
@@ -286,11 +341,88 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
             .finally(() => (this.isLoading = false));
 
       },
+      getPaymentMethod(claim){
+        if(claim && claim.claim_payment_transactions && claim.claim_payment_transactions.length >0){
+          const transaction = claim.claim_payment_transactions[claim.claim_payment_transactions.length-1];
+          if(transaction){
+            return transaction.payment_method;
+          }
+        }
+      },
+      shouldShowCheckBox(row){
+        if(this.makingManyAsPaid || this.initiatePaymentForMany)
+        {
+          if(row && row.claim_status){
+            if(row.claim_status.name_translation_key == 'payment_failed'){
+              return true;
+            }
+            if(row.claim_status.name_translation_key == 'pending'){
+              const now = Date.now();
+                    const dueDate = row.possible_debit_date?(new Date(row.possible_debit_date)):null;
+                    if(dueDate)
+                    {
+                        if(dueDate > now){
+                            return false;
+                        }
+                        else{
+                            return true;
+                        }
+                    }
+                    else{
+                        return true;
+                    }
+            }
+          }
+          else{
+            return false;
+          }
+        }
+        if(this.removeClaims)
+        {
+          return (row && row.claim_status && (row.claim_status.name_translation_key == 'pending'));
+        }
+        
+      },
+      showClaimDetail(claim){
+        this.selectedClaim = claim;
+        this.showDetail = true;
+      },
+     onClaimCloseDetail(){
+        this.selectedClaim = null;
+        this.showDetail = false;
+      },
       toggleAddClaim(){
         this.showCreateNewClaim = true;
       },
       closeAddClaim(){
         this.showCreateNewClaim = false;
+      },
+      activateRemovingClaims(){
+        this.removeClaims = true;
+      },
+      cancelRemove(){
+        this.removeClaims = false;
+      },
+      completeRemove(){
+        const data = {
+          "claim_ids":this.selectedClaims
+        }
+        const payload = {
+          id:this.batch_process_id,
+          data:data
+        }
+        this.$store.dispatch('claims/removeClaimsFromBatch',payload).then(res=>{
+          this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("claim_removed_successfully"),
+            });
+            this.selectedClaims = [];
+            this.removeClaims = false;
+            this.fetchClaims();
+        }).catch(err=>{
+          apiErrorHandler(err,this.$notify)
+        })
       },
       handleCommand(command,id){
         if(command=="mark_as_paid"){
@@ -363,12 +495,18 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
                 execution_date: formatDateToApiFormat(this.paymentExecutionDate)
 
             };
-            if(this.selectedClaims.length > 0){
+            if(this.batch_process_id == -1){
+              if(this.selectedClaims.length > 0){
                 data.claim_ids = this.selectedClaims
+              }
+              else{
+                  data.no_of_claims = 999;
+              }
             }
             else{
-                data.no_of_claims = 999;
+              data.claim_batch_process_id = this.batch_process_id;
             }
+            
             this.$store.dispatch('claims/initiateClaimPayment',data).then((res)=>{
 
                 this.paymentExecutionDate = null;
@@ -407,14 +545,71 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
           apiErrorHandler(err,this.$notify);
         });
       },
+      notifyUsers(){
+        this.$confirm(this.$t('do_you_want_to_notify_users_about_claim'), 'Warning', {
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+            this.isSubmitting = true
+            this.$store.dispatch('claims/notifyuser',data).then(()=>{
+                    this.$notify({
+                    type: "success",
+                    timeout: 5000,
+                    message: this.$t("user_notified__successfully"),
+                    
+                    });
+                    setTimeout(()=>{
+                      this.fetchClaims();
+                      this.isSubmitting = false;
+                    },5000)
+                    
+                }).catch((err)=>{
+                    apiErrorHandler(err,this.$notify);
+                    this.isSubmitting = false;
+                }).finally(()=>{
+                        
+                    });
+          }).catch((err) => {
+            apiErrorHandler(err,this.$notify);
+          });
+        let data = {
+          claim_batch_process_id:this.batch_process_id
+        }
+
+      },
       applyFilter: function(query)
         {
+          this.showCreateForm = false;
             this.page = 1;
             this.filterQuery = query;
         },
       toggleFilter: function() {
           this.showFilter=!this.showFilter;
         },
+        async createBatch(){
+          let params = this.filterQuery.split('&');
+          const statusIndex = params.findIndex(x=>x.includes('claim_status_id'));
+          
+          if(statusIndex>-1){
+            params.splice(statusIndex,1)
+          }
+         
+          let pendingStatus = this.status.find(s=>s.name_translation_key=="pending");
+          if(pendingStatus){
+            this.page = 1;
+            this.filterQuery = params.join('&')+"&claim_status_id="+pendingStatus.id+'&is_part_of_a_process=0';
+          }
+           
+          this.showCreateForm = true
+        },
+        cancelCreateBtach(){
+          this.showCreateForm = false
+        },
+        initiateBatchProcessPayment(){
+          this.showExecutionDate = true;
+          this.paymentExecutionDate = null;
+        }
     },
 
   };
@@ -450,5 +645,8 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
   }
   .actionBtnStyle {
     color: #8898aa;
+  }
+  .ml-0{
+    margin-left: 15px !important;
   }
   </style>

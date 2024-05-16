@@ -103,16 +103,18 @@
       </base-button>
     </template>
     <template slot="footer" v-if="inboxMessage && !isDraft && hasEditAccess">
-      <base-button type="link" class="ml-auto" @click="onDetailClose()">
-        {{ $t("cancel") }}
-      </base-button>
-      <base-button
+    <base-button
         type="danger"
         @click="() => deleteMessageBox()"
         :disabled="isSubmitting"
+
       >
         {{ $t("delete") }}
       </base-button>
+      <base-button type="primary" class="ml-auto" @click="onDetailClose()">
+        {{ $t("close") }}
+      </base-button>
+      
     </template>
     
  </modal>

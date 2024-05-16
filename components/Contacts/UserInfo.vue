@@ -1,14 +1,14 @@
 
 <template>
   <div>
-    {{ $t("client") }}:
+   
       <el-popover
-      v-if="info && info.account"
+      
     placement="bottom"
     width="400"
     trigger="click"
     >
-    <div>
+    <div v-if="info && info.account">
 
         <div class="row">
           <div class="col-sm-6 _col-xl-3" v-if="info.account">
@@ -48,7 +48,7 @@
         </div>
 
     </div>
-    <a href="#" slot="reference">{{ singleClientData.customer.account.account_number }}</a>
+    <a href="#" slot="reference" @click="isLazy?loadCustomer():null">{{ displayText}}</a>
   </el-popover>
   </div>
 </template>
@@ -69,12 +69,15 @@ export default {
     accountId:{
         type: Number,
       default: -1,
+    },
+    isLazy:{
+      default:false
     }
   },
   computed: {
     ...mapGetters({
       client: "clients/singleClientData",
-    }),
+    },),
 
     singleClientData() {
       return this.client(this.customerId,this.accountId);
@@ -100,24 +103,50 @@ export default {
       }
       return "/img/theme/avatar_m.png";
     },
+    displayText(){
+      if((!this.isLazy && this.singleClientData && this.singleClientData.customer && this.singleClientData.customer.account)){
+        return this.singleClientData.customer.account.account_number;
+      }
+      else{
+        if(this.accountId == -1 && this.customerId == -1){
+          return "-"
+        }
+        else{
+          if(this.customerId > -1){
+            return this.customerId;
+          }
+          else if(this.accountId > -1){
+            return this.accountId;
+          }
+        }
+      }
+    }
   },
   mounted() {
-    if (!this.singleClientData)
-    {
-        if(this.accountId!=-1)
-        {
-            this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
-                      this.$store.dispatch("clients/clientDetailsData", res.contact_id);
-                  })
-        }
-        if(this.customerId!=-1)
-        {
-            this.$store.dispatch("clients/clientDetailsData", this.customerId);
-        }
-    }
+   
+      if(!this.isLazy){
+        this.loadCustomer();
+      }
+        
+    
 
   },
   methods: {
+    loadCustomer(){
+      if (!this.singleClientData)
+    {
+        if(this.accountId!=-1)
+          {
+              this.$store.dispatch('clients/clientAccountDetails',this.accountId).then(res=>{
+                        this.$store.dispatch("clients/clientDetailsData", res.contact_id);
+                    })
+          }
+          if(this.customerId!=-1)
+          {
+              this.$store.dispatch("clients/clientDetailsData", this.customerId);
+          }
+        }
+    },
     getChannelInfo(type) {
       let channel =
         this.info.channels &&

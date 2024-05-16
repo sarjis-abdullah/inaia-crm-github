@@ -30,7 +30,7 @@
             <div class="col-lg-3 order-lg-2">
               <div class="card-profile-image">
                 <div class="img-container">
-                  <img :src="avatar" @error="refreshAvatar($event, gender)" class="rounded-circle" />
+                  <img :src="avatar" @error="refreshAvatar($event, gender)" class="rounded-circle custom-avatar" />
                   <div class="overlay" @click="clicked = true">
                     <div>
                       <i class="fa fa-camera" id="camera" @click.prevent.stop="clicked = true" />
@@ -284,7 +284,6 @@ export default {
         // this.initClientData()
     },
     methods: {
-        avatar,
         anonymousUserAvatar,
         notifyError,
         redirectPost,
@@ -390,5 +389,9 @@ export default {
 }
 .card-profile-image img {
     border: 0;
+}
+.custom-avatar {
+  height: 140px; 
+  width: 140px;
 }
 </style>

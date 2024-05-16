@@ -142,7 +142,7 @@
                         "
                         @click="displayExecuteBankPayment()"
                         ><i class="fa fa-credit-card"></i
-                        >{{ $t("execute_bank_payment") }} ( {{pendingBankAccountOrders}} )</a
+                        >{{ $t("execute_bank_payment") }} ( {{pendingBankAccountOrders>0?pendingBankAccountOrders:oustandingBankAccountOrders}} )</a
                       >
                       <a
                         class="dropdown-item"
@@ -268,7 +268,7 @@ import CsvList from "@/components/Csv-file/CsvList";
 import UploadCsv from "@/components/Csv-file/UploadCsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
 import SellGold from '@/components/Batch-processing/SellGold';
-import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale} from '../../../../helpers/order';
+import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale, isOrderSilverSale} from '../../../../helpers/order';
 import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
 export default {
@@ -315,6 +315,15 @@ export default {
       if(this.batchProcess && this.batchProcess.payment_methods && this.batchProcess.payment_methods.bank_account)
       {
         return this.batchProcess.payment_methods.bank_account.pending
+      }
+      else{
+        return 0;
+      }
+    },
+    oustandingBankAccountOrders(){
+      if(this.batchProcess && this.batchProcess.orders_count && this.batchProcess.orders_count.order_status_payment_outstanding>0)
+      {
+        return this.batchProcess.orders_count.order_status_payment_outstanding
       }
       else{
         return 0;
@@ -413,8 +422,8 @@ export default {
                             .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingPPSOrders > 0 && !this.isBeforeProcessingDate();;
   },
   shouldDisplayBankExecutePayment(){
-    return this.batchProcess.order_process_status
-                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingBankAccountOrders > 0;
+    return (this.batchProcess.order_process_status
+                            .name_translation_key == ORDER_PROCESS_STATUS_PENDING && !isOrderGoldSale(this.batchProcess) && this.pendingBankAccountOrders > 0) || ((isOrderGoldSale(this.batchProcess) || isOrderSilverSale(this.batchProcess) && this.oustandingBankAccountOrders>0));
   },
   cancelExecutePayment(){
     this.showExecutePayment = false;
@@ -451,8 +460,23 @@ export default {
     this.showExecuteBankPayment = false;
   },
   displayExecuteBankPayment(){
-    debugger;
-    this.showExecuteBankPayment = true;
+    if(!(isOrderGoldSale(this.batchProcess) || isOrderSilverSale(this.batchProcess))){
+      this.showExecuteBankPayment = true;
+    }
+    else{
+      const payload = {
+        "order_process_id":this.batchProcess.id
+      }
+      this.$store.dispatch('orders/executeSellBankPayment',payload).then((res)=>{
+                                window.open(res,'_blank');
+                                //window.location.href = res;
+                                }).catch((err)=>{
+                                    apiErrorHandler(err,this.$notify);
+                                }).finally(()=>{
+                                    this.isSubmitting = false;
+                                })
+    }
+    
   },
   onOrderUpdated(order)
   {

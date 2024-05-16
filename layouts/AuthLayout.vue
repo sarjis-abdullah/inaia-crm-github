@@ -11,7 +11,7 @@
     >
       <div slot="brand" class="navbar-wrapper">
         <nuxt-link class="navbar-brand" to="/">
-          <img src="/logo_contrast.png" alt="INAIA">
+          <img :src="contrastlogoPath" alt="INAIA">
         </nuxt-link>
       </div>
 
@@ -20,7 +20,7 @@
          <div class="row">
            <div class="col-6 collapse-brand">
              <nuxt-link to="/">
-               <img src="/logo.png" alt="INAIA">
+               <img :src="logoPath" alt="INAIA">
              </nuxt-link>
            </div>
            <div class="col-6 collapse-close">
@@ -43,7 +43,7 @@
         <div class="row align-items-center justify-content-xl-between">
           <div class="col-xl-6">
             <div class="copyright text-center text-lg-left text-muted">
-              © {{year}} INAIA GmbH
+              © {{year}} {{ $t('companyName') }}
             </div>
           </div>
           <div class="col-xl-6">
@@ -63,7 +63,7 @@
 </template>
 <script>
   import BaseNav  from '~/components/argon-core/Navbar/BaseNav.vue';
-
+  import appNames from '../appNames'
   export default {
     components: {
       BaseNav,
@@ -94,6 +94,20 @@
         } else {
           return 'bg-secondary'
         }
+      },
+      contrastlogoPath(){
+        let app = process.env.CURRENT_APP;
+        if(app == appNames.getGreenGold)
+          return '/ggg-logo_contrast.png';
+        else
+          return "/logo_contrast.png"
+      },
+      logoPath(){
+        let app = process.env.CURRENT_APP;
+        if(app == appNames.getGreenGold)
+          return '/getgreengold_logo.png';
+        else
+          return "/logo.png"
       }
     },
     methods: {

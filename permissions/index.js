@@ -6,9 +6,11 @@ import { canViewCustomers,canEditCustomers } from './customers';
 import { canViewSupportTicket,canEditSupportTicket} from './supportTicket';
 import { canViewInaiaBankAccount,canEditInaiaBankAccount} from './bankingAccount';
 import { canEditClaims,canViewClaims } from './claim';
-import { canEditSalesCimmission,canViewSalesCimmission} from './salescommission';
+import { canEditSalesCimmission,canViewSalesCimmission,ifHasSalesAdvisorAccess} from './salescommission';
 import { canViewMarketing, canEditMarketing } from './marketing';
 import { canEditAdmin,canViewAdmin} from './admin';
+import { canViewStatistics} from './statistics';
+
 export {
     canViewOrder,
     canEditOrder,
@@ -32,5 +34,7 @@ export {
     canEditMarketing,
     canViewMarketing,
     canEditAdmin,
-    canViewAdmin
+    canViewAdmin,
+    canViewStatistics,
+    ifHasSalesAdvisorAccess
 }

@@ -12,3 +12,6 @@ export const ppsView = 'pps_view';
 export const ppsEdit = 'pps_edit';
 export const crmView = 'crm_view';
 export const crmEdit = 'crm_edit';
+export const statisticView = 'statistics_view';
+export const supportView = 'support_view';
+export const supportEdit = 'support_edit';

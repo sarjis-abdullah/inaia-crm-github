@@ -179,7 +179,7 @@ export const actions = {
     },
     getCompleteOrderPreview(context,payload) {
         return this.$axios
-                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}`).then(res=>{
+                .get(`${ process.env.golddinarApiUrl }/orders/${payload.id}/complete/preview?price_date=${payload.date}${payload.transaction_fee>=0?'&transaction_fee='+payload.transaction_fee:''}`).then(res=>{
                     return res.data;
                 })
     },
@@ -203,6 +203,7 @@ export const actions = {
         return this.$axios
             .put(`${ process.env.golddinarApiUrl }/orders/${ payload.id }/sell?include=${includes}`,payload.data)
             .then(res => {
+                debugger;
                 context.commit('update', res.data.data)
                 return res.data.data.order_status
             })
@@ -227,6 +228,14 @@ export const actions = {
         .post(`${ process.env.golddinarApiUrl }/generate-batch-direct-debit-form`,payload)
         .then(res => {
             return res.data.message.data.url;
+        })
+    },
+    executeSellBankPayment(context,payload){
+        
+        return this.$axios
+        .post(`${ process.env.golddinarApiUrl }/orders/sell/initiate-money-transfer`,payload)
+        .then(res => {
+            return res.data.data.url;
         })
     },
     fetchCommissionList(context,payload){

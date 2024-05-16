@@ -2,7 +2,7 @@
   <base-nav
     container-classes="container-fluid"
     class="navbar-top border-bottom navbar-expand"
-    :class="{'bg-gradient-info navbar-dark': type === 'default'}"
+    :class="navVarBackground"
   >
 
     <!-- Search form -->
@@ -100,8 +100,8 @@
                      title-classes="nav-link pr-0">
         <a href="#" class="nav-link pr-0" @click.prevent slot="title-container">
           <div class="media align-items-center">
-                  <span class="avatar avatar-sm rounded-circle">
-                    <img alt="Im" :src="avatar">
+                  <span class="">
+                    <img alt="Im" class="avatar avatar-sm rounded-circle" :src="avatar">
                   </span>
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm  font-weight-bold">{{ userName }}</span>
@@ -151,7 +151,7 @@
   import Modal from '@/components/argon-core/Modal.vue';
   import { hasMaxAccess, getAppsAccess } from '~/helpers/auth';
   import { mapGetters } from "vuex"
-
+  import appNames from '../../../appNames';
   export default {
     components: {
       CollapseTransition,
@@ -201,7 +201,10 @@
       avatar() {
         if (this.loggedin) {
           if (!this.loggedin.avatar && this.loggedin.person_data) {
-            let gender = this.loggedin?.person_data?.gender?.toLowerCase() ?? null;
+            let gender = '';
+            if (this.loggedin && this.loggedin.person_data && this.loggedin.person_data.gender) {
+              gender = this.loggedin.person_data.gender.toLowerCase()
+            }
             if (gender == 'female' || gender == 'f') {
               return '/img/theme/avatar_f.png'
             }
@@ -224,6 +227,13 @@
           return name;
         }
         return '';
+      },
+      navVarBackground(){
+        let app = process.env.CURRENT_APP;
+        if(app == appNames.getGreenGold)
+          return 'bg-gradient-default navbar-dark';
+        else
+        return 'bg-gradient-info navbar-dark';
       }
     },
     data() {
@@ -244,7 +254,11 @@
       },
       editProfile() {
         // window.location.href    = process.env.universalLogin+'/profile'
-        this.$router.push('/profile')
+        // this.$router.push('/profile')
+        //Todo
+        const part = "/profile";
+        const url = "http://"+window.location.host+part
+        window.location.href = url;
       },
       logout() {
         // this.$store.dispatch('auth/logout')

@@ -12,7 +12,8 @@ export const state = () => {
         countryCodeList:[],
         loadedClients:[],
         amlStatuses:[],
-        kycDocuments:[]
+        kycDocuments:[],
+        kycStatuses:[],
     }
 }
 
@@ -52,7 +53,8 @@ export const getters = {
     latestTransactions:state=>state.latestTransactions,
     countryCodeList:state=>state.countryCodeList,
     amlStatuses: state=>state.amlStatuses,
-    kycDocuments: state=>state.kycDocuments
+    kycDocuments: state=>state.kycDocuments,
+    kycStatuses : state => state.kycStatuses
 }
 export const mutations = {
 
@@ -121,6 +123,9 @@ export const mutations = {
     },
     updateAccount(state,account){
         state.singleClientData.account = account;
+    },
+    kycStatuses(state,list){
+        state.kycStatuses = list;
     }
 }
 export const actions = {
@@ -308,6 +313,24 @@ export const actions = {
     },
     resetAccountPin(context,payload){
         return this.$axios.get(`/accounts/${payload}/pin-reset-request-by-staff`);
+    },
+    getKycStatuses(context){
+        return this.$axios
+            .get(`/kyc-statuses`)
+            .then(response => {
+                context.commit('kycStatuses',response.data.data);
+                return response.data.data;
+            })
+    },
+    removeDocument(context,payload){
+        return this.$axios
+            .delete(`/documents/${payload}`)
+            .then(response => {
+                return true;
+            })
+    },
+    deleteAccountPermanently(context,payload){
+        return this.$axios.delete(`/accounts/permanently-delete/${payload}`);
+        
     }
-
 }

@@ -222,6 +222,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    patchProcessId:{
+      type: Number,
+      default:-1
+    }
   },
   components: {
     Badge,
@@ -386,6 +390,9 @@ export default {
       let query = "";
       if (this.selectedType.length > 0) {
         query += "&order_type_ids=" + this.selectedType.join(",");
+      }
+      if(this.patchProcessId > -1){
+        query += "&order_process_id=" + this.patchProcessId;
       }
       if (this.selectedStatus.length > 0) {
         query += "&order_status_ids=" + this.selectedStatus.join(",");

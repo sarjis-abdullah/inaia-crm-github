@@ -17,6 +17,8 @@
           <div class="media align-items-center">
             <div class="media-body">
               <div class="font-weight-300 name">{{ row.id }}</div>
+              <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : <UserInfo :accountId="row.created_by" :isLazy="true"/></div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : <UserInfo :accountId="row.updated_by" :isLazy="true"/></div>
             </div>
           </div>
         </template>
@@ -59,6 +61,7 @@
 
 import { Table, TableColumn } from "element-ui";
 import Status from '@/components/Depots/Status';
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
   props: {
     depotStatus: {
@@ -69,7 +72,8 @@ export default {
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
-    Status
+    Status,
+    UserInfo
   },
 
 

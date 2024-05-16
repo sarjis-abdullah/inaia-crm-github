@@ -12,6 +12,14 @@
       :data="depotHistories"
     >
     <el-table-column
+        v-bind:label="$t('date')"
+        prop="created_at"
+      >
+        <template v-slot="{ row }">
+          {{ row.created_at ? $d(new Date(row.created_at)) : '' }}
+        </template>
+      </el-table-column>
+    <el-table-column
         v-bind:label="$t('saving_plan')"
         prop="is_savings_plan"
       >
@@ -64,14 +72,22 @@
           <span>{{ $d(new Date(row.interval_enddate))}}</span>
         </template>
       </el-table-column>
-     
+      <el-table-column
+        
+        prop="interval_enddate"
+      >
+        <template v-slot="{ row }">
+          <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : <UserInfo :accountId="row.created_by" :isLazy="true"/></div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : <UserInfo :accountId="row.updated_by" :isLazy="true"/></div>
+        </template>
+      </el-table-column>
     </el-table>
     </div>
 </template>
 <script>
 
 import { Table, TableColumn } from "element-ui";
-
+import UserInfo from '@/components/Contacts/UserInfo';
 
 export default {
   props: {
@@ -83,6 +99,7 @@ export default {
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
+    UserInfo
     
   },
 }

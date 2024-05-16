@@ -64,22 +64,24 @@
   </div>
 </template>
 <script>
+import appNames from '../../../appNames';
+
 export default {
   name: 'sidebar',
   props: {
     title: {
       type: String,
-      default: 'INAIA',
+      default: process.env.CURRENT_APP==appNames.inaiaEu?'INAIA':'GET GREEN GOLD',
       description: 'Sidebar title'
     },
     shortTitle: {
       type: String,
-      default: 'INAIA',
+      default: process.env.CURRENT_APP==appNames.inaiaEu?'INAIA':'GGG',
       description: 'Sidebar short title'
     },
     logo: {
       type: String,
-      default: '/logo.png',
+      default: process.env.CURRENT_APP==appNames.inaiaEu?'/logo.png':'/getgreengold_logo.png',
       description: 'Sidebar app logo'
     },
     backgroundColor: {

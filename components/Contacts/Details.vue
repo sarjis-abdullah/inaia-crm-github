@@ -142,7 +142,7 @@ import DepotList from "@/components/Depots/List";
 import LatestTransactions from "@/components/Contacts/LatestTransactions"
 import Claims from '@/components/Contacts/AccountClaimList';
 import InboxMessageList from '@/components/InboxMessage/List';
-import {Collapse,CollapseItem} from 'element-ui';
+import {Collapse,CollapseItem,MessageBox} from 'element-ui';
 import UserComment from "@/components/Comment/UserComment";
 import List from "@/components/Support/List";
 //import BankingAmountCard from "@/components/Banking/BankingAmountCard"
@@ -171,6 +171,7 @@ export default {
             type: Object
         }
     },
+    
     data() {
       return {
         bankingAccountDetails: {
@@ -271,7 +272,7 @@ export default {
             this.shouldLoadSupport = true;
           }
         });
-      }
+      },
     }
 
 }

@@ -1,14 +1,13 @@
 import {formatDateToApiFormat} from '~/helpers/helpers';
 function changeDepotStatus($axios,context,depot_id,status_id,account_id,date)
 {
-    if(!date){
-        date = formatDateToApiFormat(new Date());
-    }
     const data ={
         "status_id": status_id,
-        "account_id": account_id,
-        "end_date": date
+        "account_id": account_id
     };
+    if(date){
+        data.end_date = date;
+    }
     return $axios.put(`${process.env.golddinarApiUrl}/depots/${depot_id}/status?include=depot_status`,data).then((res)=>{
         context.commit('details', res.data.data);
         return res.data.data;
@@ -36,7 +35,8 @@ export const state = () => ({
     depotStatuses:[],
     agioTransactions: [],
     agioTransactionTypes: [],
-    depotTypes:[]
+    depotTypes:[],
+    depotTargetTypes:[],
 })
 
 const initialState  = state()
@@ -56,7 +56,8 @@ export const getters = {
     agioTransactions: state=>state.agioTransactions,
     agioTransactionTypes: state=>state.agioTransactionTypes,
     depotTypes: state=>state.depotTypes,
-    silverPrice: state => state.silverPrice
+    silverPrice: state => state.silverPrice,
+    depotTargetTypes: state => state.depotTargetTypes
 }
 
 export const mutations = {
@@ -65,6 +66,9 @@ export const mutations = {
     },
     details(state, data) {
         state.details   = data
+    },
+    updateDepot(state, data) {
+        state.details.name = data.name
     },
     remove(state, idx) {
         state.list = state.list.splice(idx, 1)
@@ -95,7 +99,7 @@ export const mutations = {
     },
     addAgioTransaction(state,agio)
     {
-        state.agioTransactions.push(agio);
+        state.agioTransactions.unshift(agio);
     },
     deleteAgioTransaction(state,id)
     {
@@ -109,7 +113,23 @@ export const mutations = {
     silverPrice(state,price)
     {
         state.silverPrice  = price;
-    }
+    },
+    setDepotTargetTypes(state,depotTargetTypes)
+    {
+        state.depotTargetTypes  = depotTargetTypes;
+    },
+    updateAgioTransactionList(state, updatedTransaction)
+    {
+        state.agioTransactions  = state.agioTransactions.map(item=> {
+            if (item.id == updatedTransaction.agio_transaction_id) {
+                return {
+                    ...item,
+                    sales_advisor_id: updatedTransaction.sales_advisor_id
+                }
+            }
+            return item
+        });
+    },
 }
 
 export const actions = {
@@ -164,6 +184,15 @@ export const actions = {
                     return Promise.reject(err)
                 })
         }
+    },
+    updateDepot(context, payload) {
+        return this.$axios.put(process.env.golddinarApiUrl + '/depots/' + payload.id, payload)
+            .then(res => {
+                context.commit('updateDepot', res.data.data);
+                return res.data.data;
+            }).catch(err => {
+                return Promise.reject(err)
+            })
     },
     remove(context, payload) {
         return this.$axios
@@ -239,7 +268,7 @@ export const actions = {
         }
         else{
             const status_id = getStatusId(status,'depot_status_paused');
-            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id,payload.end_date);
         }
     },
     confirmSavingPlanContract(context,payload)
@@ -260,6 +289,57 @@ export const actions = {
         }
     },
     resumeSavingPlan(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_active');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_active');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    withdrawContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_withdrawn');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_withdrawn');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    completeContract(context,payload)
+    {
+        let status = context.getters.depotStatuses;
+        if(status.length==0)
+        {
+            context.dispatch('getDepotStatuses').then((res)=>{
+                const status_id = getStatusId(res,'depot_status_completed');
+                return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+            }).catch(err => {
+                return Promise.reject(err)
+            })
+        }
+        else{
+            const status_id = getStatusId(status,'depot_status_completed');
+            return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
+        }
+    },
+    activateContract(context,payload)
     {
         let status = context.getters.depotStatuses;
         if(status.length==0)
@@ -358,6 +438,16 @@ export const actions = {
                 return Promise.reject(err)
             })
     },
+    fetchDepotTargetTypes(context,payload)
+    {
+        return this.$axios.get(`${process.env.golddinarApiUrl}/target-types`)
+            .then(res => {
+                context.commit('setDepotTargetTypes',res.data.data)
+                return true
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
+    },
     blockDepot(context,payload)
     {
         let status = context.getters.depotStatuses;
@@ -374,5 +464,16 @@ export const actions = {
             const status_id = getStatusId(status,'depot_status_blocked');
             return changeDepotStatus(this.$axios,context,payload.depot_id,status_id,payload.account_id);
         }
+    },
+    updateAgioTransaction(context, payload)
+    {
+        return this.$axios.put(`${process.env.golddinarApiUrl}/sales-advisor`, payload)
+            .then(res => {
+                // context.commit('setDepotTargetTypes',res.data.data)
+                context.commit('updateAgioTransactionList', payload)
+                return res.data.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
     }
 }

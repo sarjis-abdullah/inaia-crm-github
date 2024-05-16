@@ -4,7 +4,36 @@ import de from '../lang/de-DE.js'
 import en from '../lang/en-UK.js'
 import es from '../lang/es-ES.js'
 import fr from '../lang/fr-FR.js'
-
+import gggde from '../lang/ggg-de-DE.js'
+import gggen from '../lang/ggg-en-UK.js'
+import ggges from '../lang/ggg-es-ES.js'
+import gggfr from '../lang/ggg-fr-FR.js'
+import appNames from '../appNames';
+const appName  = process.env.CURRENT_APP || appNames.inaiaEu
+let selectedGerman = de;
+let selectedFrench = fr;
+let selectedEnglish = en;
+let selectedSpanish = es;
+switch (appName) {
+    case appNames.inaiaEu:
+        selectedGerman = de;
+        selectedFrench = fr;
+        selectedEnglish = en;
+        selectedSpanish = es;
+        break;
+    case appNames.getGreenGold:
+        selectedGerman = gggde;
+        selectedFrench = gggfr;
+        selectedEnglish = gggen;
+        selectedSpanish = ggges;
+        break;
+    default:
+        selectedGerman = de;
+        selectedFrench = fr;
+        selectedEnglish = en;
+        selectedSpanish = es;
+        break;
+}
 Vue.use(VueI18n)
 
 export default ({ app, store }, inject) => {
@@ -75,7 +104,7 @@ export default ({ app, store }, inject) => {
     detectBrowserLanguage: {
         fallbackLocale: 'en'
     },
-    messages: { de, en, es, fr },
+    messages: { de:selectedGerman, en:selectedEnglish, es:selectedSpanish, fr:selectedFrench },
     beforeLanguageSwitch: (o, n) => {
         console.error('switching locale from', o, 'to', n)
     },

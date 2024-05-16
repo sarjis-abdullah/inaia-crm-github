@@ -35,12 +35,15 @@
       class="table-hover table-responsive table-flush mb-3"
       header-row-class-name="thead-light"
       :data="agioTransactions"
+      :key="agioTransactionsKey"
     >
       <el-table-column label="#" min-width="100px" prop="id">
         <template v-slot="{ row }">
           <div class="media align-items-center">
             <div class="media-body">
               <div class="font-weight-300 name">{{ row.id }}</div>
+              <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : <UserInfo :accountId="row.created_by" :isLazy="true"/></div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : <UserInfo :accountId="row.updated_by" :isLazy="true"/></div>
             </div>
           </div>
         </template>
@@ -107,12 +110,23 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-bind:label="$t('sales_advisor')"
+        min-width="150px"
+        prop="sales_advisor_id"
+      >
+        <template v-slot="{ row }">
+        <div class="card mb-0">
+          <AgioTransactionSalesAdvisor @updateListKey="agioTransactionsKey++" :salesAdvisorId="row.sales_advisor_id" :agioTransaction="row" :advisors="advisors"/>
+        </div>
+        </template>
+      </el-table-column>
+      <el-table-column
         v-bind:label="$t('comment')"
         min-width="150px"
         prop="comment"
       >
         <template v-slot="{ row }">
-          {{ row.comment }}
+          <div class="ml-3">{{ row.comment }}</div>
         </template>
       </el-table-column>
       <el-table-column>
@@ -138,16 +152,22 @@ import { mapGetters } from "vuex";
 import { Table, TableColumn,Input,Button } from "element-ui";
 import { Badge } from "@/components/argon-core";
 import IconButton from '@/components/common/Buttons/IconButton';
+import CheckCircleOutlineIcon from '@/components/common/Buttons/CheckCircleOutlineIcon';
 import AddAgioTransaction from '@/components/Depots/AddAgioTransaction';
 import moment from 'moment';
 import { canEditDepot} from '@/permissions'; 
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
-
+import UserInfo from '@/components/Contacts/UserInfo';
+import AgioTransactionSalesAdvisor from '@/components/Depots/AgioTransactionSalesAdvisor'
 export default {
   props: {
     depot_id: {
       type: Number,
       default: null,
+    },
+    depot: {
+      type: Object,
+      default: ()=> ({}),
     },
   },
   components: {
@@ -157,11 +177,15 @@ export default {
     IconButton,
     AddAgioTransaction,
     Input,
-    Button
+    Button,
+    UserInfo,
+    CheckCircleOutlineIcon,
+    AgioTransactionSalesAdvisor
   },
   computed: {
     ...mapGetters({
       agioTransactions: "depots/agioTransactions",
+      advisors: "salesCommission/salesAdvisors",
     }),
     searchQuery() {
       return `&depot_id=${this.depot_id}&page=${this.page}&per_page=${
@@ -182,6 +206,15 @@ export default {
       },
       immediate: true,
     },
+    advisors: {
+      handler(n, p) {
+        if ((n && n.length) != (p && p.length)) {
+          this.$store.dispatch("salesCommission/fetchSalesAdvisors");
+        }
+      },
+      deep: false,
+      immediate: true,
+    },
   },
   data() {
     return {
@@ -194,13 +227,13 @@ export default {
       showDeleteTransaction:false,
       selectedAgioTransaction:null,
       deletedAgioTransactionId:null,
-      isDeleting:false
+      isDeleting:false,
+      agioTransactionsKey: 1,
     };
   },
   methods: {
     fetchAgioTransactions() {
       this.isLoading = true;
-      console.log(this.searchQuery);
       this.$store
         .dispatch("depots/fetchAgioTransactionList", this.searchQuery)
         .then((res) => (this.totalTableData = res.meta.total))
@@ -246,7 +279,7 @@ export default {
       }).catch((err)=>{
         apiErrorHandler(err,this.$notify);
       })
-    }
+    },
   },
 };
 </script>

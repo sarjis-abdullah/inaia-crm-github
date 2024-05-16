@@ -38,12 +38,14 @@
 
 
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" @click.prevent="openKycDocument" v-if="info.is_verified">{{ $t("kyc_documents") }}</a>
+            <a class="dropdown-item" @click.prevent="openKycDocument">{{ $t("documents") }}</a>
+            <a class="dropdown-item" @click.prevent="uploadDocument" v-if="info.is_verified">{{ $t("upload_document") }}</a>
             <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="unLockAccount" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
             <a class="dropdown-item"  @click.prevent="desactvateAccount" v-if="info.is_active">{{ $t("deactivate_account") }}</a>
             <a class="dropdown-item" @click.prevent="activateAccount" v-if="!info.is_active">{{ $t("activate_account") }}</a>
+            <a class="dropdown-item" @click.prevent="deleteAccount">{{ $t("delete_account") }}</a>
           </base-dropdown>
         </div>
 
@@ -80,10 +82,10 @@
 
             <div class="address text-sm mt-3">
               <div class="h5 text-muted text-uppercase ls-1">{{$t('address_data')}}</div>
-              <div><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address.line1}}</div>
-              <div v-if="info.address.line2" class="pl-4">{{info.address.line2}}</div>
+              <div v-if="info.address && info.address.line1"><i class="lnir lnir-map-marker mr-2 text-muted" />{{info.address.line1}}</div>
+              <div v-if="info.address && info.address.line2" class="pl-4">{{info.address.line2}}</div>
               <div><i class="lnir lnir-map mr-2 text-muted" />{{info.address.postal_code}} {{info.address.city}}</div>
-              <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + info.address.country.name_translation_key}}</div>
+              <div><i class="lnir lnir-global mr-2 text-muted" />{{ (info.address.region ? info.address.region + ', ' : '' ) + getCountryName(info)}}</div>
             </div>
 
           </div>
@@ -107,7 +109,8 @@
     <AccountSettings :showModal="showSettings" :settings="this.info.account.settings" @closed="closeSettings" />
 
     <KycDocumentList :showModal="showKycDocument" :account_id="info.account.id" @closed="closeKycDocument"/>
-    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity"/>
+    <VerifyContact :showModal="showVerifyContact" :account_id="info.id" @closed="closeCustomerIdentity" :client="info"/>
+    <UploadDocuments :showUploadDialog="showUploadDocument" :contactId="info.id" @canceled="closeUploadDocument"/>
   </div>
 </template>
 <script>
@@ -120,6 +123,7 @@ import AccountSettings from '@/components/Contacts/AccountSettings';
 import CommentBox from '@/components/Comment/CommentBox';
 import KycDocumentList from "@/components/Contacts/KycDocumentList";
 import VerifyContact from '@/components/Contacts/VerifyContact';
+import UploadDocuments from "@/components/Contacts/UploadDocuments.vue";
 import {  MessageBox } from 'element-ui'
 import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
 import { canEditCustomers } from '@/permissions';
@@ -138,7 +142,8 @@ export default {
       CommentBox,
       KycDocumentList,
       VerifyContact,
-      EditSalesAdvisor
+      EditSalesAdvisor,
+      UploadDocuments
     },
     mounted(){
       this.$confirm = MessageBox.confirm
@@ -167,14 +172,20 @@ export default {
             return (this.info && this.info.person_data && this.info.person_data.surname) || ''
         },
         getAddress() {
-          return this.info.address ?
-            this.info.address.line1 +
-            (this.info.address.line2 ? "\n" + this.info.address.line2 : '') +
-            (this.info.address.postal_code ? '<br>' + this.info.address.postal_code : '') +
+          let text = ''
+          if (this.info.address) {
+            if (this.info.address.line1) {
+              text += this.info.address.line1 + "\n"
+            }
+            if (this.info.address.line2) {
+              text += this.info.address.line2
+            }
+            text += (this.info.address.postal_code ? '<br>' + this.info.address.postal_code : '') +
             (this.info.address.city ? ' ' + this.info.address.city : '') +
             (this.info.address.region ? '<br>' + this.info.address.region : '') +
             (this.info.address.country ? '<br>' + this.info.address.country.name_translation_key : '')
-            : ''
+          }
+          return text
         },
         age() {
             let birthDate   = new Date((this.info && this.info.person_data && this.info.person_data.birthdate) || null),
@@ -199,7 +210,8 @@ export default {
         showComments: false,
         showKycDocument: false,
         showVerifyContact:false,
-        showEditSalesAdvisor:false
+        showEditSalesAdvisor:false,
+        showUploadDocument : false
       }
 
     },
@@ -252,6 +264,12 @@ export default {
       },
       closeCustomerIdentity(){
         this.showVerifyContact = false
+      },
+      uploadDocument(){
+        this.showUploadDocument = true;
+      },
+      closeUploadDocument(){
+        this.showUploadDocument = false;
       },
       resetPin(){
         this.$confirm(this.$t('are_you_sure_you_want_to_reset_account_pin'), 'Warning', {
@@ -338,6 +356,15 @@ export default {
           this.confirmUnlockAccount();
         });
       },
+      getCountryName(info){
+        if(info && info.address && info.address.country)
+        {
+          return info.address.country.name_translation_key;
+        }
+        else{
+          return "";
+        }
+      },
       confirmUnlockAccount(){
         let newAccount = JSON.parse(JSON.stringify(this.info.account));
         newAccount.is_locked = 0;
@@ -358,6 +385,28 @@ export default {
       },
       editSalesAdvisor (){
         this.showEditSalesAdvisor = true;
+      },
+      deleteAccount(){
+        this.$confirm(this.$t('are_you_sure_you_want_to_delete_this_account_permanently'),'danger',{
+            confirmButtonText: this.$t('ok'),
+            cancelButtonText: this.$t('cancel'),
+            type: 'warning'
+          }).then(() => {
+           this.$store.dispatch('clients/deleteAccountPermanently',this.info.account.id).then(()=>{
+            this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("client_deleted_successfully"),
+            });
+            setTimeout(()=>{
+              window.close()
+            },6000)
+           }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+           });
+          }).catch((err) => {
+            apiErrorHandler(err,this.$notify);
+          });
       }
 
     }

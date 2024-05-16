@@ -41,18 +41,20 @@
                         </base-button>
                         <base-button type="white" class="text-danger" @click="() => cancelOrder(selectedResource)"
                             v-if="selectedResource && shouldDisplayOrderCancelButton(selectedResource)"
-                            :disabled="(!hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
+                            :disabled="(selectedResource && !isGoldGift(selectedResource) &&!isOrderPending(selectedResource) && !hasMoneyTransfered && selectedCancelPaymentAccount==null && selectedResourceScreen==orderDetailsSceens.cancel) || isSubmitting"
                             >
                           <i class="lnir lnir-close mr-1"></i>{{$t('cancel_order')}}
                         </base-button>
                         <base-button type="primary" @click="() => markPaidOrder(selectedResource)"
-                            v-if="selectedResource && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete"
+                            v-if="selectedResource  && shouldDisplayOrderPaidButton(selectedResource) && selectedResourceScreen!==orderDetailsSceens.delete && selectedResourceScreen!=orderDetailsSceens.cancel"
                             :disabled="isSubmitting">
                           {{$t('mark_as_paid')}}
                         </base-button>
                          <base-button type="primary" @click="() => completeOrder(selectedResource)" v-if="selectedResource && shouldDisplayOrderCompleteButton(selectedResource)"
                             :disabled="shouldDisableCompleteButton() || isSubmitting">
-                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">{{$t('preview_order')}}</span>
+                           <span v-if="selectedResourceScreen==orderDetailsSceens.detail">
+                            <span v-if="isOrderGoldSale(selectedResource)">{{$t('complete_order')}}</span><span v-else>{{$t('preview_order')}}</span>
+                        </span>
                             <span v-if="selectedResourceScreen==orderDetailsSceens.complete">{{$t('confirm_order')}}</span>
                          </base-button>
                          <base-button type="white" @click="() => refundOrder(selectedResource)"
@@ -81,7 +83,7 @@ import DetailsInfo from '@/components/Orders/DetailsInfo';
 import {  isPaymentInProgressOrder,isOrderPending, isOrderPaid,isOrderPaymentFailed,isPurchaseOrder,isOrderCompleted,isIntervalPurchaseOrder,isOrderOutstanding,isSellOrder,isDeliveryOrder } from '~/helpers/order';
 import { canEditOrder } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
-import { isOrderGoldSale } from '../../helpers/order';
+import { isOrderGoldSale,isGoldGift,isOrderCanceled } from '../../helpers/order';
 export default {
     props:{
         showPopup:{
@@ -136,6 +138,8 @@ export default {
     methods :{
         isOrderPending,
         isOrderPaid,
+        isOrderGoldSale,
+        isGoldGift,
          removeOrder(resource) {
             if(this.selectedResourceScreen != orderDetailScreens.delete)
             {
@@ -273,7 +277,7 @@ export default {
                 if(isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource))
                 {
                     data.data = {price_date:this.completeOrderInfo.date};
-                    if(!isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
+                    if(this.transactionFee && !isNaN(this.transactionFee) && this.transactionFee >=0 && this.transactionFee <=100){
                         data.data.transaction_fee = this.transactionFee * 100;
                     }
                 }
@@ -382,12 +386,12 @@ export default {
         shouldDisplayOrderCancelButton(resource)
         {
           if (this.selectedResourceScreen == orderDetailScreens.detail || this.selectedResourceScreen == orderDetailScreens.cancel)
-            return isOrderPaid(resource);
+            return isOrderPaid(resource) || isOrderPending(resource) || (isGoldGift(resource) && !isOrderCanceled(resource));
           else return false;
         },
         shouldDisplayOrderPaidButton(resource)
         {
-            return (isOrderPending(resource) || isOrderPaymentFailed(resource) || isOrderOutstanding(resource) || isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) || isOrderGoldSale(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
+            return (isOrderPending(resource) || isOrderPaymentFailed(resource) ||  isPaymentInProgressOrder(resource)) && (isPurchaseOrder(resource) || isIntervalPurchaseOrder(resource) ) && this.selectedResourceScreen != orderDetailScreens.failed;
         },
         setCancelPaymentAccount(account)
         {
@@ -435,7 +439,7 @@ export default {
                 .dispatch('orders/sellGold', data)
                 .then( res => {
                     this.$notify({type: 'success', timeout: 5000, message: this.$t('gold_sold_successfully')})
-                    this.selectedResource = null;
+                    
                     //this.showPopup = false;
                     this.$emit('orderUpdated',resource);
                     this.selectedResourceScreen = orderDetailScreens.detail;

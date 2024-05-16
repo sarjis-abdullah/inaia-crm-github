@@ -1,7 +1,7 @@
 <template>
   <div class="bg-default">
     <!-- Header -->
-    <div class="header bg-gradient-info py-7 py-lg-8 pt-lg-9">
+    <div class="header bg-gradient-secondary py-7 py-lg-8 pt-lg-9">
       <div class="container">
         <div class="header-body text-center mb-7">
           <div class="row justify-content-center">

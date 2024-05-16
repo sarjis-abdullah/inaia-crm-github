@@ -109,7 +109,7 @@ export const actions = {
     getClientClaims(context,payload)
     {
         return this.$axios
-                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status${payload}`)
+                .get(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status,claim_payment_transactions${payload}`)
                 .then(res=>{
                     context.commit('claims',res.data.data);
                     return res.data;
@@ -138,7 +138,15 @@ export const actions = {
     },
     markSingleClaimAsPaid(context,payload){
         return this.$axios
-                .put(`${process.env.golddinarApiUrl}/claims/mark-paid/${payload}?include=claim_type,claim_status`)
+                .put(`${process.env.golddinarApiUrl}/claims/mark-paid/${payload}?include=claim_type,claim_status,claim_payment_transactions`)
+                .then(res=>{
+                    context.commit('updateClaim',res.data.data);
+                    return res.data.data;
+                })
+    },
+    cancelClaim(context,payload){
+        return this.$axios
+                .put(`${process.env.golddinarApiUrl}/claims/${payload}/cancel?include=claim_type,claim_status,claim_payment_transactions`)
                 .then(res=>{
                     context.commit('updateClaim',res.data.data);
                     return res.data.data;
@@ -151,7 +159,7 @@ export const actions = {
     },
     createNewClaim(context,payload){
         return this.$axios
-                .post(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status`,payload)
+                .post(`${process.env.golddinarApiUrl}/claims?include=claim_type,claim_status,claim_payment_transactions`,payload)
                 .then(res=>{
                     context.commit('newclaim',res.data.data);
                     return res.data;
@@ -169,5 +177,18 @@ export const actions = {
         return this.$axios.post(`${process.env.golddinarApiUrl}/claims/generate-batch-direct-debit-web-form`,payload).then((res)=>{
             return res.data.message.data.url;
         })
-    }
+    },
+    removeClaimsFromBatch(context,payload){
+        return this.$axios.post(`${process.env.golddinarApiUrl}/claim-batch-processes/${payload.id}/remove-claims`,payload.data).then((res)=>{
+            return true;
+        })
+    },
+    notifyuser(context,payload){
+        return this.$axios
+                .post(`${process.env.golddinarApiUrl}/notifications/claims/payment`,payload)
+                .then(res=>{
+                    
+                    return true;
+                })
+    },
 }

@@ -6,6 +6,8 @@
             class="col-md displayFlex flex-column align-content-center"
             v-if="!isDepotSet"
           >
+            <el-input v-if="isFiltersVisible('id')" :placeholder="$t('search_by')+`: ID`" class="mb-1rem" clearable v-model="claimId"/>
+            <el-input v-if="isFiltersVisible('amount')" :placeholder="$t('search_by')+`: Amount`" class="mb-1rem" clearable v-model="claimAmount"/>
             <Select
               v-model="selectedCustomer"
               remote
@@ -18,6 +20,7 @@
               @change="customerSelected"
               @clear="clearCustomer"
               clearable
+              v-if="isFiltersVisible('customer')"
             >
               <Option
                 v-for="option in customers"
@@ -36,6 +39,7 @@
               @clear="clearDepot"
               class="filterElement"
               :disabled="selectedCustomer == null"
+              v-if="isFiltersVisible('depots')"
             >
               <Option
                 v-for="option in depots"
@@ -51,7 +55,7 @@
               :placeholder="$t('status')"
               v-model="selectedStatus"
               filterable
-              
+              v-if="isFiltersVisible('status')"
               class="mb-3"
               @remove-tag="applyFilter"
               :loading="loadingStatus"
@@ -72,7 +76,7 @@
               class="mb-3"
               @remove-tag="applyFilter"
               :loading="loadingTypes"
-              v-if="displayTypes"
+              v-if="isFiltersVisible('types') && displayTypes"
             >
               <Option
                 v-for="option in types"
@@ -88,6 +92,7 @@
               clearable
               class="filterElement"
               @clear="removeSelectedPaymentMethod"
+              v-if="isFiltersVisible('payment_method')"
             >
               <Option
                 v-for="option in paymentmethods"
@@ -97,6 +102,21 @@
               >
               </Option>
             </Select>
+            <date-picker
+            size="large"
+            class="filterElement"
+            v-model="startDate"
+            type="date"
+            :placeholder="$t('select_start_date_placeholder')"
+          >
+          </date-picker>
+          <date-picker
+            class="filterElement"
+            v-model="endDate"
+            type="date"
+            :placeholder="$t('select_end_date_placeholder')"
+          >
+          </date-picker>
           </div>
          
         </div>
@@ -162,7 +182,34 @@
           }}<a class="pointer badgeIcon" @click.prevent="removeType()"
             ><i class="fas fa-window-close"></i></a
         ></Badge>
-        
+        <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="startDate && endDate"
+        >{{ $t("from") }}: {{ $d(startDate) }} {{ $t("until") }}:
+        {{ $d(endDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-else-if="startDate"
+        >{{ $t("from") }}: {{ $d(startDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-else-if="endDate"
+        >{{ $t("until") }}:{{ $d(endDate) }}
+        <a class="pointer badgeIcon" @click.prevent="removeDate()"
+          ><i class="fas fa-window-close"></i></a
+      ></Badge>
         <ClearFilter @cleared="clearFilter" />
       </div>
     </div>
@@ -195,6 +242,10 @@
         type: Boolean,
         default: true,
       },
+      showSelectedFilters: {
+        type: Array,
+        default: ()=> (['status', 'customer','depots', 'payment_method', 'types', 'id', 'amount']),
+      },
     },
     components: {
       Badge,
@@ -223,12 +274,19 @@
           { id: 1, value: "bank_transfer", label: "bank_transfer" },
           { id: 2, value: "bank_account", label: "bank_account" },
         ],
-        selectedPaymentMethod:null
+        selectedPaymentMethod:null,
+        claimAmount: null,
+        claimId: null,
+        startDate:null,
+        endDate:null
       };
     },
     mounted() {
-      this.$store.dispatch("claims/getClaimTypes", "");
-      this.$store.dispatch("claims/getClaimStatuses", "");
+      if(!this.status || this.status.length==0){
+          
+          this.$store.dispatch("claims/getClaimStatuses", "");
+        }
+        this.$store.dispatch("claims/getClaimTypes", "");
     },
     computed: {
       ...mapGetters("claims", {
@@ -370,6 +428,16 @@
         if(this.selectedPaymentMethod){
           query+='&payment_method='+this.selectedPaymentMethod;
         }
+        if (this.claimAmount) {
+          query+='&amount_eq='+parseFloat(this.claimAmount)*100
+        }
+        if (this.claimId) {
+          query+='&id='+this.claimId
+        }
+        if (this.startDate && this.endDate) {
+          query+='&create_data_range_start='+formatDateToApiFormat(this.startDate)+'&create_data_range_end='+formatDateToApiFormat(this.endDate)
+        }
+        
         if (query == "") {
           this.filterIsActive = false;
         } else this.filterIsActive = true;
@@ -423,8 +491,19 @@
         this.selectedDepots = null;
         this.selectedPaymentMethod = null;
         this.filterIsActive = false;
+        this.claimAmount = null
+        this.claimId = null
+        this.startDate = null;
+        this.endDate = null;
         this.$emit("filter", "");
       },
+      isFiltersVisible(key){
+        const found = this.showSelectedFilters.find(item=> item == key)
+        if (found) {
+          return true
+        }
+        return false
+      }
     },
   };
   </script>
@@ -472,6 +551,9 @@
   
   .pointer {
     cursor: pointer;
+  }
+  .mb-1rem{
+    margin-bottom: 16px;
   }
   </style>
   

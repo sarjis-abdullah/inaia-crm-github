@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Header -->
-    <div class="header bg-gradient-info py-7">
+    <div class="header py-7" :class="background">
       <div class="container">
         <div class="header-body text-center mt-4 mb-6">
           <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-              <h1 class="text-white">INAIA Cloud Administration</h1>
+              <h1 class="text-white">{{ $t('administrationPanelTitle') }}</h1>
               <!-- <p class="text-lead text-white">Use these awesome forms to login or create new account in your project for
                 free.</p> -->
             </div>
@@ -90,7 +90,7 @@
 <script>
   import { mapGetters } from "vuex"
   import { redirectPost } from "~/helpers/auth"
-
+  import appNames from '../appNames'
   export default {
     layout: 'AuthLayout',
     data() {
@@ -113,9 +113,17 @@
           username: this.username,
           password: this.password
         }
+      },
+      background(){
+        let app = process.env.CURRENT_APP;
+        if(app == appNames.getGreenGold)
+          return 'bg-gradient-default';
+        else
+          return "bg-gradient-info"
       }
     },
     mounted() {
+      console.log(process.env.CURRENT_APP)
       if (this.auth && this.user && this.user.is_active) {
         this.$router.push(process.env.dashboardPath)
       }

@@ -37,10 +37,19 @@
                         <div class="media align-items-center">
                             <div class="media-body">
                                 <div class="font-weight-300 name">{{row.id}}</div>
+                                
                             </div>
                         </div>
                     </template>
                 </el-table-column>
+                <el-table-column
+      >
+        <template v-slot="{ row }">
+          <div class="font-weight-300 name" v-if="row.created_by">{{$t('created_by')}} : <UserInfo :accountId="row.created_by" :isLazy="true"/></div>
+          <div class="font-weight-300 name" v-if="row.updated_by">{{$t('updated_by')}} : <UserInfo :accountId="row.updated_by" :isLazy="true"/></div>
+        </template>
+      </el-table-column>
+
 
                 <el-table-column v-bind:label="$t('transaction_type')"
                                 prop="transaction_type"
@@ -144,6 +153,7 @@ import { Table, TableColumn,Input } from 'element-ui';
 import StockFilter from '@/components/Stocks/StockFilter';
 import AddStock from '@/components/Stocks/AddStock';
 import MetaInfo from '@/components/common/MetaInfo';
+import UserInfo from '@/components/Contacts/UserInfo';
 export default {
     props:{
         depotType:{
@@ -161,7 +171,8 @@ export default {
         StockFilter,
         Input,
         AddStock,
-        MetaInfo
+        MetaInfo,
+        UserInfo
     },
     data(){
         return{

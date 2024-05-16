@@ -26,7 +26,15 @@
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
                         <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">{{depot.name }} </span>
+                        <span class="h2 font-weight-bold mb-0">
+                          <span>{{depot.name }} </span>
+                          <span v-if="hadDepotEditAccess" class="ml-1 cursor-pointer" @click.prevent="()=> {
+                            editDepot = true
+                            depotName = depot.name
+                          }">
+                            <PencilOutlineIcon/>
+                          </span>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -43,13 +51,30 @@
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
+                     
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
+                      
                     </base-dropdown>
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
+                </p>
+                <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
+                  <span>
+                    {{ $t('target') }} : {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                  </span>
+                  <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
+                  <PencilOutlineIcon/>
+                  </span>
+                </div>
+                <p class="mb-0 text-sm" v-if="paymentMethod">
+                  {{ $t('payment_method') }} : {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
+                </p>
+                <p class="mb-0 text-sm" v-if="paymentAccount">
+                  {{ $t('account') }} : {{ paymentAccountDetails  }}
                 </p>
               </div>
             </div>
@@ -119,13 +144,19 @@
                       </template>
                       <a class="dropdown-item" @click.prevent="showEditSavingPlan()" v-if="hadDepotEditAccess"
                       >{{ $t("edit_saving_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
                       <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
                       <div class="dropdown-divider"></div>
 
                       <a class="dropdown-item" @click.prevent="confirmPause()"
                         v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmWithdraw()"
+                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-times"></i>{{ $t("withdraw_contract") }}</a>
+                      <a class="dropdown-item" @click.prevent="confirmComplete()"
+                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-close"></i>{{ $t("complete_contract") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmResume()"
                         v-if="(depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled')  && hadSavingPlanStatusEditAccess"
                       ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
@@ -133,6 +164,9 @@
                         <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
                       <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'  && hadSavingPlanStatusEditAccess">
                         <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
+                        <a class="dropdown-item" @click.prevent="confirmResume()"
+                        v-if="(depot.status.name_translation_key=='depot_status_completed' || depot.status.name_translation_key=='depot_status_withdrawn')  && hadSavingPlanStatusEditAccess"
+                      ><i class="fa fa-play-circle"></i>{{ $t("activate_contract") }}</a>
                     </base-dropdown>
                   </div>
                 </div>
@@ -154,6 +188,7 @@
             <div v-else class="card border-0">
               <div class="card-body">
                 <div class="row">
+                  
                   <div class="col">
                     <h5 class="card-title text-uppercase text-muted mb-0">
                       <font-awesome-icon
@@ -164,6 +199,21 @@
                     <span class="h2 font-weight-bold mb-0"
                       >{{$t('no_saving_plan')}}</span
                     >
+                  </div>
+                  <div class="col-auto">
+                    <base-dropdown
+                      title-classes="btn btn-sm btn-link mr-0"
+                      menu-on-right
+                      :has-toggle="false"
+                    >
+                      <template slot="title">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+                     
+                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
+  
+                    </base-dropdown>
                   </div>
                 </div>
               </div>
@@ -188,6 +238,7 @@
             :placeholder="$t('select_end_pause_date_placeholder')"
           />
                 </div>
+                <div v-if="disablePauseButton" class="mt-3 text-danger">End pause date should be after today</div>
                     </div>
                     <template slot="footer">
                         <base-button type="link" class="ml-auto" @click="cancelPause()">
@@ -195,7 +246,7 @@
                         </base-button>
                         <base-button type="primary" @click="() => pauseSavinPlan()"
 
-                            :disabled="isSubmitting">
+                            :disabled="isSubmitting || disablePauseButton ">
                             <span>{{$t('pause')}}</span>
                          </base-button>
                     </template>
@@ -215,6 +266,42 @@
                 <base-button type="primary" @click="() => resumeSavinPlan()"
                     :disabled="isSubmitting">
                     <span>{{$t('resume')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showWithdrawConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('withdraw_contract_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelWithdraw()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => withdrawContract()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('withdraw_contract')}}</span>
+                  </base-button>
+            </template>
+        </modal>
+        <modal :show.sync="showCompleteContract" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
+            <template slot="header" class="pb-0">
+                <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
+                <span></span>
+            </template>
+            <div>
+                {{$t('complete_contract_question')}}
+            </div>
+            <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelComplete()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => completeContract()"
+                    :disabled="isSubmitting">
+                    <span>{{$t('complete_contract')}}</span>
                   </base-button>
             </template>
         </modal>
@@ -243,7 +330,7 @@
                 <span></span>
             </template>
             <div>
-              <AgioTransactions :depot_id="depotId"/>
+              <AgioTransactions :depot="depot" :depot_id="depotId"/>
            </div>
 
         </modal>
@@ -288,9 +375,30 @@
            </div>
 
         </modal>
+        <modal :show.sync="editDepot" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="sm">
+          <template slot="header">
+                <h5 class="modal-title">{{$t('update_depot_name')}}</h5>
+            </template>
+            <div class="pb-3">
+              <el-input :placeholder="$t('depot_name')" clearable v-model="depotName"  />
+              
+            </div>
+           <template slot="footer">
+                <base-button type="link" class="ml-auto" @click="cancelDepotUpdate()">
+                  {{$t('cancel')}}
+                </base-button>
+                <base-button type="primary" @click="() => updateDepot()"
+                  :disabled="isDepotUpdating">
+                  <span>{{$t('update')}}</span>
+                </base-button>
+              </template>
+
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
+        <AssignSalesAdvisor v-if="showEditSalesAdvisor" :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
+        <UpdateTargetTypeModal :showModal="showEditTargetTypeModal" :depot="depot" @cancelEditAdvisor="showEditTargetTypeModal = false"/>
       </div>
     </div>
   </div>
@@ -302,8 +410,11 @@ import PageLoader from '@/components/common/Loader/PageLoader';
 import TextError from '@/components/common/Errors/TextError';
 import OrderList from '@/components/Orders/List'
 import GoldGift from "@/components/Depots/GoldGift";
+import AssignSalesAdvisor from "@/components/Depots/AssignSalesAdvisor";
+import UpdateTargetTypeModal from "@/components/Depots/UpdateTargetTypeModal";
 import DepotHistory from "@/components/Depots/DepotHistory";
 import Loader from "../../../components/common/Loader/Loader";
+import PencilOutlineIcon from "@/components/common/Buttons/PencilOutlineIcon";
 import Status from '@/components/Depots/Status';
 import AgioTransactions from '@/components/Depots/AgioTransactions';
 import DepotStatusHistory from '@/components/Depots/DepotStatusHistory';
@@ -345,7 +456,17 @@ export default {
             showBlockConfirm:false,
             showEditDepot:false,
             showAddDeposit:false,
-            showDepotHistory:false
+            showDepotHistory:false,
+            showEditSalesAdvisor:false,
+            showWithdrawConfirm:false,
+            showCompleteContract:false,
+            showConfirmActivate:false,
+            paymentMethod:null,
+            paymentAccount:null,
+            showEditTargetTypeModal: false,
+            depotName: '',
+            editDepot: false,
+            isDepotUpdating: false,
         }
     },
     components: {
@@ -363,7 +484,10 @@ export default {
         UpdateSavingPlan,
         AddDeposit,
         DepotHistory,
-        Modal
+        Modal,
+        AssignSalesAdvisor,
+        UpdateTargetTypeModal,
+        PencilOutlineIcon
     },
     computed:
         {
@@ -372,6 +496,10 @@ export default {
             goldPrice:"getGoldPrice",
             silverPrice:'silverPrice'
         }),
+        disablePauseButton(){
+          const today = Date.now();
+          return !this.endPauseDate || this.endPauseDate<=today;
+        },
         pauseEndDate(){
           let pausedDate = '';
           if(this.depot && this.depot.status && this.depot.status.name_translation_key == 'depot_status_paused'
@@ -388,6 +516,22 @@ export default {
         },
         hadSavingPlanStatusEditAccess(){
           return canModifySavingPlanStatus();
+        },
+        paymentAccountDetails(){
+          if(this.paymentAccount){
+            let bank = "";
+            let iban = "";
+            this.paymentAccount.payment_account_specs.forEach(spec=>{
+              if(spec.name =='iban'){
+                iban = spec.value;
+              }
+              if(spec.name =='bank_name'){
+                bank = spec.value;
+              }
+            })
+            return bank + ' '+ iban
+          }
+          return ''
         }
 
     },
@@ -408,6 +552,15 @@ export default {
       showDeposit(){
         this.showAddDeposit = true;
       },
+      cancelEditSalesAdvisor(){
+        this.showEditSalesAdvisor = false;
+      },
+      editSalesAdvisor (){
+        this.showEditSalesAdvisor = true;
+      },
+      changeTargetType (){
+        this.showEditTargetTypeModal = true;
+      },
       showEditSavingPlan(){
         this.showEditDepot = true;
       },
@@ -423,7 +576,7 @@ export default {
               if(this.goldPrice==0)
               {
                   this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                      this.goldPrice = res;
+                      // this.goldPrice = res;
                   })
               }
             }
@@ -441,7 +594,16 @@ export default {
         {
             this.$store.dispatch('depots/details',this.depotId).then((res)=>{
 
-                this.initPrices()
+                this.initPrices();
+                this.paymentMethod = res.data.data.payment_method;
+                
+                if(res.data.data.payment_account_id!=null){
+                  this.$store.dispatch('payment-accounts/getPaymentAccountDetails',res.data.data.payment_account_id).then(res=>{
+                    
+                    this.paymentAccount = res;
+
+                  })
+                }
                 this.loadedWithError=false;
                 this.$store.dispatch('clients/clientAccountDetails',this.depot.account_id).then(res=>{
                       this.client = res;
@@ -459,11 +621,54 @@ export default {
         onGoldGiftClose(){
           this.showGoldGift =  false;
         },
+        confirmPause(){
+          this.showPauseConfirm = true;
+        },
         cancelPause(){
           this.showPauseConfirm = false;
         },
-        confirmPause(){
-          this.showPauseConfirm = true;
+        confirmWithdraw(){
+          this.showWithdrawConfirm = true;
+        },
+        cancelWithdraw(){
+          this.showWithdrawConfirm = false;
+        },
+       
+        withdrawContract(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/withdrawContract',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('Depot_withdrawn_successfully')});
+             this.showWithdrawConfirm = false;
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        confirmComplete(){
+          this.showCompleteContract = true;
+        },
+        completeContract(){
+          const data = {
+            depot_id:this.depot.id,
+            account_id:this.depot.account_id
+          };
+          this.isSubmitting = true;
+          this.$store.dispatch('depots/completeContract',data).then(()=>{
+             this.$notify({type: 'success', timeout: 5000, message: this.$t('depot_compeleted_successfully')});
+             this.showCompleteContract = false;
+          }).catch((err)=>{
+            apiErrorHandler(err,this.$notify);
+          }).finally(()=>{
+            this.isSubmitting = false;
+          })
+        },
+        cancelComplete(){
+          this.showCompleteContract = false;
         },
         pauseSavinPlan(){
           const data = {
@@ -507,6 +712,9 @@ export default {
         },
         confirmCancel(){
           this.showCancelConfirm = true;
+        },
+        cancelCompete(){
+          this.showCancelConfirm = false;
         },
         confirmContractConfirm (){
           this.$confirm(this.$t('do_you_want_to_confirm_contract','Warning',{
@@ -597,6 +805,26 @@ export default {
           }
           return value;
         },
+        cancelDepotUpdate(){
+          this.editDepot = false
+        },
+        updateDepot(){
+          if (this.depotName == this.depot.name) {
+            this.editDepot = false
+            return
+          }
+          const payload = {
+            id: this.depotId,
+            name: this.depotName
+          }
+          this.isDepotUpdating = true
+          this.$store.dispatch('depots/updateDepot', payload).then(item=> {
+            this.isDepotUpdating = false
+            this.editDepot = false
+          }).catch(error => {
+            this.isDepotUpdating = false
+          })
+        },
 
     }
 
@@ -604,4 +832,5 @@ export default {
 </script>
 <style>
 .dropdown-item i { width: 16px; text-align: center}
+.cursor-pointer {cursor: pointer;}
 </style>

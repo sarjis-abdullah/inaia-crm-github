@@ -8,12 +8,14 @@
   </div>
 </template>
 <script>
+import appNames from '../../appNames';
+
   export default {
     name: 'base-header',
     props: {
       type: {
         type: String,
-        default: 'gradient-info',
+        default: process.env.CURRENT_APP==appNames.getGreenGold?'gradient-primary':'gradient-info',
         description: 'Header background type'
       }
     }

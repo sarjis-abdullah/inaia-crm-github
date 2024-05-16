@@ -159,12 +159,21 @@ export default {
   mounted(){
       if(this.customer && this.customer.address)
       {
-          this.line1 = this.customer.address.line1;
-          this.line2 = this.customer.address.line2;
+          if (this.customer.address.line1) {
+            this.line1 = this.customer.address.line1;
+          }
+          if (this.customer.address.line2) {
+            this.line2 = this.customer.address.line2;
+          }
           this.city = this.customer.address.city;
           this.region = this.customer.address.region;
           this.postal_code = this.customer.address.postal_code;
-          this.country = this.customer.address ? this.customer.address.country_id:-1
+          if (this.customer.address.country_id) {
+            this.country = this.customer.address.country_id
+          }else{
+            this.country = -1
+          }
+          
       }
       if (this.countryList.length < 200) {
             this.initCountryList();
@@ -201,7 +210,7 @@ export default {
         },
     submitClient() {
       this.isRequesting = true;
-      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region})
+      let data = updateAddressAndGetObject(this.customer,{line1:this.line1,line2:this.line2,postal_code:this.postal_code,city:this.city,region:this.region,country_id:this.country>0?this.country:undefined})
       if (data.customer.account && !data.customer.account.password) {
         // if empty then keep the account table intact
         delete data.customer["account"];
@@ -219,6 +228,9 @@ export default {
             timeout: 5000,
             message: this.$t('address_updated_successfully'),
           });
+          setTimeout(()=>{
+            window.location.reload();
+          },5000)
         })
         .catch((err) => {
           this.failed = err.response.data.message;
