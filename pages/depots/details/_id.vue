@@ -50,7 +50,7 @@
                       </template>
                       <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
                       <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
-                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
+                      
                      
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
@@ -102,8 +102,9 @@
                       <template slot="title">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
-
+                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
+                      
                     </base-dropdown>
                   </div>
                 </div>

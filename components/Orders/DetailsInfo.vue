@@ -11,6 +11,7 @@
             <GoldGift :order="resource" v-if="resource.order_type.name_translation_key.includes('gift')"></GoldGift>
             <GoldTransfer :order="resource" v-if="resource.order_type.name_translation_key.includes('transfer_in') || resource.order_type.name_translation_key.includes('transfer_out')"></GoldTransfer>
             <GoldWithdrawal :order="resource" v-if="resource.order_type.name_translation_key.includes('withdrawal')"></GoldWithdrawal>
+            <GoldDeposit :order="resource" v-if="resource.order_type.name_translation_key.includes('gold_deposit')"></GoldDeposit>
         </div>
          <div class="mt-4 text-sm" v-if="selectedScreen==orderDetailScreens.complete">
                 <CompleteOrderDetail :order="resource"
@@ -106,6 +107,7 @@ import GoldDelivery from '@/components/Orders/goldDetails/GoldDelivery';
 import GoldGift from '@/components/Orders/goldDetails/GoldGift';
 import GoldTransfer from '@/components/Orders/goldDetails/GoldTransfer';
 import GoldWithdrawal from '@/components/Orders/goldDetails/GoldWithdrawal';
+import GoldDeposit from '@/components/Orders/goldDetails/GoldDeposit';
 import { isOrderPending, isOrderPaid,isPurchaseOrder,isIntervalPurchaseOrder,isSellOrder,isDeliveryOrder,isGoldGift } from '~/helpers/order';
 import VueSlickCarousel from 'vue-slick-carousel';
 import CompleteOrderDetail from '@/components/Orders/goldDetails/CompleteOrderDetail';
@@ -133,7 +135,8 @@ export default {
         CompleteGoldDelivery,
         DetailListItem,
         DatePicker,
-        Checkbox
+        Checkbox,
+        GoldDeposit
     },
     props: {
         resource: {
