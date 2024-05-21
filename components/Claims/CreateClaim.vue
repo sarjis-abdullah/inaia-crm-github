@@ -193,6 +193,10 @@ export default {
             customerQuery: "",
         }
     },
+    mounted() {
+      if(!this.claimTypes || this.claimTypes.length ==0)
+            this.$store.dispatch("claims/getClaimTypes", "");
+    },
     computed: {
         ...mapGetters("depots", {
             depots: "orderFilterList",
