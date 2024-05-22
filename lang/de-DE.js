@@ -297,8 +297,6 @@ export default {
     city: 'Ort',
     region: 'Bundesland/Region',
     country:'Land',
-    address_updated_successfully:"Address information upddated successfully!",
-    address_updated_unsuccessfully:"Address information couldn't be updated",
     phone_number:'Telefon',
     country_code:'Ländercode',
     select_country_code:'Wähle Ländercode',

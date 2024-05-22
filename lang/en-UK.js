@@ -301,8 +301,6 @@ export default {
     city: 'City',
     region: 'Region or state',
     country:'Country',
-    address_updated_successfully:"Address information upddated successfully!",
-    address_updated_unsuccessfully:"Address information couldn't be updated",
     phone_number:'Phone number',
     country_code:'Country code',
     select_country_code:'Select country code',
