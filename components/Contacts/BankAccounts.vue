@@ -250,7 +250,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("bank_account_added_successfully"),
+            message: this.$t("entry_added_successfully"),
           });
           this.newIban = null;
           this.newAccountHolder = null;
