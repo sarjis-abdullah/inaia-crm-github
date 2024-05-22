@@ -227,7 +227,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("bank_account_deleted_successfully"),
+            message: this.$t("entry_deleted_successfully"),
           });
          }).catch((err)=>{
             apiErrorHandler(err,this.$notify)
