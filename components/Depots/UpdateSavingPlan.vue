@@ -349,7 +349,7 @@ export default {
             this.$store.dispatch('depots/submit',newDepot).then(()=>{
                 this.$notify({
                     type:'success',
-                    message:this.$t('success_updating_saving_plan'),
+                    message:this.$t('entry_updated_successfully'),
                     duration:5000})
                 this.selecteBillingMethod = null;
                 this.startingDate = null;

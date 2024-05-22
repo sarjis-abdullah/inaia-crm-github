@@ -368,7 +368,7 @@ export default{
                     this.$store.dispatch('salesCommission/addNew',element).then(res=>{
                         if(index == commissions.length-1)
                         {
-                            this.$notify({type: 'success', timeout: 5000, message: this.$t('new_commission_created_successfully')});
+                            this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_added_successfully')});
                             this.isSubmitting = false;
                             this.onClose();
                         }

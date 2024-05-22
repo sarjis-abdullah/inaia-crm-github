@@ -83,7 +83,7 @@ export default {
                 };
                 this.isSubmitting = true;
             this.$store.dispatch('orders/deposit',data).then(res=>{
-                this.$notify({type: 'success', timeout: 5000, message: this.$t('deposit_created_successfully')})
+                this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_added_successfully')})
                 this.$store.dispatch('depots/details',this.depot.id);
                 this.$emit('onClose');
                 this.amount = null;

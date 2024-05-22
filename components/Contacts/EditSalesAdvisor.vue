@@ -121,7 +121,7 @@ import { apiErrorHandler } from '../../helpers/apiErrorHandler';
             this.$notify({
               type: "success",
               timeout: 5000,
-              message: this.$t('salesadvisor_updated_successfully'),
+              message: this.$t('entry_updated_successfully'),
             });
           })
           .catch((err) => {
