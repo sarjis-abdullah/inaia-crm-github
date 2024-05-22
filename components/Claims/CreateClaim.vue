@@ -292,7 +292,7 @@ export default {
             this.$store.dispatch('claims/createNewClaim', data).then(() => {
                 this.$notify({
                     type: 'success',
-                    message: this.$t('success_creating_claim'),
+                    message: this.$t('entry_added_successfully'),
                     duration: 5000
                 })
                 this.onClose();

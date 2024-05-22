@@ -172,7 +172,7 @@ import { Theme } from '@fullcalendar/core';
             this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("batch_claim_created_successfully"),
+            message: this.$t("entry_added_successfully"),
           });
           this.selectedType = null;
           this.startDate = null;
