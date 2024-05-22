@@ -143,7 +143,7 @@ export default {
                     this.$emit('deleted',this.index);
                     this.$notify({
                         type:'success',
-                        message:this.$t('document_deleted_successfully'),
+                        message:this.$t('entry_deleted_successfully'),
                         duration:5000
                     })
                 }).catch((err)=>{

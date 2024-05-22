@@ -429,7 +429,7 @@ export default {
                     this.onClose();
                     this.$notify({
                     type:'success',
-                    message:this.$t('success_adding_stock'),
+                    message:this.$t('entry_added_successfully'),
                     duration:5000})
                 }).catch((err)=>{
                     apiErrorHandler(err,this.$notify);
@@ -454,7 +454,7 @@ export default {
                     this.onClose();
                     this.$notify({
                     type:'success',
-                    message:this.$t('success_adding_stock'),
+                    message:this.$t('entry_added_successfully'),
                     duration:5000})
                 }).catch((err)=>{
                     apiErrorHandler(err,this.$notify);
