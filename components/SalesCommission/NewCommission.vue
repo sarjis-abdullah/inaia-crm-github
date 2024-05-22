@@ -398,7 +398,7 @@ export default{
                 }
                 this.isSubmitting = true;
                 this.$store.dispatch('salesCommission/edit',data).then(res=>{
-                    this.$notify({type: 'success', timeout: 5000, message: this.$t('commission_edited_successfully')});
+                    this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_updated_successfully')});
                     this.onClose();
                 }).catch(err=>{
                     apiErrorHandler(err,this.$notify);

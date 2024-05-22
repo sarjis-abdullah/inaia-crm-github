@@ -564,8 +564,6 @@ export default {
     new_contract:'New contract',
     contract_canceled:'Contract canceled',
     are_you_sure_you_want_to_delete_commission:'Are you sure you want to delete the commission?',
-    commission_edited_successfully:'Commission edited successfully',
-    commission_edited_unsuccessfully:"We couldn't edit the commission please try agaian later",
     edit_commission:'Edit commission',
     optional:'optional',
     commission_information:'Commission information',
