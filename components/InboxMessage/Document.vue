@@ -107,7 +107,7 @@ export default {
                     });
                         this.$notify({
                         type:'success',
-                        message:this.$t('document_saved_successfully'),
+                        message:this.$t('entry_added_successfully'),
                         duration:5000
                     })
                     

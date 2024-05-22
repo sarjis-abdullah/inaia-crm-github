@@ -161,7 +161,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("phone_updated_successfully"),
+            message: this.$t("entry_updated_successfully"),
           });
         })
         .catch((err) => {
@@ -170,7 +170,7 @@ export default {
           this.$notify({
             type: "danger",
             timeout: 5000,
-            message: this.$t("phone_updated_unsuccessfully"),
+            message: this.$t("entry_updated_failed"),
           });
         })
         .finally(() => {

@@ -147,7 +147,7 @@ export default {
         }
         
         this.$store.dispatch('batch-processing/createNew',data).then(res=>{
-            this.$notify({type: 'success', timeout: 5000, message: this.$t('batch_order_prcess_created_successfully')})
+            this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_added_successfully')})
             this.cancelCreatingNewBatch();
         }).catch(err=>{
           apiErrorHandler(err,this.$notify);
