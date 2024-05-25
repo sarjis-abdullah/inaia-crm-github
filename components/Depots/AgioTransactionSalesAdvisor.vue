@@ -163,7 +163,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("agio_transaction_deleted_successfully"),
+            message: this.$t("entry_deleted_successfully"),
           });
           this.$emit('updateListKey')
         })

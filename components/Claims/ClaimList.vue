@@ -536,7 +536,7 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("claim_deleted_successfully"),
+            message: this.$t("entry_deleted_successfully"),
           });
          }).catch((err)=>{
           apiErrorHandler(err,this.$notify);

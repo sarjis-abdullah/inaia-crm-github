@@ -244,7 +244,7 @@ export default {
                 this.$notify({
                     type: "success",
                     timeout: 5000,
-                    message: this.$t("claim_deleted_successfully"),
+                    message: this.$t("entry_deleted_successfully"),
                 });
                 this.$emit('changed');
                 }).catch((err)=>{
