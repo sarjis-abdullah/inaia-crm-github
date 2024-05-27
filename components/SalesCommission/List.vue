@@ -192,7 +192,7 @@ export default{
         deleteTicket(id){
             this.isDeleting = true;
             this.$store.dispatch('salesCommission/deleteCommission',id).then(()=>{
-                this.$notify({type: 'success', timeout: 5000, message: this.$t('commission_deleted_successfully')})
+                this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_deleted_successfully')})
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify);
             }).finally(()=>{

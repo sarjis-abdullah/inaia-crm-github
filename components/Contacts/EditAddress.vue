@@ -226,7 +226,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t('address_updated_successfully'),
+            message: this.$t('entry_updated_successfully'),
           });
           setTimeout(()=>{
             window.location.reload();
@@ -238,7 +238,7 @@ export default {
           this.$notify({
             type: "danger",
             timeout: 5000,
-            message: this.$t('address_updated_unsuccessfully'),
+            message: this.$t('entry_updated_failed'),
           });
         })
         .finally(() => {

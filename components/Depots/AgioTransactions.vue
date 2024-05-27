@@ -274,7 +274,7 @@ export default {
     confirmDeletion()
     {
       this.$store.dispatch('depots/deleteAgioTransaction',this.selectedAgioTransaction.id).then(()=>{
-        this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_deleted_successfully')});
+        this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_deleted_successfully')});
         this.cancelDeletion();
       }).catch((err)=>{
         apiErrorHandler(err,this.$notify);

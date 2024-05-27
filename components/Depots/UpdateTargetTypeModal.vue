@@ -114,7 +114,7 @@ export default {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t("depot_target_updated_successfully"),
+            message: this.$t("entry_updated_successfully"),
           });
         })
         .catch((err) => {

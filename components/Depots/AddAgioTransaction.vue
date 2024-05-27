@@ -133,7 +133,7 @@ export default ({
             }
             this.isSubmitting = true;
             this.$store.dispatch('depots/createAgioTransaction',payload).then(res=>{
-                this.$notify({type: 'success', timeout: 5000, message: this.$t('agio_transaction_created_successfully')})
+                this.$notify({type: 'success', timeout: 5000, message: this.$t('entry_added_successfully')})
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify);
             }).finally(()=>{
