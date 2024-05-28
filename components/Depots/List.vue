@@ -252,9 +252,19 @@ export default {
                 this.fetchList(this.searchQuery)
             },
             immediate: true,
+        },
+        $route: {
+            handler() {
+                if (this.$route.query && this.$route.query.start_date) {
+                    this.toggleFilter()
+                }
+            },
+            immediate: true,
+            deep: false
         }
     },
     mounted() {
+        console.log(this.$route);
     },
     methods: {
         popupDetails(resource) {
