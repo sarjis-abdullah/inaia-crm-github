@@ -114,12 +114,26 @@
                         </div>
                         <table v-for="depot in depots.filter(a=>a.asset == asset.id)" :key="depot.asset">
                             <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key)}} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
+                                <template v-if="key!='asset' && key!='sales_advisor'">
+                                    <template v-if="key == 'total_no_of_depots'">
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            <nuxt-link :to="getDepotsRoute(key)">
+                                                {{ value }}
+                                            </nuxt-link> 
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            {{ value }} 
+                                        </td>
+                                    </template>
+                                </template>
                             </tr>
                         </table>
                         <div class="font-weight-bold my-3">
@@ -444,6 +458,11 @@ export default({
                 }
             }
             return d;
+        },
+        getStartAndEndDates(){
+            if (this.startDate && this.endDate) 
+                return `start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
+            return ''
         }
     },
     data(){
@@ -492,6 +511,14 @@ export default({
 
                 this.loadData();
             }
+        },
+        getDepotsRoute(key){
+            let query = `?depot_type_id=${key}`
+            if(this.startDate && this.endDate){
+                query += this.getStartAndEndDates
+            }
+
+            return `/depots${query}`
         }
     }
 })
