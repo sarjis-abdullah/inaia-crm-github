@@ -269,7 +269,7 @@ export default {
         $route: {
             handler() {
                 if (this.$route.query && Object.keys(this.$route.query).length) {
-                    this.toggleFilter()
+                    this.showFilter = true;
                 }
             },
             immediate: true,
@@ -277,7 +277,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.$route);
     },
     methods: {
         popupDetails(resource) {

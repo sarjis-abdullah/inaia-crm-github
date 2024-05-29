@@ -423,9 +423,6 @@ export default {
         return this.formatClientLabel(advisor)
       }
       return ''
-    },
-    isDataReady() {
-      return this.fromCreatedDate && this.toCreatedDate && this.selectedDepotType !== null;
     }
   },
   watch: {
@@ -441,21 +438,16 @@ export default {
           if (this.$route.query.depot_type_id) {
             this.selectedDepotType = parseInt(this.$route.query.depot_type_id)
           }
-        }
-      },
-      immediate: true,
-      deep: false
-    },
-    isDataReady: {
-      handler() {
-        if (this.isDataReady) {
+          if (this.$route.query.sales_advisor_id) {
+            this.salesAdvisorId = parseInt(this.$route.query.sales_advisor_id)
+          }
           this.filterIsActive = true;
           this.applyFilter()
         }
       },
       immediate: true,
       deep: false
-    },
+    }
   },
   methods: {
     formatDateToApiFormat,
@@ -618,6 +610,11 @@ export default {
     },
     removeSalesAdviserFilter: function () {
       this.salesAdvisorId = null;
+      if (this.$route.query && this.$route.query.sales_advisor_id) {
+        const query = { ...this.$route.query };
+        delete query.sales_advisor_id;
+        this.$router.push({ path: this.$route.path, query });
+      }
       if (this.filterIsActive) this.applyFilter();
     },
     removeAgio: function () {

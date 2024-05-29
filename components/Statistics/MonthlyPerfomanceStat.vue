@@ -48,12 +48,26 @@
                         </div>
                         <table v-for="depot in depots.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="depot.asset">
                             <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key)}} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
+                                <template v-if="key!='asset' && key!='sales_advisor'">
+                                    <template v-if="key == 'total_no_of_depots'">
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            <nuxt-link :to="getDepotsRouteWithSalesAdvisor(asset.key, sales.id)">
+                                                {{ value }}
+                                            </nuxt-link>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            {{ value }}
+                                        </td>
+                                    </template>
+                                </template>
                             </tr>
                         </table>
                         <div class="font-weight-bold my-3">
@@ -519,14 +533,18 @@ export default({
                 this.loadData();
             }
         },
-        getDepotsRoute(id){
-            let query = `?depot_type_id=${id}`
+        getDepotsRoute(depotTypeId){
+            let query = `?depot_type_id=${depotTypeId}`
             
             if(this.startDate && this.endDate){
                 query += this.getStartAndEndDates
             }
 
             return `/depots${query}`
+        },
+        getDepotsRouteWithSalesAdvisor(depotTypeId, salesAdvisorId){
+            const query = this.getDepotsRoute(depotTypeId)
+            return query + '&sales_advisor_id=' + salesAdvisorId
         }
     }
 })
