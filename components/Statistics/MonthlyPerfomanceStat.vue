@@ -534,7 +534,7 @@ export default({
             }
         },
         getDepotsRoute(depotTypeId){
-            const query = `?depot_type_id=${depotTypeId}`
+            let query = `?depot_type_id=${depotTypeId}`
             if(this.startDate && this.endDate){
                 query += this.getStartAndEndDates
             }

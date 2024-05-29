@@ -247,20 +247,25 @@ export default {
         },
         hasViewAccess(){
             return canViewDepot();
+        },
+        hasRouteQuery() {
+            return Object.keys(this.$route.query).length
         }
     },
     watch: {
         searchQuery: {
             handler(o, p) {
-                if (!Object.keys(this.$route.query).length) {
-                    this.fetchList(this.searchQuery)
-                }
+                setTimeout(() => {
+                    if (!this.hasRouteQuery) {
+                        this.fetchList(this.searchQuery)
+                    }
+                }, 1);
             },
             immediate: true,
         },
         mergedQuery: {
             handler(o, p) {
-                if (Object.keys(this.$route.query).length && this.filterQuery) {
+                if (this.hasRouteQuery && this.filterQuery) {
                     this.fetchList(this.searchQuery)
                 }
             },

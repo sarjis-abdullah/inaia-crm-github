@@ -697,6 +697,24 @@ export default {
       const query = this.quiryBuilder();
       this.$emit("filter", query);
     },
+    removeQueryFilter(){
+      if (this.$route.query) {
+        const query = { ...this.$route.query };
+        if (query.start_date) {
+          delete query.start_date;
+        }
+        if (query.end_date) {
+          delete query.end_date;
+        }
+        if (query.depot_type_id) {
+          delete query.depot_type_id;
+        }
+        if (query.sales_advisor_id) {
+          delete query.sales_advisor_id;
+        }
+        this.$router.push({ path: this.$route.path, query });
+      }
+    },
     clearFilter() {
       this.selectedAgioPaymentPlan = null;
       this.selectedAgio = null;
@@ -705,14 +723,16 @@ export default {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
       this.selectedSavingPlan = null;
-      this.selectedDepotType = null;
+      
       this.filterIsActive = false;
       this.selectedDepotStatus = [];
       this.selectedIntervalDay = null;
       this.selectedPaymentMethod = null;
+      this.removeQueryFilter()
       this.salesAdvisorId = null;
       this.toCreatedDate = null;
       this.fromCreatedDate = null;
+      this.selectedDepotType = null;
       this.$emit("filter", "");
     },
   },
