@@ -534,12 +534,10 @@ export default({
             }
         },
         getDepotsRoute(depotTypeId){
-            let query = `?depot_type_id=${depotTypeId}`
-            
+            const query = `?depot_type_id=${depotTypeId}`
             if(this.startDate && this.endDate){
                 query += this.getStartAndEndDates
             }
-
             return `/depots${query}`
         },
         getDepotsRouteWithSalesAdvisor(depotTypeId, salesAdvisorId){

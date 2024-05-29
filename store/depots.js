@@ -78,7 +78,6 @@ export const mutations = {
     },
     loading(state, bool) {
         state.loading   = bool
-        console.log(bool, 'fetch debug');
     },
     resetState(state) {
         Object.assign(state, initialState)
