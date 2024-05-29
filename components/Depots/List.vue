@@ -239,6 +239,9 @@ export default {
                 `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
+        mergedQuery() {
+            return this.searchQuery
+        },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage )
         },
@@ -248,14 +251,24 @@ export default {
     },
     watch: {
         searchQuery: {
-            handler() {
-                this.fetchList(this.searchQuery)
+            handler(o, p) {
+                if (!Object.keys(this.$route.query).length) {
+                    this.fetchList(this.searchQuery)
+                }
+            },
+            immediate: true,
+        },
+        mergedQuery: {
+            handler(o, p) {
+                if (Object.keys(this.$route.query).length && this.filterQuery) {
+                    this.fetchList(this.searchQuery)
+                }
             },
             immediate: true,
         },
         $route: {
             handler() {
-                if (this.$route.query && this.$route.query.start_date) {
+                if (this.$route.query && Object.keys(this.$route.query).length) {
                     this.toggleFilter()
                 }
             },

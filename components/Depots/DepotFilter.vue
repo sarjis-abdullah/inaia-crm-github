@@ -333,6 +333,7 @@ import {
 } from "element-ui";
 import { mapGetters, mapMutations } from "vuex";
 import { formatDateToApiFormat } from "../../helpers/helpers";
+import { formatDateByMoment } from "@/helpers/date";
 import moment from "moment";
 export default {
   components: {
@@ -422,10 +423,43 @@ export default {
         return this.formatClientLabel(advisor)
       }
       return ''
+    },
+    isDataReady() {
+      return this.fromCreatedDate && this.toCreatedDate && this.selectedDepotType !== null;
     }
+  },
+  watch: {
+    $route: {
+      handler() {
+        if (this.$route.query) {
+          if (this.$route.query.start_date) {
+            this.fromCreatedDate = moment(this.$route.query.start_date)
+          }
+          if (this.$route.query.end_date) {
+            this.toCreatedDate = moment(this.$route.query.end_date)
+          }
+          if (this.$route.query.depot_type_id) {
+            this.selectedDepotType = parseInt(this.$route.query.depot_type_id)
+          }
+        }
+      },
+      immediate: true,
+      deep: false
+    },
+    isDataReady: {
+      handler() {
+        if (this.isDataReady) {
+          this.filterIsActive = true;
+          this.applyFilter()
+        }
+      },
+      immediate: true,
+      deep: false
+    },
   },
   methods: {
     formatDateToApiFormat,
+    formatDateByMoment,
     clearCustomer: function () {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
@@ -550,10 +584,10 @@ export default {
         query+='&sales_advisor_id='+this.salesAdvisorId;
       }
       if(this.fromCreatedDate){
-        query+='&from_date='+this.formatDateToApiFormat(this.fromCreatedDate);
+        query+='&from_date='+this.formatDateByMoment(this.fromCreatedDate);
       }
       if(this.toCreatedDate){
-        query+='&to_date='+this.formatDateToApiFormat(this.toCreatedDate);
+        query+='&to_date='+this.formatDateByMoment(this.toCreatedDate);
       }
       if (query == "") {
         this.filterIsActive = false;
@@ -595,6 +629,11 @@ export default {
     },
     removeDepotType: function (){
       this.selectedDepotType = null;
+      if (this.$route.query && this.$route.query.depot_type_id) {
+        const query = { ...this.$route.query };
+        delete query.depot_type_id;
+        this.$router.push({ path: this.$route.path, query });
+      }
       if (this.filterIsActive) {
         const query = this.quiryBuilder();
         this.$emit("filter", query);
@@ -610,6 +649,16 @@ export default {
     removeCreatedDateFilters: function () {
       this.fromCreatedDate = null;
       this.toCreatedDate = null;
+      if (this.$route.query) {
+        const query = { ...this.$route.query };
+        if (query.start_date) {
+          delete query.start_date;
+        }
+        if (query.end_date) {
+          delete query.end_date;
+        }
+        this.$router.push({ path: this.$route.path, query });
+      }
       if (this.filterIsActive) this.applyFilter();
     },
     removeToCreatedDate: function () {

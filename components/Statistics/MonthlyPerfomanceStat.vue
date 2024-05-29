@@ -120,7 +120,7 @@
                                             {{ $t(key)}} :
                                         </td>
                                         <td class="px-3">
-                                            <nuxt-link :to="getDepotsRoute(key)">
+                                            <nuxt-link :to="getDepotsRoute(asset.key)">
                                                 {{ value }}
                                             </nuxt-link> 
                                         </td>
@@ -202,6 +202,18 @@ export default({
         ...mapGetters({
             data: "statistic/monthlyPeformance"
         }),
+        ...mapGetters("depots", {
+            depotTypes: "depotTypes",
+        }),
+        assets(){
+            return this.depotTypes.map(item=> {
+                return {
+                    ...item,
+                    key: item.id,
+                    id: item.name_translation_key ? item.name_translation_key.toLowerCase() : ''
+                }
+            })
+        },
         salesAdvisors(){
             let advisors = [];
             if(this.data){
@@ -461,7 +473,7 @@ export default({
         },
         getStartAndEndDates(){
             if (this.startDate && this.endDate) 
-                return `start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
+                return `&start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
             return ''
         }
     },
@@ -470,19 +482,14 @@ export default({
             startDate:null,
             endDate:null,
             loading:false,
-            groupBySalesPerson:false,
-            assets:[
-                {
-                    id:'gold'
-                },
-                {
-                    id:'silver'
-                }
-            ]
+            groupBySalesPerson:false
         }
     },
     mounted(){
         this.loadData();
+        if(this.depotTypes.length == 0) {
+            this.$store.dispatch('depots/getDepotTypes')
+        }
     },
     watch:{
         groupBySalesPerson:{
@@ -512,8 +519,9 @@ export default({
                 this.loadData();
             }
         },
-        getDepotsRoute(key){
-            let query = `?depot_type_id=${key}`
+        getDepotsRoute(id){
+            let query = `?depot_type_id=${id}`
+            
             if(this.startDate && this.endDate){
                 query += this.getStartAndEndDates
             }
