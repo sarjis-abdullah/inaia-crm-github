@@ -239,19 +239,46 @@ export default {
                 `&per_page=${this.perPage}`+(this.filterQuery ? this.filterQuery : '')
             )
         },
+        mergedQuery() {
+            return this.searchQuery
+        },
         totalPages() {
             return Math.ceil(this.totalTableData / this.perPage )
         },
         hasViewAccess(){
             return canViewDepot();
+        },
+        hasRouteQuery() {
+            return Object.keys(this.$route.query).length
         }
     },
     watch: {
         searchQuery: {
-            handler() {
-                this.fetchList(this.searchQuery)
+            handler(o, p) {
+                setTimeout(() => {
+                    if (!this.hasRouteQuery) {
+                        this.fetchList(this.searchQuery)
+                    }
+                }, 1);
             },
             immediate: true,
+        },
+        mergedQuery: {
+            handler(o, p) {
+                if (this.hasRouteQuery && this.filterQuery) {
+                    this.fetchList(this.searchQuery)
+                }
+            },
+            immediate: true,
+        },
+        $route: {
+            handler() {
+                if (this.$route.query && Object.keys(this.$route.query).length) {
+                    this.showFilter = true;
+                }
+            },
+            immediate: true,
+            deep: false
         }
     },
     mounted() {

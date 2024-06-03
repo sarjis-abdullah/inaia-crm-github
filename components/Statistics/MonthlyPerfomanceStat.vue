@@ -48,12 +48,26 @@
                         </div>
                         <table v-for="depot in depots.filter(a=>a.sales_advisor==sales.id && a.asset == asset.id)" :key="depot.asset">
                             <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key)}} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
+                                <template v-if="key!='asset' && key!='sales_advisor'">
+                                    <template v-if="key == 'total_no_of_depots'">
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            <nuxt-link :to="getDepotsRouteWithSalesAdvisor(asset.key, sales.id)">
+                                                {{ value }}
+                                            </nuxt-link>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            {{ value }}
+                                        </td>
+                                    </template>
+                                </template>
                             </tr>
                         </table>
                         <div class="font-weight-bold my-3">
@@ -114,12 +128,26 @@
                         </div>
                         <table v-for="depot in depots.filter(a=>a.asset == asset.id)" :key="depot.asset">
                             <tr v-for="[key,value] in Object.entries(depot)" :key="key" >
-                                <td v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $t(key)}} :
-                                </td>
-                                <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ value }} 
-                                </td>
+                                <template v-if="key!='asset' && key!='sales_advisor'">
+                                    <template v-if="key == 'total_no_of_depots'">
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            <nuxt-link :to="getDepotsRoute(asset.key)">
+                                                {{ value }}
+                                            </nuxt-link> 
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td>
+                                            {{ $t(key)}} :
+                                        </td>
+                                        <td class="px-3">
+                                            {{ value }} 
+                                        </td>
+                                    </template>
+                                </template>
                             </tr>
                         </table>
                         <div class="font-weight-bold my-3">
@@ -188,6 +216,18 @@ export default({
         ...mapGetters({
             data: "statistic/monthlyPeformance"
         }),
+        ...mapGetters("depots", {
+            depotTypes: "depotTypes",
+        }),
+        assets(){
+            return this.depotTypes.map(item=> {
+                return {
+                    ...item,
+                    key: item.id,
+                    id: item.name_translation_key ? item.name_translation_key.toLowerCase() : ''
+                }
+            })
+        },
         salesAdvisors(){
             let advisors = [];
             if(this.data){
@@ -444,6 +484,11 @@ export default({
                 }
             }
             return d;
+        },
+        getStartAndEndDates(){
+            if (this.startDate && this.endDate) 
+                return `&start_date=${formatDateToApiFormat(this.startDate)}&end_date=${formatDateToApiFormat(this.endDate)}`;
+            return ''
         }
     },
     data(){
@@ -451,19 +496,14 @@ export default({
             startDate:null,
             endDate:null,
             loading:false,
-            groupBySalesPerson:false,
-            assets:[
-                {
-                    id:'gold'
-                },
-                {
-                    id:'silver'
-                }
-            ]
+            groupBySalesPerson:false
         }
     },
     mounted(){
         this.loadData();
+        if(this.depotTypes.length == 0) {
+            this.$store.dispatch('depots/getDepotTypes')
+        }
     },
     watch:{
         groupBySalesPerson:{
@@ -492,6 +532,17 @@ export default({
 
                 this.loadData();
             }
+        },
+        getDepotsRoute(depotTypeId){
+            let query = `?depot_type_id=${depotTypeId}`
+            if(this.startDate && this.endDate){
+                query += this.getStartAndEndDates
+            }
+            return `/depots${query}`
+        },
+        getDepotsRouteWithSalesAdvisor(depotTypeId, salesAdvisorId){
+            const query = this.getDepotsRoute(depotTypeId)
+            return query + '&sales_advisor_id=' + salesAdvisorId
         }
     }
 })

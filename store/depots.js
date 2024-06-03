@@ -145,18 +145,15 @@ export const actions = {
             })
     },
     fetchList(context, payload) {
-        if (!context.state.loading) {
-            context.commit('loading', true)
-            return this.$axios.get(`${process.env.golddinarApiUrl}/depots?include=depot_status${ payload }`)
-                .then(res => {
-                    context.commit('list', res.data.data)
-                    return res
-                }).catch(err => {
-                    return Promise.reject(err)
-                }).finally(() => {
-                    context.commit('loading', false)
-                })
-        }
+        return this.$axios.get(`${process.env.golddinarApiUrl}/depots?include=depot_status${ payload }`)
+            .then(res => {
+                context.commit('list', res.data.data)
+                return res
+            }).catch(err => {
+                return Promise.reject(err)
+            }).finally(() => {
+                context.commit('loading', false)
+            })
     },
     async details(context, payload) {
         return await this.$axios
