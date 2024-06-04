@@ -51,8 +51,13 @@
                     </el-table-column>
                     <el-table-column v-bind:label="$t('valide')"
                                     >
-                                    <template v-slot="{row}">
-                                        <span>{{getValidated(row.payment_account_specs)?$t('validated'):$t('not_validated')}}</span>
+                                    <template v-slot="{row}" >
+                                        <div class="flex flex-row justify-content-center align-content-center">
+                                        <span>{{row.is_verified?$t('validated'):$t('not_validated')}}</span>
+                                        <button type="button" class="btn base-button btn-icon btn-fab btn-success btn-sm" v-if="!row.is_verified" @click="()=>validatePaymentAccount(row)">
+                    <span class="btn-inner--text">{{$t('validate_account')}}</span>
+                </button>
+            </div>
                                     </template>
                     </el-table-column>
                     <el-table-column>
@@ -216,6 +221,26 @@ export default {
                 }
             });
             return isValidated;
+        },
+        validatePaymentAccount(account){
+            this.$confirm(this.$t('do_you_want_to_validate_bank_account'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+         this.$store.dispatch('payment-accounts/validatebankaccount',account.id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("entry_validated_successfully"),
+          });
+         }).catch((err)=>{
+            apiErrorHandler(err,this.$notify)
+            
+         });
+        }).catch((err) => {
+            apiErrorHandler(err,this.$notify)
+        });
         },
         deleteBankAccount(row){
             this.$confirm(this.$t('do_you_want_to_delete_bank_account'), 'Warning', {

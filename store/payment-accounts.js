@@ -22,6 +22,12 @@ export const mutations = {
     },
     addPaymentAccounts(state,data){
         state.paymentAccounts.unshift(data);
+    },
+    updatePaymentAccount(state,data){
+        let existingAccount  = state.paymentAccounts.find( x => data.id == x.id  )
+        if (existingAccount) {
+            Object.assign(existingAccount, data)
+        } 
     }
     
 }
@@ -60,5 +66,12 @@ export const actions = {
             
             return res.data.data;
         })
+    },
+    validatebankaccount(context,paylaod){
+        return this.$axios
+                .patch(`${ process.env.paymentsApiUrl }/payment-accounts/${paylaod}/verify`).then(res=>{
+                    context.commit('updatePaymentAccount', res.data.data)
+                    return res.data.data;
+                })
     }
 }
