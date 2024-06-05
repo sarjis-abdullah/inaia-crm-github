@@ -1,4 +1,5 @@
 export default {
     inaiaEu : 'inaia-eu',
-    getGreenGold:'green-gold'
+    getGreenGold:'green-gold',
+    inaiaUk : 'inaia-uk'
 }

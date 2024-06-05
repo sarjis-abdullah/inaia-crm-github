@@ -116,6 +116,10 @@
       },
       background(){
         let app = process.env.CURRENT_APP;
+        let env = process.env.NODE_ENV;
+        if(env == 'development'){
+          return 'bg-gradient-warning';
+        }
         if(app == appNames.getGreenGold)
           return 'bg-gradient-default';
         else
@@ -124,6 +128,7 @@
     },
     mounted() {
       console.log(process.env.CURRENT_APP)
+      console.log(process.env.NODE_ENV)
       if (this.auth && this.user && this.user.is_active) {
         this.$router.push(process.env.dashboardPath)
       }
