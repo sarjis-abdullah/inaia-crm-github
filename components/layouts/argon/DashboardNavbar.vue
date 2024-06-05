@@ -231,7 +231,7 @@
       navVarBackground(){
         let app = process.env.CURRENT_APP;
         let env = process.env.NODE_ENV;
-        if(env == 'development'){
+        if(env != 'production'){
           return 'bg-gradient-warning';
         }
         if(app == appNames.getGreenGold)
