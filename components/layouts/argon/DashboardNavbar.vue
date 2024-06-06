@@ -230,7 +230,7 @@
       },
       navVarBackground(){
         let app = process.env.CURRENT_APP;
-        let env = process.env.NODE_ENV;
+        let env = process.env.DEPLOYMENT_ENV;
         console.log(env);
         if(env != 'production'){
           return 'bg-gradient-warning';
