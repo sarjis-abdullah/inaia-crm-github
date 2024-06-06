@@ -231,6 +231,7 @@
       navVarBackground(){
         let app = process.env.CURRENT_APP;
         let env = process.env.NODE_ENV;
+        console.log(env);
         if(env != 'production'){
           return 'bg-gradient-warning';
         }
