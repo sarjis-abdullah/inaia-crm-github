@@ -19,9 +19,11 @@ const pkg = require('./package')
 const appEnv  = process.env.NODE_ENV || 'development';
 import appNames from './appNames';
 const appName  = process.env.CURRENT_APP || appNames.inaiaEu
+const appCurrency = process.env.APP_CURRENCY || 'EUR'
 import EnvKeys from './config';
 
 import gggEnvKeys from './gggConfig';
+import inaiaUKEnvKeys from './inaiaUkConfig';
 let selectedConfig = EnvKeys;
 let favIcon = '/favicon.ico';
 let pageTitle = "Adminpanel - INAIA Cloud";
@@ -44,6 +46,18 @@ switch (appName) {
       'assets/css/icomoon/style.css',
       'assets/sass/argon.scss',
     ]
+    break;
+    case appNames.inaiaUk:
+      selectedConfig = inaiaUKEnvKeys;
+      pageTitle = "Adminpanel - INAIA UK Cloud"
+      favIcon = '/favicon.ico'
+      css =[
+        'assets/css/nucleo/css/nucleo.css',
+        'assets/css/LineIconsPro/Pro-Regular/css/LineIconsPro-Regular.css',
+        //'assets/css/LineIconsPro/Pro-Light/css/LineIconsPro-Light.css',
+        'assets/css/icomoon/style.css',
+        'assets/sass/argon.scss',
+      ]
     break;
     case appNames.getGreenGold:
       selectedConfig = gggEnvKeys;
@@ -139,7 +153,8 @@ module.exports = {
    */
   env: {
     ...selectedConfig[appEnv].env,
-    CURRENT_APP:appName
+    CURRENT_APP:appName,
+    APP_CURRENCY:appCurrency
   },
 
   /*

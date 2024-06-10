@@ -71,17 +71,17 @@ export default {
   props: {
     title: {
       type: String,
-      default: process.env.CURRENT_APP==appNames.inaiaEu?'INAIA':'GET GREEN GOLD',
+      default: (process.env.CURRENT_APP==appNames.inaiaEu || process.env.CURRENT_APP==appNames.inaiaUk)?'INAIA':'GET GREEN GOLD',
       description: 'Sidebar title'
     },
     shortTitle: {
       type: String,
-      default: process.env.CURRENT_APP==appNames.inaiaEu?'INAIA':'GGG',
+      default: (process.env.CURRENT_APP==appNames.inaiaEu || process.env.CURRENT_APP==appNames.inaiaUk)?'INAIA':'GGG',
       description: 'Sidebar short title'
     },
     logo: {
       type: String,
-      default: process.env.CURRENT_APP==appNames.inaiaEu?'/logo.png':'/getgreengold_logo.png',
+      default: (process.env.CURRENT_APP==appNames.inaiaEu || process.env.CURRENT_APP==appNames.inaiaUk)?'/logo.png':'/getgreengold_logo.png',
       description: 'Sidebar app logo'
     },
     backgroundColor: {

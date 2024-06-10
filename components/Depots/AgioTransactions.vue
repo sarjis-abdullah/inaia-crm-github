@@ -72,7 +72,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ currency }}
           </span>
         </template>
       </el-table-column>
@@ -94,7 +94,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_before) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_before) / 100"></i18n-n> {{ currency }}
           </span>
         </template>
       </el-table-column>
@@ -105,7 +105,7 @@
       >
         <template v-slot="{ row }">
           <span class="status">
-            <i18n-n :value="parseInt(row.agio_after) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.agio_after) / 100"></i18n-n> {{ currency }}
           </span>
         </template>
       </el-table-column>
@@ -159,6 +159,7 @@ import { canEditDepot} from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 import UserInfo from '@/components/Contacts/UserInfo';
 import AgioTransactionSalesAdvisor from '@/components/Depots/AgioTransactionSalesAdvisor'
+import {getCurrencySymbol} from '../../helpers/currency';
 export default {
   props: {
     depot_id: {
@@ -197,6 +198,9 @@ export default {
     },
     hasDepotEditAccess(){
       return canEditDepot();
+    },
+    currency(){
+      return getCurrencySymbol(this.depot.currency);
     }
   },
   watch: {
