@@ -55,7 +55,7 @@
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
-
+                      <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
                     </base-dropdown>
                   </div>
                 </div>
@@ -395,6 +395,15 @@
               </template>
 
         </modal>
+        <modal :show.sync="showDownLoadStatement"  footerClasses="border-top bg-secondary" :allowOutSideClose="false"  size="lg">
+          <template slot="header">
+                <h5 class="modal-title">{{$t('download_statement')}}</h5>
+            </template>
+            <div class="pb-3">
+              <DownLoadUserStatement :depot="depot" @canceled="showDownLoadStatement=false"/>
+            </div>
+          
+        </modal>
         <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
@@ -432,6 +441,7 @@ import AddDeposit from '@/components/Depots/AddDeposit';
 import { canEditDepot, canModifySavingPlanStatus} from '@/permissions';
 import Modal from '../../../components/argon-core/Modal.vue';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
+import DownLoadUserStatement from '@/components/Depots/DownLoadUserStatement';
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -468,6 +478,7 @@ export default {
             depotName: '',
             editDepot: false,
             isDepotUpdating: false,
+            showDownLoadStatement:false
         }
     },
     components: {
@@ -488,7 +499,8 @@ export default {
         Modal,
         AssignSalesAdvisor,
         UpdateTargetTypeModal,
-        PencilOutlineIcon
+        PencilOutlineIcon,
+        DownLoadUserStatement
     },
     computed:
         {
@@ -570,6 +582,9 @@ export default {
       },
         getCustomerName(client) {
           return client.username;
+        },
+        openDownloadStatement(){
+          this.showDownLoadStatement = true;
         },
         initPrices(){
             if(isGoldDepot(this.depot))

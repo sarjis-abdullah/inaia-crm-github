@@ -39,8 +39,8 @@
 
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="openKycDocument">{{ $t("documents") }}</a>
-            <a class="dropdown-item" @click.prevent="uploadDocument" v-if="info.is_verified">{{ $t("upload_document") }}</a>
-            <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-else>{{ $t("verify_identity") }}</a>
+            <a class="dropdown-item" @click.prevent="uploadDocument" >{{ $t("upload_document") }}</a>
+            <a class="dropdown-item" @click.prevent="verifyCustomerIdentity" v-if="!info.is_verified">{{ $t("verify_identity") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="unLockAccount" v-if="info.is_locked">{{ $t("unlock_account") }}</a>
             <a class="dropdown-item"  @click.prevent="desactvateAccount" v-if="info.is_active">{{ $t("deactivate_account") }}</a>

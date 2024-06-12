@@ -472,5 +472,15 @@ export const actions = {
             }).catch(err=>{
                 return Promise.reject(err)
             })
+    },
+    downloadStatement(context,payload){
+        return this.$axios.get(`${process.env.golddinarApiUrl}/depots/${payload.depotId}/statement?start_date=${payload.startDate}&end_date=${payload.endDate}`,{
+            responseType: 'blob',
+        })
+            .then(res => {
+                return res.data
+            }).catch(err=>{
+                return Promise.reject(err)
+            })
     }
 }

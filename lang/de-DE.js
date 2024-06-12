@@ -757,5 +757,6 @@ export default {
     update_depot_name:'Depotname ändern',
     validate_account:'Validate account',
     do_you_want_to_validate_bank_account:'Are you sure you want to validate this bank account ?',
-    entry_validated_successfully:'Entry was validated successfully'
+    entry_validated_successfully:'Entry was validated successfully',
+    download_statement:'Download depot statement'
 }
