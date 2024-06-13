@@ -110,7 +110,7 @@
                 </div>
                 <div class="mt-3 mb-0 text-sm">
                   <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
-                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> €</div>
+                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n>{{ currency }}</div>
                 </div>
               </div>
             </div>
@@ -130,7 +130,7 @@
                     </h5>
 
                     <div>
-                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} €</span>
+                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} {{ currency }}</span>
                       <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
                     </div>
                   </div>
@@ -173,14 +173,14 @@
                 </div>
                 <div class="mt-3 mb-0 text-sm">
                   <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
-                  <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} €</div>
+                  <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} {{ currency }}</div>
                   <div v-if="depot.agio_payment_option=='onetime'">{{$t(depot.agio_payment_option)}}</div>
                   <div v-else>{{$t('billing')}} <span v-if="depot.agio_percentage == 75">75/25</span>
                     <span v-if="depot.agio_percentage == 50">50/50</span>
                   </div>
                   <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
                   <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
-                  <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} € {{ $t('of') }} {{(depot.target_amount/100)}} €</div>
+                  <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} {{ currency }} {{ $t('of') }} {{(depot.target_amount/100)}} {{ currency }}</div>
                   <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span><span v-else>No date available</span></div>
                 </div>
               </div>
@@ -442,6 +442,7 @@ import { canEditDepot, canModifySavingPlanStatus} from '@/permissions';
 import Modal from '../../../components/argon-core/Modal.vue';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 import DownLoadUserStatement from '@/components/Depots/DownLoadUserStatement';
+import { getCurrencySymbol } from "@/helpers/currency";
 export default {
     layout: 'DashboardLayout',
     props: {
@@ -545,8 +546,10 @@ export default {
             return bank + ' '+ iban
           }
           return ''
+        },
+        currency(){
+          return getCurrencySymbol(this.depot.currency);
         }
-
     },
      mounted () {
        this.$confirm = MessageBox.confirm
