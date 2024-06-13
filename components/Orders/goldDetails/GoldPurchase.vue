@@ -13,12 +13,12 @@
         <detail-list-item :title="$t('created_by')"><UserInfo :accountId="order.created_by" slot="value" :isLazy="true"/></detail-list-item>
         <detail-list-item :title="$t('updated_by')"><UserInfo :accountId="order.updated_by" slot="value" :isLazy="true"/></detail-list-item>
         <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
-        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="displayAmount()/100"></i18n-n> €</div></detail-list-item>
-        <detail-list-item :title="$t('purchase_amount')" v-if="order.purchase_amount && order.purchase_amount>0"><div slot="value">{{ $n(order.purchase_amount/100) }} €</div></detail-list-item>
+        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="displayAmount()/100"></i18n-n> {{ getCurrency }}</div></detail-list-item>
+        <detail-list-item :title="$t('purchase_amount')" v-if="order.purchase_amount && order.purchase_amount>0"><div slot="value">{{ $n(order.purchase_amount/100) }} {{ getCurrency }}</div></detail-list-item>
         <detail-list-item :title="$t('agio')" v-if="order &&
             order.order_status &&
-            order.agio_amount>0"><div slot="value"> <i18n-n :value="order.agio_amount/100"></i18n-n> €</div></detail-list-item>
-        <detail-list-item :title="$t('storage_fee')" v-if="order.storage_fee && order.storage_fee>0"><div slot="value"><i18n-n :value="order.storage_fee/100"></i18n-n> €</div></detail-list-item>
+            order.agio_amount>0"><div slot="value"> <i18n-n :value="order.agio_amount/100"></i18n-n> {{ getCurrency }}</div></detail-list-item>
+        <detail-list-item :title="$t('storage_fee')" v-if="order.storage_fee && order.storage_fee>0"><div slot="value"><i18n-n :value="order.storage_fee/100"></i18n-n> {{ getCurrency }}</div></detail-list-item>
         <detail-list-item :title="$t('comment')" v-if="order.comment && order.comment!=''"><div slot="value">{{order.comment}}</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
@@ -32,6 +32,7 @@ import DetailListItem from '@/components/common/DetailListItem.vue';
 import PaymentAccount from '@/components/Orders/goldDetails/payments/PaymentAccount';
 import Transactions from '@/components/Orders/goldDetails/transactions/Transactions';
 import UserInfo from '@/components/Contacts/UserInfo';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         DetailListItem,
@@ -43,6 +44,18 @@ export default {
     props: {
         order: {
             type: Object
+        }
+    },
+    computed: {
+        getCurrency(){
+            const order = this.order
+            let currency = undefined
+            if (order?.currency) {
+                currency = order.currency
+            }else if (order?.depot?.currency) {
+                currency = order.depot.currency
+            }
+            return getCurrencySymbol(undefined);
         }
     },
     mounted(){
@@ -67,7 +80,7 @@ export default {
         */
         return this.order.amount;
 
-   },
+    },
     }
 }
 </script>
