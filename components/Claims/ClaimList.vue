@@ -78,7 +78,7 @@
           
         >
           <template v-slot="{ row }">
-            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ getCurrency(row) }}
             
             
           </template>
@@ -241,6 +241,7 @@ import ClaimFilter from "@/components/Claims/ClaimFilter";
 import ClaimDetail from "@/components/Claims/ClaimDetail";
 import Modal from '../argon-core/Modal.vue';
 import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
+import { getCurrencySymbol } from "@/helpers/currency";
   export default {
     props: {
       batch_process_id:{
@@ -609,6 +610,13 @@ import CreateBatchClaims from "@/components/Claims/CreateBatchClaims";
         initiateBatchProcessPayment(){
           this.showExecutionDate = true;
           this.paymentExecutionDate = null;
+        },
+        getCurrency(claim){
+          let currency = undefined
+          if (claim?.currency) {
+              currency = claim.currency
+          }
+          return getCurrencySymbol(currency);
         }
     },
 

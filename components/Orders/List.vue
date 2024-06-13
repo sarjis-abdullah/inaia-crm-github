@@ -377,7 +377,7 @@ export default {
             }else if (order?.depot?.currency) {
                 currency = order.depot.currency
             }
-            return getCurrencySymbol(undefined);
+            return getCurrencySymbol(currency);
         }
 
     }

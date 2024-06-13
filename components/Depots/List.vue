@@ -68,7 +68,7 @@
                                 <template v-slot="{row}">
                                     <span class="orderType" v-if="row.is_savings_plan==0">{{$t('no_saving_plan')}}</span>
                                     <div v-if="row.is_savings_plan==1">
-                                        <div>{{$n(row.interval_amount / 100)}} €</div>
+                                        <div>{{$n(row.interval_amount / 100)}} {{ getCurrency(row) }}</div>
                                         <div class="dateStyle">{{$d(new Date(row.interval_startdate))}} - {{$d(new Date(row.interval_enddate))}}</div>
                                     </div>
                                 </template>
@@ -79,7 +79,7 @@
                                          min-width="160px"
                         >
                           <template v-slot="{row}">
-                            <span>{{$n(row.agio/100)}} €</span>
+                            <span>{{$n(row.agio/100)}} {{ getCurrency(row) }}</span>
                             <div class="dateStyle" v-if="row.agio_payment_option=='onetime'">{{$t(row.agio_payment_option)}}</div>
                             <div class="dateStyle" v-else>{{$t('billing')}}  <span v-if="row.agio_percentage == 75">75/25</span>
                                 <span v-if="row.agio_percentage == 50">50/50</span>
@@ -183,6 +183,7 @@ import Status from '@/components/Depots/Status';
 import MetaInfo from '@/components/common/MetaInfo';
 import {canViewDepot} from '@/permissions'
 import Loader from "../common/Loader/Loader";
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components: {
       Loader,
@@ -380,6 +381,13 @@ export default {
         applyFilter: function(query)
         {
             this.filterQuery = query;
+        },
+        getCurrency(row){
+          let currency = undefined
+          if (row?.currency) {
+              currency = row.currency
+          }
+          return getCurrencySymbol(currency);
         }
     }
 }
