@@ -48,7 +48,7 @@ export default {
         if(this.goldPrice==0)
         {
             this.$store.dispatch('depots/getCurrentGoldPrice').then(res=>{
-                this.goldPrice = res;
+                // this.goldPrice = res;
             })
         }
     }
