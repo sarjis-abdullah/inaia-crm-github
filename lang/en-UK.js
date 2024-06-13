@@ -421,6 +421,7 @@ export default {
     batch_process_will_be_updated:'After updating an order, batch process takes sometime to be updated, the app will update the batch process very soon',
     clear_filter: "Clear filter",
     search_by_subject_or_client_name:'Search by subject or customer name',
+    new_messages: 'new messages',
     new:'New',
     closed:'Closed',
     open:'open',
