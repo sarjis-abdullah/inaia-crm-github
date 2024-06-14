@@ -254,7 +254,9 @@ export default {
                this.fetchList(this.searchQuery);
         },
         popupDetails(resource) {
-            this.selectedResource   = resource
+            const currency = this.getCurrency(resource)
+            const obj = {...resource, currency}
+            this.selectedResource   = obj
             this.showPopup          = true
         },
         fetchList(pageQuery) {
