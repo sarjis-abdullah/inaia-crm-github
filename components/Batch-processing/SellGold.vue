@@ -25,7 +25,7 @@
         <detail-list-item :title="$t('gold_price')"
           ><div slot="value">
             <i18n-n :value="batchProcessSellPreview.gram_price_raw / 100"></i18n-n>
-            €
+            {{ currency }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_amount')"
@@ -35,7 +35,7 @@
         >
         <detail-list-item :title="$t('money_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessSellPreview.money_amount / 100"></i18n-n> €
+            <i18n-n :value="batchProcessSellPreview.money_amount / 100"></i18n-n> {{ currency }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('number_of_order')"
@@ -65,6 +65,7 @@ import { formatDateToApiFormat } from "../../helpers/helpers";
 import DetailListItem from "@/components/common/DetailListItem.vue";
 import Loader from '@/components/common/Loader/Loader';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   components: {
     DatePicker,
@@ -88,6 +89,15 @@ export default {
       batchProcessSellPreview: null,
       isLoading: false,
     };
+  },
+  computed: {
+    currency(){
+      let currency = undefined
+      if (this.selectedOrderProcess && this.selectedOrderProcess.currency) {
+        currency = this.selectedOrderProcess.currency
+      }
+      return getCurrencySymbol(currency);
+    }
   },
   methods: {
     cancelConfirmSell() {
