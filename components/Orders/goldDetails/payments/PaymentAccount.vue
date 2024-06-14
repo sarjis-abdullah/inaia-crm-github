@@ -9,7 +9,7 @@
                     <div class="d-flex align-items-center">
                         <div class="date mr-4">{{ formatDate(account.updated_at) }}</div>
                         <div class="d-flex align-items-center">
-                          <div class="amount mb-0 mr-2">{{ (account.recipient_payment_account_id == inaiaPaymentAccountId)?'+':'-'}} {{ $n(account.amount/100)}} €</div>
+                          <div class="amount mb-0 mr-2">{{ (account.recipient_payment_account_id == inaiaPaymentAccountId)?'+':'-'}} {{ $n(account.amount/100)}} {{ currency }}</div>
                           <div>
                             <Badge type="success" v-if="account.status.name_translation_key=='completed'" >{{$t(account.status.name_translation_key)}}</Badge>
                             <Badge type="danger" v-if="account.status.name_translation_key=='failed'" >{{$t(account.status.name_translation_key)}}</Badge>
@@ -50,9 +50,12 @@ export default {
         Loader
     },
     props:{
-       
         order:{
             type:Object
+        },
+        currency:{
+            type:String,
+            required: true
         }
     },
     data:function()

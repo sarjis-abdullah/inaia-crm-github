@@ -371,7 +371,7 @@
                 <span></span>
             </template>
             <div>
-              <DepotHistory :depotHistories="depot.depot_histories"/>
+              <DepotHistory :currency="currency" :depotHistories="depot.depot_histories"/>
 
            </div>
 

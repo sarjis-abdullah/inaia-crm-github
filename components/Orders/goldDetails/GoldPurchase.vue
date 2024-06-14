@@ -22,7 +22,7 @@
         <detail-list-item :title="$t('comment')" v-if="order.comment && order.comment!=''"><div slot="value">{{order.comment}}</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>
-    <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order"/>
+    <PaymentAccount v-if="order.orders_payment_transactions && order.orders_payment_transactions.length>0" :order="order" :currency="getCurrency"/>
   </div>
 </template>
 <script>
