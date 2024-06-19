@@ -147,11 +147,11 @@
                       <a
                         class="dropdown-item"
                         v-if="
-                          isOrderGoldSale(batchProcess)
+                          isOrderGoldSale(batchProcess) || isOrderSilverSale(batchProcess)
                         "
                         @click.prevent="displaySellGoldModal"
                         ><i class="fa fa-check"></i
-                        >{{ $t("sell_gold") }}</a
+                        >{{ $t("sell_all") }}</a
                       >
                     </base-dropdown>
                     <div class="text-sm"></div>
@@ -351,6 +351,7 @@ export default {
   },
   methods: {
     isOrderGoldSale,
+    isOrderSilverSale,
     cancelConfirmComplete() {
       this.showConfirmComplete = false;
       this.showConfirmRetryComplete = false;
