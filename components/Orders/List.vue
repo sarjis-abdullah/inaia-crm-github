@@ -80,7 +80,7 @@
                                 <i18n-n :value="row.amount/1000"></i18n-n> g
                             </span>
                             <span class="amount" v-else>
-                                <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
+                                <i18n-n :value="parseInt(row.amount)/100"></i18n-n> {{ getCurrency(row) }}
                             </span>
                             <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
                         </template>
@@ -137,6 +137,7 @@ import MetaInfo from '@/components/common/MetaInfo';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
 import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale, isOrderSilverPurchase, isOrderSilverSale } from '../../helpers/order';
+import {getCurrencySymbol} from '@/helpers/currency';
 export default {
     components: {
         [Table.name]: Table,
@@ -253,7 +254,9 @@ export default {
                this.fetchList(this.searchQuery);
         },
         popupDetails(resource) {
-            this.selectedResource   = resource
+            const currency = this.getCurrency(resource)
+            const obj = {...resource, currency}
+            this.selectedResource   = obj
             this.showPopup          = true
         },
         fetchList(pageQuery) {
@@ -368,6 +371,15 @@ export default {
         onOrderUpdated(order)
         {
             this.$emit('orderUpdated',order);
+        },
+        getCurrency(order){
+            let currency = undefined
+            if (order.currency) {
+                currency = order.currency
+            }else if (order?.depot?.currency) {
+                currency = order.depot.currency
+            }
+            return getCurrencySymbol(currency);
         }
 
     }

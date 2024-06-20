@@ -13,12 +13,12 @@
         <detail-list-item :title="$t('created_by')"><UserInfo :accountId="order.created_by" slot="value" :isLazy="true"/></detail-list-item>
         <detail-list-item :title="$t('updated_by')"><UserInfo :accountId="order.updated_by" slot="value" :isLazy="true"/></detail-list-item>
         <detail-list-item :title="$t('depot')"><div slot="value"><nuxt-link :to="'/depots/details/'+order.depot.id">{{order.depot.depot_number}} ({{order.depotName}})</nuxt-link></div></detail-list-item>
-        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="displayAmount()/100"></i18n-n> €</div></detail-list-item>
-        <detail-list-item :title="$t('purchase_amount')" v-if="order.purchase_amount && order.purchase_amount>0"><div slot="value">{{ $n(order.purchase_amount/100) }} €</div></detail-list-item>
+        <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="displayAmount()/100"></i18n-n> {{ order.currency }}</div></detail-list-item>
+        <detail-list-item :title="$t('purchase_amount')" v-if="order.purchase_amount && order.purchase_amount>0"><div slot="value">{{ $n(order.purchase_amount/100) }} {{ order.currency }}</div></detail-list-item>
         <detail-list-item :title="$t('agio')" v-if="order &&
             order.order_status &&
-            order.agio_amount>0"><div slot="value"> <i18n-n :value="order.agio_amount/100"></i18n-n> €</div></detail-list-item>
-        <detail-list-item :title="$t('storage_fee')" v-if="order.storage_fee && order.storage_fee>0"><div slot="value"><i18n-n :value="order.storage_fee/100"></i18n-n> €</div></detail-list-item>
+            order.agio_amount>0"><div slot="value"> <i18n-n :value="order.agio_amount/100"></i18n-n> {{ order.currency }}</div></detail-list-item>
+        <detail-list-item :title="$t('storage_fee')" v-if="order.storage_fee && order.storage_fee>0"><div slot="value"><i18n-n :value="order.storage_fee/100"></i18n-n> {{ order.currency }}</div></detail-list-item>
         <detail-list-item :title="$t('comment')" v-if="order.comment && order.comment!=''"><div slot="value">{{order.comment}}</div></detail-list-item>
     </div>
     <Transactions v-if="order.transactions && order.transactions.length>0" :order="order"/>

@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column v-bind:label="$t('agio')" prop="agio">
         <template v-slot="{ row }">
-          <span>{{$n(row.agio/100)}} €</span>
+          <span>{{$n(row.agio/100)}} {{ currency }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -45,7 +45,7 @@
         prop="interval_amount"
       >
         <template v-slot="{ row }">
-          <span>{{$n(row.interval_amount/100)}} €</span>
+          <span>{{$n(row.interval_amount/100)}} {{ currency }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -95,12 +95,15 @@ export default {
       type: Array,
       default: [],
     },
+    currency: {
+      type: String,
+      required: true,
+    },
   },
   components: {
     [Table.name]: Table,
     [TableColumn.name]: TableColumn,
     UserInfo
-    
   },
 }
 </script>

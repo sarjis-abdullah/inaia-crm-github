@@ -188,7 +188,7 @@
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
                     ><i18n-n :value="batchProcess.money_amount / 100"></i18n-n>
-                    €</span
+                    {{ currency }}</span
                   >
                 </div>
               </div>
@@ -271,6 +271,7 @@ import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale, isOrderSilverSale} from '../../../../helpers/order';
 import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
+import { getCurrencySymbol } from "@/helpers/currency";
 export default {
   layout: "DashboardLayout",
   components: {
@@ -288,7 +289,6 @@ export default {
   },
   data() {
     return {
-      processId: this.$route.params.id,
       isLoading: false,
       showConfirmComplete: false,
       showConfirmRetryComplete: false,
@@ -340,6 +340,12 @@ export default {
     },
     hasEditAccess(){
        return canEditDepot();
+    },
+    processId() {
+      return Number(this.$route.params.id)
+    },
+    currency(){
+      return getCurrencySymbol(this.batchProcess.currency);
     }
   },
   destroyed(){

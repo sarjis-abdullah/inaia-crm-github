@@ -19,7 +19,7 @@
                 </detail-list-item>
                 <detail-list-item :title="$t('amount')" >
                     <div slot="value">
-                        <i18n-n :value="parseInt(claim.amount) / 100" ></i18n-n> €
+                        <i18n-n :value="parseInt(claim.amount) / 100" ></i18n-n> {{ currency }}
                     </div>
                 </detail-list-item>
                 <detail-list-item :title="$t('date')" >
@@ -152,6 +152,7 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
 import moment from 'moment'
 import LoaderVue from '@/components/common/Loader/Loader.vue';
 import Loader from '../common/Loader/Loader.vue';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     props:{
         showDetail:{
@@ -227,6 +228,9 @@ export default {
           }
         }
       },
+      currency(){
+        return getCurrencySymbol(this.claim.currency);
+      }
     },
     methods:{
         askToConfirm(action){

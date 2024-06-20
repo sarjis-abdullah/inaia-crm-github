@@ -10,7 +10,7 @@
                   </div>
                 </template>
                 <div class="list-group list-group-flush">
-                   <TransactionItem :transaction="transaction"/>
+                   <TransactionItem :transaction="{...transaction, orderCurrency: order.currency}"/>
                 </div>
             </collapse-item>
         </collapse>

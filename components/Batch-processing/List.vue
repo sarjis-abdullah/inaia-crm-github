@@ -68,7 +68,7 @@
                                     sortable>
                         <template v-slot="{row}">
                             <span class="amount">
-                                <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
+                                <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> {{ getCurrency(row) }}
                             </span>
                         </template>
                     </el-table-column>
@@ -146,6 +146,7 @@ import BachFilter from '@/components/Batch-processing/Filter';
 import Complete from '@/components/Batch-processing/Complete';
 import RetryFailed from '@/components/Batch-processing/RetryFailed';
 import MetaInfo from '@/components/common/MetaInfo';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components: {
         [Table.name]: Table,
@@ -258,6 +259,13 @@ export default {
         confirmRetryComplete(resource){
             this.selectedOrderProcess = resource;
             this.showConfirmRetryComplete = true;
+        },
+        getCurrency(row){
+          let currency = undefined
+          if (row?.currency) {
+              currency = row.currency
+          }
+          return getCurrencySymbol(currency);
         }
     }
 }
