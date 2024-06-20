@@ -112,14 +112,12 @@
 
       <div class="row">
 
-        <!--
         <div class="col-lg-6">
           <gold-price />
         </div>
         <div class="col-lg-6">
           <silver-price />
         </div>
-        -->
 
 
 
@@ -336,8 +334,8 @@
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
   //import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
-  //import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
-  //import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
+  import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
+  import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
   import { canViewInaiaBankAccount,canViewAdmin } from '@/permissions'
   import { mapGetters } from "vuex"
   //import GoldDinarStat from '@/components/Statistics/GoldDinarStat';
@@ -359,8 +357,8 @@
       UserList,
       ProgressTrackList,
       //MasterAmountCard,
-      //GoldPrice,
-      //SilverPrice,
+      GoldPrice,
+      SilverPrice,
       //GoldDinarStat,
       CustomerStat
     },
