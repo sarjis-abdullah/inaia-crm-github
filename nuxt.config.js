@@ -20,6 +20,7 @@ const appEnv  = process.env.NODE_ENV || 'development';
 import appNames from './appNames';
 const appName  = process.env.CURRENT_APP || appNames.inaiaEu
 const appCurrency = process.env.APP_CURRENCY || 'EUR'
+const depoloymentEnv = process.env.DEPLOYMENT_ENV || 'production';
 import EnvKeys from './config';
 
 import gggEnvKeys from './gggConfig';
@@ -154,7 +155,8 @@ module.exports = {
   env: {
     ...selectedConfig[appEnv].env,
     CURRENT_APP:appName,
-    APP_CURRENCY:appCurrency
+    APP_CURRENCY:appCurrency,
+    DEPLOYMENT_ENV:depoloymentEnv
   },
 
   /*

@@ -25,16 +25,17 @@
 
     <!-- Card stats -->
     <div class="container-fluid mt--6">
+
+      <customer-stat/>
+
       <div class="row">
 
-        
-
+        <!--
         <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
           <gold-dinar-stat/>
         </div>
-        <div class="col-xl-6 col-md-6" v-if="canViewAdmin()">
-          <customer-stat/>
-        </div>
+        -->
+
         <!--
         <div class="col-xl-4 col-md-6">
           <stats-card title="Goldbestand Kunden"
@@ -103,7 +104,7 @@
         </div>
         -->
       </div>
-      
+
     </div>
 
     <!--Charts-->
@@ -118,7 +119,6 @@
           <silver-price />
         </div>
 
-        
 
 
         <!-- <div class="col-xl-8">
@@ -320,7 +320,7 @@
   import BaseProgress from '@/components/argon-core/BaseProgress';
   import RouteBreadCrumb from '@/components/argon-core/Breadcrumb/RouteBreadcrumb';
   import StatsCard from '@/components/argon-core/Cards/StatsCard';
-  import MasterAmountCard from "@/components/Banking/MasterAmountCard"
+  //import MasterAmountCard from "@/components/Banking/MasterAmountCard"
 
   // Lists
   import ActivityFeed from '@/components/pages/dashboard/ActivityFeed.vue';
@@ -333,17 +333,17 @@
   import SocialTrafficTable from '@/components/pages/dashboard/SocialTrafficTable.vue';
   import PageVisitsTable from '@/components/pages/dashboard/PageVisitsTable.vue';
 
+  //import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
   import GoldPrice from '@/components/common/ApexCharts/GoldPrice';
-  import ExternalBankAmountCard from "../components/Banking/ExternalBankAmountCard";
   import SilverPrice from '@/components/common/ApexCharts/SilverPrice';
   import { canViewInaiaBankAccount,canViewAdmin } from '@/permissions'
   import { mapGetters } from "vuex"
-  import GoldDinarStat from '@/components/Statistics/GoldDinarStat';
+  //import GoldDinarStat from '@/components/Statistics/GoldDinarStat';
   import CustomerStat from '@/components/Statistics/CustomerStat';
   export default {
     layout: 'DashboardLayout',
     components: {
-      ExternalBankAmountCard,
+      //ExternalBankAmountCard,
       ActivityFeed,
       LineChart,
       BarChart,
@@ -356,10 +356,10 @@
       LightTable,
       UserList,
       ProgressTrackList,
+      //MasterAmountCard,
       GoldPrice,
-      MasterAmountCard,
       SilverPrice,
-      GoldDinarStat,
+      //GoldDinarStat,
       CustomerStat
     },
     computed:{
