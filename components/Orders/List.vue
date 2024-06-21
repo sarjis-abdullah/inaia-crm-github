@@ -374,9 +374,9 @@ export default {
         },
         getCurrency(order){
             let currency = undefined
-            if (order.currency) {
+            if (order && order.currency) {
                 currency = order.currency
-            }else if (order?.depot?.currency) {
+            }else if (order && order.depot && order.depot.currency) {
                 currency = order.depot.currency
             }
             return getCurrencySymbol(currency);
