@@ -421,6 +421,7 @@ export default {
     batch_process_will_be_updated:'After updating an order, batch process takes sometime to be updated, the app will update the batch process very soon',
     clear_filter: "Clear filter",
     search_by_subject_or_client_name:'Search by subject or customer name',
+    new_messages: 'new messages',
     new:'New',
     closed:'Closed',
     open:'open',
@@ -770,5 +771,6 @@ export default {
     entry_validated_successfully:'Entry was validated successfully',
     validate_account:'Validate account',
     do_you_want_to_validate_bank_account:'Are you sure you want to validate this bank account ?',
-    download_statement:'Download depot statement'
+    download_statement:'Download depot statement',
+    sell_all:'Sell all'
 }

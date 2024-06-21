@@ -1,15 +1,19 @@
 <template>
+  <div>
+
     <div class="card border-0">
       <div class="card-body">
         <div>{{ $t('depots') }} {{ data?'( '+(data.depots.gold.total+data.depots.silver.total)+' )':'' }}</div>
         <div id="chart">
-        <apexchart type="bar" height="200" :options="chartOptions" :series="series" v-if="data && !loading"></apexchart>
-        <div class="d-flex justify-content-center align-items-center" style="height: 200px;" v-else>
-          <Loader/>
+          <apexchart type="bar" height="200" :options="chartOptions" :series="series" v-if="data && !loading"></apexchart>
+          <div class="d-flex justify-content-center align-items-center" style="height: 200px;" v-else>
+            <Loader/>
+          </div>
         </div>
       </div>
     </div>
-    </div>
+
+  </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
@@ -47,10 +51,10 @@ import Loader from '@/components/common/Loader/Loader'
               width: 1,
               colors: ['#fff']
             },
-            
+
             xaxis: {
-              
-              
+
+
                     axisBorder: {
                         show: false,
                     },
@@ -89,7 +93,7 @@ import Loader from '@/components/common/Loader/Loader'
                 },
             fill: {
               opacity: 1
-            
+
             },
             legend: {
               position: 'bottom',
@@ -97,8 +101,8 @@ import Loader from '@/components/common/Loader/Loader'
               offsetX: 0
             }
           },
-          
-          
+
+
         }
     },
     mounted(){
@@ -106,7 +110,7 @@ import Loader from '@/components/common/Loader/Loader'
         this.$store.dispatch('statistic/getGoldDinarStatistics').then(()=>{
             if(this.data){
                     const depots = this.data.depots;
-               
+
                     if(depots && depots.gold && depots.silver){
                         const goldsData = depots.gold;
                         const silverData = depots.silver;
@@ -143,5 +147,5 @@ import Loader from '@/components/common/Loader/Loader'
         }).catch((err)=>console.log(err));
     }
     }
-   
+
 </script>
