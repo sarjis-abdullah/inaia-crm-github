@@ -142,7 +142,7 @@
                         "
                         @click="displayExecuteBankPayment()"
                         ><i class="fa fa-credit-card"></i
-                        >{{ $t("execute_bank_payment") }} ( {{pendingBankAccountOrders>0?pendingBankAccountOrders:oustandingBankAccountOrders}} )</a
+                        >{{ $t("execute_bank_payment") }} ( {{displayExecuteBankPaymentText}} )</a
                       >
                       <a
                         class="dropdown-item"
@@ -303,6 +303,7 @@ export default {
   computed: {
     ...mapGetters({
       batchProcess: "batch-processing/batchProcess",
+      selectedOrders: "orders/selectedOrders",
     }),
     progressPercentage() {
       return Math.floor(
@@ -346,6 +347,12 @@ export default {
     },
     currency(){
       return getCurrencySymbol(this.batchProcess.currency);
+    },
+    displayExecuteBankPaymentText(){
+      if (this.selectedOrders && this.selectedOrders.length) {
+        return this.selectedOrders.length
+      }
+      return this.pendingBankAccountOrders > 0 ? this.pendingBankAccountOrders : this.oustandingBankAccountOrders
     }
   },
   destroyed(){
@@ -471,8 +478,11 @@ export default {
       this.showExecuteBankPayment = true;
     }
     else{
-      const payload = {
-        "order_process_id":this.batchProcess.id
+      const payload = {}
+      if (this.selectedOrders && this.selectedOrders.length) {
+        payload.order_ids = this.selectedOrders.map(item => item.id)
+      }else{
+        payload.order_process_id = this.batchProcess.id
       }
       this.$store.dispatch('orders/executeSellBankPayment',payload).then((res)=>{
                                 window.open(res,'_blank');
