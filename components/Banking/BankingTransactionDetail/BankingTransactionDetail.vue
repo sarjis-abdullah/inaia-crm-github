@@ -10,11 +10,11 @@
             <h2 class="card-title mt-3 mb-0 title">{{$t(transaction.type)}}</h2>
         </div>
         <div class="mt-4 text-sm">
-            <FundTransfer v-if="isFundTransfer(transaction.type)" :transaction="transaction"/>
-            <PaymentIn v-if="isPaymentIn(transaction.type)" :transaction="transaction"/>
-            <Sepa v-if="isPaymentOut(transaction.type)" :transaction="transaction"/>
-            <Withdrawal v-if="isWithDrawal(transaction.type)" :transaction="transaction"/>
-            <Redemption v-if="isRedemption(transaction.type)" :transaction="transaction"/>
+            <FundTransfer v-if="isFundTransfer(transaction.type)" :transaction="transactionData"/>
+            <PaymentIn v-if="isPaymentIn(transaction.type)" :transaction="transactionData"/>
+            <Sepa v-if="isPaymentOut(transaction.type)" :transaction="transactionData"/>
+            <Withdrawal v-if="isWithDrawal(transaction.type)" :transaction="transactionData"/>
+            <Redemption v-if="isRedemption(transaction.type)" :transaction="transactionData"/>
             
             <div class="list-group list-group-flush" v-else>
                
@@ -64,6 +64,9 @@ export default {
             }
             return getCurrencySymbol(currency);
         },
+        transactionData(){
+            return this.transaction ? {...this.transaction, currency: this.currency} : null
+        }
     },
     methods:{
         isFundTransfer,

@@ -5,7 +5,7 @@
         <detail-list-item :title="$t('receiver')" ><div slot="value" >{{transaction.transfer_account_name}}</div></detail-list-item>
         <detail-list-item title="IBAN"><div slot="value" >{{transaction.transfer_account_iban}}</div></detail-list-item>
         <detail-list-item :title="$t('usage')" ><div slot="value" >{{transaction.reason_text}}</div></detail-list-item>
-        <detail-list-item :title="$t('amount')"><div slot="value" >{{ transaction.direction == 'DEBIT' ? '-' : '+' }} {{$n(transaction.money_amount/100)}} €</div></detail-list-item>
+        <detail-list-item :title="$t('amount')"><div slot="value" >{{ transaction.direction == 'DEBIT' ? '-' : '+' }} {{$n(transaction.money_amount/100)}}  {{ transaction.currency }}</div></detail-list-item>
     </div>
 </template>
 <script>
