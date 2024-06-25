@@ -4,7 +4,6 @@
             <div class="col">
                 <h6 class="surtitle">{{ $t('gold_price_per_gram') }}</h6>
                 <h5 class="h1 mb-0 text-nowrap">
-                    <!-- {{ $n(goldPrice) }} € -->
                     <i18n-n :value="goldPrice">
                         <template v-slot:integer="slotProps">{{ slotProps.integer }}</template>
                         <template v-slot:group="slotProps">{{ slotProps.group }}</template>
@@ -12,7 +11,7 @@
                         <template v-slot:fraction="slotProps">
                             <span class="">{{ paddingFractionTo2(slotProps.fraction) }}</span>
                         </template>
-                    </i18n-n> €
+                    </i18n-n> {{ currency }}
                     <span class="h5 font-weight-normal text-nowrap">
                         <i :class="{'fas': true, 'fa-arrow-up': priceUp, 'fa-arrow-down': !priceUp, 'ml-2': true, '_mr-1': true, 'text-success': priceUp, 'text-warning': !priceUp}"></i>
                          <!-- {{ $n(priceChanged) }} % -->
@@ -54,6 +53,7 @@
 import VueApexCharts from 'vue-apexcharts'
 import ChartTimelines from '@/components/common/ApexCharts/ChartTimelines'
 import ApexChartMixin from '~/mixins/ApexChartMixin'
+import { getCurrencySymbol } from '@/helpers/currency';
 
 export default {
     mixins: [ApexChartMixin],
@@ -66,6 +66,15 @@ export default {
             type: Object,
             default: null
         }
+    },
+    computed: {
+        currency(){
+            let currency = undefined
+            if (this.depot && this.depot.currency) {
+                currency = this.depot.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     },
     mounted() {
         this.$root.$on('goldPriceUpdated', () => {

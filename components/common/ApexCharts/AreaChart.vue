@@ -51,6 +51,7 @@
 <script>
 import VueApexCharts from 'vue-apexcharts'
 import axios from "axios"
+import { getCurrencySymbol } from '@/helpers/currency';
 
 const startingDate   = new Date()
 startingDate.setMonth(startingDate.getMonth() - 12)
@@ -383,7 +384,7 @@ export default {
                     labels: {
                         show: false,
                         formatter: function(val) {
-                            return val+' €'
+                            return val+' '+this.currency
                         },
                     }
                 },
@@ -465,7 +466,10 @@ export default {
         }
     },
     computed: {
-
+        currency(){
+            let currency = undefined
+            return getCurrencySymbol(currency);
+        },
     },
     mounted() {
         this.fetchData()

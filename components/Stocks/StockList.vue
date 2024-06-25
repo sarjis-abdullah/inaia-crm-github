@@ -68,7 +68,7 @@
                                 >
                     <template v-slot="{row}">
                         <div>
-                            <i18n-n :value="parseInt(row.fixing_price)/100"></i18n-n> €
+                            <i18n-n :value="parseInt(row.fixing_price)/100"></i18n-n> {{ getCurrency(row) }}
                               <div class="dateStyle">{{ $d(new Date(row.fixing_date), 'short') }}</div>
                             </div>
                     </template>
@@ -154,6 +154,7 @@ import StockFilter from '@/components/Stocks/StockFilter';
 import AddStock from '@/components/Stocks/AddStock';
 import MetaInfo from '@/components/common/MetaInfo';
 import UserInfo from '@/components/Contacts/UserInfo';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     props:{
         depotType:{
@@ -250,7 +251,14 @@ export default {
         },
         addStock(){
             this.showAddStock = true;
-        }
+        },
+        getCurrency(row){
+            let currency = undefined
+            if (row && row.currency) {
+                currency = row.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     }
 }
 </script>

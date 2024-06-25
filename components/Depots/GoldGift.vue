@@ -20,8 +20,8 @@
                   </div>
                   <div class="col-md-6 my-auto">
                    
-                      <div>{{ $t('gram_price') }} : {{ $n(fixingPriceGram) }} €</div>
-                      <div>{{ $t('ounce_price') }} : {{ $n(fixingPriceOunce) }} €</div>
+                      <div>{{ $t('gram_price') }} : {{ $n(fixingPriceGram) }} {{ currency }}</div>
+                      <div>{{ $t('ounce_price') }} : {{ $n(fixingPriceOunce) }} {{ currency }}</div>
                   
                   </div>
                 </div>
@@ -35,7 +35,7 @@
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <div class="text-sm">{{ $t('amount') }} ( € )</div>
+                      <div class="text-sm">{{ $t('amount') }} ( {{ currency }} )</div>
                       <Input class="filterElement mb-0" v-model="moneyAmount" :placeholder="$t('0')" type="number" @change="onMoneyChanged"/>
                     </div>
                   </div>
@@ -70,6 +70,7 @@ import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
 import { assetTypes } from '@/helpers/depots';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         Input,
@@ -110,6 +111,15 @@ export default {
                 comment:null,
             }
         }
+    },
+    computed: {
+        currency(){
+            let currency = undefined
+            if (this.depot && this.depot.currency) {
+                currency = this.depot.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     },
     watch:{
         moneyAmount:{

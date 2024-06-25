@@ -79,7 +79,7 @@
             prop="amount"
           >
             <template v-slot="{ row }">
-              <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+              <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ getCurrency(row) }}
             </template>
           </el-table-column>
 
@@ -112,6 +112,7 @@ import { Table, TableColumn,Dropdown,DropdownMenu,DropdownItem } from "element-u
 import { canEditClaims } from '@/permissions';
 import moment from 'moment';
 import { apiErrorHandler } from '../../../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   layout: "DashboardLayout",
   components: {
@@ -223,7 +224,11 @@ export default {
       }).finally(()=>{
         this.isSubmitting = false;
       })
-    }
+    },
+    getCurrency(){
+      let currency = undefined
+      return getCurrencySymbol(currency);
+    },
   }
 };
 </script>

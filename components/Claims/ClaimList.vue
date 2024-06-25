@@ -91,7 +91,7 @@
                   >{{
                     row.claim_type ? $t(row.claim_type.name_translation_key) : ""
                   }}</span
-                ><Status :status='row.claim_status ? row.claim_status.name_translation_key : ""' class="ml-2"/>
+                ><Status :status='row.claim_status ? row.claim_status.name_translation_key : ""' :currency="getCurrency(row)" class="ml-2"/>
 
 
 

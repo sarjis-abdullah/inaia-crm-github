@@ -46,7 +46,7 @@
           
         >
           <template v-slot="{ row }">
-            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+            <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ getCurrency(row) }}
             
           </template>
         </el-table-column>
@@ -172,6 +172,7 @@
   import MetaInfo from '@/components/common/MetaInfo';
   import IconButton from "@/components/common/Buttons/IconButton";
 import { formatDateToApiFormat } from '../../helpers/helpers';
+import { getCurrencySymbol } from "@/helpers/currency";
   export default {
     props: {
 
@@ -407,7 +408,14 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
         cancelExecutionDate(){
         this.paymentExecutionDate = null;
         this.showExecutionDate = false;
-    }
+    },
+    getCurrency(row){
+      let currency = undefined
+      if (row && row.currency) {
+        currency = row.currency
+      }
+      return getCurrencySymbol(currency);
+    },
     },
 
   };
