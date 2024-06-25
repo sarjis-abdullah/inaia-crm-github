@@ -39,6 +39,7 @@
 <script>
 import Loader from "../common/Loader/Loader";
 import ProductClassSpecification from '@/components/ProductClasses/ProductClassSpecification';
+import { getCurrencySymbol } from '@/helpers/currency';
 
 
 export default {
@@ -59,6 +60,15 @@ export default {
     return {
       showProductSpec: false
     }
+  },
+  computed: {
+    currency(){
+      let currency = undefined
+      if (this.productClassDetails && this.productClassDetails.currency) {
+          currency = this.productClassDetails.currency
+      }
+      return getCurrencySymbol(currency);
+    },
   },
   watch: {
 
