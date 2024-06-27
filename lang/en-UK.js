@@ -772,5 +772,7 @@ export default {
     validate_account:'Validate account',
     do_you_want_to_validate_bank_account:'Are you sure you want to validate this bank account ?',
     download_statement:'Download depot statement',
-    sell_all:'Sell all'
+    sell_all:'Sell all',
+    enable_selection_mode:'Enable Selection Mode',
+    disable_selection_mode:'Disable Selection Mode',
 }

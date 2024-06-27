@@ -760,5 +760,7 @@ export default {
     do_you_want_to_validate_bank_account:'Are you sure you want to validate this bank account ?',
     entry_validated_successfully:'Entry was validated successfully',
     download_statement:'Download depot statement',
-    sell_all:'Sell all'
+    sell_all:'Sell all',
+    enable_selection_mode:'Auswahlmodus aktivieren',
+    disable_selection_mode:'Auswahlmodus deaktivieren',
 }
