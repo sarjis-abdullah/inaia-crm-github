@@ -34,13 +34,16 @@
                   }}
                     </div>
                 </detail-list-item>
-                <detail-list-item :title="$t('payment_method')" v-if="paymentmethod">
+                <detail-list-item :title="$t('payment_method')" v-if="paymentmethod && !isEditingPaymentMethod">
                     <div slot="value">
                         {{
                     $t(paymentmethod)
                   }}
-                    </div>
+                    </div> 
                 </detail-list-item>
+                <div v-else>
+
+                </div>
                 <detail-list-item :title="$t('batch_claims')" v-if="claim && claim.claim_batch_process_id">
                     <div slot="value">
                         <nuxt-link :to="'/accounting/claims/batch-claims/details/'+claim.claim_batch_process_id">{{
@@ -77,6 +80,7 @@
                 <detail-list-item :title="$t('updated_by')">
                     <UserInfo :accountId="claim.updated_by" slot="value" :isLazy="true"/>
                 </detail-list-item>
+                <PaymentTransactions v-if="claim.claim_payment_transactions && claim.claim_payment_transactions.length>0" :claim="claim"/>
             </div>
             <div v-else>
                 <div v-if="selectedAction == 'markpaid'">
@@ -150,8 +154,8 @@ import UserInfo from '@/components/Contacts/UserInfo';
 import { DatePicker } from "element-ui";
 import { formatDateToApiFormat } from '../../helpers/helpers';
 import moment from 'moment'
-import LoaderVue from '@/components/common/Loader/Loader.vue';
 import Loader from '../common/Loader/Loader.vue';
+import PaymentTransactions from '@/components/Claims/Payments/PaymentTransactions';
 export default {
     props:{
         showDetail:{
@@ -168,7 +172,8 @@ export default {
         Status,
         UserInfo,
         DatePicker,
-        Loader
+        Loader,
+        PaymentTransactions
     },
     data(){
         return{
@@ -176,7 +181,8 @@ export default {
             selectedAction:'',
             isSubmitting:false,
             paymentExecutionDate:null,
-            iNotifying:false
+            iNotifying:false,
+            isEditingPaymentMethod:false
 
         }
     },
@@ -236,6 +242,9 @@ export default {
         cancelConfirmation(){
             this.selectedAction = "";
             this.confirming = false;
+        },
+        startEditingPaymentMethod(){
+            this.isEditingPaymentMethod = true;
         },
         confirmAction(){
             if(this.selectedAction == "delete"){
