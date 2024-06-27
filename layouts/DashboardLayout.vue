@@ -192,7 +192,7 @@
           <sidebar-item :link="{ name: $t('monthly'), path: '/reports/monthly' }"/>
         </sidebar-item>
         <sidebar-item
-          v-if="hasAdmin"
+          v-if="adminAccess"
           :link="{
             name: $t('sales_commission'),
             icon: 'lnir lnir-consulting text-primary',

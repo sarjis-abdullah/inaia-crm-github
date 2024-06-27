@@ -184,6 +184,7 @@ export default {
             reference: null,
             comment: null,
             isSubmitting: false,
+            loadingCustomers: false,
             notValid: true,
             selectedDepot: null,
             selectedOrder: null,

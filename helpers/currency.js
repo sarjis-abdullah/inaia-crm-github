@@ -1,5 +1,5 @@
 export const getCurrencySymbol=(curr)=>{
-    let currency = curr || process.env.APP_CURRENCY;
+    const currency = curr || process.env.APP_CURRENCY;
     console.log(process.env.CURRENT_APP);
     switch (currency) {
         case undefined:

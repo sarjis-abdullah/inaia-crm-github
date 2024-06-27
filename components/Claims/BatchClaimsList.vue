@@ -57,7 +57,7 @@
                                 sortable>
                     <template v-slot="{row}">
                         <Progress :percentage="Math.floor((row.paid_amount/row.total_amount) * 100)" color="#2dce89"></Progress>
-                            <i18n-n :value="parseInt(row.paid_amount)/100"></i18n-n> € {{ $t('paid') }} {{ $t('of') }} <i18n-n :value="parseInt(row.total_amount)/100"></i18n-n> €
+                            <i18n-n :value="parseInt(row.paid_amount)/100"></i18n-n> {{ getCurrency(row) }} {{ $t('paid') }} {{ $t('of') }} <i18n-n :value="parseInt(row.total_amount)/100"></i18n-n> {{ getCurrency(row) }}
 
                     </template>
                 </el-table-column>
@@ -97,6 +97,7 @@
 import { mapGetters } from "vuex"
 import { Table, TableColumn,Progress } from 'element-ui'
 import IconButton from '@/components/common/Buttons/IconButton';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         [Table.name]: Table,
@@ -146,6 +147,13 @@ export default {
                     }).finally(() => {
                         this.isLoading = false
                     })
+        },
+        getCurrency(claim){
+          let currency = undefined
+          if (claim?.currency) {
+              currency = claim.currency
+          }
+          return getCurrencySymbol(currency);
         }
     }
 }

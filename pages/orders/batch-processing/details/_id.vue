@@ -142,7 +142,7 @@
                         "
                         @click="displayExecuteBankPayment()"
                         ><i class="fa fa-credit-card"></i
-                        >{{ $t("execute_bank_payment") }} ( {{pendingBankAccountOrders>0?pendingBankAccountOrders:oustandingBankAccountOrders}} )</a
+                        >{{ $t("execute_bank_payment") }} ( {{displayExecuteBankPaymentText}} )</a
                       >
                       <a
                         class="dropdown-item"
@@ -188,7 +188,7 @@
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
                     ><i18n-n :value="batchProcess.money_amount / 100"></i18n-n>
-                    €</span
+                    {{ currency }}</span
                   >
                 </div>
               </div>
@@ -271,6 +271,7 @@ import SellGold from '@/components/Batch-processing/SellGold';
 import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale, isOrderSilverSale} from '../../../../helpers/order';
 import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
+import { getCurrencySymbol } from "@/helpers/currency";
 export default {
   layout: "DashboardLayout",
   components: {
@@ -288,7 +289,6 @@ export default {
   },
   data() {
     return {
-      processId: this.$route.params.id,
       isLoading: false,
       showConfirmComplete: false,
       showConfirmRetryComplete: false,
@@ -303,6 +303,7 @@ export default {
   computed: {
     ...mapGetters({
       batchProcess: "batch-processing/batchProcess",
+      selectedOrders: "orders/selectedOrders",
     }),
     progressPercentage() {
       return Math.floor(
@@ -340,6 +341,18 @@ export default {
     },
     hasEditAccess(){
        return canEditDepot();
+    },
+    processId() {
+      return Number(this.$route.params.id)
+    },
+    currency(){
+      return getCurrencySymbol(this.batchProcess.currency);
+    },
+    displayExecuteBankPaymentText(){
+      if (this.selectedOrders && this.selectedOrders.length) {
+        return this.selectedOrders.length
+      }
+      return this.pendingBankAccountOrders > 0 ? this.pendingBankAccountOrders : this.oustandingBankAccountOrders
     }
   },
   destroyed(){
@@ -465,8 +478,11 @@ export default {
       this.showExecuteBankPayment = true;
     }
     else{
-      const payload = {
-        "order_process_id":this.batchProcess.id
+      const payload = {}
+      if (this.selectedOrders && this.selectedOrders.length) {
+        payload.order_ids = this.selectedOrders.map(item => item.id)
+      }else{
+        payload.order_process_id = this.batchProcess.id
       }
       this.$store.dispatch('orders/executeSellBankPayment',payload).then((res)=>{
                                 window.open(res,'_blank');

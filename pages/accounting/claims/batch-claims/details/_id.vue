@@ -33,12 +33,12 @@
                     <div>
                     {{ $t("total_amount") }}:
                     <i18n-n :value="batchDetails.total_amount/100"></i18n-n>
-                    €
+                    {{ currency }}
                     </div>
                     <div>
                         {{ $t("paid_amount") }}:
                         <i18n-n :value="batchDetails.paid_amount/100"></i18n-n>
-                    €
+                    {{ currency }}
                     </div>
 
                   </div>
@@ -69,6 +69,7 @@
 <script>
 import ClaimList from '@/components/Claims/ClaimList';
 import { Progress } from 'element-ui'
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   layout: "DashboardLayout",
   components : {
@@ -86,6 +87,9 @@ export default {
         if(this.batchDetails && this.batchDetails.total_amount > 0){
             return Math.floor((this.batchDetails.paid_amount/this.batchDetails.total_amount) *100)
         }
+    },
+    currency(){
+      return getCurrencySymbol(this.batchDetails.currency);
     }
   },
   mounted(){

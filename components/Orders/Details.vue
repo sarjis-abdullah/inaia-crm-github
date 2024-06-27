@@ -91,7 +91,7 @@ export default {
             default: false
         },
         selectedResource: {
-            type: Boolean,
+            type: Object,
             default: null
         }
     },

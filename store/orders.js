@@ -4,7 +4,8 @@ export const state = () => ({
     details: null,
     pairs: null,
     loading: false,
-    commissionList:[]
+    commissionList:[],
+    selectedOrders:[]
 })
 
 const initialState  = state()
@@ -17,7 +18,8 @@ export const getters = {
     pairs(state) {
         state.pairs
     },
-    commissionList:state=>state.commissionList
+    commissionList:state=>state.commissionList,
+    selectedOrders:state=>state.selectedOrders,
 }
 
 export const mutations = {
@@ -60,6 +62,14 @@ export const mutations = {
     commissionList(state,list){
         state.commissionList = list;
     },
+    addRemoveOrder(state, payload){
+        const index = state.selectedOrders.findIndex(item=> item.id == payload.id)
+        if (index > -1) {
+            state.selectedOrders.splice(index, 1)
+        } else {
+            state.selectedOrders.push(payload)
+        }
+    }
 }
 
 export const actions = {
@@ -258,4 +268,7 @@ export const actions = {
                 return res.data;
             })
     },
+    addRemoveOrder(context, payload){
+        context.commit('addRemoveOrder', payload);
+    }
 }

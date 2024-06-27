@@ -36,7 +36,7 @@
         <detail-list-item :title="$t('gold_price')"
           ><div slot="value">
             <i18n-n :value="batchProcessPreview.gram_price_raw / 100"></i18n-n>
-            €
+            {{ currency }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('trading_gold_price')"
@@ -44,7 +44,7 @@
             <i18n-n
               :value="batchProcessPreview.gram_price_trading / 100"
             ></i18n-n>
-            €
+            {{ currency }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('gold_amount')"
@@ -54,7 +54,7 @@
         >
         <detail-list-item :title="$t('money_amount')"
           ><div slot="value">
-            <i18n-n :value="batchProcessPreview.money_amount / 100"></i18n-n> €
+            <i18n-n :value="batchProcessPreview.money_amount / 100"></i18n-n> {{ currency }}
           </div></detail-list-item
         >
         <detail-list-item :title="$t('number_of_order')"
@@ -119,6 +119,7 @@ import Loader from '@/components/common/Loader/Loader';
 import { mapGetters } from "vuex";
 import { assetTypes } from '@/helpers/depots'
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   components: {
     DatePicker,
@@ -165,6 +166,13 @@ export default {
           }
           return 0;
           
+        },
+        currency(){
+          let currency = undefined
+          if (this.selectedOrderProcess && this.selectedOrderProcess.currency) {
+            currency = this.selectedOrderProcess.currency
+          }
+          return getCurrencySymbol(currency);
         }
     },
   methods: {

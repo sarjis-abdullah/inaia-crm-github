@@ -9,6 +9,10 @@
                       <el-input prefix-icon="el-icon-search" :placeholder="$t('search')+`: ID`" clearable style="width: 200px" v-model="orderId" @change="doSearchById" @clear="clearSearchById"/>
                     </div>
                     <div class="col-4 text-right">
+                        <button @click="isSelectionModeEnabled = !isSelectionModeEnabled" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
+                            <svg class="w-16px mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#0074d9" d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H192c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+                            {{ isSelectionModeEnabled ? $t('disable_selection_mode') : $t('enable_selection_mode') }}
+                        </button>
                       <button @click.prevent="toggleFilter()" type="button" class="btn base-button btn-icon btn-fab btn-neutral btn-sm">
                         <span class="btn-inner--icon"><i class="fas fa-filter"></i></span><span class="btn-inner--text">{{$t('filter')}}</span>
                       </button>
@@ -36,8 +40,8 @@
 
                                     </Checkbox>
                                     </div>
+                                    <Checkbox v-else-if="isSelectionModeEnabled" :label="row.id" @change="(value)=>addRemoveOrder(row)"></Checkbox>
                                     <div class="font-weight-300 name" v-else>{{row.id}}</div>
-                                    
                                 </div>
                             </div>
                         </template>
@@ -80,7 +84,7 @@
                                 <i18n-n :value="row.amount/1000"></i18n-n> g
                             </span>
                             <span class="amount" v-else>
-                                <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
+                                <i18n-n :value="parseInt(row.amount)/100"></i18n-n> {{ getCurrency(row) }}
                             </span>
                             <!-- <span class="status">{{row.amount}} {{row.unit}}</span> -->
                         </template>
@@ -137,6 +141,7 @@ import MetaInfo from '@/components/common/MetaInfo';
 import OrderFilter from '@/components/Orders/OrderFilter';
 import SelectPaymentAccount from '@/components/Orders/goldDetails/payments/SelectPaymentAccount.vue';
 import { isOrderPending,isOrderGoldPurchase,isOrderGoldSale, isOrderSilverPurchase, isOrderSilverSale } from '../../helpers/order';
+import {getCurrencySymbol} from '@/helpers/currency';
 export default {
     components: {
         [Table.name]: Table,
@@ -196,7 +201,8 @@ export default {
                 type:'',
                 orders:[]
             },
-            meta:null
+            meta:null,
+            isSelectionModeEnabled:false,
         }
     },
     computed: {
@@ -253,7 +259,9 @@ export default {
                this.fetchList(this.searchQuery);
         },
         popupDetails(resource) {
-            this.selectedResource   = resource
+            const currency = this.getCurrency(resource)
+            const obj = {...resource, currency}
+            this.selectedResource   = obj
             this.showPopup          = true
         },
         fetchList(pageQuery) {
@@ -368,8 +376,19 @@ export default {
         onOrderUpdated(order)
         {
             this.$emit('orderUpdated',order);
+        },
+        getCurrency(order){
+            let currency = undefined
+            if (order.currency) {
+                currency = order.currency
+            }else if (order?.depot?.currency) {
+                currency = order.depot.currency
+            }
+            return getCurrencySymbol(currency);
+        },
+        addRemoveOrder(row){
+            this.$store.dispatch('orders/addRemoveOrder',row)
         }
-
     }
 }
 </script>
@@ -402,5 +421,8 @@ export default {
 }
 .actionBtnStyle {
     color:#8898aa;
+}
+.w-16px {
+    width: 16px;
 }
 </style>
