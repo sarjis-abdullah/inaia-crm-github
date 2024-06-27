@@ -38,7 +38,7 @@
                 </a>
               </div>
             </div> -->
-            <div class="card-body px-lg-5 py-lg-5">
+            <div v-if="!forgetPassword" class="card-body px-lg-5 py-lg-5">
               <!-- <div class="text-center text-muted mb-4">
                 <small>Or sign in with credentials</small>
               </div> -->
@@ -71,15 +71,42 @@
 
                   <base-checkbox v-model="rememberMe">Remember me</base-checkbox>
                   <div class="text-center">
-                    <base-button type="primary" native-type="submit" class="my-4">Sign in</base-button>
+                    <base-button :disabled="isRequesting" type="primary" native-type="submit" class="my-4">Sign in</base-button>
                   </div>
                 </form>
               </validation-observer>
             </div>
+            <div v-else class="card-body px-lg-5 py-lg-5">
+              <validation-observer ref="forgetPasswordObserver" v-slot="{ invalid, handleSubmit }">
+                <div v-if="failed" class="text-center text-danger mb-2">{{ failed }}</div>
+                
+                <form class="needs-validation" @submit.prevent="handleSubmit(handleForgetPassword)">
+                  <base-input
+                    type="email"
+                    class="mb-3"
+                    name="email"
+                    id="email"
+                    rules="required"
+                    prepend-icon="fas fa-envelope"
+                    placeholder="e.g. Email address"
+                    v-model="email"
+                  />
+
+                  <div class="d-flex align-items-center flex-column">
+                    <base-button :disabled="isRequesting" type="primary" native-type="submit" class="my-4">
+                    Submit
+                    <i v-if="isRequesting" class="fas fa-spinner fa-spin"></i>
+                  </base-button>
+                    <router-link to="/" class=""><small>Back to login</small></router-link>
+                  </div>
+                </form>
+                <div v-if="message" class="text-success mt-3">{{message}}</div>
+              </validation-observer>
+            </div>
           </div>
-          <div class="row mt-3">
+          <div class="row mt-3" v-if="!forgetPassword">
             <div class="col-6">
-              <router-link to="/forgot-password" class="text-light"><small>Forgot password?</small></router-link>
+              <router-link to="?forgot-password=1" class="text-light"><small>Forgot password?</small></router-link>
             </div>
           </div>
         </div>
@@ -97,9 +124,12 @@
       return {
         username: '',
         password: '',
+        email: '',
         isRequesting: false,
         failed: "",
-        rememberMe: false
+        rememberMe: false,
+        forgetPassword: false,
+        message: ''
       };
     },
     computed: {
@@ -114,6 +144,11 @@
           password: this.password
         }
       },
+      forgetPasswordData() {
+        return {
+          email: this.email
+        }
+      },
       background(){
         let app = process.env.CURRENT_APP;
         let env = process.env.DEPLOYMENT_ENV;
@@ -124,6 +159,26 @@
           return 'bg-gradient-default';
         else
           return "bg-gradient-info"
+      }
+    },
+    watch: {
+      $route: {
+        immediate: true,
+        deep: true,
+        handler(newValue, oldValue) {
+          if (this.$route && this.$route.query && this.$route.query['forgot-password']) {
+            this.forgetPassword = true
+            this.$nextTick(()=> {
+              if (this.$refs && this.$refs.forgetPasswordObserver) {
+                this.$refs.forgetPasswordObserver.reset();
+              }
+            })
+          }else {
+            this.message = ""
+            this.email = ""
+            this.forgetPassword = false
+          }
+        }
       }
     },
     mounted() {
@@ -165,6 +220,32 @@
                 this.failed = err
             }
             // this.password  = ""
+            this.isRequesting   = false
+          })
+        } else {
+          this.isRequesting   = false
+        }
+      },
+      async handleForgetPassword(){
+        this.isRequesting   = true
+        const isValid       = this.$refs.forgetPasswordObserver.validate()
+        if (isValid) {
+          await this.$store.dispatch('users/handleForgetPassword', this.forgetPasswordData)
+          .then( response => {
+            if (response && response.data && response.data.message) {
+              this.message = response.data.message
+            }
+            this.isRequesting = false
+          }).catch( err => {
+            if (err.response) {
+                let e   = err.response.data
+                this.failed = e.message || e.errors.message
+                if (e.errors) {
+                   this.$refs.forgetPasswordObserver.setErrors(e.errors)
+                }
+            } else {
+                this.failed = err
+            }
             this.isRequesting   = false
           })
         } else {
