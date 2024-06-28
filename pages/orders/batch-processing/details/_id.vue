@@ -104,7 +104,7 @@
                         shouldDisplayProgressActions() && hasEditAccess
                       "
                     >
-                      <template slot="title">
+                      <template slot="title" v-if="dropdownVisibility">
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
                       <a
@@ -120,7 +120,7 @@
                       <a
                         class="dropdown-item"
                         v-if="
-                          shouldDisplayComplete()
+                          shouldDisplayComplete() && isPaidOrderPresent
                         "
                         @click.prevent="confirmMarkAsComplete"
                         ><i class="fa fa-check"></i
@@ -268,9 +268,10 @@ import CsvList from "@/components/Csv-file/CsvList";
 import UploadCsv from "@/components/Csv-file/UploadCsv";
 import ExecutePayment from '@/components/Batch-processing/ExecutePayment';
 import SellGold from '@/components/Batch-processing/SellGold';
-import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale, isOrderSilverSale} from '../../../../helpers/order';
+import {isOrderGoldPurchase,isOrderGoldPurchaseInterval,isOrderGoldSale, isOrderSilverSale} from '@/helpers/order';
 import { canEditDepot } from '@/permissions'
-import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '../../../../helpers/orderProcess';
+import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '@/helpers/orderProcess';
+import {ORDER_STATUS_PAID} from '@/helpers/order';
 import { getCurrencySymbol } from "@/helpers/currency";
 export default {
   layout: "DashboardLayout",
@@ -304,6 +305,7 @@ export default {
     ...mapGetters({
       batchProcess: "batch-processing/batchProcess",
       selectedOrders: "orders/selectedOrders",
+      orders: "orders/list",
     }),
     progressPercentage() {
       return Math.floor(
@@ -353,6 +355,15 @@ export default {
         return this.selectedOrders.length
       }
       return this.pendingBankAccountOrders > 0 ? this.pendingBankAccountOrders : this.oustandingBankAccountOrders
+    },
+    isPaidOrderPresent(){
+      if (this.orders && this.orders.length) {
+        return this.orders.some(order => order && order.order_status && order.order_status.name_translation_key === ORDER_STATUS_PAID)
+      }
+      return false
+    },
+    dropdownVisibility(){
+      return this.shouldDisplayRetry() || (this.shouldDisplayComplete() && this.isPaidOrderPresent) || this.shouldDisplayPPsExecutePayment() || this.shouldDisplayBankExecutePayment() || this.isOrderGoldSale(this.batchProcess) || this.isOrderSilverSale(this.batchProcess)
     }
   },
   destroyed(){
