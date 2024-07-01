@@ -76,7 +76,8 @@ export const mutations = {
         if(index>-1){
             state.claims.splice(index,1);
         }
-    }
+    },
+
 }
 
 export const actions = {
@@ -190,5 +191,13 @@ export const actions = {
                     
                     return true;
                 })
+    },
+    updatePaymentMethod(context,payload){
+        return this.$axios
+            .put(`${ process.env.golddinarApiUrl }/claims/${ payload.id }?include=claim_type,claim_status,claim_payment_transactions`,payload.data)
+            .then(res => {
+                context.commit('updateClaim', res.data.data)
+                return res.data.data;
+            })
     },
 }
