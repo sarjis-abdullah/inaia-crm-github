@@ -150,7 +150,7 @@ export default {
         },
         getCurrency(claim){
           let currency = undefined
-          if (claim?.currency) {
+          if (claim && claim.currency) {
               currency = claim.currency
           }
           return getCurrencySymbol(currency);

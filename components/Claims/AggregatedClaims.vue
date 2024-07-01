@@ -78,7 +78,7 @@
             prop="amount"
           >
             <template v-slot="{ row }">
-              <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+              <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ currency }}
             </template>
           </el-table-column>
 
@@ -159,7 +159,7 @@
           <h5 class="h3 mb-0">{{$t('pending_amount')}}</h5>
         </div>
         <div class="card-body">
-          <div class="text-sm-center">{{$n(pendingAmount/100)}} €</div>
+          <div class="text-sm-center">{{$n(pendingAmount/100)}} {{ currency }}</div>
         </div>
       </div>
       <div class="card" v-if="paidAmount > 0">
@@ -167,7 +167,7 @@
           <h5 class="h3 mb-0">{{$t('paid_amount')}}</h5>
         </div>
         <div class="card-body">
-          <div class="text-center">{{$n(paidAmount/100)}} €</div>
+          <div class="text-center">{{$n(paidAmount/100)}} {{ currency }}</div>
         </div>
       </div>
     </div>
@@ -187,6 +187,7 @@ import {PAYMENT_PENDING,PAYMENT_PAID} from '../../helpers/claims';
 import { MessageBox } from "element-ui";
 import SelectCustomer from "@/components/Contacts/SelectCustomer";
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   props: {
     account_id: {
@@ -293,6 +294,10 @@ export default {
         }
       }
       return 0;
+    },
+    currency(){
+      let currency = undefined
+      return getCurrencySymbol(currency);
     }
   },
   watch: {

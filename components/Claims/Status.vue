@@ -6,7 +6,7 @@
             )
         }}
         <span v-if="amount > 0" class="text-sm">
-            ({{ $n(amount / 100) }} €)</span
+            ({{ $n(amount / 100) }} {{ currency }})</span
           >
     </span>
 </template>
@@ -17,12 +17,18 @@
         components:{
             Badge
         },
-        props:{status:{
-            type: String
+        props:{
+            status:{
+                type: String
+            },
+            amount:{
+                type:Number
+            },
+            currency: {
+                type: String,
+                default: '€'
+            }
         },
-        amount:{
-        type:Number
-    }},
     computed:{
         badgeType(){
             if(this.status == PAYMENT_PAID)

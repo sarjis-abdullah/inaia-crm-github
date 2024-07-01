@@ -78,7 +78,7 @@
                              sortable>
               <template v-slot="{row}">
                   <span class="balance">
-                      <i18n-n :value="parseInt(row.balance)/100"></i18n-n> €
+                      <i18n-n :value="parseInt(row.balance)/100"></i18n-n> {{ getCurrency(row) }}
                   </span>
               </template>
             </el-table-column>
@@ -109,6 +109,7 @@
 <script>
 import { Table, TableColumn } from 'element-ui'
 import IconButton from "../common/Buttons/IconButton";
+import { getCurrencySymbol } from '@/helpers/currency';
 
 export default {
   components: {
@@ -155,6 +156,13 @@ export default {
           this.initiated  = false
         })
       }
+    },
+    getCurrency(row){
+      let currency = undefined
+      if (row && row.currency) {
+        currency = row.currency
+      }
+      return getCurrencySymbol(currency);
     }
   },
   mounted() {

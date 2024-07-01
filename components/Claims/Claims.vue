@@ -45,7 +45,7 @@
         prop="amount"
       >
         <template v-slot="{ row }">
-          <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> €
+          <i18n-n :value="parseInt(row.amount) / 100"></i18n-n> {{ getCurrency(row) }}
         </template>
       </el-table-column>
         <el-table-column v-bind:label="$t('type')"  prop="type" min-width="150">
@@ -117,6 +117,7 @@ import {PAYMENT_PENDING,PAYMENT_PAID, PAYMENT_FAILED} from '../../helpers/claims
 import { MessageBox } from "element-ui";
 import IconButton from "@/components/common/Buttons/IconButton";
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   props: {
     aggregated_id: {
@@ -251,6 +252,13 @@ export default {
         }).catch((err) => {
           apiErrorHandler(err,this.$notify);
         });
+      },
+      getCurrency(row){
+        let currency = undefined
+        if (row && row.currency) {
+          currency = row.currency
+        }
+        return getCurrencySymbol(currency);
       }
   },
 };

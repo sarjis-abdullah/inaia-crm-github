@@ -94,7 +94,7 @@
                         />
                         
                     </div>
-                    <p class="text-center mt-2 text-danger" v-if="this.remainingAmount>=0">{{ $t('maximum_available_amount') }} {{ $n(this.remainingAmount/100) }} €</p>
+                    <p class="text-center mt-2 text-danger" v-if="this.remainingAmount>=0">{{ $t('maximum_available_amount') }} {{ $n(this.remainingAmount/100) }} {{ currency }}</p>
                 </div>
         </form>
         <template slot="footer">
@@ -114,6 +114,7 @@ import { formatDateToApiFormat } from '../../helpers/helpers';
 import AddSaleAdvisorItem from '@/components/SalesCommission/AddSaleAdvisorItem';
 import IconButton from '@/components/common/Buttons/IconButton';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 
 export default{
   components: { BaseButton,Form,Select,Option,Input,FormItem,AddSaleAdvisorItem,IconButton },
@@ -202,7 +203,13 @@ export default{
         ...mapGetters("orders", {
             orders: "commissionList",
         }),
-        
+        currency(){
+            let currency = undefined
+            if(this.oldCommission && this.oldCommission.currency){
+                currency = this.oldCommission.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     },
     watch: {
         selectedCustomer: {
@@ -339,7 +346,7 @@ export default{
         },
         formatOrderLabel(order){
             if(order){
-                return order.purchase_amount/100 + ' €'
+                return order.purchase_amount/100 + ' ' + this.currency
             }
         },
         createNewCommission(){

@@ -40,7 +40,7 @@
                       {{ $t("balance") }}
                     </h5>
                     <span class="h1 font-weight-bold mb-0 text-nowrap"
-                      >{{ $n(bankAccountnfo.balance / 100) }} €</span
+                      >{{ $n(bankAccountnfo.balance / 100) }} {{ bankAccountCurrency }}</span
                     >
                   </div>
                 </div>
@@ -76,7 +76,7 @@
                   <strong>{{$t('atm')}} </strong>
                   </div>
                   <div class="col-6"
-                    >{{ $n(limit.atm_limit.amount) }} €
+                    >{{ $n(limit.atm_limit.amount) }} {{ limitCurrency }}
                     {{ limit.atm_limit.constraint }}</div
                   >
                 </div>
@@ -86,7 +86,7 @@
                   </div>
 
                   <div class="col-6"
-                    >{{ $n(limit.master_card.amount) }} €
+                    >{{ $n(limit.master_card.amount) }} {{ limitCurrency }}
                     {{ limit.master_card.constraint }}</div
                   >
                 </div>
@@ -96,7 +96,7 @@
                  {{$t('PAYMENT_OUT')}}</strong>
                   </div>
                   <div class="col-6"
-                    >{{ $n(limit.sepa.amount) }} €
+                    >{{ $n(limit.sepa.amount) }} {{ limitCurrency }}
                     {{ limit.sepa.constraint }}</div
                   >
                 </div>
@@ -106,7 +106,7 @@
                   {{$t('PAYMENT_IN')}}</strong>
                   </div>
                   <div class="col-6"
-                    >{{ $n(limit.sepa_in.amount) }} €
+                    >{{ $n(limit.sepa_in.amount) }} {{ limitCurrency }}
                     {{ limit.sepa_in.constraint }}</div
                   >
                 </div>
@@ -115,7 +115,7 @@
                   <strong>
                  {{$t('max_balance')}}</strong>
                   </div>
-                 <div class="col-6">{{ $n(limit.max_balance.amount) }} €</div>
+                 <div class="col-6">{{ $n(limit.max_balance.amount) }} {{ limitCurrency }}</div>
                 </div>
               </div>
     </div>
@@ -135,6 +135,7 @@
 import UserInfo from "@/components/Contacts/UserInfo";
 import BankingTransactionList from '@/components/Banking/BankingTransactionsList';
 import BankingCards from '@/components/Banking/BankingCards';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   components: { UserInfo,BankingTransactionList,BankingCards },
   props: {
@@ -162,7 +163,22 @@ export default {
         this.limit = res;
       });
   },
-  computed: {},
+  computed: {
+    bankAccountCurrency(){
+      let currency = undefined
+      if (this.bankAccountnfo && this.bankAccountnfo.currency) {
+        currency = this.bankAccountnfo.currency
+      }
+      return getCurrencySymbol(currency);
+    },
+    limitCurrency(){
+      let currency = undefined
+      if (this.limit && this.limit.currency) {
+        currency = this.limit.currency
+      }
+      return getCurrencySymbol(currency);
+    }
+  },
   watch: {},
   methods: {},
 };

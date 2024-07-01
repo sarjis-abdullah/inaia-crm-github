@@ -34,6 +34,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     props:{
         product_class_id:{
@@ -78,7 +79,8 @@ export default {
         {
             if(unit=="euro")
             {
-                return '€'
+                let currency = undefined
+                return getCurrencySymbol(currency);
             }
             else if(unit == "percentage")
             {

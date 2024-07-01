@@ -69,7 +69,7 @@
                 <template v-slot="{row}">
                     <span class="amount">
                         {{ row.direction == 'DEBIT' ? '-' : '+' }}
-                        <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
+                        <i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> {{ getCurrency(row) }}
                     </span>
                 </template>
             </el-table-column>
@@ -115,6 +115,7 @@ import Status from '@/components/Banking/TransactionStatus';
 import IconButton from '@/components/common/Buttons/IconButton';
 import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
 import TransactionListFilter from '@/components/Banking/Filters/TransactionListFilter';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   components: {
     [Table.name]: Table,
@@ -221,6 +222,13 @@ export default {
     applyFilter(query){
       this.page = 1;
       this.filterQuery = query
+    },
+    getCurrency(row){
+      let currency = undefined
+      if (row && row.currency) {
+        currency = row.currency
+      }
+      return getCurrencySymbol(currency);
     }
 
   },

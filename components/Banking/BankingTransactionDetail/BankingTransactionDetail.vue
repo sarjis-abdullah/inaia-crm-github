@@ -10,18 +10,18 @@
             <h2 class="card-title mt-3 mb-0 title">{{$t(transaction.type)}}</h2>
         </div>
         <div class="mt-4 text-sm">
-            <FundTransfer v-if="isFundTransfer(transaction.type)" :transaction="transaction"/>
-            <PaymentIn v-if="isPaymentIn(transaction.type)" :transaction="transaction"/>
-            <Sepa v-if="isPaymentOut(transaction.type)" :transaction="transaction"/>
-            <Withdrawal v-if="isWithDrawal(transaction.type)" :transaction="transaction"/>
-            <Redemption v-if="isRedemption(transaction.type)" :transaction="transaction"/>
+            <FundTransfer v-if="isFundTransfer(transaction.type)" :transaction="transactionData"/>
+            <PaymentIn v-if="isPaymentIn(transaction.type)" :transaction="transactionData"/>
+            <Sepa v-if="isPaymentOut(transaction.type)" :transaction="transactionData"/>
+            <Withdrawal v-if="isWithDrawal(transaction.type)" :transaction="transactionData"/>
+            <Redemption v-if="isRedemption(transaction.type)" :transaction="transactionData"/>
             
             <div class="list-group list-group-flush" v-else>
                
                 <detail-list-item :title="$t('sender')" ><div slot="value" >{{transaction.transfer_account_name}}</div></detail-list-item>
                 <detail-list-item title="IBAN"><div slot="value" >{{transaction.transfer_account_iban}}</div></detail-list-item>
                 <detail-list-item :title="$t('usage')" ><div slot="value" >{{transaction.reason_text}}</div></detail-list-item>
-                <detail-list-item :title="$t('amount')"><div slot="value" >{{ transaction.direction == 'DEBIT' ? '-' : '+' }} {{$n(transaction.money_amount/100)}} €</div></detail-list-item>
+                <detail-list-item :title="$t('amount')"><div slot="value" >{{ transaction.direction == 'DEBIT' ? '-' : '+' }} {{$n(transaction.money_amount/100)}} {{ currency }}</div></detail-list-item>
             </div>
             
         </div>
@@ -36,6 +36,7 @@ import Withdrawal from '@/components/Banking/BankingTransactionDetail/Withdrawal
 import Redemption from '@/components/Banking/BankingTransactionDetail/Redemption';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {isFundTransfer,isPaymentIn,isPaymentOut,isWithDrawal,isRedemption} from '../../../helpers/bankingTransactions';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     props:{
         showModal:{
@@ -54,6 +55,18 @@ export default {
         Withdrawal,
         Redemption,
         DetailListItem
+    },
+    computed: {
+        currency(){
+            let currency = undefined
+            if (this.transaction && this.transaction.currency) {
+                currency = this.transaction.currency
+            }
+            return getCurrencySymbol(currency);
+        },
+        transactionData(){
+            return this.transaction ? {...this.transaction, currency: this.currency} : null
+        }
     },
     methods:{
         isFundTransfer,

@@ -7,7 +7,7 @@
               <img src="/img/icons/cards/mastercard.png" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
               <div class="media-body">
                 <h5 class="card-title text-uppercase text-muted mb-0">Bernhauser Bank eG</h5>
-                <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="!isLoading && bankAccount">{{ bankAccount.balance/100 }} €</span>
+                <span class="h2 font-weight-bold mb-0 text-nowrap" v-if="!isLoading && bankAccount">{{ bankAccount.balance/100 }} {{ bankAccountCurrency }}</span>
                 <Loader :width="24" :height="24" v-else/>
               </div>
             </div>
@@ -38,6 +38,7 @@
 import Loader from "../common/Loader/Loader";
 import { canEditInaiaBankAccount } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
   components: {
     Loader
@@ -55,7 +56,14 @@ export default {
     },
     hasEditAccess(){
       return canEditInaiaBankAccount()
-    }
+    },
+    bankAccountCurrency(){
+      let currency = undefined
+      if (this.bankAccount && this.bankAccount.currency) {
+        currency = this.bankAccount.currency
+      }
+      return getCurrencySymbol(currency);
+    },
   },
   methods: {
     refreshData(isFirst){
