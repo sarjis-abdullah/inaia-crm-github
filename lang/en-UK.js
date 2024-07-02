@@ -786,5 +786,7 @@ export default {
     clickHere:"Click here",
     requestNewLink :'The link is expired, please request a new link by:',
     confirm:'Confirm',
+    confirm_password_mismatch:'The confirm password does not match',
     password_message:'Your password must be at least 8 character long and must contains special characters',
+    checking:'Checking',
 }
