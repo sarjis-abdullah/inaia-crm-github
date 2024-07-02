@@ -53,6 +53,11 @@
   </validation-provider>
 </template>
 <script>
+  import { extend } from 'vee-validate';
+  extend('special_character', {
+    validate: value => /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    message: `The {_field_} must contain at least one special character.`
+  });
   export default {
     inheritAttrs: false,
     name: "base-input",
