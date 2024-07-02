@@ -190,13 +190,6 @@ export default {
 .h-auto {
   height: auto;
 }
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-.font-bold {
-  font-weight: 700;
-}
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
   margin-top: 1.5rem;
 }
@@ -205,17 +198,6 @@ export default {
 }
 .w-full {
   width: 100%;
-}
-
-.py-1\.5 {
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-}
-.cursor-pointer {
-  cursor: pointer;
-}
-.font-semibold {
-  font-weight: 600;
 }
 .h-8 {
   height: 2rem;
