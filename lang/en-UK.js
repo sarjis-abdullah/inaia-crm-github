@@ -789,4 +789,7 @@ export default {
     confirm_password_mismatch:'The confirm password does not match',
     password_message:'Your password must be at least 8 character long and must contains special characters',
     checking:'Checking',
+    back_to_login:'Back to login',
+    password_request_with_success:'We have emailed you a link to reset your password.',
+    request_password_title:'Forgotten your password?',
 }
