@@ -1,26 +1,24 @@
 <template>
   <div
-    class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
+    class="d-flex min-h-full flex-1 flex-col justify-content-center px-3 py-12 lg:px-8"
   >
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <nuxt-link to="/">
         <img
-          class="flex mx-auto w-36 h-auto"
+          class="d-flex mx-auto w-36 h-auto"
           src="~/static/logo.png"
           alt="INAIA GmbH"
         />
       </nuxt-link>
 
       <div class="bg-white py-4 mt-10 mb-10 px-4 shadow sm:rounded-lg sm:px-10">
-        <h2
-          class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
-        >
+        <h2 class="text-center text-2xl font-bold leading-9 tracking-tight">
           {{ $t("reset_password_title") }}
         </h2>
         <img
           src="~/static/pinscreen.jpg"
           alt="pin"
-          class="flex w-32 h-auto my-4 mx-auto"
+          class="d-flex w-32 h-auto my-4 mx-auto"
         />
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -97,7 +95,7 @@
                     : ""
                 }}</span>
 
-                <div class="flex justify-content-center">
+                <div class="d-flex justify-content-center">
                   <base-button
                     :disabled="
                       disabled || isSubmitting || showConfirmPasswordError
@@ -112,8 +110,13 @@
                 </div>
               </form>
             </validation-observer>
-            <div class="mt-1 flex items-center justify-center" v-if="success">
-              <div class="mt-1 flex items-center justify-center">
+            <div
+              class="mt-1"
+              v-if="success"
+            >
+              <div
+                class="mt-1 d-flex align-items-center justify-content-center"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -132,11 +135,16 @@
                   {{ $t("password_reset_with_success") }}
                 </span>
               </div>
+              <div class="mt-2 d-flex justify-content-center">
+                <router-link to="/" class=""><small>
+                  {{ $t('back_to_login') }}
+                </small></router-link>
+              </div>
             </div>
           </div>
           <div v-else-if="isLoading">
             <p class="text-center">{{ $t("checking") }}...</p>
-            <div class="flex justify-center mt-6">
+            <div class="d-flex justify-content-center mt-6">
               <Loader />
             </div>
           </div>
@@ -146,10 +154,10 @@
             <p class="text-center">
               {{ $t("requestNewLink") }}
             </p>
-            <div class="flex justify-center mt-6">
+            <div class="d-flex justify-content-center mt-6">
               <NuxtLink
                 to="/?forgot-password=1"
-                class="text-blue-600 cursor-pointer font-semibold"
+                class="cursor-pointer font-semibold"
                 >{{ $t("clickHere") }}</NuxtLink
               >
             </div>
@@ -251,10 +259,6 @@ export default {
 </script>
 
 <style scoped>
-/* Base styles */
-.flex {
-  display: flex;
-}
 .min-h-full {
   min-height: 100%;
 }
@@ -263,13 +267,6 @@ export default {
 }
 .flex-col {
   flex-direction: column;
-}
-.justify-center {
-  justify-content: center;
-}
-.px-6 {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
 }
 .py-12 {
   padding-top: 3rem;
@@ -280,7 +277,6 @@ export default {
   padding-right: 2rem;
 }
 
-/* Image styles */
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -294,8 +290,6 @@ export default {
 .h-auto {
   height: auto;
 }
-
-/* Card styles */
 .bg-white {
   background-color: #ffffff;
 }
@@ -323,11 +317,6 @@ export default {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
 }
-
-/* Text styles */
-.text-center {
-  text-align: center;
-}
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -341,29 +330,9 @@ export default {
 .tracking-tight {
   letter-spacing: -0.025em;
 }
-.text-gray-900 {
-  color: #1a202c;
-}
 
-/* Form styles */
 .space-y-6 > :not([hidden]) ~ :not([hidden]) {
   margin-top: 1.5rem;
-}
-.block {
-  display: block;
-}
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-.font-medium {
-  font-weight: 500;
-}
-.leading-6 {
-  line-height: 1.5rem;
-}
-.text-gray-900 {
-  color: #1a202c;
 }
 .mt-1 {
   margin-top: 0.25rem;
@@ -371,61 +340,13 @@ export default {
 .w-full {
   width: 100%;
 }
-.bg-slate-200 {
-  background-color: #e2e8f0;
-}
-.rounded-md {
-  border-radius: 0.375rem;
-}
-.border-0 {
-  border-width: 0;
-}
+
 .py-1\.5 {
   padding-top: 0.375rem;
   padding-bottom: 0.375rem;
 }
-.text-gray-900 {
-  color: #1a202c;
-}
 .shadow-sm {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-.ring-1 {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-.ring-inset {
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-.ring-gray-300 {
-  --tw-ring-color: #d1d5db;
-}
-.placeholder\:text-gray-400::placeholder {
-  color: #9ca3af;
-}
-.focus\:ring-2:focus {
-  box-shadow: 0 0 0 2px var(--tw-ring-color);
-}
-.focus\:ring-inset:focus {
-  box-shadow: inset 0 0 0 2px var(--tw-ring-color);
-}
-.focus\:ring-blue-600:focus {
-  --tw-ring-color: #2563eb;
-}
-.sm\:text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-.sm\:leading-6 {
-  line-height: 1.5rem;
-}
-.text-red-500 {
-  color: #f87171;
-}
-.text-gray-500 {
-  color: #6b7280;
-}
-.text-blue-600 {
-  color: #2563eb;
 }
 .cursor-pointer {
   cursor: pointer;
@@ -433,31 +354,7 @@ export default {
 .font-semibold {
   font-weight: 600;
 }
-.opacity-50 {
-  opacity: 0.5;
-}
-.opacity-100 {
-  opacity: 1;
-}
-.bg-blue-600 {
-  background-color: #2563eb;
-}
-.hover\:bg-blue-500:hover {
-  background-color: #3b82f6;
-}
-.focus-visible\:outline:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-.focus-visible\:outline-2:focus-visible {
-  outline: 2px solid transparent;
-}
-.focus-visible\:outline-offset-2:focus-visible {
-  outline-offset: 2px;
-}
-.focus-visible\:outline-blue-600:focus-visible {
-  outline: 2px solid #2563eb;
-}
+
 @media (min-width: 640px) {
   .sm\:w-full {
     width: 100%;
