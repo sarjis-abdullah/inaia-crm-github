@@ -137,7 +137,7 @@
           <div v-else-if="isLoading">
             <p class="text-center">{{ $t("checking") }}...</p>
             <div class="flex justify-center mt-6">
-              <!-- <Loading class="" /> -->Loading
+              <Loader />
             </div>
           </div>
           <div
@@ -161,8 +161,13 @@
 </template>
 
 <script>
+import Loader from "@/components/common/Loader/Loader.vue";
+
 export default {
   layout: "no-layout",
+  components: {
+    Loader,
+  },
   data() {
     return {
       failed: "",
