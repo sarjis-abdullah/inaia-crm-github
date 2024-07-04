@@ -173,23 +173,13 @@
           <div class="card border-0">
             <div class="card-body">
               <div class="row">
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">
-                    {{ $t("total_gold_amount") }}
-                  </h5>
-                  <span class="h2 font-weight-bold mb-0"
-                    ><i18n-n :value="batchProcess.gram_amount / 1000"></i18n-n>
-                    g</span
-                  >
-                </div>
-                <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">
-                    {{ $t("amount") }}
-                  </h5>
-                  <span class="h2 font-weight-bold mb-0"
-                    ><i18n-n :value="batchProcess.money_amount / 100"></i18n-n>
-                    {{ currency }}</span
-                  >
+                <div class="col-md-4 p-0 mb-2" v-for="(item, index) in paymentMethods" :key="index">
+                  <ul>
+                    <h5 class="card-title text-uppercase text-muted mb-0">{{ item.methodName }}</h5>
+                    <li v-for="(value, ind) in item.method" :key="value+ind" class="d-flex">
+                      <span class="capitalize">{{ ind }}: {{ value }} </span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -364,6 +354,16 @@ export default {
     },
     dropdownVisibility(){
       return this.shouldDisplayRetry() || (this.shouldDisplayComplete() && this.isPaidOrderPresent) || this.shouldDisplayPPsExecutePayment() || this.shouldDisplayBankExecutePayment() || this.isOrderGoldSale(this.batchProcess) || this.isOrderSilverSale(this.batchProcess)
+    },
+    paymentMethods(){
+      if (!this.batchProcess.payment_methods) {
+        return []
+      }
+      const data = this.batchProcess.payment_methods
+      return Object.keys(data).map(methodName => ({
+        methodName,
+        method: data[methodName]
+      })).filter(item=> item.methodName != 'pps');
     }
   },
   destroyed(){
