@@ -1,7 +1,7 @@
 <template>
   <div class="bg-default">
     <!-- Header -->
-    <div class="header bg-gradient-secondary py-7 py-lg-8 pt-lg-9">
+    <div class="header py-7 py-lg-8 pt-lg-9" :class="background">
       <div class="container">
         <div class="header-body text-center mb-7">
           <div class="row justify-content-center">
@@ -41,7 +41,19 @@
 </template>
 
 <script>
+import appNames from "../appNames";
 export default {
-  layout: 'AuthLayout'
-}
+  layout: "AuthLayout",
+  computed: {
+    background() {
+      let app = process.env.CURRENT_APP;
+      let env = process.env.DEPLOYMENT_ENV;
+      if (env != "production") {
+        return "bg-gradient-warning";
+      }
+      if (app == appNames.getGreenGold) return "bg-gradient-default";
+      else return "bg-gradient-info";
+    },
+  },
+};
 </script>
