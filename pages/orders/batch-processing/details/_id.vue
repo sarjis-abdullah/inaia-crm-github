@@ -173,11 +173,13 @@
           <div class="card border-0">
             <div class="card-body">
               <div class="row">
-                <div class="col-md-4 p-0 mb-2" v-for="(item, index) in paymentMethods" :key="index">
+                <div class="col-md-6 p-0 mb-2" v-for="(item, index) in summary" :key="index">
                   <ul>
-                    <h5 class="card-title text-uppercase text-muted mb-0">{{ item.methodName }}</h5>
-                    <li v-for="(value, ind) in item.method" :key="value+ind" class="d-flex">
-                      <span class="capitalize">{{ ind }}: {{ value }} </span>
+                    <h5 class="card-title text-uppercase text-muted mb-0">{{ item.payment_method }}</h5>
+                    <li v-for="(order, ind) in item.orders" :key="ind" class="d-flex">
+                      <span class="capitalize">
+                        {{ getOrderStatus(order.status) + ": " + order.count + " / " + centToEur(order.amount) + " " + currency }} 
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -263,6 +265,9 @@ import { canEditDepot } from '@/permissions'
 import {ORDER_PROCESS_STATUS_PENDING,ORDER_PROCESS_STATUS_COMPLETE,ORDER_PROCESS_STATUS_INPROGRESS,ORDER_PROCESS_STATUS_FAILED} from '@/helpers/orderProcess';
 import {ORDER_STATUS_PAID} from '@/helpers/order';
 import { getCurrencySymbol } from "@/helpers/currency";
+import { getOrderStatus } from "@/helpers/order";
+import {useFormatter} from "@/helpers/useFormatter";
+const { centToEur } = useFormatter();
 export default {
   layout: "DashboardLayout",
   components: {
@@ -355,15 +360,15 @@ export default {
     dropdownVisibility(){
       return this.shouldDisplayRetry() || (this.shouldDisplayComplete() && this.isPaidOrderPresent) || this.shouldDisplayPPsExecutePayment() || this.shouldDisplayBankExecutePayment() || this.isOrderGoldSale(this.batchProcess) || this.isOrderSilverSale(this.batchProcess)
     },
-    paymentMethods(){
-      if (!this.batchProcess.payment_methods) {
+    summary(){
+      if (!this.batchProcess.summary) {
         return []
       }
-      const data = this.batchProcess.payment_methods
-      return Object.keys(data).map(methodName => ({
-        methodName,
-        method: data[methodName]
-      })).filter(item=> item.methodName != 'pps');
+      return this.batchProcess.summary.filter(item=> {
+        if (item.orders.length) {
+          return item
+        }
+      });
     }
   },
   destroyed(){
@@ -374,6 +379,8 @@ export default {
     this.getBatchProcess();
   },
   methods: {
+    centToEur,
+    getOrderStatus,
     isOrderGoldSale,
     isOrderSilverSale,
     cancelConfirmComplete() {
