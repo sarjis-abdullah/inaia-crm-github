@@ -69,17 +69,10 @@
             {{ $t('not_enough_asset_please_buy') }}
           </div>
         </div>
-        <detail-list-item :title="$t('inaia_stock')"
-          ><div slot="value" class="d-flex float-right align-items-center">
-            
-              <Input type="numeric" class="mr-2" :placeholder="$t('amount')" v-model="inaiaStockAmount"/> {{$t('from')}}  {{ batchProcessPreview.inaia_stock_balance/1000 }} g
-           
-          </div></detail-list-item
-        >
         <detail-list-item :title="$t('operation_stock')"
           ><div slot="value" class="d-flex float-right align-items-center">
             
-              <Input type="numeric" class="mr-2" :placeholder="$t('amount')" v-model="operationStockAmount"/> {{$t('from')}}  {{ batchProcessPreview.operation_stock_balance/1000 }} g
+            {{ batchProcessPreview.operation_stock_balance/1000 }} g
            
           </div></detail-list-item
         >

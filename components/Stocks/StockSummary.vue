@@ -7,13 +7,6 @@
             </div>
             <div v-else class=" d-flex flex-column justify-content-center align-items-center">
                 <h4 class="mb-2 text-muted">{{$t('total_stock')}} {{getTotal()}} g</h4>
-                <pie-chart
-                class="my-3"
-              :height="150"
-              ref="barChart"
-              :chart-data="getChartData()"
-            >
-            </pie-chart>
 
                         <el-table class="table-hover table-responsive table-flush"
                             header-row-class-name="thead-light"
@@ -129,11 +122,11 @@ export default {
             let sum = 0;
             if(this.stockType == assetTypes.gold)
             {
-                sum = (this.inaiaGoldSock + this.operationGoldSock)/1000;
+                sum = (this.operationGoldSock)/1000;
             }
             if(this.stockType == assetTypes.silver)
             {
-                sum = (this.inaiaSilverSock + this.operationSilverSock)/1000;
+                sum = (this.operationSilverSock)/1000;
             }
             return sum;
         },
@@ -182,11 +175,6 @@ export default {
             if(this.stockType == assetTypes.gold)
             {
                 data.push({
-                    title : this.$t(stockTypes.inaiaStock),
-                    value : this.inaiaGoldSock,
-                    styling:'circle-inaia',
-                    target:stockTypes.inaiaStock
-                },{
                     title : this.$t(stockTypes.operationStock),
                     value : this.operationGoldSock,
                     styling:'circle-operation',
@@ -196,11 +184,6 @@ export default {
             if(this.stockType == assetTypes.silver)
             {
                 data.push({
-                    title : this.$t(stockTypes.inaiaStock),
-                    value : this.inaiaSilverSock,
-                    styling:'circle-inaia',
-                    target:stockTypes.inaiaStock
-                },{
                     title : this.$t(stockTypes.operationStock),
                     value : this.operationSilverSock,
                     styling:'circle-operation',
