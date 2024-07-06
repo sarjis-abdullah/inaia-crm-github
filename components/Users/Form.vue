@@ -309,30 +309,37 @@ export default {
             }
         },
         updatedUserData() {
+            const customerData = {
+                contact: {
+                    id: this.customer.id,
+                    name: this.customer.name,
+                    type_id: this.types['person'] || 0,
+                    is_active: this.customer.is_active
+                },
+                person_data: {
+                    ...this.customer.person_data,
+                    contact_id: this.customer.id
+                },
+                address: {
+                    ...this.customer.address,
+                    contact_id: this.customer.id
+                },
+                account: {
+                    ...this.customer.account,
+                    contact_id: this.customer.id,
+                    type_id:  this.types[this.selectedAccountType] || 0,
+                },
+                channels: {}
+            }
+            if(this.customer.channels.mobile.value != ""){
+                customerData.channels.mobile = this.customer.channels.mobile
+            }
+            if(this.customer.channels.email.value != ""){
+                customerData.channels.email = this.customer.channels.email
+            }
             return {
                 id: this.customer.id,
-                customer: {
-                    contact: {
-                        id: this.customer.id,
-                        name: this.customer.name,
-                        type_id: this.types['person'] || 0,
-                        is_active: this.customer.is_active
-                    },
-                    person_data: {
-                        ...this.customer.person_data,
-                        contact_id: this.customer.id
-                    },
-                    address: {
-                        ...this.customer.address,
-                        contact_id: this.customer.id
-                    },
-                    account: {
-                        ...this.customer.account,
-                        contact_id: this.customer.id,
-                        type_id:  this.types[this.selectedAccountType] || 0,
-                    },
-                    channels: this.customer.channels
-                }
+                customer: customerData
             }
         }
     },
