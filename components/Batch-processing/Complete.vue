@@ -76,9 +76,6 @@
            
           </div></detail-list-item
         >
-        <div class="text-danger" v-if="batchProcessPreview.gram_amount > (parseInt(inaiaStockAmount*1000)+parseInt(operationStockAmount*1000))">
-            {{ $t('the_stock_amounts_must_be_equal_to_purchased_amout') }}
-          </div>
       </div>
       <span class="text-danger" v-if="batchProcessPreview && batchProcessPreview.gram_amount > totalAvailableStockAmount">{{ $t('please_buy_assets') }}</span>
       </div>
@@ -89,7 +86,7 @@
       </base-button>
       <base-button
         type="primary"
-        @click="() => transferOrComplete()"
+        @click="() => markAsComplete()"
         :disabled="shouldDisableMarkAsComplete()"
       >
         {{ $t("mark_as_complete") }}
@@ -143,8 +140,6 @@ export default {
       selectedDate: null,
       batchProcessPreview: null,
       isLoading: false,
-      inaiaStockAmount:null,
-      operationStockAmount:null
     };
   },
   computed:{
@@ -154,8 +149,7 @@ export default {
         totalAvailableStockAmount(){
           if(this.batchProcessPreview){
             const operationAmount = (this.batchProcessPreview.operation_stock_balance?this.batchProcessPreview.operation_stock_balance:0);
-            const inaiaAmount = (this.batchProcessPreview.inaia_stock_balance?this.batchProcessPreview.inaia_stock_balance:0);
-            return operationAmount + inaiaAmount;
+            return operationAmount;
           }
           return 0;
           
@@ -200,15 +194,6 @@ export default {
           this.isLoading = false;
         });
     },
-    transferOrComplete(){
-      if(this.inaiaStockAmount>0)
-      {
-        this.transferGramAmount();
-      }
-      else{
-        this.markAsComplete();
-      }
-    },
     markAsComplete() {
       this.isSubmitting = true;
       if(isOrderGoldSale(this.selectedOrderProcess))
@@ -240,42 +225,16 @@ export default {
           this.isSubmitting = false;
         });
     },
-    transferGramAmount(){
-      let depoType = null;
-      if(this.selectedOrderProcess.order_type)
-      {
-        if(this.selectedOrderProcess.order_type.name_translation_key.indexOf('gold')!=-1)
-          depoType = this.depotTypes.find(x=>x.name_translation_key.indexOf(assetTypes.gold)!=-1);
-        else
-          depoType = this.depotTypes.find(x=>x.name_translation_key.indexOf(assetTypes.silver)!=-1);
-      }
-      if(depoType)
-      {
-        this.isSubmitting =  true;
-        let data = {
-                    depot_type_id:depoType.id,
-                    amount:this.inaiaStockAmount*1000,
-                    fixing_price:parseInt(this.batchProcessPreview.gram_price_raw),
-                    fixing_date:this.batchProcessPreview.gram_price_date
-                }
-                this.$store.dispatch('stocks/transferStock',{data:data}).then((res)=>{
-                    this.markAsComplete();
-                }).catch((err)=>{
-                    this.isSubmitting =  false;
-                    apiErrorHandler(err,this.$notify);
-                })
-      }
-    },
     shouldDisableMarkAsComplete(){
       if(this.selectedOrderProcess && isOrderGoldSale(this.selectedOrderProcess))
       {
         return this.isSubmitting;
       }
       else{
+        if(this.batchProcessPreview)
+        console.log(this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance), 22222);
         return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0 
-        || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)
-        || parseInt(this.inaiaStockAmount*1000 + this.operationStockAmount*1000) < parseInt(this.batchProcessPreview.gram_amount)
-        
+        || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)        
         ;
       }
     }
