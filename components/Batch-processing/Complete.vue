@@ -231,8 +231,6 @@ export default {
         return this.isSubmitting;
       }
       else{
-        if(this.batchProcessPreview)
-        console.log(this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance), 22222);
         return this.isSubmitting || !this.batchProcessPreview || this.batchProcessPreview.total_orders_count == 0 
         || this.batchProcessPreview.gram_amount > (this.batchProcessPreview.operation_stock_balance+this.batchProcessPreview.inaia_stock_balance)        
         ;
