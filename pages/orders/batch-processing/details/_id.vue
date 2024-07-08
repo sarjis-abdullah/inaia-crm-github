@@ -175,10 +175,12 @@
               <div class="row">
                 <div class="col-md-6 p-0 mb-2" v-for="(item, index) in summary" :key="index">
                   <ul>
-                    <h5 class="card-title text-uppercase text-muted mb-0">{{ item.payment_method }}</h5>
+                    <h5 class="card-title text-uppercase text-muted mb-0">
+                      {{ $t(item.payment_method) }}
+                    </h5>
                     <li v-for="(order, ind) in item.orders" :key="ind" class="d-flex">
                       <span class="capitalize">
-                        {{ getOrderStatus(order.status) + ": " + order.count + " / " + centToEur(order.amount) + " " + currency }} 
+                        {{ $t(getOrderStatus(order.status)) + ": " + order.count + " / " + centToEur(order.amount) + " " + currency }} 
                       </span>
                     </li>
                   </ul>
