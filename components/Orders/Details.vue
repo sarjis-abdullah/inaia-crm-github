@@ -319,9 +319,13 @@ export default {
                 this.isSubmitting = true;
                 this.$store
                     .dispatch('orders/paid', resource.id)
-                    .then( res => {
+                    .then( orderStatus => {
                         //this.showPopup = false;
-                        this.$emit('orderUpdated',resource);
+                        const obj = {
+                            ...resource,
+                            order_status: orderStatus
+                        }
+                        this.$emit('orderUpdated',obj);
                         this.selectedResourceScreen = orderDetailScreens.detail;
                         //this.onDetailClose();
                         this.$notify({type: 'success', timeout: 5000, message: this.$t('Order_paid_successfully')})

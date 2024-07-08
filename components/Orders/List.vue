@@ -376,6 +376,10 @@ export default {
         onOrderUpdated(order)
         {
             this.$emit('orderUpdated',order);
+            this.selectedResource   = {
+                ...this.selectedResource,
+                order_status: order.order_status
+            }
         },
         getCurrency(order){
             let currency = undefined
