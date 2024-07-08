@@ -65,13 +65,6 @@
         {{ $t("cancel") }}
       </base-button>
       <base-button
-        type="secondary"
-        @click="() => sendMessage(true)"
-        :disabled="isSubmitting || !shouldEnableSave()"
-      >
-        {{ $t("save_as_draft") }}
-      </base-button>
-      <base-button
         type="primary"
         @click="() => sendMessage(false)"
         :disabled="isSubmitting || !shouldEnableSave()"
