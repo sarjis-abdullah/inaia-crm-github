@@ -347,3 +347,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.modal.show {
+    overflow-y: auto;
+}
+</style>
