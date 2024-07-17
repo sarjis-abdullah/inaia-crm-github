@@ -792,4 +792,6 @@ export default {
     back_to_login:'Back to login',
     password_request_with_success:'We have emailed you a link to reset your password.',
     request_password_title:'Forgotten your password?',
+    verified_at:'Verified At',
+    verified_by:'Verified By',
 }

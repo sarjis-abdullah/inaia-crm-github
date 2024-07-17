@@ -778,5 +778,7 @@ export default {
     checking: "Überprüfung",
     back_to_login: "Zurück zum Login",
     password_request_with_success: "Wir haben Ihnen einen Link zum Zurücksetzen Ihres Passworts per E-Mail gesendet.",
-    request_password_title: "Passwort vergessen?"
+    request_password_title: "Passwort vergessen?",
+    verified_at:'Verifiziert am',
+    verified_by:'Verifiziert von',
 }
