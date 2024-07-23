@@ -19,20 +19,21 @@
     <div class="container-fluid mt--6">
         <div class="row">
             <div class="col-xl-4 col-md-6">
-            <ExternalBankAmountCard @loaded="onSummaryLoaded"/>
+            <ExternalBankAmountCard @loaded="onSummaryLoaded" v-if="hasInaiaAccountAccess"/>
             </div>
         </div>
         
 
     </div>
     <div class="container-fluid" v-if="isSummryLoaded">
-            <BankingTransactionsList :bankingAccountId="accountId"/>
+            <BankingTransactionsList :bankingAccountId="accountId" v-if="hasInaiaAccountAccess"/>
         </div>
     </div>
 </template>
 <script>
 import ExternalBankAmountCard from '@/components/Banking/ExternalBankAmountCard';
 import BankingTransactionsList from '@/components/Banking/BankingTransactionsList';
+import {canViewInaiaBankAccount} from '~/permissions';
 export default {
     layout: 'DashboardLayout',
     components:{
@@ -44,6 +45,11 @@ export default {
             isSummryLoaded:false,
             accountId:null
         }
+    },
+    computed:{
+        hasInaiaAccountAccess(){
+        return canViewInaiaBankAccount();
+      },
     },
     methods:{
         onSummaryLoaded(id){

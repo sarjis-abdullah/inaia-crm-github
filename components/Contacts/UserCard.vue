@@ -33,6 +33,7 @@
             <a class="dropdown-item" @click.prevent="displayEditEmail">{{ $t("edit_email") }}</a>
             <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
             <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
+            <a class="dropdown-item" @click.prevent="resetPassword">{{ $t("reset_password") }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
 
@@ -280,6 +281,15 @@ export default {
           this.confirmResetPin();
         });
       },
+      resetPassword(){
+        this.$confirm(this.$t('send_reset_password_link_confirmation'), 'Warning', {
+          confirmButtonText: this.$t('ok'),
+          cancelButtonText: this.$t('cancel'),
+          type: 'warning'
+        }).then(() => {
+          this.confirmResetPassword();
+        });
+      },
       openRefrredByLink(){
         if(this.info && this.info.account && this.info.account.referred_by && this.info.account.referred_by.referred_by){
           const contactId = this.info.account.referred_by.referred_by.contract_id
@@ -294,6 +304,18 @@ export default {
             type: "success",
             timeout: 5000,
             message: this.$t('pin_account_reset_successfully'),
+          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+        })
+      },
+      confirmResetPassword(){
+        const email = this.getChannelInfo("email")
+        this.$store.dispatch('users/handleForgetPassword', {email}).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('password_reset_link_sent_successfully'),
           });
         }).catch((err)=>{
           apiErrorHandler(err,this.$notify);
