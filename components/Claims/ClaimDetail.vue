@@ -1,5 +1,6 @@
 <template>
-    <modal :show.sync="showDetail" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" @close="onDetailClose" :allowOutSideClose="false">
+    
+    <modal :show.sync="showDetail" class=""  headerClasses="" bodyClasses="modal-body" footerClasses="border-top bg-secondary" @close="onDetailClose" :allowOutSideClose="false">
         <template slot="header" class="pb-0">
                         <!--<h5 class="modal-title" id="exampleModalLabel">{{$t('order_details')}}</h5>-->
                         <span></span>
@@ -80,7 +81,7 @@
                 <detail-list-item :title="$t('updated_by')">
                     <UserInfo :accountId="claim.updated_by" slot="value" :isLazy="true"/>
                 </detail-list-item>
-                <PaymentTransactions v-if="claim.claim_payment_transactions && claim.claim_payment_transactions.length>0" :claim="claim"/>
+                
             </div>
             <div v-else>
                 <div v-if="selectedAction == 'markpaid'">
@@ -107,6 +108,7 @@
           <div class="text-danger mt-3" v-if="!isAfterOrEqualDueDate"> {{ $t('payment_date_after') }} {{ claim.possible_debit_date?$d(new Date(claim.possible_debit_date),'short'):"" }}</div>
                 </div>
             </div>
+            <PaymentTransactions v-if="claim.claim_payment_transactions && claim.claim_payment_transactions.length>0" :claim="claim"/>
         </div>
         <div v-else>
             <div class="d-flex justify-content-center align-items-center">
@@ -348,7 +350,8 @@ export default {
 }
 </script>
 <style scoped>
-.modal.show {
+.modal-body {
+    max-height: calc(100vh - 210px);
     overflow-y: auto;
 }
 </style>

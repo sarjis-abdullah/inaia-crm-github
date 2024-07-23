@@ -180,11 +180,7 @@
           class="ml-auto"
         ></base-pagination>
       </div>
-
-    </div>
-    </div>
-    </div>
-    <CreateClaim :show="showCreateNewClaim"  @closed="closeAddClaim"/>
+      <CreateClaim :show="showCreateNewClaim"  @closed="closeAddClaim"/>
     <modal
     :show.sync="showExecutionDate"
     headerClasses=""
@@ -222,6 +218,10 @@
     </template>
     </modal>
     <ClaimDetail v-if="selectedClaim" :showDetail="showDetail" :claim="selectedClaim" @changed="onClaimCloseDetail" @closed="onClaimCloseDetail" @onUserNotified="fetchClaims"/>
+    </div>
+    </div>
+    </div>
+    
     
 </div>
   </template>
@@ -622,7 +622,7 @@ import { getCurrencySymbol } from "@/helpers/currency";
 
   };
   </script>
-  <style scoped>
+  <style scope>
   .capitalize {
     text-transform: capitalize;
   }
