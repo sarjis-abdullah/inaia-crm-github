@@ -24,9 +24,9 @@ export default {
       currency(){
         const transaction = this.transaction
         let currency = undefined
-        if (transaction?.currency) {
+        if (transaction && transaction.currency) {
             currency = transaction.currency
-        }else if (transaction?.orderCurrency) {
+        }else if (transaction && transaction.orderCurrency) {
             currency = transaction.orderCurrency
         }
         return getCurrencySymbol(currency);

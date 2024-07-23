@@ -10,7 +10,7 @@
             
           </div>
           <div class="col">
-            Total amount : <i18n-n :value="parseInt(totalAmount) / 100"></i18n-n> €
+            Total amount : <i18n-n :value="parseInt(totalAmount) / 100"></i18n-n> {{ currency }}
           </div>
           
         </div>
@@ -46,6 +46,7 @@
   import moment from "moment";
   import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 import { Theme } from '@fullcalendar/core';
+import { getCurrencySymbol } from '@/helpers/currency';
   export default {
     props: {
         showForm: {
@@ -97,7 +98,11 @@ import { Theme } from '@fullcalendar/core';
           return this.metaData.total
         }
         return 0
-      }
+      },
+      currency(){
+        let currency = undefined
+        return getCurrencySymbol(currency);
+      },
     },
     methods: {
       _getQuaryValue(p){

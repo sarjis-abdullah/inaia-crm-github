@@ -79,7 +79,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $n(value) }} €
+                                    {{ $n(value) }} {{ getCurrency(agio) }}
                                 </td>
                             </tr>
                         </table>
@@ -107,7 +107,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $n(value) }} €
+                                    {{ $n(value) }} {{ getCurrency(claim) }}
                                 </td>
                             </tr>
                         </table>
@@ -159,7 +159,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $n(value) }} €
+                                    {{ $n(value) }} {{ getCurrency(agio) }}
                                 </td>
                             </tr>
                         </table>
@@ -185,7 +185,7 @@
                                     {{ $t(key) }} :
                                 </td>
                                 <td class="px-3" v-if="key!='asset' && key!='sales_advisor'">
-                                    {{ $n(value) }} €
+                                    {{ $n(value) }} {{ getCurrency(claim) }}
                                 </td>
                             </tr>
                         </table>
@@ -207,6 +207,7 @@
 import { mapGetters } from "vuex"
 import { DatePicker,Checkbox } from 'element-ui';
 import {formatDateToApiFormat} from '@/helpers/helpers'
+import { getCurrencySymbol } from "@/helpers/currency";
 export default({
     components: {
         DatePicker,
@@ -543,6 +544,13 @@ export default({
         getDepotsRouteWithSalesAdvisor(depotTypeId, salesAdvisorId){
             const query = this.getDepotsRoute(depotTypeId)
             return query + '&sales_advisor_id=' + salesAdvisorId
+        },
+        getCurrency(row){
+            let currency = undefined
+            if (row && row) {
+                currency = row.currency
+            }
+            return getCurrencySymbol(currency);
         }
     }
 })

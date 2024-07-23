@@ -1,11 +1,17 @@
-
-export const ORDER_STATUS_PENDING   = 'order_status_pending'
-
-export const ORDER_STATUS_PAID      = 'order_status_paid'
-export const ORDER_STATUS_PAYMENT_FAILED      = 'order_status_payment_failed'
-export const ORDER_STATUS_COMPLETED     = 'order_status_completed'
+export const ORDER_STATUS_PENDING = 'order_status_pending';
+export const ORDER_STATUS_PAYMENT_IN_PROGRESS = 'order_status_payment_inprogress';
+export const ORDER_STATUS_PAID = 'order_status_paid';
+export const ORDER_STATUS_PAYMENT_OUTSTANDING = 'order_status_payment_outstanding';
+export const ORDER_STATUS_EXECUTED = 'order_status_executed';
+export const ORDER_STATUS_CANCELED = 'order_status_canceled';
+export const ORDER_STATUS_REJECTED = 'order_status_rejected';
+export const ORDER_STATUS_PAYMENT_FAILED = 'order_status_payment_failed';
+export const ORDER_STATUS_REFUND = 'order_status_refund';
+export const ORDER_STATUS_REFUNDED = 'order_status_refunded';
+export const ORDER_STATUS_COMPLETED = 'order_status_completed';
+export const ORDER_STATUS_REVERTED = 'order_status_reverted';
 export const ORDER_STATUS_OUTSTANDING = "order_status_payment_outstanding";
-export const ORDER_STATUS_PAYMENT_IN_PROGRESS = "order_status_payment_inprogress";
+
 export const GOLD_PURCHASE_TYPE = "gold_purchase";
 export const GOLD_SELL_TYPE = "gold_sell";
 export const GOLD_PURCHASE_INTERVAL_TYPE = "gold_purchase_interval";
@@ -16,7 +22,6 @@ export const SILVER_PURCHASE_TYPE = "silver_purchase";
 export const SILVER_SELL_TYPE = "silver_sell";
 export const SILVER_PURCHASE_INTERVAL_TYPE = "silver_purchase_interval";
 export const SILVER_DELIVERY_TYPE = "silver_delivery";
-export const ORDER_STATUS_CANCELED = "order_status_canceled";
 export function isOrderPending(order) {
     if (order.order_status && order.order_status.name_translation_key === ORDER_STATUS_PENDING) {
         return true
@@ -92,4 +97,34 @@ export function isGoldGift(order){
 }
 export function isOrderCanceled(order){
     return order && order.order_status && order.order_status.name_translation_key == ORDER_STATUS_CANCELED
+}
+export function getOrderStatus(status) {
+    switch (status) {
+        case ORDER_STATUS_PENDING:
+            return 'pending';
+        case ORDER_STATUS_PAYMENT_IN_PROGRESS:
+            return 'payment_inprogress';
+        case ORDER_STATUS_PAID:
+            return 'paid';
+        case ORDER_STATUS_PAYMENT_OUTSTANDING:
+            return 'payment_outstanding';
+        case ORDER_STATUS_EXECUTED:
+            return 'executed';
+        case ORDER_STATUS_CANCELED:
+            return 'canceled';
+        case ORDER_STATUS_REJECTED:
+            return 'rejected';
+        case ORDER_STATUS_PAYMENT_FAILED:
+            return 'payment_failed';
+        case ORDER_STATUS_REFUND:
+            return 'refund';
+        case ORDER_STATUS_REFUNDED:
+            return 'refunded';
+        case ORDER_STATUS_COMPLETED:
+            return 'completed';
+        case ORDER_STATUS_REVERTED:
+            return 'reverted';
+        default:
+            return 'unknown';
+    }
 }

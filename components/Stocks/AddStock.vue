@@ -65,10 +65,10 @@
                 </date-picker>
                 <div class="mt--1 mb-3 row">
                     <div v-if="fixingPriceGram > -1" class="col text-sm text-muted">
-                        {{$t('fixing_price')}} : {{$n(fixingPriceGram)}} € / g
+                        {{$t('fixing_price')}} : {{$n(fixingPriceGram)}} {{ currency }} / g
                     </div>
                     <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
-                        {{$n(fixingPriceOunce)}} € / Ounce
+                        {{$n(fixingPriceOunce)}} {{ currency }} / Ounce
                     </div>
                     <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
                         {{$t('this_date_has_not_goldprice')}}
@@ -101,7 +101,7 @@
 
                 <Input v-model="totalMoneyAmount" :placeholder="$t('total_buying_amount')"  v-if="isRefinerySource() && isCredit" />
                 <div class="mb-3 text-sm text-muted" v-if="isRefinerySource() && isCredit">
-                    {{ $t('buying_unit_price') }} : {{ unitPrice }} € / g
+                    {{ $t('buying_unit_price') }} : {{ unitPrice }} {{ currency }} / g
                 </div>
                 
                 
@@ -156,6 +156,7 @@ import { formatDateToApiFormat } from '@/helpers/helpers';
 import { Upload } from "element-ui";
 import SelectSuppliers from "@/components/Suppliers/SelectSuppliers";
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from "@/helpers/currency";
 const REFINERY = 'refinery';
 const credit = "CREDIT";
 const debit = "DEBIT";
@@ -200,7 +201,11 @@ export default {
         }),
         isCredit(){
             return this.transactionType == credit;
-        }
+        },
+        currency(){
+            let currency = undefined
+            return getCurrencySymbol(currency);
+        },
     },
     data(){
         return {

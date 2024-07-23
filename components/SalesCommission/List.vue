@@ -49,7 +49,7 @@
                                 <template v-slot="{row}">
                                 
                                     <div>
-                                        <div>{{$n(row.amount/100)}} €</div>
+                                        <div>{{$n(row.amount/100)}} {{ getCurrency(row) }}</div>
                                         <div class="text-sm-left text-muted">{{$n(row.rate)}} %</div>
                                     </div>
                                 </template>
@@ -70,7 +70,7 @@
                                        
                                         >
                                 <template v-slot="{row}">
-                                        <div>{{$n(row.target_amount/100)}} €</div>
+                                        <div>{{$n(row.target_amount/100)}} {{ getCurrency(row) }}</div>
                                 </template>
                         </el-table-column>
                         <el-table-column :label="$t('direction')"
@@ -102,6 +102,7 @@ import IconButton from '@/components/common/Buttons/IconButton';
 import CommissionFilter from '@/components/SalesCommission/Filter';
 import { canEditSalesCimmission } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default{
     components: {
         [Table.name]: Table,
@@ -201,8 +202,14 @@ export default{
         },
         editTicket(commission){
             this.$emit('onEdit',commission);
-        }
-
+        },
+        getCrrency(row){
+            let currency = undefined
+            if (row && row.currency) {
+                currency = row.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     }
 }
 </script>

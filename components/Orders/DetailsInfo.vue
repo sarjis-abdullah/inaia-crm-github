@@ -87,10 +87,10 @@
                 </div>
                 <div class="mt--1 mb-3 row" v-else>
                     <div v-if="fixingPriceGram > -1" class="col text-sm text-muted">
-                        {{$t('gram_price')}} : {{$n(fixingPriceGram)}} €
+                        {{$t('gram_price')}} : {{$n(fixingPriceGram)}} {{ currency }}
                     </div>
                     <div v-if="fixingPriceOunce > -1" class="col text-sm text-muted">
-                        {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} €
+                        {{$t('ounce_price')}} : {{$n(fixingPriceOunce)}} {{ currency }}
                     </div>
                     <div v-if="(fixingPriceGram == -1)" class="mt--1 my-3 text-sm text-danger">
                         {{$t('this_date_has_not_goldprice')}}
@@ -119,6 +119,7 @@ import {Input,Checkbox} from 'element-ui';
 import DetailListItem from '@/components/common/DetailListItem.vue';
 import {formatDateToApiFormat} from '../../helpers/helpers';
 import {DatePicker} from 'element-ui';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         GoldSale,
@@ -156,6 +157,15 @@ export default {
             fixingDate:null,
             hasMoneyTransfered:false
         }
+    },
+    computed: {
+        currency(){
+            let currency = undefined
+            if (this.resource && this.resource.currency) {
+                currency = this.resource.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     },
     created (){
         this.orderDetailScreens = orderDetailScreens

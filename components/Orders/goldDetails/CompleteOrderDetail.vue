@@ -23,9 +23,9 @@
             <!--<detail-list-item title="ID"><div slot="value">{{preview.order_id}}</div></detail-list-item>-->
             <detail-list-item :title="$t('date')"><div slot="value"> {{$d(new Date(preview.gram_price_date),'short')}}</div></detail-list-item>
             <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
-            <detail-list-item :title="$t('course')"><div slot="value"> <i18n-n :value="preview.gram_price_trading/100"></i18n-n> €</div></detail-list-item>
-            <detail-list-item :title="$t('agio')" v-if="preview.fee!=0"><div slot="value"> <i18n-n :value="preview.fee/100"></i18n-n> €</div></detail-list-item>
-            <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
+            <detail-list-item :title="$t('course')"><div slot="value"> <i18n-n :value="preview.gram_price_trading/100"></i18n-n> {{ currency }}</div></detail-list-item>
+            <detail-list-item :title="$t('agio')" v-if="preview.fee!=0"><div slot="value"> <i18n-n :value="preview.fee/100"></i18n-n> {{ currency }}</div></detail-list-item>
+            <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> {{ currency }}</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <detail-list-item :title="$t('operation_stock')"><div slot="value"> <i18n-n :value="preview.operation_stock_balance/1000"></i18n-n> g</div></detail-list-item>
             
@@ -44,6 +44,7 @@ import {formatDateToApiFormat} from '../../../helpers/helpers';
 import {DatePicker,Checkbox,Input} from 'element-ui';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
 import { isPurchaseOrder } from '~/helpers/order';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         DetailListItem,
@@ -67,6 +68,15 @@ export default {
             transactionFeeBadValue : false
 
         }
+    },
+    computed: {
+        currency(){
+        let currency = undefined
+        if (this.order && this.order.currency) {
+            currency = this.order.currency
+        }
+        return getCurrencySymbol(currency);
+      },
     },
     mounted:function(){
         const today = new Date();

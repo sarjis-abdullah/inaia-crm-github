@@ -384,7 +384,7 @@ export default {
         },
         getCurrency(row){
           let currency = undefined
-          if (row?.currency) {
+          if (row && row.currency) {
               currency = row.currency
           }
           return getCurrencySymbol(currency);

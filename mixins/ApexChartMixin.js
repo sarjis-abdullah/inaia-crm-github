@@ -1,6 +1,7 @@
 import axios from "axios"
 import { mapGetters } from "vuex"
 import { parseFixed, paddingFractionTo2, paddingFractionTo3 } from '@/helpers/helpers'
+import { getCurrencySymbol } from "@/helpers/currency"
 
 const startingDate   = new Date()
 startingDate.setMonth(startingDate.getMonth() - 12)
@@ -37,7 +38,8 @@ export default {
                     labels: {
                         show: false,
                         formatter: function(val) {
-                            return vm.$n(val.toFixed(2))+' €'
+                            const currency = getCurrencySymbol(undefined)
+                            return vm.$n(val.toFixed(2))+' '+ currency
                         },
                     }
                 },

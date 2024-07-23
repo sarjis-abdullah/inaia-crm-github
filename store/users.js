@@ -109,4 +109,11 @@ export const actions = {
                 return response
             })
     },
+    handleForgetPassword(context, payload) {
+        return this.$axios
+            .post('/password-reset/request', payload)
+            .then(response => {
+                return response
+            })
+    },
 }

@@ -24,9 +24,9 @@
             <detail-list-item :title="$t('payment_accounts')" v-if="paymentMethod"><div slot="value"> {{$t(paymentMethod)}}</div></detail-list-item>
             <detail-list-item :title="$t('date')"><div slot="value"> {{$d(new Date(preview.gram_price_date),'short')}}</div></detail-list-item>
             <detail-list-item :title="$t('depot')"><div slot="value">{{order.depotName}}</div></detail-list-item>
-            <detail-list-item :title="$t('course')"><div slot="value"> <i18n-n :value="preview.gram_price_trading/100"></i18n-n> €</div></detail-list-item>
-            <detail-list-item :title="$t('agio')" v-if="preview.fee!=0"><div slot="value"> <i18n-n :value="preview.fee/100"></i18n-n> €</div></detail-list-item>
-            <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> €</div></detail-list-item>
+            <detail-list-item :title="$t('course')"><div slot="value"> <i18n-n :value="preview.gram_price_trading/100"></i18n-n> {{ currency }}</div></detail-list-item>
+            <detail-list-item :title="$t('agio')" v-if="preview.fee!=0"><div slot="value"> <i18n-n :value="preview.fee/100"></i18n-n> {{ currency }}</div></detail-list-item>
+            <detail-list-item :title="$t('amount')"><div slot="value"> <i18n-n :value="preview.money_amount/100"></i18n-n> {{ currency }}</div></detail-list-item>
             <detail-list-item :title="$t('gold_amount')"><div slot="value"> <i18n-n :value="preview.gram_amount/1000"></i18n-n> g</div></detail-list-item>
             <!--
             <detail-list-item :title="$t('depot_balance_before')"><div slot="value"><i18n-n :value="preview.depot_balance_before/100"></i18n-n> €</div></detail-list-item>
@@ -43,6 +43,7 @@ import Loader from '@/components/common/Loader/Loader';
 import TextError from '@/components/common/Errors/TextError';
 import PaymentAccountItem from '@/components/Orders/goldDetails/payments/PaymentAccountItem';
 import { apiErrorHandler } from '../../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     components:{
         DatePicker,
@@ -64,6 +65,15 @@ export default {
             preview:null,
             paymentMethod:null,
         }
+    },
+    computed: {
+        currency(){
+        let currency = undefined
+        if (this.order && this.order.currency) {
+            currency = this.order.currency
+        }
+        return getCurrencySymbol(currency);
+      },
     },
     mounted:function(){
         const today = new Date();

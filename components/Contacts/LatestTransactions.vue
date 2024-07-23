@@ -62,10 +62,10 @@
                                         <i18n-n :value="row.amount/1000"></i18n-n> g
                                     </span>
                                     <span class="status" v-else-if="row.unit == 'EUR'">
-                                        <i18n-n :value="parseInt(row.amount)/100"></i18n-n> €
+                                        <i18n-n :value="parseInt(row.amount)/100"></i18n-n> {{ getCurrency(row) }}
                                     </span>
                                     <span class="status" v-else-if="!row.unit">
-                                        <span>{{row.direction=='CREDIT'?'- ':''}}</span><i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> €
+                                        <span>{{row.direction=='CREDIT'?'- ':''}}</span><i18n-n :value="parseInt(row.money_amount)/100"></i18n-n> {{ getCurrency(row) }}
                                     </span>
                                 </template>
 
@@ -115,6 +115,7 @@ import OrderDetails from '@/components/Orders/Details';
 import BankStatus from '@/components/Banking/TransactionStatus';
 import BankingTransactionDetail from '@/components/Banking/BankingTransactionDetail/BankingTransactionDetail';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import { getCurrencySymbol } from '@/helpers/currency';
 export default {
     props:{
         account_id:{
@@ -190,7 +191,14 @@ export default {
             this.selectedOrder = null;
             this.showOrderDetails = false;
             this.showBankTransactionDetail = false;
-        }
+        },
+        getCurrency(row){
+            let currency = undefined
+            if (row && row) {
+                currency = row.currency
+            }
+            return getCurrencySymbol(currency);
+        },
     }
 }
 </script>
