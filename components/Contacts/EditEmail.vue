@@ -99,7 +99,15 @@ export default {
     submitClient() {
       this.isRequesting = true;
       let data = functionUpdateChannelAndGetObject(this.customer,'email',this.newEmail);
-      if (data.customer.account && !data.customer.account.password) {
+      if(!data){
+        this.$notify({
+            type: "danger",
+            timeout: 5000,
+            message: "No email was found to edit",
+          });
+          return;
+      }
+      if (data && data.customer && data.customer.account && !data.customer.account.password) {
         // if empty then keep the account table intact
         delete data.customer["account"];
         // if empty then keep the old passowrd
