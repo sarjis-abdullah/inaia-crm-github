@@ -794,4 +794,7 @@ export default {
     request_password_title:'Forgotten your password?',
     verified_at:'Verified At',
     verified_by:'Verified By',
+    password_reset_link_sent_successfully:'Password reset link sent successfully',
+    send_reset_password_link_confirmation: "Are you sure you want to send a reset password link to the user?",
+    reset_password:'Reset passwort',
 }

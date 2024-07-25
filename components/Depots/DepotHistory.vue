@@ -24,7 +24,9 @@
         prop="is_savings_plan"
       >
         <template v-slot="{ row }">
-          {{ row.is_savings_plan ? $t('saving_plan') : $t('no_saving_plan') }}
+          <span class="text-break">
+            {{ row.is_savings_plan ? $t('saving_plan') : $t('no_saving_plan') }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column :label="$t('agio_payment_option')" min-width="100px" prop="agio_payment_option">
@@ -46,6 +48,14 @@
       >
         <template v-slot="{ row }">
           <span>{{$n(row.interval_amount/100)}} {{ currency }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        v-bind:label="$t('paymentMethod')"
+        prop="paymentMethod"
+      >
+        <template>
+          <span class="text-break">{{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -98,6 +108,10 @@ export default {
     currency: {
       type: String,
       required: true,
+    },
+    paymentMethod: {
+      type: String,
+      required: false,
     },
   },
   components: {
