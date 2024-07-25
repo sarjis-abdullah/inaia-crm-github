@@ -14,8 +14,13 @@
             <div>
               <span class="mr-2"><i class="fa mr-1" :class="`${info.is_verified ? 'fa-check-circle text-success' : 'fa-times text-danger'}`"></i>{{ info.is_verified ? $t('verified') : $t('not_verified') }}</span>
             </div>
-            <div v-if="info.verifier_account_id" class="text-sm">{{ $t('verified_by') }}: {{ info.verifier_account_id }}</div>
-            <div v-if="info.verified_at" class="text-sm">{{ $t('verified_at') }}: {{ formatDateByMoment(info.verified_at, 'YYYY-MM-DD HH:MM:SS') }}</div>
+            <div v-if="info.verifier_account_id" class="d-flex text-sm" style="gap: 0.25rem;">
+              <span>{{ $t('verified_by') }}:</span> <UserInfo :accountId="info.verifier_account_id" :isLazy="true"/>
+            </div>
+            <div v-if="info.verified_at" class="d-flex text-sm" style="gap: 0.25rem;">
+              <span>{{ $t('verified_at') }}:</span>
+              <span>{{ formatDateByMoment(info.verified_at, 'YYYY-MM-DD HH:MM:SS') }}</span>
+            </div>
           </div>
         </div>
 
@@ -131,6 +136,7 @@ import {functionUpdateAccountAndGetObject} from '@/helpers/customer';
 import {formatDateByMoment} from '@/helpers/date';
 import { canEditCustomers } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
+import UserInfo from '@/components/Contacts/UserInfo';
 
 export default {
     props: {
@@ -147,7 +153,8 @@ export default {
       KycDocumentList,
       VerifyContact,
       EditSalesAdvisor,
-      UploadDocuments
+      UploadDocuments,
+      UserInfo
     },
     mounted(){
       this.$confirm = MessageBox.confirm
