@@ -795,4 +795,5 @@ export default {
     password_reset_link_sent_successfully:'Password reset link sent successfully',
     send_reset_password_link_confirmation: "Are you sure you want to send a reset password link to the user?",
     reset_password:'Reset passwort',
+    search_blacklist_user_placeholder:'Search: Name/email',
 }
