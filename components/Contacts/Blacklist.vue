@@ -183,7 +183,7 @@ export default {
       initiated: false,
       selectedResource: null,
       showConfirm: false,
-      perPage: 2,
+      perPage: 10,
       page: 1,
       totalTableData: 0,
       searchWords: null,

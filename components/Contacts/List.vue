@@ -149,15 +149,27 @@
                                   <span class="status">{{getAccountType(row)}}</span>
                               </template>
                           </el-table-column> -->
-
-
-                          <el-table-column>
-                              <template v-slot="{row}">
-
+                          <el-table-column min-width="100px">
+                            <template v-slot="{ row }">
                                 <icon-button type="info" @click="gotoDetails(row.contact)"></icon-button>
-
-                              </template>
-                          </el-table-column>
+                                <el-dropdown trigger="click" class="dropdown">
+                                    <span class="btn btn-sm btn-icon-only text-light">
+                                    <i class="fas fa-ellipsis-v mt-2"></i>
+                                    </span>
+                                    <el-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-arrow show"
+                                    slot="dropdown"
+                                    >
+                                    <a
+                                        class="dropdown-item"
+                                        @click.prevent="() => blacklistConfirm(row)"
+                                        href="#"
+                                        >{{ $t("Add to blacklist") }}</a
+                                    >
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                                </template>
+                            </el-table-column>
 
                         <!--
                         <el-table-column min-width="180px" >
@@ -209,6 +221,18 @@
                           <template slot="footer">
                               <base-button type="secondary" @click="showConfirm = false">Close</base-button>
                               <base-button type="danger" @click="remove(selectedResource)">Remove</base-button>
+                          </template>
+                      </modal>
+                      <modal :show.sync="showConfirmToBlacklisted">
+                          <template slot="header">
+                              <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                          </template>
+                          <div>
+                              Are you sure to add id "{{ selectedResource ? selectedResource.id : '' }}" into blacklist?
+                          </div>
+                          <template slot="footer">
+                              <base-button type="secondary" @click="showConfirm = false">Close</base-button>
+                              <base-button type="danger" @click="addToBlacklist(selectedResource)">Add to blacklist</base-button>
                           </template>
                       </modal>
 
@@ -270,6 +294,7 @@ export default {
             selectedSalesAdvisor:null,
             meta:null,
             isVerified:false,
+            showConfirmToBlacklisted:false,
         }
     },
 
@@ -362,6 +387,10 @@ export default {
             this.selectedResource   = resource
             this.showConfirm        = true
         },
+        blacklistConfirm(resource) {
+            this.selectedResource   = resource
+            this.showConfirmToBlacklisted        = true
+        },
         remove(resource) {
             this.showConfirm    = false
             this.$store
@@ -372,6 +401,13 @@ export default {
                     } else {
                         this.fetchClientData(this.searchQuery)
                     }
+                })
+        },
+        addToBlacklist(resource) {
+            this.showConfirmToBlacklisted    = false
+            this.$store
+                .dispatch('blacklist/addToBlacklist', resource.id)
+                .then( () => {
                 })
         },
         getChannelInfo(channels, type) {

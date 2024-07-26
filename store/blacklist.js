@@ -23,5 +23,12 @@ export const actions = {
             .then(response => {
                 return response
             })
+    },
+    addToBlacklist(context, payload) {
+        return this.$axios
+            .post(`/blacklist/create/${ payload }`)
+            .then(response => {
+                return response
+            })
     }
 }
