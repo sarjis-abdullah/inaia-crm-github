@@ -139,6 +139,7 @@
                                 <badge :type="`${row.contact.is_active ? 'success' : 'danger'}`">{{row.contact.is_active ? $t('active') : $t('inactive')}}</badge>
 
                                 <badge v-if="row.contact.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
+                                <badge v-if="row.contact.kyc_issue_id" type="danger">{{$t('blacklisted')}}</badge>
 
                               </template>
                           </el-table-column>
@@ -231,7 +232,7 @@
                               Are you sure to add id "{{ selectedResource ? selectedResource.id : '' }}" into blacklist?
                           </div>
                           <template slot="footer">
-                              <base-button type="secondary" @click="showConfirm = false">Close</base-button>
+                              <base-button type="secondary" @click="showConfirmToBlacklisted = false">Close</base-button>
                               <base-button type="danger" @click="addToBlacklist(selectedResource)">Add to blacklist</base-button>
                           </template>
                       </modal>
