@@ -796,4 +796,7 @@ export default {
     send_reset_password_link_confirmation: "Are you sure you want to send a reset password link to the user?",
     reset_password:'Reset passwort',
     search_blacklist_user_placeholder:'Search: Name/email',
+    blacklist_users: 'Blacklist users',
+    are_you_sure_you_want_to_delete_this_blacklisted_user: 'Are you sure you want to delete this blacklisted user?',
+    blacklisted: 'Blacklisted',
 }

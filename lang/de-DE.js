@@ -781,5 +781,9 @@ export default {
     request_password_title: "Passwort vergessen?",
     password_reset_link_sent_successfully:'Link zum Zurücksetzen des Passworts erfolgreich gesendet',
     reset_password:'Passwort zurücksetzen',
-    send_reset_password_link_confirmation: "Sind Sie sicher, dass Sie dem Benutzer einen Link zum Zurücksetzen des Passworts senden möchten?"
+    send_reset_password_link_confirmation: "Sind Sie sicher, dass Sie dem Benutzer einen Link zum Zurücksetzen des Passworts senden möchten?",
+    search_blacklist_user_placeholder: 'Suche: Name/E-Mail',
+    blacklist_users: 'Benutzer auf die Blacklist setzen',
+    are_you_sure_you_want_to_delete_this_blacklisted_user: 'Sind Sie sicher, dass Sie diesen blackgelisteten Benutzer löschen möchten?',
+    blacklisted: 'Blackgelistet'
 }

@@ -4,7 +4,7 @@
       <div class="row align-items-center py-4">
         <div class="col-lg-6 col-7">
           <h6 class="h2 text-white d-inline-block mb-0">
-            {{ $t("Blacklist users") }}
+            {{ $t("blacklist_users") }}
           </h6>
         </div>
       </div>
@@ -126,15 +126,17 @@
             </div>
             <modal :show.sync="showConfirm">
               <template slot="header">
-                <h5 class="modal-title" id="confirmModal">Confirmation</h5>
+                <h5 class="modal-title" id="confirmModal">
+                  {{ $t('Confirmation') }}
+                </h5>
               </template>
-              <div>Are you sure to delete this blacklisted user?</div>
+              <div>{{ $t('are_you_sure_you_want_to_delete_this_blacklisted_user') }}</div>
               <template slot="footer">
                 <base-button type="secondary" @click="showConfirm = false"
-                  >Close</base-button
+                  >{{$t('Close')}}</base-button
                 >
                 <base-button type="danger" @click="remove(selectedResource)"
-                  >Remove</base-button
+                  >{{$t('delete')}}</base-button
                 >
               </template>
             </modal>
