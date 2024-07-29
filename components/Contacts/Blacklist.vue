@@ -228,18 +228,13 @@ export default {
         this.$store
           .dispatch("blacklist/fetchData", pageQuery)
           .then((response) => {
-            console.log(response, "response");
-            if (response.data.data) {
+            if (response.data && response.data.data) {
               this.data = response.data.data;
               if (response.data.meta.total) {
                 this.totalTableData = response.data.meta.total;
                 this.meta = response.data.meta;
-              } else {
-                this.totalTableData = response.data.total;
-                this.meta = response.data;
               }
             }
-
             this.loading = false;
           })
           .finally(() => {
