@@ -408,8 +408,6 @@ export default {
             this.showConfirmToBlacklisted    = false
             this.$store
                 .dispatch('blacklist/addToBlacklist', resource.id)
-                .then( () => {
-                })
         },
         getChannelInfo(channels, type) {
             let channel = channels && channels.length && channels.find( c => c.type.value == type )
