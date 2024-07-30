@@ -140,6 +140,7 @@
           <sidebar-item :link="{ name: $t('support_ticket'), path: '/support-tickets' }" v-if="hasSupportTicketAccess"/>
         
           <sidebar-item :link="{ name: $t('pending_verifications'), path: '/pending-verifications',badge:totalPendingVerifications }" v-if="!isSalesAdvirsor"/>
+          <sidebar-item :link="{ name: $t('Blacklist'), path: '/blacklist-users' }"/>
         
         </sidebar-item>
 <!--
