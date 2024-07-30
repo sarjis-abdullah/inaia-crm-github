@@ -127,17 +127,21 @@
             <modal :show.sync="showConfirm">
               <template slot="header">
                 <h5 class="modal-title" id="confirmModal">
-                  {{ $t('Confirmation') }}
+                  {{ $t("Confirmation") }}
                 </h5>
               </template>
-              <div>{{ $t('are_you_sure_you_want_to_delete_this_blacklisted_user') }}</div>
+              <div>
+                {{
+                  $t("are_you_sure_you_want_to_delete_this_blacklisted_user")
+                }}
+              </div>
               <template slot="footer">
-                <base-button type="secondary" @click="showConfirm = false"
-                  >{{$t('Close')}}</base-button
-                >
-                <base-button type="danger" @click="remove(selectedResource)"
-                  >{{$t('delete')}}</base-button
-                >
+                <base-button type="secondary" @click="showConfirm = false">{{
+                  $t("Close")
+                }}</base-button>
+                <base-button type="danger" @click="remove(selectedResource)">{{
+                  $t("delete")
+                }}</base-button>
               </template>
             </modal>
           </div>
@@ -222,26 +226,27 @@ export default {
   },
   methods: {
     fetchData(pageQuery) {
-      if (!this.initiated) {
-        this.initiated = true;
-        this.loading = true;
-        this.$store
-          .dispatch("blacklist/fetchData", pageQuery)
-          .then((response) => {
-            if (response.data && response.data.data) {
-              this.data = response.data.data;
-              if (response.data.meta.total) {
-                this.totalTableData = response.data.meta.total;
-                this.meta = response.data.meta;
-              }
-            }
-            this.loading = false;
-          })
-          .finally(() => {
-            this.initiated = false;
-            this.loading = false;
-          });
+      if (this.initiated) {
+        return;
       }
+      this.initiated = true;
+      this.loading = true;
+      this.$store
+        .dispatch("blacklist/fetchData", pageQuery)
+        .then((response) => {
+          if (response.data && response.data.data) {
+            this.data = response.data.data;
+            if (response.data.meta.total) {
+              this.totalTableData = response.data.meta.total;
+              this.meta = response.data.meta;
+            }
+          }
+          this.loading = false;
+        })
+        .finally(() => {
+          this.initiated = false;
+          this.loading = false;
+        });
     },
     removeConfirm(resource) {
       this.selectedResource = resource;
