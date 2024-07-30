@@ -269,17 +269,13 @@ export default {
         });
     },
     onSearch(value) {
-      if (value != "") {
-        if (isEmail(value)) {
-          this.search = "email=" + value;
-        } else {
-          this.search = "name=" + value;
-        }
-
-        this.page = 1;
-      } else {
-        this.clearSearch();
+      if(value == '') {
+        this.clearSearch()
+        return
       }
+      const targetProp = isEmail(value) ? 'email=' : 'name='
+      this.search      = targetProp + value
+      this.page        = 1;
     },
     clearSearch() {
       this.search = "";
