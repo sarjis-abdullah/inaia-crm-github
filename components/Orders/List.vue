@@ -238,6 +238,9 @@ export default {
                 {
                     query+='&depot_ids='+this.depotSetId;
                 }
+                if (this.order_process_id > 0) {
+                    query+='&order_process_id='+this.order_process_id
+                }
                this.$store
                     .dispatch("orders/fetchList", query)
                     .then(response => {
