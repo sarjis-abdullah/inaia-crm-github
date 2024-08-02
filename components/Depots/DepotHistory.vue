@@ -52,10 +52,10 @@
       </el-table-column>
       <el-table-column
         v-bind:label="$t('paymentMethod')"
-        prop="paymentMethod"
+        prop="payment_method"
       >
-        <template>
-          <span class="text-break">{{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}</span>
+        <template v-slot="{ row }">
+          <span class="text-break">{{ row.payment_method ? $t(row.payment_method) : $t('unassigned')  }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -108,11 +108,7 @@ export default {
     currency: {
       type: String,
       required: true,
-    },
-    paymentMethod: {
-      type: String,
-      required: false,
-    },
+    }
   },
   components: {
     [Table.name]: Table,
