@@ -161,6 +161,48 @@ export const actions = {
 				return Promise.reject(error)
 			})
 	},
+	verifyMfa(context, payload) {
+        const { pin, token} = payload
+        const query = '?include=account,type,person_data,address,country,channels,account.roles,role.activePermissions,apps'
+		return this.$axios
+			.post('mfa/login/verify' + query, {pin}, {
+                headers: {
+                  'X-api-key': token
+                }
+            })
+			.then(response => {
+                let dt  = response.data.success
+                if (dt && hasAdminLoginAccess(dt.account.account)) {
+                    let st  = dt.account.account.settings,
+                        ad  = dt.account.address,
+                        lc  = st && st.find(s => s.name_translation_key == 'locale')
+
+                    context.commit('setAuth', dt.accessToken)
+                    context.commit('user', dt.account)
+                    if (lc && lc.value != context.state.locale) {
+                        context.commit('setLocale', lc.value)
+                    } else if (!lc && ad && ad.country) {
+                        context.commit('setLocale', ad.country.alpha2_code.toLowerCase())
+                    }
+                } else {
+                    throw "Unauthorized"
+                }
+				return response
+			})
+			.catch(error => {
+				return Promise.reject(error)
+			})
+	},
+	initialLogin(context, payload) {
+		return this.$axios
+			.post('/authenticate?for=admin', payload)
+			.then(response => {
+				return response
+			})
+			.catch(error => {
+				return Promise.reject(error)
+			})
+	},
 
     refreshAvatar(context, payload) {
         return this.$axios
