@@ -139,7 +139,7 @@
                                 <badge :type="`${row.contact.is_active ? 'success' : 'danger'}`">{{row.contact.is_active ? $t('active') : $t('inactive')}}</badge>
 
                                 <badge v-if="row.contact.is_locked" type="danger"><i class="lnir lnir-lock-alt"></i>{{$t('locked')}}</badge>
-                                <badge v-if="row.contact.kyc_issue_id" type="danger">{{$t('blacklisted')}}</badge>
+                                <badge v-if="row.contact.kyc_issue_id" type="danger">{{$t(getKycIssue(row.contact.kyc_issue_id))}}</badge>
 
                               </template>
                           </el-table-column>
@@ -501,6 +501,15 @@ export default {
                 return label;
             }
         },
+        getKycIssue(kyc_issue_id){
+            //todo, Khalid will change API response
+            if (kyc_issue_id == 1) {
+                return 'kyc_name_mismatched'
+            }else if (kyc_issue_id == 2) {
+                return 'kyc_blacklisted'
+            }
+            return 'kyc_falied'
+        }
     }
 }
 </script>
