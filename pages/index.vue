@@ -109,7 +109,7 @@
               </div>
               <div class="text-center" style="margin-top: 1rem;">
                 <div>
-                  <img src="~/static/pinscreen.jpg" alt="personal info" class="w-32 h-auto mb-5 mx-auto"/>
+                  <img src="~/static/pinscreen.jpg" alt="personal info" class="w-32 h-auto mb-4 mx-auto"/>
                   <h2 class="text-center mb-8 text-xl">
                     <span v-if="primaryResponse?.method">{{$t(getMethodWiseText(primaryResponse.method))}}</span>
                   </h2>              
@@ -372,16 +372,10 @@
         }
       },
       getMethodWiseText (method) {
-        switch(method){
-          case CONFIRMATION_METHOD_MOBILE_PIN:
-            return 'mobile_pin_verify_able_message';
-          case CONFIRMATION_METHOD_EMAIL:
-            return 'email_verify_able_message';
-          case CONFIRMATION_METHOD_SMS:
-            return 'sms_verify_able_message';
-          default:
-            return 'two_fa_verify_able_message'
+        if (method == CONFIRMATION_METHOD_EMAIL) {
+          return 'email_verify_able_message';
         }
+        return 'two_fa_verify_able_message'
       },
       closeMfa(){
         this.showCodeInput = false
@@ -447,5 +441,8 @@
 }
 .h-8 {
   height: 2rem;
+}
+.mb-8 {
+  margin-bottom: 2rem !important;
 }
 </style>

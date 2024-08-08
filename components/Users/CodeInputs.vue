@@ -1,5 +1,5 @@
 <template>
-    <div class="form-row">
+    <div class="form-row justify-content-center">
       <div class="col-auto">
         <input type="text" class="form-control text-center" maxlength="1" autofocus v-model="state.digit1" @paste="onPaste" @keyup="(value) => onChange(value, 0)" ref="digit1Input" />
       </div>
