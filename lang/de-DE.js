@@ -789,5 +789,8 @@ export default {
     are_you_sure_you_want_to_delete_this_blacklisted_user: 'Sind Sie sicher, dass Sie diesen blackgelisteten Benutzer löschen möchten?',
     kyc_blacklisted: 'Blackgelistet',
     kyc_name_mismatched: 'Name stimmt nicht überein',
-    kyc_failed: 'KYC fehlgeschlagen'
+    kyc_failed: 'KYC fehlgeschlagen',
+    choose_other_confirming_method: "Wählen Sie eine andere Bestätigungsmethode:",
+    email_verify_able_message: "Um Ihr Konto zu verifizieren, bestätigen Sie es bitte mit dem Code, der an Ihre E-Mail gesendet wurde",
+    two_fa_verify_able_message:  "Öffne deine Authenticator-App und bestätige die Anmeldung mit einem gültigen Code."
 }
