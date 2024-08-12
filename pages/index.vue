@@ -91,7 +91,8 @@
           <div v-else class="card bg-secondary border-0 mb-0">
             <div class="card-body px-lg-5 py-lg-5">
               <div class="flex flex-row w-full">
-                <a @click="closeMfa" class="cursor-pointer"><svg
+                <a @click="closeMfa" class="cursor-pointer">
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -110,21 +111,28 @@
               <div class="text-center" style="margin-top: 1rem;">
                 <div>
                   <img src="~/static/pinscreen.jpg" alt="personal info" class="w-32 h-auto mb-4 mx-auto"/>
-                  <h2 class="text-center mb-8 text-xl">
+                  <h2 class="text-center mb-8 font-normal">
                     <span v-if="primaryResponse?.method">{{$t(getMethodWiseText(primaryResponse.method))}}</span>
                   </h2>              
                 </div>
-                <CodeInputs @complete="verifyMfa" :length="codeInputLength" />
-                <div v-if="alternativeMethods?.length && !isRequesting" class="mt-8">
-                  <p>{{ $t('choose_other_confirming_method') }}</p>
-                  <ul>
-                    <!-- <li v-for="(method, index) in alternativeMethods" :key="index" 
-                        @click="selectAlternativeMethod(method)" 
-                        class="cursor-pointer underline text-blue-500">
-                      {{ getMethod(method) }}
-                    </li> -->
-                  </ul>
-                </div>
+                <template v-if="!isRequesting">
+                  <CodeInputs @complete="verifyMfa" :length="codeInputLength" />
+                  <div v-if="alternativeMethods?.length && !isRequesting" class="mt-8">
+                    <p>{{ $t('choose_other_confirming_method') }}</p>
+                    <ul>
+                      <li v-for="(method, index) in alternativeMethods" :key="index" 
+                          @click="selectAlternativeMethod(method)" 
+                          class="cursor-pointer underline text-blue-500">
+                        {{ getMethod(method) }}
+                      </li>
+                    </ul>
+                  </div>
+                </template>
+                <template v-else-if="isRequesting">
+                  <div class="text-center">
+                    <Loader />
+                  </div>
+                </template>
               </div>
               <!-- <validation-observer ref="observer" v-slot="{ invalid, handleSubmit }">
                 <div v-if="failed" class="text-center text-danger mb-2">{{ failed }}</div>
@@ -172,12 +180,14 @@
   import { mapGetters } from "vuex"
   import { redirectPost } from "~/helpers/auth"
   import CodeInputs from "~/components/Users/CodeInputs"
+  import Loader from "~/components/common/Loader/Loader.vue"
   import appNames from '../appNames'
   import { CODE_INPUT_LENGTH_FOUR, CODE_INPUT_LENGTH_SIX, CONFIRMATION_METHOD_EMAIL, CONFIRMATION_METHOD_MOBILE_PIN, CONFIRMATION_METHOD_SMS, CONFIRMATION_METHOD_TWO_FA } from '@/helpers/constants.js';
   export default {
     layout: 'AuthLayout',
     components: {
       CodeInputs,
+      Loader,
     },
     data() {
       return {
@@ -192,6 +202,7 @@
         primaryResponse: null,
         codeInputLength: CODE_INPUT_LENGTH_FOUR,
         showCodeInput: false,
+        loginMethod: CONFIRMATION_METHOD_TWO_FA
       };
     },
     computed: {
@@ -204,7 +215,7 @@
         const object = {
           username: this.username,
           password: this.password,
-          method: CONFIRMATION_METHOD_TWO_FA,
+          method: this.loginMethod,
         }
         return object
       },
@@ -225,6 +236,9 @@
           return "bg-gradient-info"
       },
       alternativeMethods(){
+        if(this.primaryResponse && this.primaryResponse.alternativeMethods && this.primaryResponse.alternativeMethods.length){
+        return this.primaryResponse.alternativeMethods
+      }
         return []
       }
     },
@@ -323,6 +337,7 @@
       },
       async initialLogin(){
         try{
+            this.failed = ""
             this.isRequesting   = true
             // const response = await initialLogin(loginData.value);
             const response = await this.$store.dispatch('auth/initialLogin', this.loginData)
@@ -333,13 +348,6 @@
                 this.codeInputLength = CODE_INPUT_LENGTH_SIX
               }else{
                 this.codeInputLength = CODE_INPUT_LENGTH_FOUR
-              }
-              if(response.method == CONFIRMATION_METHOD_MOBILE_PIN){
-                // interval.value = setInterval(() => {
-                //   verifyMfa()
-                // }, timeIntervalInSec.value);
-              }else {
-                // clearThisInterval()
               }
             }
         }
@@ -380,6 +388,10 @@
       closeMfa(){
         this.showCodeInput = false
         // error.value = null
+      },
+      selectAlternativeMethod(method) {
+        this.loginMethod = method
+        initialLogin()
       },
       async verifyMfa(code){
         try{
@@ -444,5 +456,11 @@
 }
 .mb-8 {
   margin-bottom: 2rem !important;
+}
+.font-normal {
+  font-weight: normal;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
