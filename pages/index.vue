@@ -115,7 +115,7 @@
                     <span v-if="primaryResponse?.method">{{$t(getMethodWiseText(primaryResponse.method))}}</span>
                   </h2>              
                 </div>
-                <template v-if="!isRequesting">
+                <template v-if="!isRequesting && !showOnlyLoading">
                   <CodeInputs @complete="verifyMfa" :length="codeInputLength" />
                   <div v-if="alternativeMethods?.length && !isRequesting" class="mt-8">
                     <p>{{ $t('choose_other_confirming_method') }}</p>
@@ -128,7 +128,7 @@
                     </ul>
                   </div>
                 </template>
-                <template v-else-if="isRequesting">
+                <template v-else>
                   <div class="text-center">
                     <Loader />
                   </div>
@@ -202,6 +202,7 @@
         primaryResponse: null,
         codeInputLength: CODE_INPUT_LENGTH_FOUR,
         showCodeInput: false,
+        showOnlyLoading: false,
         loginMethod: CONFIRMATION_METHOD_TWO_FA
       };
     },
@@ -404,7 +405,7 @@
               token
             }
             const response = await this.$store.dispatch('auth/verifyMfa', object);
-            // showOnlyLoading.value = true
+            this.showOnlyLoading = true
             this.primaryResponse = null
             console.log(response.data, 'response.data');
             if(response.data.success.account && response.data.success.account.account && response.data.success.account.account.type.value === "customer") {
