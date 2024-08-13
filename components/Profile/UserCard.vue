@@ -83,6 +83,20 @@
             <div><i class="ni education_hat mr-2"></i>University of Computer Science</div>
             -->
           </div>
+          <div class="text-center">
+            <div class="d-flex justify-content-center gap-4">
+              <dt class="font-medium">
+                Two Factor Authentication
+              </dt>
+              <div>
+                <span v-if="hasTwoFaEnabled">{{$t('two_fa_enabled_message')}}</span>
+                <span v-else>{{$t('two_fa_disabled_message')}}</span>
+              </div>
+              <button type="button" class="btn btn-sm btn-primary" @click="showTwoFaConfirmation = !showTwoFaConfirmation">
+                {{ hasTwoFaEnabled ? $t('disable_2fa') : $t('enable_2fa') }}
+              </button>
+            </div>
+          </div>
 
           
           <div class="mt-5 py-5 border-top text-center">
@@ -145,12 +159,22 @@
       -->
 
     </div>
+   
+    <TwoFaConfirmation 
+      v-if="showTwoFaConfirmation"
+      :hasTwoFaEnabled="hasTwoFaEnabled" 
+      :show="showTwoFaConfirmation" 
+      @disable="disableTwoFA"
+      @cancel="toggleTwoFaConfirmationModal" 
+      @enable="enableTwoFA" />
+      
   </div>
 </template>
 <script>
 import RefreshAvatarMixin from '~/mixins/RefreshAvatarMixin'
 import { mapGetters } from "vuex"
 import ProfilePhoto from '@/components/common/ProfilePhoto'
+import TwoFaConfirmation from '@/components/Profile/TwoFaConfirmation'
 import Modal from '@/components/argon-core/Modal'
 import { hasMaxAccess, avatar, anonymousUserAvatar, notifyError } from '@/helpers/auth'
 import Loading from 'vue-loading-overlay'
@@ -164,7 +188,8 @@ export default {
         ProfilePhoto,
         Modal,
         Loading,
-        Upload
+        Upload,
+        TwoFaConfirmation
     },
     mixins: [
         RefreshAvatarMixin
@@ -176,7 +201,9 @@ export default {
             photo: null,
             selectedLocale: null,
             fullPage: true,
-            isSubmitting:false
+            isSubmitting:false,
+            twoFaEnabled:false,
+            showTwoFaConfirmation: false
         }
     },
     computed: {
@@ -261,6 +288,15 @@ export default {
                 age--
             }
             return age
+        },
+        hasTwoFaEnabled () {
+          if (this.twoFaEnabled) {
+            return true
+          }
+          // if (account.value?.account?.settings?.length) {
+          //   return account.value.account.settings.some(s => s.name_translation_key == MFA_SECRET_TRANSLATION_KEY)
+          // }
+          return false
         }
     },
     watch: {
@@ -341,8 +377,27 @@ export default {
             }
         },
         submitUpload() {
-      this.$refs.upload.submit();
-    },
+          this.$refs.upload.submit();
+        },
+        // twoFaEnabled = ref(false)
+        toggleTwoFaConfirmationModal(data) {
+          this.showTwoFaConfirmation = false;
+          if (data?.id) {
+            this.twoFaEnabled = true
+            // account.value = data
+          }
+        },
+        enableTwoFA(data) {
+          toggleTwoFaConfirmationModal(data)
+        },
+        disableTwoFA() {
+          this.showTwoFaConfirmation = false;
+          this.twoFaEnabled = false
+          // if (account.value?.account?.settings?.length) {
+          //   const settings = account.value.account.settings.filter(item => item.name_translation_key != MFA_SECRET_TRANSLATION_KEY)
+          //   account.value.account.settings = settings
+          // } 
+        }
     }
 
 }
@@ -393,5 +448,8 @@ export default {
 .custom-avatar {
   height: 140px; 
   width: 140px;
+}
+.gap-4 {
+  gap: 1rem;
 }
 </style>
