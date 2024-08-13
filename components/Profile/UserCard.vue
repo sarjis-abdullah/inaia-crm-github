@@ -182,6 +182,7 @@ import 'vue-loading-overlay/dist/vue-loading.css'
 import { redirectPost } from "~/helpers/auth"
 import { Upload } from "element-ui";
 import { toBase64 } from '../../helpers/helpers'
+import { MFA_SECRET_TRANSLATION_KEY } from '@/helpers/constants'
 
 export default {
     components: {
@@ -293,9 +294,10 @@ export default {
           if (this.twoFaEnabled) {
             return true
           }
-          // if (account.value?.account?.settings?.length) {
-          //   return account.value.account.settings.some(s => s.name_translation_key == MFA_SECRET_TRANSLATION_KEY)
-          // }
+          const settings = this.info && this.info.account ? this.info.account.settings : null
+          if (settings && settings.length) {
+            return settings.some(s => s.name_translation_key == MFA_SECRET_TRANSLATION_KEY)
+          }
           return false
         }
     },
@@ -393,10 +395,11 @@ export default {
         disableTwoFA() {
           this.showTwoFaConfirmation = false;
           this.twoFaEnabled = false
-          // if (account.value?.account?.settings?.length) {
-          //   const settings = account.value.account.settings.filter(item => item.name_translation_key != MFA_SECRET_TRANSLATION_KEY)
-          //   account.value.account.settings = settings
-          // } 
+          const settings = this.info && this.info.account ? this.info.account.settings : null
+          if (settings && settings.length) {
+            const settings = settings.filter(item => item.name_translation_key != MFA_SECRET_TRANSLATION_KEY)
+            this.$store.dispatch('auth/updateUserSettings', settings)
+          }
         }
     }
 

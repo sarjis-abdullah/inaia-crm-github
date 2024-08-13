@@ -6,9 +6,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-title">
-          <div class="d-flex align-items-center">
+          <div class="d-flex">
             <div
-              class="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white"
+              class="d-flex justify-content-center rounded-circle bg-danger text-white"
               style="width: 40px; height: 40px"
             >
               <ExclamationTriangleIcon
@@ -16,13 +16,23 @@
                 aria-hidden="true"
               />
             </div>
-            <h5 class="ml-3 mb-0">
-              {{
-                hasTwoFaEnabled
-                  ? $t("confirm_disable_two_factor_authentication")
-                  : $t("confirm_enable_two_factor_authentication")
-              }}
-            </h5>
+            <article class="ml-3 mb-0">
+              <h5>
+                {{
+                  hasTwoFaEnabled
+                    ? $t("confirm_disable_two_factor_authentication")
+                    : $t("confirm_enable_two_factor_authentication")
+                }}
+              </h5>
+              <div class="">
+                <p class="text-sm text-gray-500" v-if="hasTwoFaEnabled">
+                  {{ $t("do_you_want_to_disable_two_factor_authentication?") }}
+                </p>
+                <p class="text-sm text-gray-500" v-else>
+                  {{ $t("do_you_want_to_enable_two_factor_authentication?") }}
+                </p>
+              </div>
+            </article>
           </div>
         </div>
       </div>
@@ -77,15 +87,7 @@
             </div>
           </div>
         </div>
-        <button
-          v-if="!hasTwoFaEnabled"
-          type="button"
-          :disabled="isLoading"
-          class="btn btn-primary"
-          @click="svgContent ? enable() : confrim()"
-        >
-          {{ svgContent && !isLoading ? $t("ok") : $t("confirm") }}
-        </button>
+
         <button
           v-if="!svgContent"
           type="button"
@@ -96,9 +98,18 @@
         >
           {{ $t("cancel") }}
         </button>
+        <button
+          v-if="!hasTwoFaEnabled"
+          type="button"
+          :disabled="isLoading"
+          class="btn btn-primary"
+          @click="svgContent ? enable() : confrim()"
+        >
+          {{ svgContent && !isLoading ? $t("ok") : $t("confirm") }}
+        </button>
       </div>
     </div>
-    <template #footer>
+    <!-- <template #footer>
       <button
         type="button"
         class="btn btn-primary"
@@ -117,7 +128,7 @@
       >
         Close
       </button>
-    </template>
+    </template> -->
   </modal>
 </template>
 <script>
@@ -171,14 +182,14 @@ export default {
   computed: {
     computedAccountId() {
       return null;
-    //   return AccountStorage.getContactId();
+      //   return AccountStorage.getContactId();
     },
   },
   watch: {
-    computedAccountId(newVal) {
-      this.accountId = newVal;
-      this.loadAccount();
-    },
+    // computedAccountId(newVal) {
+    //   this.accountId = newVal;
+    //   this.loadAccount();
+    // },
   },
   methods: {
     cancel() {
@@ -192,8 +203,8 @@ export default {
     async loadAccount() {
       try {
         if (this.accountId) {
-          this.account = await AccountService.loadAccount(this.accountId);
-          AccountStorage.saveAccount(this.account);
+          //   this.account = await AccountService.loadAccount(this.accountId);
+          //   AccountStorage.saveAccount(this.account);
         }
       } catch (error) {
         console.error(error);
@@ -203,9 +214,10 @@ export default {
       try {
         this.isLoading = true;
         this.showCodeInput = false;
-        const res = await AccountService.enableTwoFA();
+        const res = this.$axios.post(`mfa/init`)
+        // const res = await AccountService.enableTwoFA();
         this.svgContent = res.qrCode;
-        await this.loadAccount();
+        // await this.loadAccount();
       } catch (error) {
         this.serverErrorMsg = error.message ?? "";
       } finally {
@@ -219,7 +231,7 @@ export default {
         const res = await AccountService.disableTwoFA(obj);
         this.svgContent = res.qrCode;
         this.$emit("disable");
-        await this.loadAccount();
+        // await this.loadAccount();
       } catch (error) {
         console.log(error.status, error);
         this.serverErrorMsg = error.message ?? "";
@@ -229,8 +241,8 @@ export default {
     },
   },
   created() {
-    this.accountId = this.computedAccountId;
-    this.loadAccount();
+    // this.accountId = this.computedAccountId;
+    // this.loadAccount();
   },
 };
 </script>

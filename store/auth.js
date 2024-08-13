@@ -89,6 +89,9 @@ export const mutations = {
 
     loading(state, bool) {
         state.loading = bool
+    },
+    updateUserSettings(state, settings) {
+        state.user.account.settings = settings
     }
 }
 
@@ -229,7 +232,10 @@ export const actions = {
 
     unauthorize(context) {
         resetState(context.commit)
-    }
+    },
+    updateUserSettings(context, settings) {
+        context.commit('updateUserSettings', settings)
+    },
 }
 
 function resetState(commit) {
