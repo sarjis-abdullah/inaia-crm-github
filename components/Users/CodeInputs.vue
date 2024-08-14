@@ -116,7 +116,6 @@ export default {
   width: 3rem;
   height: 3.5rem;
   font-size: 1.5rem;
-  margin: 0.5rem;
   text-align: center;
 }
 </style>  

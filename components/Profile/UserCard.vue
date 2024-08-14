@@ -381,25 +381,15 @@ export default {
         submitUpload() {
           this.$refs.upload.submit();
         },
-        // twoFaEnabled = ref(false)
-        toggleTwoFaConfirmationModal(data) {
+        toggleTwoFaConfirmationModal() {
           this.showTwoFaConfirmation = false;
-          if (data?.id) {
-            this.twoFaEnabled = true
-            // account.value = data
-          }
         },
-        enableTwoFA(data) {
-          toggleTwoFaConfirmationModal(data)
+        enableTwoFA() {
+          this.showTwoFaConfirmation = false;
         },
         disableTwoFA() {
           this.showTwoFaConfirmation = false;
           this.twoFaEnabled = false
-          const settings = this.info && this.info.account ? this.info.account.settings : null
-          if (settings && settings.length) {
-            const settings = settings.filter(item => item.name_translation_key != MFA_SECRET_TRANSLATION_KEY)
-            this.$store.dispatch('auth/updateUserSettings', settings)
-          }
         }
     }
 

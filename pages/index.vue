@@ -345,7 +345,7 @@
             this.showCodeInput = true
             if (response) {
               this.primaryResponse = response.data
-              if(response.method == CONFIRMATION_METHOD_TWO_FA){
+              if(response.data.method == CONFIRMATION_METHOD_TWO_FA){
                 this.codeInputLength = CODE_INPUT_LENGTH_SIX
               }else{
                 this.codeInputLength = CODE_INPUT_LENGTH_FOUR

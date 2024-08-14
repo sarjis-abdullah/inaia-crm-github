@@ -1,5 +1,12 @@
 <template>
-  <modal :show.sync="show" :show-close="true" modal-classes="modal-secondary">
+  <modal
+    :show.sync="show"
+    class="orderModal"
+    headerClasses=""
+    bodyClasses="pt-0"
+    footerClasses="border-top bg-secondary"
+    :allowOutSideClose="false"
+  >
     <template #header>
       <h5>
         {{
@@ -20,42 +27,36 @@
         <Loading />
       </div>
       <div v-else>
-        <div v-if="serverErrorMsg" class="alert alert-danger">
-          <ExclamationTriangleIcon class="mr-2" />
+        <div v-if="serverErrorMsg" class="alert alert-danger text-white">
           {{ serverErrorMsg }}
         </div>
-        <!-- <div v-if="svgContent" v-html="svgContent"></div>
-          <code-inputs v-if="showCodeInput" @confirm="confirmDisableTwofa" />
-          <check-circle-icon v-if="!hasTwoFaEnabled" @click="confrim" />
-          <check-circle-icon v-if="hasTwoFaEnabled" @click="cancel" /> -->
       </div>
     </div>
     <div v-if="hasTwoFaEnabled && !isLoading && showCodeInput" class="w-100">
-      <div class="alert alert-warning text-center">
+      <div class="text-sm text-center">
         {{ $t("enter_6_digit_code_to_confirm_disable_two_fa") }}
       </div>
-      <div class="d-flex justify-content-center">
+      <div class="d-flex justify-content-center mt-4">
         <CodeInputs @complete="confirmDisableTwofa" :length="6" />
       </div>
-      <div class="alert alert-warning text-center mt-4">
+      <div class="text-sm text-center mt-4">
         {{ $t("two_fa_disable_warning_message") }}
       </div>
     </div>
     <div v-else-if="!isLoading && svgContent && !hasTwoFaEnabled" class="w-100">
       <div class="text-center">
-        <p>
+        <p class="text-sm">
           {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
         </p>
         <picture>
           <div v-html="svgContent" v-if="svgContent"></div>
         </picture>
-        <div class="alert alert-success mt-3">
-          <check-circle-icon class="mr-2" />
+        <div class="alert alert-success">
           {{ $t("two_factor_authentication_enabled_success") }}
         </div>
         <div>
-          <p>{{ $t("enter_6_digit_code_prompt") }}</p>
-          <p>{{ $t("keep_mobile_device_secure") }}</p>
+          <p class="text-sm">{{ $t("enter_6_digit_code_prompt") }}</p>
+          <p class="text-sm mt-2">{{ $t("keep_mobile_device_secure") }}</p>
         </div>
       </div>
     </div>
@@ -70,42 +71,35 @@
       >
         {{ $t("cancel") }}
       </button>
-      <button
-        v-if="!hasTwoFaEnabled"
-        type="button"
-        :disabled="isLoading"
-        class="btn btn-primary"
-        @click="svgContent ? enable() : confrim()"
-      >
-        {{ svgContent && !isLoading ? $t("ok") : $t("confirm") }}
-      </button>
+      <template v-if="!hasTwoFaEnabled">
+        <button
+          v-if="!confirmed"
+          type="button"
+          :disabled="isLoading"
+          class="btn btn-primary"
+          @click="confirmEnableTwoFa()"
+        >
+          {{ $t("confirm") }}
+        </button>
+        <button
+          v-if="confirmed"
+          type="button"
+          :disabled="isLoading"
+          class="btn btn-primary"
+          @click="submit()"
+        >
+          {{ $t("submit") }}
+        </button>
+      </template>
     </template>
   </modal>
 </template>
 <script>
-// import {
-//   Dialog,
-//   DialogPanel,
-//   DialogTitle,
-//   TransitionChild,
-//   TransitionRoot,
-// } from "@headlessui/vue";
-// import {
-//   ExclamationTriangleIcon,
-//   CheckCircleIcon,
-// } from "@heroicons/vue/24/outline";
 import Loading from "@/components/common/Loader/Loader.vue";
 import CodeInputs from "@/components/Users/CodeInputs";
 
 export default {
   components: {
-    // Dialog,
-    // DialogPanel,
-    // DialogTitle,
-    // TransitionChild,
-    // TransitionRoot,
-    // ExclamationTriangleIcon,
-    // CheckCircleIcon,
     Loading,
     CodeInputs,
   },
@@ -127,6 +121,7 @@ export default {
       svgContent: "",
       showCodeInput: true,
       isLoading: false,
+      confirmed: false,
       serverErrorMsg: "",
     };
   },
@@ -153,43 +148,55 @@ export default {
     },
     async loadAccount() {
       try {
-        if (this.accountId) {
-          //   this.account = await AccountService.loadAccount(this.accountId);
-          //   AccountStorage.saveAccount(this.account);
-        }
+        await this.$store.dispatch("auth/fetchLoggedIn");
       } catch (error) {
         console.error(error);
       }
     },
-    async confrim() {
+    async submit() {
+      try {
+        this.isLoading = true;
+        await this.loadAccount();
+        this.$emit("enable");
+      } catch (error) {
+        this.handleError(error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async confirmEnableTwoFa() {
       try {
         this.serverErrorMsg = "";
         this.isLoading = true;
         this.showCodeInput = false;
         const res = await this.$axios.post(`mfa/init`);
-        console.log(res, "res");
-        // const res = await AccountService.enableTwoFA();
         this.svgContent = res.data.qrCode;
-        // await this.loadAccount();
+        this.confirmed = true;
       } catch (error) {
-        this.serverErrorMsg = error.message ?? "";
+        this.handleError(error);
       } finally {
         this.isLoading = false;
       }
     },
     async confirmDisableTwofa(code) {
+      this.confirmed = false;
       try {
         this.isLoading = true;
         const obj = { pin: code };
-        const res = await AccountService.disableTwoFA(obj);
-        this.svgContent = res.qrCode;
+        const res = await this.$axios.post(`mfa/reset`, obj);
         this.$emit("disable");
-        // await this.loadAccount();
+        await this.loadAccount();
       } catch (error) {
-        console.log(error.status, error);
-        this.serverErrorMsg = error.message ?? "";
+        this.handleError(error);
       } finally {
         this.isLoading = false;
+      }
+    },
+    handleError(error) {
+      if (error.response && error.response.data && error.response.data.message)
+        this.serverErrorMsg = error.response.data.message;
+      else {
+        this.serverErrorMsg = error.message ? error.message : "";
       }
     },
   },
@@ -200,7 +207,14 @@ export default {
 };
 </script>
 <style scoped>
-.modal-dialog {
-  max-width: 600px;
+.orderModal {
+  overflow-y: auto;
+}
+.text-sm {
+  font-size: 14px !important;
+  margin-bottom: 0;
+}
+.modal-header {
+  padding-bottom: 0.5rem !important;
 }
 </style>
