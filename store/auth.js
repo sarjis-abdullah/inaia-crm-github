@@ -198,7 +198,7 @@ export const actions = {
 	},
 	initialLogin(context, payload) {
 		return this.$axios
-			.post('/authenticate?for=admin', payload)
+			.post('/authenticate', payload)
 			.then(response => {
 				return response
 			})

@@ -45,22 +45,27 @@
     </div>
     <div v-else-if="!isLoading && svgContent && !hasTwoFaEnabled" class="w-100">
       <div class="text-center">
-        <p class="text-sm">
-          {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
-        </p>
-        <picture>
-          <div v-html="svgContent" v-if="svgContent"></div>
-        </picture>
-        <div class="alert alert-success">
+        <template v-if="svgContent">
+          <p class="text-sm">
+            {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
+          </p>
+          <picture>
+            <div v-html="svgContent"></div>
+          </picture>
+        </template>
+        <CodeInputs v-if="confirmed" @complete="submit" :length="6" />
+        <template v-if="confirmed">
+          <div>
+            <p class="text-sm mt-4">{{ $t("enter_6_digit_code_prompt") }}</p>
+            <p class="text-sm mt-2">{{ $t("keep_mobile_device_secure") }}</p>
+          </div>
+        </template>
+        <div v-else class="alert alert-success">
           {{ $t("two_factor_authentication_enabled_success") }}
-        </div>
-        <div>
-          <p class="text-sm">{{ $t("enter_6_digit_code_prompt") }}</p>
-          <p class="text-sm mt-2">{{ $t("keep_mobile_device_secure") }}</p>
         </div>
       </div>
     </div>
-    <template #footer>
+    <template #footer v-if="!confirmed">
       <button
         v-if="!svgContent"
         type="button"
@@ -73,7 +78,6 @@
       </button>
       <template v-if="!hasTwoFaEnabled">
         <button
-          v-if="!confirmed"
           type="button"
           :disabled="isLoading"
           class="btn btn-primary"
@@ -81,7 +85,7 @@
         >
           {{ $t("confirm") }}
         </button>
-        <button
+        <!-- <button
           v-if="confirmed"
           type="button"
           :disabled="isLoading"
@@ -89,7 +93,7 @@
           @click="submit()"
         >
           {{ $t("submit") }}
-        </button>
+        </button> -->
       </template>
     </template>
   </modal>
@@ -125,18 +129,6 @@ export default {
       serverErrorMsg: "",
     };
   },
-  computed: {
-    computedAccountId() {
-      return null;
-      //   return AccountStorage.getContactId();
-    },
-  },
-  watch: {
-    // computedAccountId(newVal) {
-    //   this.accountId = newVal;
-    //   this.loadAccount();
-    // },
-  },
   methods: {
     cancel() {
       this.$emit("cancel", this.account);
@@ -158,6 +150,9 @@ export default {
         this.isLoading = true;
         await this.loadAccount();
         this.$emit("enable");
+        this.confirmed = false;
+
+        this.svgContent = "";
       } catch (error) {
         this.handleError(error);
       } finally {
