@@ -8,9 +8,10 @@
     <div class="px-3 pb-3">
       <div class="message-area" id="note-area">
         <div
-          v-for="comment in comments"
+          v-for="(comment, index) in comments"
           :key="comment.id"
-          class="d-flex flex-column notebox p-2 mt-3"
+          class="d-flex flex-column notebox p-2"
+          :class="index != 0 && 'mt-3'"
           :id="'message-' + comment.id"
         >
           <h4>
@@ -93,7 +94,7 @@ export default {
       page: 1,
       note: null,
       isSending: false,
-      perPage: 1,
+      perPage: 10,
       lastPage: 1,
       isLoading: false,
     };
