@@ -54,7 +54,6 @@
 
                       <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
-                      <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                       <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
                       <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
                       <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
@@ -191,12 +190,7 @@
           <div class="col-xl-4 col-md-6">
             <div class="card border-0">
               <div class="card-body card-body__commnets-wrapper">
-                
                 <CommentBox :depot="depot" />
-                <!-- <div class="mt-3 mb-0 text-sm">
-                  <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
-                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n>{{ currency }}</div>
-                </div> -->
               </div>
             </div>
           </div>
@@ -384,7 +378,6 @@
             </div>
           
         </modal>
-        <!-- <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/> -->
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
         <AssignSalesAdvisor v-if="showEditSalesAdvisor" :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
@@ -443,7 +436,6 @@ export default {
             showCancelConfirm:false,
             showAgioTransaction:false,
             showDepotStatusHistory:false,
-            showComments:false,
             endPauseDate:null,
             showBlockConfirm:false,
             showEditDepot:false,
@@ -782,12 +774,6 @@ export default {
         },
         cancelBlocked(){
           this.showBlockConfirm = false;
-        },
-        openComment(){
-          this.showComments = true;
-        },
-        closeComments(){
-          this.showComments = false;
         },
         openDepotHistory(){
           this.showDepotHistory = true;
