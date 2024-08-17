@@ -1,7 +1,7 @@
 <template>
   <div class="w-full mt-1">
-    <div class="h-1 w-full bg-pink-100 overflow-hidden">
-      <div class="progress w-full h-full bg-pink-500 left-right"></div>
+    <div class="h-1 w-full bg-blue-100 overflow-hidden">
+      <div class="progress w-full h-full bg-blue-500 left-right"></div>
     </div>
   </div>
 </template>
@@ -41,11 +41,11 @@ export default {
   height: 0.25rem;
 }
 
-.bg-pink-100 {
+.bg-blue-100 {
   background-color: rgba(189,189,189 ,0.25);
 }
 
-.bg-pink-500 {
+.bg-blue-500 {
   background-color: #5e72e4;
 }
 

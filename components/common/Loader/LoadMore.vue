@@ -1,7 +1,7 @@
 <template>
     <div class="w-100 d-flex justify-content-center align-items-center">
-        <span class="loading__anim" v-if="isLoading && !isLinear"></span>
-        <LinearLoader v-else-if="isLoading && isLinear" />
+        <span class="loading__anim" v-if="isLoading && !showLinear"></span>
+        <LinearLoader v-else-if="isLoading && showLinear" />
         <a v-else-if="currentPage<lastPage"  @click.prevent="clicked"><span class="loadmore">{{$t('load_more')}}</span></a>
     </div>
 </template>
@@ -25,7 +25,7 @@ export default {
             type:Boolean,
             default: false
         },
-        isLinear:{
+        showLinear:{
             type:Boolean,
             default: false
         }

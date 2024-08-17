@@ -22,7 +22,7 @@
           </h4>
           <div>{{ comment.comment }}</div>
         </div>
-        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :isLinear="true" @click="loadMore"/>
+        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :showLinear="true" @click="loadMore"/>
       </div>
 
 
