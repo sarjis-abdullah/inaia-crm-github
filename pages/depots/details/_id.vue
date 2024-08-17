@@ -25,8 +25,7 @@
                     <div class="media align-items-center">
                       <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
                       <div class="media-body">
-                        <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">
+                        <span class="h2 card-title mb-0">
                           <span>{{depot.name }} </span>
                           <span v-if="hadDepotEditAccess" class="ml-1 cursor-pointer" @click.prevent="()=> {
                             editDepot = true
@@ -35,6 +34,7 @@
                             <i class="fas fa-pen text-sm text-gray"></i>
                           </span>
                         </span>
+                        <div class="font-weight-bold mb-0"><i18n-n :value="depot.gram_amount/1000"></i18n-n> g</div>
                       </div>
                     </div>
                   </div>
@@ -56,13 +56,17 @@
                       <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                       <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
                       <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
+                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
+                      <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
                     </base-dropdown>
                   </div>
                 </div>
                 <p class="mt-3 mb-0 text-sm" v-if="client!=null">
                   <UserInfo :customerId="client.contact_id"></UserInfo>
                 </p>
-                <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
+                <p class="text-nowrap text-sm mb-0 mt-3">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</p>
+                <p class="text-nowrap text-sm mb-0">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> {{ currency }}</p>
+                <div class="mb-0 text-sm d-flex gap-3 align-items-center" >
                   <span>
                     {{ $t('target') }}: {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
                   </span>
@@ -76,42 +80,6 @@
                 <p class="mb-0 text-sm" v-if="paymentAccount">
                   {{ $t('account') }}: {{ paymentAccountDetails  }}
                 </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-md-6">
-            <div class="card border-0">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">
-                      {{$t('total_gold_amount')}}
-                    </h5>
-                    <span class="h2 font-weight-bold mb-0"
-                      ><i18n-n :value="depot.gram_amount/1000"></i18n-n> g</span
-                    >
-                  </div>
-                  <div class="col-auto">
-                    <base-dropdown
-                      title-classes="btn btn-sm btn-link mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                      v-if="hadDepotEditAccess"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                      <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
-
-                    </base-dropdown>
-                  </div>
-                </div>
-                <div class="mt-3 mb-0 text-sm">
-                  <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
-                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n>{{ currency }}</div>
-                </div>
               </div>
             </div>
           </div>
@@ -217,6 +185,18 @@
                     </base-dropdown>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4 col-md-6">
+            <div class="card border-0">
+              <div class="card-body card-body__commnets-wrapper">
+                
+                <CommentBox :depot="depot" />
+                <!-- <div class="mt-3 mb-0 text-sm">
+                  <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
+                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n>{{ currency }}</div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -404,7 +384,7 @@
             </div>
           
         </modal>
-        <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
+        <!-- <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/> -->
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
         <AssignSalesAdvisor v-if="showEditSalesAdvisor" :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
@@ -852,4 +832,10 @@ export default {
 <style>
 .dropdown-item i { width: 16px; text-align: center}
 .cursor-pointer {cursor: pointer;}
+.card {
+  margin-bottom: 8px !important;
+}
+.card-body__commnets-wrapper {
+  padding-bottom: .5rem !important;
+}
 </style>

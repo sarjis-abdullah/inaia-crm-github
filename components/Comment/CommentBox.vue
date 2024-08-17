@@ -1,19 +1,11 @@
 <template>
-  <modal
-    :show.sync="displayModal"
-    class="orderModal"
-    headerClasses=""
-    bodyClasses="pt-0"
-    footerClasses="border-top bg-secondary"
-    @close="onClose"
-    :allowOutSideClose="false"
+  <div
   >
-    <template slot="header" class="pb-0">
+    <div slot="header" class="pb-0">
       <h5 class="modal-title" v-if="account">{{ clientName }}</h5>
-      <h5 class="modal-title" v-if="depot">{{ depot.name }}</h5>
       <span></span>
-    </template>
-    <div class="p-3">
+    </div>
+    <div class="px-3 pb-3">
       <div class="message-area" id="note-area">
         <div
           v-for="comment in comments"
@@ -29,7 +21,7 @@
           </h4>
           <div>{{ comment.comment }}</div>
         </div>
-        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" @click="loadMore"/>
+        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :isLinear="true" @click="loadMore"/>
       </div>
 
 
@@ -37,9 +29,9 @@
       <div class="write-area">
         <textarea
           type="text"
-          class="chat-input mt-3"
+          class="chat-input"
           :placeholder="$t('type')"
-          rows="5"
+          rows="1"
           v-model="note"
           v-if="hasEditAccess"
         >
@@ -55,11 +47,12 @@
         ></base-button>
       </div>
     </div>
-  </modal>
+  </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import LoadMore from "@/components/common/Loader/LoadMore";
+import LinearLoader from "@/components/common/Loader/LinearLoader";
 import { canEditDepot } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
@@ -79,6 +72,7 @@ export default {
   },
   components: {
     LoadMore,
+    LinearLoader
   },
   computed: {
     ...mapGetters({
@@ -99,7 +93,7 @@ export default {
       page: 1,
       note: null,
       isSending: false,
-      perPage: 10,
+      perPage: 1,
       lastPage: 1,
       isLoading: false,
     };
@@ -182,8 +176,8 @@ export default {
 <style scoped>
 .message-area {
   overflow-x: hidden;
-  height: 40vh;
-  max-height: 40vh;
+  /* height: 40vh; */
+  max-height: 15vh;
   width: 100%;
   z-index: 1000;
   margin: 0 auto;

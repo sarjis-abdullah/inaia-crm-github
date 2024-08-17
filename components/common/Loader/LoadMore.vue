@@ -1,11 +1,17 @@
 <template>
     <div class="w-100 d-flex justify-content-center align-items-center">
-        <span class="loading__anim" v-if="isLoading"></span>
+        <span class="loading__anim" v-if="isLoading && !isLinear"></span>
+        <LinearLoader v-else-if="isLoading && isLinear" />
         <a v-else-if="currentPage<lastPage"  @click.prevent="clicked"><span class="loadmore">{{$t('load_more')}}</span></a>
     </div>
 </template>
 <script>
+import LinearLoader from "@/components/common/Loader/LinearLoader";
+
 export default {
+    components: {
+        LinearLoader,
+    },
     props:{
         currentPage:{
             type:Number,
@@ -16,6 +22,10 @@ export default {
             default:1
         },
         isLoading:{
+            type:Boolean,
+            default: false
+        },
+        isLinear:{
             type:Boolean,
             default: false
         }
