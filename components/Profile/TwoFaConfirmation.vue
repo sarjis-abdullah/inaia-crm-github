@@ -85,15 +85,6 @@
         >
           {{ $t("confirm") }}
         </button>
-        <!-- <button
-          v-if="confirmed"
-          type="button"
-          :disabled="isLoading"
-          class="btn btn-primary"
-          @click="submit()"
-        >
-          {{ $t("submit") }}
-        </button> -->
       </template>
     </template>
   </modal>

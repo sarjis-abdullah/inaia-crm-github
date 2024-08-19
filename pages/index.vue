@@ -182,7 +182,7 @@
   import CodeInputs from "~/components/Users/CodeInputs"
   import Loader from "~/components/common/Loader/Loader.vue"
   import appNames from '../appNames'
-  import { CODE_INPUT_LENGTH_FOUR, CODE_INPUT_LENGTH_SIX, CONFIRMATION_METHOD_EMAIL, CONFIRMATION_METHOD_MOBILE_PIN, CONFIRMATION_METHOD_SMS, CONFIRMATION_METHOD_TWO_FA } from '@/helpers/constants.js';
+  import { CODE_INPUT_LENGTH_FOUR, CODE_INPUT_LENGTH_SIX, CONFIRMATION_METHOD_EMAIL, CONFIRMATION_METHOD_TWO_FA } from '@/helpers/constants.js';
   export default {
     layout: 'AuthLayout',
     components: {
@@ -370,12 +370,8 @@
       },
       getMethod(method) {
         switch(method){
-          case CONFIRMATION_METHOD_MOBILE_PIN:
-            return "Mobile PIN";
           case CONFIRMATION_METHOD_EMAIL:
             return "Email";
-          case CONFIRMATION_METHOD_SMS:
-            return "SMS";
           default:
           return "2FA"
         }
