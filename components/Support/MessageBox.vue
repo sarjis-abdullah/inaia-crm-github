@@ -12,7 +12,7 @@
                 </div>
                 <div class="col-4 my-auto">
                     <div class="float-right">
-                        <Status v-bind:status='ticket.support_status.name_translation_key' class="mr-2">{{ticket.support_status ? $t(ticket.support_status.name_translation_key) : ticket.support_status_id}}</Status>
+                        <Status v-bind:status='ticket.support_status' class="mr-2" />
                      <base-dropdown
             title-classes="btn btn-sm mr-0"
             menu-on-right

@@ -14,7 +14,9 @@
         </div>
 
         <div class="text-right">
-          <div><Status v-bind:status='ticket.support_status.name_translation_key'>{{ticket.support_status ? $t(ticket.support_status.name_translation_key) : ticket.support_status_id}}</Status></div>
+          <div>
+            <Status v-bind:status='ticket.support_status'/>
+          </div>
           <div class="text-muted"><small>{{$d(new Date(ticket.updated_at), 'short')}}</small></div>
         </div>
       </div>
@@ -68,7 +70,6 @@ export default {
                 color:this.isSelected ? '#0074d9' : '#000'
             }
         },
-
     },
     methods:{
         selectTicket()
