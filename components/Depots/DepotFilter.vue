@@ -165,6 +165,15 @@
           >
           </date-picker>
           <date-picker
+            size="large"
+            class="filterElement"
+            v-model="intervalstartDateEnd"
+            type="date"
+            :placeholder="$t('select_interval_start_date__end_placeholder')"
+            @clear="removeStartDateRangeEnd"
+          >
+          </date-picker>
+          <date-picker
             class="filterElement"
             v-model="intervalendDate"
             type="date"
@@ -286,10 +295,19 @@
         size="md"
         style="margin-right: 10px"
         v-if="intervalstartDate"
-        >{{ $t("from") }}: {{ $d(intervalstartDate) }} <span  v-if="intervalendDate">{{ $t("until") }}:
-        {{ $d(intervalendDate) }}</span>
-        <a class="badgeIcon" @click.prevent="removeDate()"
-          ><i class="fas fa-window-close"></i></a
+        >
+        <span v-if="intervalstartDate && intervalstartDateEnd">
+          {{ $t("from") }}: ({{ $d(intervalstartDate) }} - {{ $d(intervalstartDateEnd) }})
+        </span>
+        <span v-else>
+          {{ $t("from") }}: {{ $d(intervalstartDate) }} 
+        </span>
+        <span v-if="intervalendDate">
+          {{ $t("until") }}: {{ $d(intervalendDate) }}
+        </span>
+        <a class="badgeIcon" @click.prevent="removeAllDate()">
+          <i class="fas fa-window-close"></i>
+        </a
       ></Badge>
       <Badge
         type="secondary"
@@ -355,6 +373,7 @@ export default {
   data: function () {
     return {
       intervalstartDate: null,
+      intervalstartDateEnd: null,
       intervalendDate: null,
       selectedAgio: null,
       selectedAgioPaymentPlan: null,
@@ -581,6 +600,9 @@ export default {
       if(this.toCreatedDate){
         query+='&to_date='+this.formatDateByMoment(this.toCreatedDate);
       }
+      if(this.intervalstartDateEnd){
+        query+='&interval_startdate_range_end='+this.formatDateByMoment(this.intervalstartDateEnd);
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -667,6 +689,16 @@ export default {
       this.intervalendDate = null;
       if (this.filterIsActive) this.applyFilter();
     },
+    removeStartDateRangeEnd: function () {
+      this.intervalstartDateEnd = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
+    removeAllDate: function () {
+      this.intervalstartDate = null;
+      this.intervalstartDateEnd = null;
+      this.intervalendDate = null;
+      if (this.filterIsActive) this.applyFilter();
+    },
     removeCustomer: function () {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
@@ -719,6 +751,7 @@ export default {
       this.selectedAgioPaymentPlan = null;
       this.selectedAgio = null;
       this.intervalstartDate = null;
+      this.intervalstartDateEnd = null;
       this.intervalendDate = null;
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
