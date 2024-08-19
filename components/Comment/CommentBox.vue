@@ -1,6 +1,5 @@
 <template>
-  <div
-  >
+  <div>
     <div slot="header" class="pb-0">
       <h5 class="modal-title" v-if="account">{{ clientName }}</h5>
       <span></span>
@@ -22,17 +21,19 @@
           </h4>
           <div>{{ comment.comment }}</div>
         </div>
-        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :showLinear="true" @click="loadMore"/>
+        <div class="mt-1">
+          <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :showLinear="true" @click="loadMore"/>
+        </div>
       </div>
 
 
 
-      <div class="write-area">
+      <div class="write-area" v-if="!initialLoading">
         <textarea
           type="text"
           class="chat-input"
           :placeholder="$t('type')"
-          rows="1"
+          rows="3"
           v-model="note"
           v-if="hasEditAccess"
         >
@@ -97,6 +98,7 @@ export default {
       perPage: 10,
       lastPage: 1,
       isLoading: false,
+      initialLoading: true,
     };
   },
   mounted() {
@@ -120,6 +122,7 @@ export default {
           })
           .finally(() => {
             this.isLoading = false;
+            this.initialLoading = false;
           });
       }
     },
@@ -177,8 +180,7 @@ export default {
 <style scoped>
 .message-area {
   overflow-x: hidden;
-  /* height: 40vh; */
-  max-height: 15vh;
+  max-height: calc(100vh - 400px);
   width: 100%;
   z-index: 1000;
   margin: 0 auto;
