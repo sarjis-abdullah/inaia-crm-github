@@ -1,3 +1,5 @@
+import { getUniqueListBy } from "../helpers/helpers";
+
 export const state = ()=>{
     return {
         comments:[]
@@ -6,7 +8,7 @@ export const state = ()=>{
 
 const initialState = state();
 export const getters = {
-    comments: state=>state.comments
+    comments: state=> getUniqueListBy(state.comments, 'id')
 }
 export const mutations = {
     comments(state,data){

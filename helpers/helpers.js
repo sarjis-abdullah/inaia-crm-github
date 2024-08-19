@@ -170,5 +170,8 @@ export const toBase64 = file => new Promise((resolve, reject) => {
     reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
 });
+export function getUniqueListBy(arr, key) {
+	return [...new Map(arr.map(item => [item[key], item])).values()]
+}
 
 

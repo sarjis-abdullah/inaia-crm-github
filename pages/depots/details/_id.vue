@@ -17,211 +17,199 @@
       />
       <div v-if="loaded && !loadedWithError">
         <div class="row">
-          <div class="col-xl-4 col-md-6">
-            <div class="card border-0">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <div class="media align-items-center">
-                      <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
-                      <div class="media-body">
-                        <h5 class="card-title text-uppercase text-muted mb-0">{{$t('depot_name')}}</h5>
-                        <span class="h2 font-weight-bold mb-0">
-                          <span>{{depot.name }} </span>
-                          <span v-if="hadDepotEditAccess" class="ml-1 cursor-pointer" @click.prevent="()=> {
-                            editDepot = true
-                            depotName = depot.name
-                          }">
-                            <i class="fas fa-pen text-sm text-gray"></i>
-                          </span>
-                        </span>
+          <div class="col-xl-8 col-md-6">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card border-0">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <div class="media align-items-center">
+                          <img :src="depot.avatar" alt="" class="avatar avatar-lg bg-white shadow rounded-circle mr-3" />
+                          <div class="media-body">
+                            <span class="h2 card-title mb-0">
+                              <span>{{depot.name }} </span>
+                              <span v-if="hadDepotEditAccess" class="ml-1 cursor-pointer" @click.prevent="()=> {
+                                editDepot = true
+                                depotName = depot.name
+                              }">
+                                <i class="fas fa-pen text-sm text-gray"></i>
+                              </span>
+                            </span>
+                            <div class="font-weight-bold mb-0"><i18n-n :value="depot.gram_amount/1000"></i18n-n> g</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                                            <base-dropdown
+                          title-classes="btn btn-sm btn-link mr-0"
+                          menu-on-right
+                          :has-toggle="false"
+                          v-if="hadDepotEditAccess"
+                        >
+                          <template slot="title">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </template>
+                          <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
+                          <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
+
+
+                          <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                          <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
+                          <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
+                          <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
+                          <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
+                        </base-dropdown>
+                      </div>
+                    </div>
+                    <p class="mt-3 mb-0 text-sm" v-if="client!=null">
+                      <UserInfo :customerId="client.contact_id"></UserInfo>
+                    </p>
+                    <p class="text-nowrap text-sm mb-0 mt-3">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</p>
+                    <p class="text-nowrap text-sm mb-0">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n> {{ currency }}</p>
+                    <div class="mb-0 text-sm d-flex gap-3 align-items-center" >
+                      <span>
+                        {{ $t('target') }}: {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
+                      </span>
+                      <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
+                        <i class="fas fa-pen text-xs text-gray"></i>
+                      </span>
+                    </div>
+                    <p class="mb-0 text-sm" v-if="paymentMethod">
+                      {{ $t('payment_method') }}: {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
+                    </p>
+                    <p class="mb-0 text-sm" v-if="paymentAccount">
+                      {{ $t('account') }}: {{ paymentAccountDetails  }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div v-if="depot.is_savings_plan" class="card border-0">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
+                          <font-awesome-icon
+                            icon="fa fa-clock-rotate-left"
+                            class="mr-1"
+                          />{{$t('saving_plan')}}<Status class="ml-2" :row="depot"/>
+
+                        </h5>
+
+                        <div>
+                          <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} {{ currency }}</span>
+                          <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <base-dropdown
+                          title-classes="btn btn-sm btn-link mr-0"
+                          menu-on-right
+                          :has-toggle="false"
+                        >
+                          <template slot="title">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </template>
+                          <a class="dropdown-item" @click.prevent="showEditSavingPlan()" v-if="hadDepotEditAccess"
+                          >{{ $t("edit_saving_plan") }}</a>
+                          <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
+                          <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
+                          <div class="dropdown-divider"></div>
+
+                          <a class="dropdown-item" @click.prevent="confirmPause()"
+                            v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                          ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
+                          <a class="dropdown-item" @click.prevent="confirmWithdraw()"
+                            v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                          ><i class="fa fa-times"></i>{{ $t("withdraw_contract") }}</a>
+                          <a class="dropdown-item" @click.prevent="confirmComplete()"
+                            v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
+                          ><i class="fa fa-close"></i>{{ $t("complete_contract") }}</a>
+                          <a class="dropdown-item" @click.prevent="confirmResume()"
+                            v-if="(depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled')  && hadSavingPlanStatusEditAccess"
+                          ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
+                          <a class="dropdown-item" @click.prevent="confirmContractConfirm" v-if="depot.status.name_translation_key=='depot_status_applied_for_savings_plan'  && hadSavingPlanStatusEditAccess">
+                            <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
+                          <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'  && hadSavingPlanStatusEditAccess">
+                            <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
+                            <a class="dropdown-item" @click.prevent="confirmResume()"
+                            v-if="(depot.status.name_translation_key=='depot_status_completed' || depot.status.name_translation_key=='depot_status_withdrawn')  && hadSavingPlanStatusEditAccess"
+                          ><i class="fa fa-play-circle"></i>{{ $t("activate_contract") }}</a>
+                        </base-dropdown>
+                      </div>
+                    </div>
+                    <div class="mt-3 mb-0 text-sm">
+                      <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
+                      <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} {{ currency }}</div>
+                      <div v-if="depot.agio_payment_option=='onetime'">{{$t(depot.agio_payment_option)}}</div>
+                      <div v-else>{{$t('billing')}} <span v-if="depot.agio_percentage == 75">75/25</span>
+                        <span v-if="depot.agio_percentage == 50">50/50</span>
+                      </div>
+                      <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
+                      <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
+                      <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} {{ currency }} {{ $t('of') }} {{(depot.target_amount/100)}} {{ currency }}</div>
+                      <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span><span v-else>No date available</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="card border-0">
+                  <div class="card-body">
+                    <div class="row">
+
+                      <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">
+                          <font-awesome-icon
+                            icon="fa fa-clock-rotate-left"
+                            class="mr-1"
+                          />{{$t('saving_plan')}}
+                        </h5>
+                        <span class="h2 font-weight-bold mb-0"
+                          >{{$t('no_saving_plan')}}</span
+                        >
+                      </div>
+                      <div class="col-auto">
+                        <base-dropdown
+                          title-classes="btn btn-sm btn-link mr-0"
+                          menu-on-right
+                          :has-toggle="false"
+                        >
+                          <template slot="title">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </template>
+
+                          <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
+                          <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
+
+                        </base-dropdown>
                       </div>
                     </div>
                   </div>
-                  <div class="col-auto">
-                                        <base-dropdown
-                      title-classes="btn btn-sm btn-link mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                      v-if="hadDepotEditAccess"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-                      <a class="dropdown-item" v-if="depot.status.name_translation_key=='depot_status_blocked'"  @click.prevent="confirmResume()">{{ $t("activate_depot") }}</a>
-                      <a class="dropdown-item" v-else @click.prevent="showBlockConfirm=true">{{ $t("block_depot") }}</a>
-
-
-                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
-                      <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
-                      <a class="dropdown-item" @click.prevent="openComment"><i class="fa fa-comment"></i>{{$t("depot_comment")}}</a>
-                      <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
-                    </base-dropdown>
-                  </div>
                 </div>
-                <p class="mt-3 mb-0 text-sm" v-if="client!=null">
-                  <UserInfo :customerId="client.contact_id"></UserInfo>
-                </p>
-                <div class="mt-3 mb-0 text-sm d-flex gap-3 align-items-center" >
-                  <span>
-                    {{ $t('target') }}: {{ depot && depot.target_type ? depot.target_type.title : $t('unassigned')  }}
-                  </span>
-                  <span class="ml-1 cursor-pointer" @click.prevent="changeTargetType">
-                    <i class="fas fa-pen text-xs text-gray"></i>
-                  </span>
-                </div>
-                <p class="mb-0 text-sm" v-if="paymentMethod">
-                  {{ $t('payment_method') }}: {{ paymentMethod ? $t(paymentMethod) : $t('unassigned')  }}
-                </p>
-                <p class="mb-0 text-sm" v-if="paymentAccount">
-                  {{ $t('account') }}: {{ paymentAccountDetails  }}
-                </p>
               </div>
             </div>
+            <div class="d-none d-md-block">
+              <div class="row">
+                <div class="col-md-12">
+                <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+              </div>
+            </div>
+            </div>
           </div>
-
+          
           <div class="col-xl-4 col-md-6">
             <div class="card border-0">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">
-                      {{$t('total_gold_amount')}}
-                    </h5>
-                    <span class="h2 font-weight-bold mb-0"
-                      ><i18n-n :value="depot.gram_amount/1000"></i18n-n> g</span
-                    >
-                  </div>
-                  <div class="col-auto">
-                    <base-dropdown
-                      title-classes="btn btn-sm btn-link mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                      v-if="hadDepotEditAccess"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-                      <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                      <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
-
-                    </base-dropdown>
-                  </div>
-                </div>
-                <div class="mt-3 mb-0 text-sm">
-                  <div class="text-nowrap">{{$t('depot_type')}}: {{$t(depot.depot_type.name_translation_key)}}</div>
-                  <div class="text-nowrap">{{$t('depot_value')}}: <i18n-n :value="calculateDepotValue()"></i18n-n>{{ currency }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-xl-4 col-md-6">
-            <div v-if="depot.is_savings_plan" class="card border-0">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0 mr-2">
-                      <font-awesome-icon
-                        icon="fa fa-clock-rotate-left"
-                        class="mr-1"
-                      />{{$t('saving_plan')}}<Status class="ml-2" :row="depot"/>
-
-                    </h5>
-
-                    <div>
-                      <span class="h2 font-weight-bold mb-0">{{ $n(depot.interval_amount / 100) }} {{ currency }}</span>
-                      <span class="text-muted text-sm"> / {{$t('monthly')}}</span>
-                    </div>
-                  </div>
-                  <div class="col-auto">
-                    <base-dropdown
-                      title-classes="btn btn-sm btn-link mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-                      <a class="dropdown-item" @click.prevent="showEditSavingPlan()" v-if="hadDepotEditAccess"
-                      >{{ $t("edit_saving_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="openDepotHistory">{{$t("depot_history")}}</a>
-                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
-                      <div class="dropdown-divider"></div>
-
-                      <a class="dropdown-item" @click.prevent="confirmPause()"
-                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
-                      ><i class="fa fa-pause-circle"></i>{{ $t("pause_savings_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmWithdraw()"
-                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
-                      ><i class="fa fa-times"></i>{{ $t("withdraw_contract") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmComplete()"
-                        v-if="depot.status.name_translation_key=='depot_status_active' && hadSavingPlanStatusEditAccess"
-                      ><i class="fa fa-close"></i>{{ $t("complete_contract") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmResume()"
-                        v-if="(depot.status.name_translation_key=='depot_status_paused' || depot.status.name_translation_key=='depot_status_canceled')  && hadSavingPlanStatusEditAccess"
-                      ><i class="fa fa-play-circle"></i>{{ $t("resume_savings_plan") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmContractConfirm" v-if="depot.status.name_translation_key=='depot_status_applied_for_savings_plan'  && hadSavingPlanStatusEditAccess">
-                        <i class="fa fa-check"></i>{{$t("confirm_contract") }}</a>
-                      <a class="dropdown-item" @click.prevent="confirmCancel" v-if="depot.status.name_translation_key!='depot_status_canceled'  && hadSavingPlanStatusEditAccess">
-                        <i class="fa fa-times"></i>{{$t("cancel_contract") }}</a>
-                        <a class="dropdown-item" @click.prevent="confirmResume()"
-                        v-if="(depot.status.name_translation_key=='depot_status_completed' || depot.status.name_translation_key=='depot_status_withdrawn')  && hadSavingPlanStatusEditAccess"
-                      ><i class="fa fa-play-circle"></i>{{ $t("activate_contract") }}</a>
-                    </base-dropdown>
-                  </div>
-                </div>
-                <div class="mt-3 mb-0 text-sm">
-                  <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
-                  <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} {{ currency }}</div>
-                  <div v-if="depot.agio_payment_option=='onetime'">{{$t(depot.agio_payment_option)}}</div>
-                  <div v-else>{{$t('billing')}} <span v-if="depot.agio_percentage == 75">75/25</span>
-                    <span v-if="depot.agio_percentage == 50">50/50</span>
-                  </div>
-                  <div>{{$t('payment_method')}}: {{$t(depot.payment_method)}}</div>
-                  <div>{{$t('interval_day')}}: {{$t(depot.interval_day?depot.interval_day.toString():'')}}</div>
-                  <div>{{$t('invested_amount')}}: {{(depot.invested_amount/100)}} {{ currency }} {{ $t('of') }} {{(depot.target_amount/100)}} {{ currency }}</div>
-                  <div v-if="depot && depot.status.name_translation_key=='depot_status_paused'">{{$t('paused_until')}}: <span v-if="pauseEndDate!=''">{{$d(new Date(pauseEndDate))}}</span><span v-else>No date available</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div v-else class="card border-0">
-              <div class="card-body">
-                <div class="row">
-
-                  <div class="col">
-                    <h5 class="card-title text-uppercase text-muted mb-0">
-                      <font-awesome-icon
-                        icon="fa fa-clock-rotate-left"
-                        class="mr-1"
-                      />{{$t('saving_plan')}}
-                    </h5>
-                    <span class="h2 font-weight-bold mb-0"
-                      >{{$t('no_saving_plan')}}</span
-                    >
-                  </div>
-                  <div class="col-auto">
-                    <base-dropdown
-                      title-classes="btn btn-sm btn-link mr-0"
-                      menu-on-right
-                      :has-toggle="false"
-                    >
-                      <template slot="title">
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-
-                      <a class="dropdown-item" @click.prevent="showDepotStatusHistory=true">{{ $t("status_history") }}</a>
-                      <a class="dropdown-item" @click.prevent="showAgioTransaction=true" >{{ $t("agio_history") }}</a>
-
-                    </base-dropdown>
-                  </div>
-                </div>
+              <div class="card-body card-body__commnets-wrapper">
+                <CommentBox :depot="depot" />
               </div>
             </div>
           </div>
         </div>
-        <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+        <div class="d-md-none">
+          <order-list :isDepotSet="true" :depotSetId="depot.id"/>
+        </div>
         <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>
         <modal :show.sync="showPauseConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
                     <template slot="header" class="pb-0">
@@ -404,7 +392,6 @@
             </div>
           
         </modal>
-        <CommentBox :displayModal="showComments" :depot="depot" @closed="closeComments"/>
         <UpdateSavingPlan :show="showEditDepot" :depot="depot" @closed="closeEditSavingPlan"/>
         <AddDeposit :showModal="showAddDeposit" :depot="depot" @onClose="showAddDeposit=false"/>
         <AssignSalesAdvisor v-if="showEditSalesAdvisor" :showModal="showEditSalesAdvisor" :depot="depot" @cancelEditAdvisor="cancelEditSalesAdvisor"/>
@@ -463,7 +450,6 @@ export default {
             showCancelConfirm:false,
             showAgioTransaction:false,
             showDepotStatusHistory:false,
-            showComments:false,
             endPauseDate:null,
             showBlockConfirm:false,
             showEditDepot:false,
@@ -803,12 +789,6 @@ export default {
         cancelBlocked(){
           this.showBlockConfirm = false;
         },
-        openComment(){
-          this.showComments = true;
-        },
-        closeComments(){
-          this.showComments = false;
-        },
         openDepotHistory(){
           this.showDepotHistory = true;
         },
@@ -852,4 +832,10 @@ export default {
 <style>
 .dropdown-item i { width: 16px; text-align: center}
 .cursor-pointer {cursor: pointer;}
+.card {
+  margin-bottom: 8px !important;
+}
+.card-body__commnets-wrapper {
+  padding-bottom: .5rem !important;
+}
 </style>

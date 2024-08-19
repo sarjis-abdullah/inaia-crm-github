@@ -1,24 +1,16 @@
 <template>
-  <modal
-    :show.sync="displayModal"
-    class="orderModal"
-    headerClasses=""
-    bodyClasses="pt-0"
-    footerClasses="border-top bg-secondary"
-    @close="onClose"
-    :allowOutSideClose="false"
-  >
-    <template slot="header" class="pb-0">
+  <div>
+    <div slot="header" class="pb-0">
       <h5 class="modal-title" v-if="account">{{ clientName }}</h5>
-      <h5 class="modal-title" v-if="depot">{{ depot.name }}</h5>
       <span></span>
-    </template>
-    <div class="p-3">
+    </div>
+    <div class="px-3 pb-3">
       <div class="message-area" id="note-area">
         <div
-          v-for="comment in comments"
+          v-for="(comment, index) in comments"
           :key="comment.id"
-          class="d-flex flex-column notebox p-2 mt-3"
+          class="d-flex flex-column notebox p-2"
+          :class="index != 0 && 'mt-3'"
           :id="'message-' + comment.id"
         >
           <h4>
@@ -29,17 +21,19 @@
           </h4>
           <div>{{ comment.comment }}</div>
         </div>
-        <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" @click="loadMore"/>
+        <div class="mt-1">
+          <LoadMore :currentPage="page" :lastPage="lastPage" :isLoading="isLoading" :showLinear="true" @click="loadMore"/>
+        </div>
       </div>
 
 
 
-      <div class="write-area">
+      <div class="write-area" v-if="!initialLoading">
         <textarea
           type="text"
-          class="chat-input mt-3"
+          class="chat-input"
           :placeholder="$t('type')"
-          rows="5"
+          rows="3"
           v-model="note"
           v-if="hasEditAccess"
         >
@@ -55,11 +49,12 @@
         ></base-button>
       </div>
     </div>
-  </modal>
+  </div>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import LoadMore from "@/components/common/Loader/LoadMore";
+import LinearLoader from "@/components/common/Loader/LinearLoader";
 import { canEditDepot } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
@@ -79,6 +74,7 @@ export default {
   },
   components: {
     LoadMore,
+    LinearLoader
   },
   computed: {
     ...mapGetters({
@@ -102,6 +98,7 @@ export default {
       perPage: 10,
       lastPage: 1,
       isLoading: false,
+      initialLoading: true,
     };
   },
   mounted() {
@@ -125,6 +122,7 @@ export default {
           })
           .finally(() => {
             this.isLoading = false;
+            this.initialLoading = false;
           });
       }
     },
@@ -182,8 +180,7 @@ export default {
 <style scoped>
 .message-area {
   overflow-x: hidden;
-  height: 40vh;
-  max-height: 40vh;
+  max-height: calc(100vh - 400px);
   width: 100%;
   z-index: 1000;
   margin: 0 auto;
