@@ -59,8 +59,9 @@
               <div class="d-flex justify-content-center align-items-center">
                 <div class="badge badge-light">{{displayDate(m.date)}}</div>
               </div>
+              
 
-              <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id"></MessageElement>
+              <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id" @handleDeletedMessage="handleDeletedMessage"></MessageElement>
 
             </div>
               <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
@@ -107,7 +108,7 @@ export default {
             messageText:null,
             isSending:false,
             refresher:null,
-            ticket:null,
+            ticket:null
         }
     },
     destroyed(){
@@ -339,6 +340,21 @@ export default {
                 return this.$t('ticket_closed_by')+'<strong>'+name+'</strong>'+this.$t('at')+'<strong>'+updatedAt+'</strong>'
             }
 
+        },
+        handleDeletedMessage(deletedMessageId){
+            const oldTicket = {...this.ticket}
+            this.ticket.messages = this.ticket.messages.filter(item => item.id != deletedMessageId)
+            this.groupedMessages = []
+            this.groupMessages()
+            this.$store.dispatch('support/deleteSupportMessage', deletedMessageId)
+            .then((result) => {
+                this.$notify({type:'success',message:this.$t('entry_deleted_successfully'),duration:5000});
+            }).catch((err) => {
+                this.$notify({type:'danger',message:this.$t('entry_deleted_failed'),duration:5000});
+                this.ticket = oldTicket
+                this.groupedMessages = []
+                this.groupMessages()
+            });
         }
     }
 }

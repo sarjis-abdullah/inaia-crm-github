@@ -103,6 +103,9 @@ export const actions = {
             return res.data.data;
         })
     },
+    deleteSupportMessage(context,payload){
+        return this.$axios.delete('/support-messages/' + payload)
+    },
     updateTicket(context,payload){
         return this.$axios.put(`/support-tickets/${ payload.id }?include=${detailsIncludes}`,payload.data)
         .then(res => {
