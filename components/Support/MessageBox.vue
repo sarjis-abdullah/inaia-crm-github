@@ -91,7 +91,7 @@ import { canEditSupportTicket } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
-        ticket:{
+        propsTicket:{
             type: Object,
             default: null
         }
@@ -106,7 +106,8 @@ export default {
             groupedMessages:[],
             messageText:null,
             isSending:false,
-            refresher:null
+            refresher:null,
+            ticket:null,
         }
     },
     destroyed(){
@@ -163,11 +164,11 @@ export default {
         }
     },
     watch:{
-        ticket:{
+        propsTicket:{
             handler(newval, oldval){
                 if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
                 {
-                    this.fetchDetails(this.ticket.id)
+                    this.fetchDetails(this.propsTicket.id)
                 }
             },immediate:true
         }
@@ -254,7 +255,7 @@ export default {
                     }
                     this.isSending = true;
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
-                        this.ticket = data;
+                        this.ticket = {...data};
                         this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
                     }).catch((err)=>{
                         apiErrorHandler(err,this.$notify);
@@ -278,7 +279,7 @@ export default {
                     }
                     this.isSending = true;
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
-                        this.ticket = data;
+                        this.ticket = {...data};
                         this.$notify({type:'success',message:this.$t('ticket_opened_successfully'),duration:5000});
                     }).catch((err)=>{
                         apiErrorHandler(err,this.$notify);
@@ -309,10 +310,10 @@ export default {
 
       },
       fetchDetails(id){
-        if(this.ticket)
+        if(this.propsTicket)
         {
             this.$store.dispatch('support/getDetails',id).then((data)=>{
-                    this.ticket = data;
+                    this.ticket = {...data};
                     this.groupedMessages = [];
                     this.groupMessages();
 
