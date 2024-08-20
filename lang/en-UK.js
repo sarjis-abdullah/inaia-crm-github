@@ -802,5 +802,6 @@ export default {
     are_you_sure_you_want_to_delete_this_blacklisted_user: 'Are you sure you want to delete this blacklisted user?',
     kyc_blacklisted: 'Blacklisted',
     kyc_name_mismatched: 'Name mis-matched',
-    kyc_failed: 'Kyc failed'
+    kyc_failed: 'Kyc failed',
+    "delete_message_confirmation": "Are you sure you want to delete this message?"
 }

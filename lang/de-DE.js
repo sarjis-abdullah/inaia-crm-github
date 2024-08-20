@@ -789,5 +789,6 @@ export default {
     are_you_sure_you_want_to_delete_this_blacklisted_user: 'Sind Sie sicher, dass Sie diesen blackgelisteten Benutzer löschen möchten?',
     kyc_blacklisted: 'Blackgelistet',
     kyc_name_mismatched: 'Name stimmt nicht überein',
-    kyc_failed: 'KYC fehlgeschlagen'
+    kyc_failed: 'KYC fehlgeschlagen',
+    "delete_message_confirmation": "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?"
 }
