@@ -58,7 +58,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      comments: "comment/comments",
+      commentList: "comment/comments",
+      authUser: "auth/user",
     }),
     clientName() {
       return (
@@ -68,6 +69,33 @@ export default {
     },
     hasEditAccess(){
       return canEditCustomers();
+    },
+    authUserId(){
+      if (this.authUser && this.authUser.account && this.authUser.account.id) {
+          return this.authUser.account.id
+      }
+      return null
+    },
+    comments(){
+      let hasAdminRole = false
+      if (this.authUser && this.authUser.account && this.authUser.account.roles && this.authUser.account.roles.length) {
+        const found = this.authUser.account.roles.find(item => {
+          const {name_translation_key} = item
+          if (name_translation_key == 'superadmin_role' || name_translation_key == 'admin_role') {
+            return item
+          }
+        })
+        if (found) {
+          hasAdminRole = true
+        }
+      }
+      
+      return this.commentList.map(item => {
+        return {
+          ...item,
+          hasAbilityToDelete: hasAdminRole ? true : this.checkAbilityToDelete(item)
+        }
+      })
     }
   },
   data() {
@@ -147,7 +175,15 @@ export default {
     loadMore(){
         this.page+=1;
         this.fetchComments();
-    }
+    },
+    checkAbilityToDelete(comment){
+      const {created_by_id} = comment
+      if (!created_by_id) {
+          return false
+      }
+
+      return this.authUserId && this.authUserId == created_by_id
+    },
   },
 };
 </script>
