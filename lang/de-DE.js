@@ -790,5 +790,6 @@ export default {
     kyc_blacklisted: 'Blackgelistet',
     kyc_name_mismatched: 'Name stimmt nicht überein',
     kyc_failed: 'KYC fehlgeschlagen',
-    "delete_message_confirmation": "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?"
+    delete_message_confirmation: "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?",
+    delete_entry_confirmation: "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?"
 }
