@@ -52,7 +52,11 @@ export const mutations = {
     isLoadingStatuses(state,value)
     {
         state.isLoadingStatuses = value;
-    }
+    },
+    deleteSupportMessage(state,id)
+    {
+        // state.details.messages = state.details.messages.filter(item => item.id != id)
+    },
 }
 export const actions = {
     fetchList(context,payload){
@@ -105,7 +109,12 @@ export const actions = {
         })
     },
     deleteSupportMessage(context,payload){
-        return this.$axios.delete('/support-messages/' + payload)
+        return this.$axios.delete('/support-messages/' + payload).then((result) => {
+            context.commit('deleteSupportMessage', payload)
+            return Promise.resolve(payload)
+        }).catch((err) => {
+            return Promise.reject(err)
+        });
     },
     updateTicket(context,payload){
         return this.$axios.put(`/support-tickets/${ payload.id }?include=${detailsIncludes}`,payload.data)

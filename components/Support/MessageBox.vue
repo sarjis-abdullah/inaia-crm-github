@@ -92,7 +92,7 @@ import { canEditSupportTicket } from '@/permissions';
 import { apiErrorHandler } from '../../helpers/apiErrorHandler';
 export default {
     props:{
-        propsTicket:{
+        ticket:{
             type: Object,
             default: null
         }
@@ -165,11 +165,11 @@ export default {
         }
     },
     watch:{
-        propsTicket:{
+        ticket:{
             handler(newval, oldval){
                 if((newval && !oldval)||(oldval && newval && oldval.id!=newval.id))
                 {
-                    this.fetchDetails(this.propsTicket.id)
+                    this.fetchDetails(this.ticket.id)
                 }
             },immediate:true
         }
@@ -256,7 +256,6 @@ export default {
                     }
                     this.isSending = true;
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
-                        this.ticket = {...data};
                         this.$notify({type:'success',message:this.$t('ticket_closed_successfully'),duration:5000});
                     }).catch((err)=>{
                         apiErrorHandler(err,this.$notify);
@@ -311,10 +310,9 @@ export default {
 
       },
       fetchDetails(id){
-        if(this.propsTicket)
+        if(this.ticket)
         {
             this.$store.dispatch('support/getDetails',id).then((data)=>{
-                    this.ticket = {...data};
                     this.groupedMessages = [];
                     this.groupMessages();
 

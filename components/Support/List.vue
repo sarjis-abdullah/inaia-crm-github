@@ -5,7 +5,7 @@
            <ListTickets :selctedTicket="selectedTicket" @onselectedTicket="onTicketSelected" :account_id="account_id"/>
         </div>
         <div class="flex-grow-1">
-            <MessageBox :propsTicket="selectedTicket"></MessageBox>
+            <MessageBox :ticket="selectedTicket"></MessageBox>
         </div>
       </div>
     </div>
