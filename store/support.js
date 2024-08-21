@@ -13,7 +13,8 @@ export const getters = {
     list:state=>state.list,
     details:state=>state.details,
     statuses:state=>state.statuses,
-    latestList:state => state.latestList
+    latestList:state => state.latestList,
+    isLoadingStatuses:state => state.isLoadingStatuses,
 }
 export const mutations = {
     list(state, list) {
