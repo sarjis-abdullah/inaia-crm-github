@@ -53,9 +53,21 @@ export const mutations = {
     {
         state.isLoadingStatuses = value;
     },
-    deleteSupportMessage(state,id)
+    deleteSupportMessage(state,payload)
     {
-        // state.details.messages = state.details.messages.filter(item => item.id != id)
+        // const f = state.list.find(item => {
+        //     if(item.id == payload.ticketId)
+        //         return item
+        // })
+        // console.log(f, 1234, payload);
+        state.list = state.list.map(item => {
+            if(item.id == payload.ticketId)
+                return {
+                    ...item,
+                    messages: item.messages.filter(msg => msg.id != payload.deletedMessageId)
+                }
+            return item
+        })
     },
 }
 export const actions = {
@@ -109,12 +121,13 @@ export const actions = {
         })
     },
     deleteSupportMessage(context,payload){
-        return this.$axios.delete('/support-messages/' + payload).then((result) => {
-            context.commit('deleteSupportMessage', payload)
-            return Promise.resolve(payload)
-        }).catch((err) => {
-            return Promise.reject(err)
-        });
+        context.commit('deleteSupportMessage', payload)
+        // return this.$axios.delete('/support-messages/' + payload.deletedMessageId).then((result) => {
+        //     context.commit('deleteSupportMessage', payload)
+        //     return Promise.resolve(payload)
+        // }).catch((err) => {
+        //     return Promise.reject(err)
+        // });
     },
     updateTicket(context,payload){
         return this.$axios.put(`/support-tickets/${ payload.id }?include=${detailsIncludes}`,payload.data)

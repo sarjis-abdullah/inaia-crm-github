@@ -146,7 +146,7 @@ export default {
         },
         confirmDeleteMessage(){
             this.showConfirmModal = false
-            this.$emit('handleDeletedMessage', this.message.id)
+            this.$emit('handleDeletedMessage', this.message)
         },
     }
 }

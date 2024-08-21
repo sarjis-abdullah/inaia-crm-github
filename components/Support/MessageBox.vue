@@ -107,8 +107,7 @@ export default {
             groupedMessages:[],
             messageText:null,
             isSending:false,
-            refresher:null,
-            ticket:null
+            refresher:null
         }
     },
     destroyed(){
@@ -339,19 +338,26 @@ export default {
             }
 
         },
-        handleDeletedMessage(deletedMessageId){
+        handleDeletedMessage(message){
             const oldTicket = {...this.ticket}
-            this.ticket.messages = this.ticket.messages.filter(item => item.id != deletedMessageId)
-            this.groupedMessages = []
-            this.groupMessages()
-            this.$store.dispatch('support/deleteSupportMessage', deletedMessageId)
+            // this.ticket.messages = this.ticket.messages.filter(item => item.id != deletedMessageId)
+            // this.groupedMessages = []
+            // this.groupMessages()
+            
+            const payload = {
+                deletedMessageId: message.id,
+                ticketId: message.support_ticket_id
+            }
+            this.$emit('handleDeletedMessage', payload)
+            console.log(payload);
+            this.$store.dispatch('support/deleteSupportMessage', payload)
             .then((result) => {
                 this.$notify({type:'success',message:this.$t('entry_deleted_successfully'),duration:5000});
             }).catch((err) => {
                 this.$notify({type:'danger',message:this.$t('entry_deleted_failed'),duration:5000});
-                this.ticket = oldTicket
-                this.groupedMessages = []
-                this.groupMessages()
+                // this.ticket = oldTicket
+                // this.groupedMessages = []
+                // this.groupMessages()
             });
         }
     }

@@ -163,7 +163,7 @@ export default {
         },
         ticketSelected(ticket){
             this.selectedTicket = ticket;
-            this.$emit('onselectedTicket',ticket);
+            this.$emit('onselectedTicket',{...ticket});
         },
         getClosedParam(){
             if(this.statuses.length>0 && !this.includeClosed && this.account_id == -1)
