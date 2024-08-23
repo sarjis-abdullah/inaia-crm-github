@@ -206,9 +206,10 @@ export default {
 
     },
     methods:{
-        groupMessages(ticket = this.ticketDetails)
+        groupMessages()
         {
             this.groupedMessages = []
+            const ticket = this.ticketDetails
             if(ticket && ticket.messages.length > 0 )
             {
                 ticket.messages.forEach((element,index)=>{
