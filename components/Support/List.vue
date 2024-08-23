@@ -5,7 +5,7 @@
            <ListTickets :selctedTicket="selectedTicket" @onselectedTicket="onTicketSelected" :account_id="account_id"/>
         </div>
         <div class="flex-grow-1">
-            <MessageBox :ticket="selectedTicket" @handleDeletedMessage="handleDeletedMessage"></MessageBox>
+            <MessageBox :ticket="selectedTicket"></MessageBox>
         </div>
       </div>
     </div>
@@ -38,14 +38,6 @@ export default {
         onTicketSelected(ticket)
         {
             this.selectedTicket = ticket;
-        },
-        handleDeletedMessage(payload){
-            console.log(this.selectedTicket.messages);
-            const messages = this.selectedTicket.messages.filter(item => item.id != payload.deletedMessageId)
-            this.selectedTicket = {
-                ...this.selectedTicket,
-                messages
-            }
         }
     }
 }

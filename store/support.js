@@ -1,9 +1,12 @@
+import { getUniqueListBy } from "../helpers/helpers";
+
 const includes = "creater,contacts,support_status,person_data";
 const detailsIncludes = "messages,creater,contacts,owner,support_status,person_data";
 
 export const state = () => ({
     list: null,
     details: null,
+    ticketDetails: null,
     statuses:[],
     latestList:[],
     isLoadingStatuses:false
@@ -15,6 +18,7 @@ export const getters = {
     statuses:state=>state.statuses,
     latestList:state => state.latestList,
     isLoadingStatuses:state => state.isLoadingStatuses,
+    ticketDetails:state => state.ticketDetails,
 }
 export const mutations = {
     list(state, list) {
@@ -28,13 +32,11 @@ export const mutations = {
         }
         
     },
-    details(state, data) {
-        state.details   = data;
-        let ticket = state.list.find(x=>x.id == data.id);
-        if(ticket)
-        {
-            Object.assign(ticket,data);
-        }
+    setTicketDetails(state, data) {
+        state.ticketDetails   = data;
+    },
+    adNewTicketMessage(state, data) {
+        state.ticketDetails.messages.push(data)
     },
     statuses(state,list){
         state.statuses = list;
@@ -42,32 +44,13 @@ export const mutations = {
     latestList(state,list){
         state.latestList = list;
     },
-    addMessage(state,message)
-    {
-        if(state.details.id == message.support_ticket_id)
-        {
-            state.details.messages.push(message);
-        }
-    },
     isLoadingStatuses(state,value)
     {
         state.isLoadingStatuses = value;
     },
     deleteSupportMessage(state,payload)
     {
-        // const f = state.list.find(item => {
-        //     if(item.id == payload.ticketId)
-        //         return item
-        // })
-        // console.log(f, 1234, payload);
-        state.list = state.list.map(item => {
-            if(item.id == payload.ticketId)
-                return {
-                    ...item,
-                    messages: item.messages.filter(msg => msg.id != payload.deletedMessageId)
-                }
-            return item
-        })
+        state.ticketDetails.messages = state.ticketDetails.messages.filter(item => item.id != payload.id)
     },
 }
 export const actions = {
@@ -99,7 +82,7 @@ export const actions = {
     getDetails(context,payload){
         return this.$axios.get(`/support-tickets/${ payload }?include=${detailsIncludes}`)
                 .then(res => {
-                    context.commit('details', res.data.data)
+                    context.commit('setTicketDetails', res.data.data)
                     return res.data.data;
                 }).catch(err => {
                     return Promise.reject(err)
@@ -116,23 +99,22 @@ export const actions = {
     },
     sendMessage(context,payload){
         return this.$axios.post('/support-messages?include=owner,contacts,person_data',payload).then(res=>{
-            context.commit('addMessage',res.data.data);
+            context.commit('adNewTicketMessage',res.data.data);
             return res.data.data;
         })
     },
     deleteSupportMessage(context,payload){
-        context.commit('deleteSupportMessage', payload)
-        // return this.$axios.delete('/support-messages/' + payload.deletedMessageId).then((result) => {
-        //     context.commit('deleteSupportMessage', payload)
-        //     return Promise.resolve(payload)
-        // }).catch((err) => {
-        //     return Promise.reject(err)
-        // });
+        return this.$axios.delete('/support-messages/' + payload.id).then((result) => {
+            context.commit('deleteSupportMessage', payload)
+            return Promise.resolve(payload)
+        }).catch((err) => {
+            return Promise.reject(err)
+        });
     },
     updateTicket(context,payload){
         return this.$axios.put(`/support-tickets/${ payload.id }?include=${detailsIncludes}`,payload.data)
         .then(res => {
-            context.commit('details', res.data.data)
+            context.commit('setTicketDetails', res.data.data)
             return res.data.data;
         }).catch(err => {
             return Promise.reject(err)

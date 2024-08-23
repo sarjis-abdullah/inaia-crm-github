@@ -12,19 +12,19 @@
                 </div>
                 <div class="col-4 my-auto">
                     <div class="float-right">
-                        <Status v-bind:status='ticket.support_status' class="mr-2" />
+                        <Status v-bind:status='supportStatus' class="mr-2" />
                      <base-dropdown
             title-classes="btn btn-sm mr-0"
             menu-on-right
             :has-toggle="false"
-            v-if="hasEditAccess"
+            v-if="hasEditAccess && ticketDetails"
 
           >
             <template slot="title">
               <i class="fas fa-ellipsis-v"></i>
             </template>
 
-            <a class="dropdown-item"  @click.prevent="confirmClosing" v-if="shouldShowMessageBoxAndCloseTicket()">
+            <a class="dropdown-item"  @click.prevent="confirmClosing" v-if="shouldShowMessageBoxAndCloseTicket">
                 <div class="d-flex" style="min-width:200px">
                     <div>
                         <i class="lnir lnir-lock-alt"></i>
@@ -61,13 +61,13 @@
               </div>
               
 
-              <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id" @handleDeletedMessage="handleDeletedMessage"></MessageElement>
+              <MessageElement v-for="message in m.messages" :key="message.id" :ticket="ticket" :message="message" :id="'message-'+message.id"></MessageElement>
 
             </div>
               <div class="badge badge-light" v-if="displayClosedBy()">{{formatTextClosedBy()}}</div>
             </div>
 
-            <div class="write-area" v-if="shouldShowMessageBoxAndCloseTicket()">
+            <div class="write-area" v-if="shouldShowMessageBoxAndCloseTicket">
               <textarea type="text" class="chat-input mt-3" :placeholder="$t('write_answer')" rows="5" v-model="messageText"></textarea>
               <base-button type="primary" class="float-right mt-2" @click="sendMessage"  :disabled="isSending || !messageText ||messageText==''">{{$t('send_message')}}<span class="btn-inner--icon ml-1"><i class="fa fa-paper-plane"></i></span></base-button>
             </div>
@@ -118,12 +118,6 @@ export default {
     },
     mounted(){
         this.$confirm = MessageBox.confirm
-        if(this.ticket && this.ticket.messages.length > 0 )
-        {
-            this.groupMessages();
-            var messageArea = this.$el.querySelector("#message-area");
-            messageArea.scrollTop = messageArea.scrollHeight;
-        }
         if(this.ticket && this.ticket.support_status.name_translation_key != 'closed')
         {
             /*this.refresher = setInterval(()=>{
@@ -142,6 +136,7 @@ export default {
     computed:{
         ...mapGetters({
             data: "support/latestList",
+            ticketDetails: "support/ticketDetails",
             statuses: "support/statuses"
         }),
         name(){
@@ -161,6 +156,17 @@ export default {
         },
         hasEditAccess(){
           return canEditSupportTicket() ;
+        },
+        shouldShowMessageBoxAndCloseTicket()
+        {
+            const ticket = this.ticketDetails
+            return (ticket && ticket.support_status && ticket.support_status.name_translation_key!='closed' && this.hasEditAccess);
+        },
+        supportStatus(){
+            if (this.ticketDetails && this.ticketDetails.support_status) {
+                return this.ticketDetails.support_status
+            }
+            return this.ticket.support_status
         }
     },
     watch:{
@@ -171,12 +177,28 @@ export default {
                     this.fetchDetails(this.ticket.id)
                 }
             },immediate:true
-        }
+        },
+        ticketDetails:{
+            handler(newval, oldval){
+                if(this.ticketDetails && this.ticketDetails.messages && this.ticketDetails.messages.length > 0 ){
+                    this.groupMessages();
+                    if (this.$el && this.$el.querySelector("#message-area")) {
+                        const messageArea = this.$el.querySelector("#message-area");
+                        if (messageArea) {
+                            messageArea.scrollTop = messageArea.scrollHeight;
+                        }
+                    }
+                }
+            },
+            deep:true,
+            immediate:true,
+        },
     },
     updated(){
-        if(this.ticket && this.ticket.messages && this.ticket.messages.length>0)
+        const ticket = this.ticketDetails
+        if(ticket && ticket.messages && ticket.messages.length>0)
         {
-            let lastMessage = this.ticket.messages[this.ticket.messages.length-1]
+            let lastMessage = ticket.messages[ticket.messages.length-1]
             var messageArea = this.$el.querySelector("#message-"+lastMessage.id.toString());
             if(messageArea)
                 messageArea.scrollIntoView();
@@ -184,11 +206,12 @@ export default {
 
     },
     methods:{
-        groupMessages()
+        groupMessages(ticket = this.ticketDetails)
         {
-            if(this.ticket && this.ticket.messages.length > 0 )
+            this.groupedMessages = []
+            if(ticket && ticket.messages.length > 0 )
             {
-                this.ticket.messages.forEach((element,index)=>{
+                ticket.messages.forEach((element,index)=>{
                     const creationDate = moment(element.created_at);
                     const pureDate = moment({year:creationDate.get('year'),month:creationDate.get('month'),date:creationDate.get('date')});
                     let goupMessage = this.groupedMessages.find(x=>pureDate.isSame(x.date));
@@ -219,10 +242,6 @@ export default {
                 return this.$d(date);
             }
         },
-        shouldShowMessageBoxAndCloseTicket()
-        {
-            return (this.ticket && this.ticket.support_status && this.ticket.support_status.name_translation_key!='closed' && this.hasEditAccess);
-        },
         sendMessage(){
             const user = this.$store.getters["auth/user"];
             let data ={
@@ -232,8 +251,6 @@ export default {
             };
             this.isSending = true;
             this.$store.dispatch('support/sendMessage',data).then((data)=>{
-                this.groupedMessages = [];
-                this.groupMessages();
                 this.messageText = null;
             }).catch((err)=>{
                 apiErrorHandler(err,this.$notify);
@@ -278,7 +295,6 @@ export default {
                     }
                     this.isSending = true;
                     this.$store.dispatch('support/updateTicket',payload).then((data)=>{
-                        this.ticket = {...data};
                         this.$notify({type:'success',message:this.$t('ticket_opened_successfully'),duration:5000});
                     }).catch((err)=>{
                         apiErrorHandler(err,this.$notify);
@@ -311,12 +327,7 @@ export default {
       fetchDetails(id){
         if(this.ticket)
         {
-            this.$store.dispatch('support/getDetails',id).then((data)=>{
-                    this.groupedMessages = [];
-                    this.groupMessages();
-
-
-                })
+            this.$store.dispatch('support/getDetails',id)
         }
 
       },
@@ -337,28 +348,6 @@ export default {
                 return this.$t('ticket_closed_by')+'<strong>'+name+'</strong>'+this.$t('at')+'<strong>'+updatedAt+'</strong>'
             }
 
-        },
-        handleDeletedMessage(message){
-            const oldTicket = {...this.ticket}
-            // this.ticket.messages = this.ticket.messages.filter(item => item.id != deletedMessageId)
-            // this.groupedMessages = []
-            // this.groupMessages()
-            
-            const payload = {
-                deletedMessageId: message.id,
-                ticketId: message.support_ticket_id
-            }
-            this.$emit('handleDeletedMessage', payload)
-            console.log(payload);
-            this.$store.dispatch('support/deleteSupportMessage', payload)
-            .then((result) => {
-                this.$notify({type:'success',message:this.$t('entry_deleted_successfully'),duration:5000});
-            }).catch((err) => {
-                this.$notify({type:'danger',message:this.$t('entry_deleted_failed'),duration:5000});
-                // this.ticket = oldTicket
-                // this.groupedMessages = []
-                // this.groupMessages()
-            });
         }
     }
 }
