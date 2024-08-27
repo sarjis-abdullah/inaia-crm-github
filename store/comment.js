@@ -30,11 +30,7 @@ export const mutations = {
             Object.assign(oldComment,comment);
     },
     deleteComment(state,commentId){
-        let index = state.comments.indexOf(x=>x.id==commentId);
-        if(index > -1)
-        {
-            state.comments.splice(index,1);
-        }
+        state.comments = state.comments.filter(item => item.id !== commentId)
     }
 }
 export const actions = {

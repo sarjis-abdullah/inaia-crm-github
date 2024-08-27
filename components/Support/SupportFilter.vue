@@ -142,6 +142,7 @@ export default {
   computed: {
     ...mapGetters("support", {
       status: "statuses",
+      loadingStatus: "isLoadingStatuses",
     }),
     ...mapGetters("clients", {
       customers: "orderFilterList",
