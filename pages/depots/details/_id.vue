@@ -58,7 +58,7 @@
                           <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
                           <a class="dropdown-item" @click.prevent="openDownloadStatement"><i class="fa fa-download"></i>{{$t("download_statement")}}</a>
                           <a class="dropdown-item" @click.prevent="showDeposit">{{$t("add_deposit")}}</a>
-                          <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("gold_gift")}}</a>
+                          <a class="dropdown-item" @click.prevent="addGoldGift"><i class="fa fa-gift"></i>{{$t("assets_gift")}}</a>
                         </base-dropdown>
                       </div>
                     </div>

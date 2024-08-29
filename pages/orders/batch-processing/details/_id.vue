@@ -236,7 +236,7 @@
         @canceled="()=>{showUploadCsv = true}"
       />
       <SellGold
-        v-if="batchProcess && isOrderGoldSale(batchProcess)"
+        v-if="batchProcess && (isOrderGoldSale(batchProcess) || isOrderSilverSale(batchProcess))"
         :showConfirmSell="showSellGold"
         :selectedOrderProcess="batchProcess"
         @canceled="cancelSellGold"
