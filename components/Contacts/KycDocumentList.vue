@@ -47,7 +47,7 @@
                                     <div class="media align-items-center">
                                         <div class="media-body">
 
-                                            <a :href="row.link" target="_blank">{{row.title}}</a>
+                                            <a :href="row.link" target="_blank">{{row.title ? row.title : $t('download')}}</a>
 
                                         </div>
                                     </div>
