@@ -47,25 +47,13 @@
                                     <div class="media align-items-center">
                                         <div class="media-body">
 
-                                            <a :href="row.link" target="_blank">{{row.title}}</a>
+                                            <a :href="row.link" target="_blank">{{row.title ? row.title : $t('download')}}</a>
 
                                         </div>
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column v-bind:label="$t('description')"
-                                    
-                                    >
-                                <template v-slot="{row}">
-                                    <div class="media align-items-center">
-                                        <div class="media-body">
-
-                                            <div>{{row.title}}</div>
-
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-table-column>
+                            
                             <el-table-column 
                                     
                                     >
