@@ -136,13 +136,21 @@
             >
             </Option>
           </Select>
-          
+
           <date-picker
             class="filterElement"
             v-model="fromCreatedDate"
             type="date"
             :placeholder="$t('from_created_date')"
             @clear="removeCreatedDateFilters"
+          >
+          </date-picker>
+          <date-picker
+            class="filterElement"
+            v-model="toCreatedDate"
+            type="date"
+            :placeholder="$t('to_created_date')"
+            @clear="removeToCreatedDate"
           >
           </date-picker>
         </div>
@@ -179,14 +187,6 @@
             type="date"
             :placeholder="$t('select_interval_end_date_placeholder')"
             @clear="removeDate"
-          >
-          </date-picker>
-          <date-picker
-            class="filterElement"
-            v-model="toCreatedDate"
-            type="date"
-            :placeholder="$t('to_created_date')"
-            @clear="removeToCreatedDate"
           >
           </date-picker>
         </div>
@@ -300,7 +300,7 @@
           {{ $t("from") }}: ({{ $d(intervalstartDate) }} - {{ $d(intervalstartDateEnd) }})
         </span>
         <span v-else>
-          {{ $t("from") }}: {{ $d(intervalstartDate) }} 
+          {{ $t("from") }}: {{ $d(intervalstartDate) }}
         </span>
         <span v-if="intervalendDate">
           {{ $t("until") }}: {{ $d(intervalendDate) }}
@@ -314,7 +314,7 @@
         size="md"
         style="margin-right: 10px"
         v-if="fromCreatedDate"
-        > 
+        >
         <span>{{ $t("from") + ' ' + $t("created_date") }} : {{ $d(fromCreatedDate) }}</span>
         <span v-if="toCreatedDate">{{' - ' + $t("to") + ' ' + $t("created_date")}} : {{ $d(toCreatedDate) }}</span>
         <a class="badgeIcon" @click.prevent="removeCreatedDateFilters()">
@@ -326,7 +326,7 @@
         size="md"
         style="margin-right: 10px"
         v-if="toCreatedDate && !fromCreatedDate"
-        > 
+        >
         <span v-if="!fromCreatedDate">
           {{ $t("to") + ' ' + $t("created_date") }} : {{ $d(toCreatedDate) }}
         </span>
@@ -756,7 +756,7 @@ export default {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
       this.selectedSavingPlan = null;
-      
+
       this.filterIsActive = false;
       this.selectedDepotStatus = [];
       this.selectedIntervalDay = null;
