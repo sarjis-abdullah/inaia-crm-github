@@ -164,8 +164,8 @@ export default {
     no_saving_plan:'Not set',
     product:'Product',
     agio_payment_plan:'Agio payment plan',
-    select_interval_start_date_placeholder:'Interval start date',
-    select_interval_end_date_placeholder:'Interval end date',
+    select_interval_start_date_placeholder:'Start date (from)',
+    select_interval_end_date_placeholder:'End date',
     depot_balance_before:'Depot balance before',
     depot_balance_after:'Depot balance after',
     select_right_preview_date:'The price date must not be in the future',
@@ -805,5 +805,5 @@ export default {
     kyc_failed: 'Kyc failed',
     delete_message_confirmation: "Are you sure you want to delete this message?",
     delete_entry_confirmation: "Are you sure you want to delete this entry?",
-    select_interval_start_date__end_placeholder: 'Interval start date end',
+    select_interval_start_date__end_placeholder: 'Start date (until)',
 }
