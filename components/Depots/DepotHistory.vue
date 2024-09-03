@@ -37,6 +37,11 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column v-bind:label="$t('target_amount')" prop="target_amount">
+        <template v-slot="{ row }">
+          <span>{{$n(row.target_amount/100)}} {{ currency }}</span>
+        </template>
+      </el-table-column>
       <el-table-column v-bind:label="$t('agio')" prop="agio">
         <template v-slot="{ row }">
           <span>{{$n(row.agio/100)}} {{ currency }}</span>
