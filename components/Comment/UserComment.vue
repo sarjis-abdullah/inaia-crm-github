@@ -133,7 +133,8 @@ export default {
       return this.commentList.map(item => {
         return {
           ...item,
-          hasAbilityToDelete: hasAdminRole ? true : this.checkAbilityToDelete(item)
+          hasAbilityToDelete: this.checkAbilityToDelete(item)
+          // hasAbilityToDelete: hasAdminRole ? true : this.checkAbilityToDelete(item) //todo, waiting for back-end update
         }
       })
     }
