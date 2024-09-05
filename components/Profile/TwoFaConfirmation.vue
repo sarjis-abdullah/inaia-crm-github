@@ -8,21 +8,27 @@
     :allowOutSideClose="false"
   >
     <template #header>
-      <h5>
-        {{
-          hasTwoFaEnabled
-            ? $t("confirm_disable_two_factor_authentication")
-            : $t("confirm_enable_two_factor_authentication")
-        }}
-        <p class="text-sm text-gray-500" v-if="hasTwoFaEnabled">
-          {{ $t("do_you_want_to_disable_two_factor_authentication?") }}
-        </p>
-        <p class="text-sm text-gray-500" v-else>
-          {{ $t("do_you_want_to_enable_two_factor_authentication?") }}
-        </p>
-      </h5>
+      <header>
+        <span v-if="hasTwoFaEnabled">
+          <p class="text-sm text-gray-500">
+            <strong>{{ $t("do_you_want_to_disable_two_factor_authentication?") }}</strong>
+          </p>
+          <p class="text-sm">
+            {{ $t("enter_6_digit_code_to_confirm_disable_two_fa") }}
+          </p>
+        </span>
+
+        <span v-else class="text-center">
+          <p class="text-sm text-gray-500">
+            <strong>{{ $t("do_you_want_to_enable_two_factor_authentication?") }}</strong>
+          </p>
+          <p class="text-sm">
+            {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
+          </p>
+        </span>
+      </header>
     </template>
-    <div class="" v-if="isLoading || serverErrorMsg">
+    <div>
       <div v-if="isLoading" class="text-center">
         <Loading />
       </div>
@@ -46,17 +52,26 @@
     <div v-else-if="!isLoading && svgContent && !hasTwoFaEnabled" class="w-100">
       <div class="text-center">
         <template v-if="svgContent">
-          <p class="text-sm">
+          <!-- <p class="text-sm">
             {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
-          </p>
+          </p> -->
           <picture>
             <div v-html="svgContent"></div>
           </picture>
         </template>
+        <p class="text-sm mb-3">
+          Once you have scanned the QR code, enter the 6-digit code from your
+          authenticator app to confirm setup.
+        </p>
         <CodeInputs v-if="confirmed" @complete="submit" :length="6" />
+
+        <div v-if="isLoading || isMfaVerifying" class="text-center mt-3">
+          <Loading />
+        </div>
+
         <template v-if="confirmed">
           <div>
-            <p class="text-sm mt-4">{{ $t("enter_6_digit_code_prompt") }}</p>
+            <p class="text-sm mt-3">{{ $t("enter_6_digit_code_prompt") }}</p>
             <p class="text-sm mt-2">{{ $t("keep_mobile_device_secure") }}</p>
           </div>
         </template>
@@ -76,16 +91,6 @@
       >
         {{ $t("cancel") }}
       </button>
-      <template v-if="!hasTwoFaEnabled">
-        <button
-          type="button"
-          :disabled="isLoading"
-          class="btn btn-primary"
-          @click="confirmEnableTwoFa()"
-        >
-          {{ $t("confirm") }}
-        </button>
-      </template>
     </template>
   </modal>
 </template>
@@ -115,10 +120,14 @@ export default {
       account: null,
       svgContent: "",
       showCodeInput: true,
-      isLoading: false,
+      isLoading: true,
       confirmed: false,
+      isMfaVerifying: false,
       serverErrorMsg: "",
     };
+  },
+  mounted() {
+    this.initTwoFA();
   },
   methods: {
     cancel() {
@@ -138,8 +147,8 @@ export default {
     },
     async submit(code) {
       try {
-        this.isLoading = true;
-        const res = await this.$axios.post(`mfa/verify`, {pin: code});
+        this.isMfaVerifying = true;
+        const res = await this.$axios.post(`mfa/verify`, { pin: code });
         await this.loadAccount();
         this.$emit("enable");
         this.confirmed = false;
@@ -148,10 +157,10 @@ export default {
       } catch (error) {
         this.handleError(error);
       } finally {
-        this.isLoading = false;
+        this.isMfaVerifying = false;
       }
     },
-    async confirmEnableTwoFa() {
+    async initTwoFA() {
       try {
         this.serverErrorMsg = "";
         this.isLoading = true;
@@ -186,10 +195,6 @@ export default {
         this.serverErrorMsg = error.message ? error.message : "";
       }
     },
-  },
-  created() {
-    // this.accountId = this.computedAccountId;
-    // this.loadAccount();
   },
 };
 </script>
