@@ -825,4 +825,6 @@ export default {
     delete_message_confirmation: "Are you sure you want to delete this message?",
     delete_entry_confirmation: "Are you sure you want to delete this entry?",
     select_interval_start_date__end_placeholder: 'Start date (until)',
+    add_to_blacklist: 'Add to blacklist',
+    reset_2fa: 'Reset 2fa'
 }

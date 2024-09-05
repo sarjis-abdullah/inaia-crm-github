@@ -1,50 +1,58 @@
 <template>
   <modal
-    :show.sync="show"
+    :show.sync="showModal"
     class="orderModal"
     headerClasses=""
     bodyClasses="pt-0"
     footerClasses="border-top bg-secondary"
     :allowOutSideClose="false"
+    @update:show="cancel()"
+    @close="cancel()"
   >
-    <template #header>
-      <header>
-        <span v-if="hasTwoFaEnabled">
-          <p class="text-sm text-gray-500">
-            <strong>{{ $t("do_you_want_to_disable_two_factor_authentication?") }}</strong>
-          </p>
-          <p class="text-sm">
-            {{ $t("enter_6_digit_code_to_confirm_disable_two_fa") }}
-          </p>
-        </span>
+    <header class="d-flex justify-content-between align-items-start mt-3 gap-x-4">
+      <span v-if="hasTwoFaEnabled">
+        <h5 class="text-sm font-medium text-gray-500">{{
+            $t("do_you_want_to_disable_two_factor_authentication?")
+          }}
+        </h5>
+      </span>
 
-        <span v-else>
-          <p class="text-sm text-gray-500">
-            <strong>{{ $t("do_you_want_to_enable_two_factor_authentication?") }}</strong>
-          </p>
-          <p class="text-sm">
-            {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
-          </p>
-        </span>
-      </header>
-    </template>
-    <div>
-      <div v-if="isLoading" class="text-center">
+      <span v-else>
+        <h5 class="text-sm font-medium text-gray-500">
+          {{
+            $t("do_you_want_to_enable_two_factor_authentication?")
+          }}
+        </h5>
+        <p class="text-sm" v-if="svgContent">
+          {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
+        </p>
+      </span>
+      <button
+        type="button"
+        class="close"
+        @click="cancel"
+        data-dismiss="modal"
+        aria-label="Close"
+      >
+        <span>×</span>
+      </button>
+    </header>
+    <div v-if="isLoading && !hasTwoFaEnabled" class="text-center mt-3">
         <Loading />
       </div>
-      <div v-else>
-        <div v-if="serverErrorMsg" class="alert alert-danger text-white">
-          {{ serverErrorMsg }}
-        </div>
-      </div>
+    <div v-if="serverErrorMsg" class="alert alert-danger text-white mt-3">
+      {{ serverErrorMsg }}
     </div>
-    <div v-if="hasTwoFaEnabled && !isLoading && showCodeInput" class="w-100">
+    <div v-if="hasTwoFaEnabled && showCodeInput" class="w-100 mt-4">
       <div class="text-sm text-center">
         {{ $t("enter_6_digit_code_to_confirm_disable_two_fa") }}
       </div>
       <div class="d-flex justify-content-center mt-4">
         <CodeInputs @complete="confirmDisableTwofa" :length="6" />
       </div>
+      <div v-if="isLoading" class="text-center mt-3">
+          <Loading />
+        </div>
       <div class="text-sm text-center mt-4">
         {{ $t("two_fa_disable_warning_message") }}
       </div>
@@ -89,7 +97,7 @@ export default {
     CodeInputs,
   },
   props: {
-    show: {
+    showModal: {
       type: Boolean,
       default: false,
     },
@@ -112,17 +120,16 @@ export default {
     };
   },
   mounted() {
-    if(!this.hasTwoFaEnabled)
-      this.initTwoFA();
-    else this.isLoading = false
+    if (!this.hasTwoFaEnabled) this.initTwoFA();
+    else this.isLoading = false;
   },
   methods: {
     cancel() {
-      this.$emit("cancel", this.account);
+      this.$emit("cancel");
       this.svgContent = "";
     },
     enable() {
-      this.$emit("enable", this.account);
+      this.$emit("enable");
       this.svgContent = "";
     },
     async loadAccount() {
@@ -195,5 +202,8 @@ export default {
 }
 .modal-header {
   padding-bottom: 0.5rem !important;
+}
+.gap-x-4 {
+  gap: 1rem;
 }
 </style>

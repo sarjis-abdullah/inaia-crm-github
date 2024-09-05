@@ -811,4 +811,6 @@ export default {
     delete_message_confirmation: "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?",
     delete_entry_confirmation: "Sind Sie sicher, dass Sie diese Nachricht löschen möchten?",
     select_interval_start_date__end_placeholder: 'Vertragsbeginn (bis)',
+    add_to_blacklist: 'Zur Blacklist hinzufügen',
+    reset_2fa: 'Reset 2fa'
 }

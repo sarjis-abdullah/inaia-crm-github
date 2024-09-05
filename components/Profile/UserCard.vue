@@ -163,7 +163,7 @@
     <TwoFaConfirmation 
       v-if="showTwoFaConfirmation"
       :hasTwoFaEnabled="hasTwoFaEnabled" 
-      :show="showTwoFaConfirmation" 
+      :showModal="showTwoFaConfirmation" 
       @disable="disableTwoFA"
       @cancel="toggleTwoFaConfirmationModal" 
       @enable="enableTwoFA" />
