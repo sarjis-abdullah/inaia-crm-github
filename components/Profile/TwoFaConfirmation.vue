@@ -80,18 +80,6 @@
         </div>
       </div>
     </div>
-    <template #footer v-if="!confirmed">
-      <button
-        v-if="!svgContent"
-        type="button"
-        :disabled="isLoading"
-        class="btn btn-secondary"
-        @click="cancel"
-        ref="cancelButtonRef"
-      >
-        {{ $t("cancel") }}
-      </button>
-    </template>
   </modal>
 </template>
 <script>
