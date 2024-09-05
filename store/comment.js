@@ -1,3 +1,5 @@
+import { getUniqueListBy } from "../helpers/helpers";
+
 export const state = ()=>{
     return {
         comments:[]
@@ -6,7 +8,7 @@ export const state = ()=>{
 
 const initialState = state();
 export const getters = {
-    comments: state=>state.comments
+    comments: state=> getUniqueListBy(state.comments, 'id')
 }
 export const mutations = {
     comments(state,data){
@@ -28,11 +30,7 @@ export const mutations = {
             Object.assign(oldComment,comment);
     },
     deleteComment(state,commentId){
-        let index = state.comments.indexOf(x=>x.id==commentId);
-        if(index > -1)
-        {
-            state.comments.splice(index,1);
-        }
+        state.comments = state.comments.filter(item => item.id !== commentId)
     }
 }
 export const actions = {

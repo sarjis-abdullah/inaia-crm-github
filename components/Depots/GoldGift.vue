@@ -6,8 +6,8 @@
         </template>
         <div>
             <div class="text-center">
-              <img src="/img/theme/gold-gift.png" class="icon"/>
-              <h2 class="card-title mt-3 mb-0 title">{{$t('gold_gift')}}</h2>
+              
+              <h2 class="card-title mt-3 mb-0 title">{{$t('assets_gift')}}</h2>
             </div>
             <div class="mt-4">
                 <div class="row">

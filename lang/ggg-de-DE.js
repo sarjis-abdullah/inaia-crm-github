@@ -417,7 +417,7 @@ export default {
     confirm_execute_text:'Are you sure you want to execute payments for the following order process ',
     execute_payments_started_successfully:'Execute payments started successfully',
     execute_payments_started_unsuccessfully:"We couldn't start execute payments",
-    confirm_batch_sell_title:'Sell gold for batch orders',
+    confirm_batch_sell_title:'Sell assets for batch orders',
     order_batch_gold_successfully:'Batch orders gold sold successfully',
     order_batch_gold_unsuccessfully:"Batch orders can't be sold",
     select_price_date:'Select price date',
