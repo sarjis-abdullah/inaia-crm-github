@@ -136,9 +136,10 @@ export default {
         console.error(error);
       }
     },
-    async submit() {
+    async submit(code) {
       try {
         this.isLoading = true;
+        const res = await this.$axios.post(`mfa/verify`, {pin: code});
         await this.loadAccount();
         this.$emit("enable");
         this.confirmed = false;
