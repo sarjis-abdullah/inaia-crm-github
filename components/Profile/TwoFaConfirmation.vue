@@ -18,7 +18,7 @@
           </p>
         </span>
 
-        <span v-else class="text-center">
+        <span v-else>
           <p class="text-sm text-gray-500">
             <strong>{{ $t("do_you_want_to_enable_two_factor_authentication?") }}</strong>
           </p>
@@ -52,9 +52,6 @@
     <div v-else-if="!isLoading && svgContent && !hasTwoFaEnabled" class="w-100">
       <div class="text-center">
         <template v-if="svgContent">
-          <!-- <p class="text-sm">
-            {{ $t("scan_the_qr_code_below_with_your_authenticator_app") }}
-          </p> -->
           <picture>
             <div v-html="svgContent"></div>
           </picture>
@@ -115,7 +112,9 @@ export default {
     };
   },
   mounted() {
-    this.initTwoFA();
+    if(!this.hasTwoFaEnabled)
+      this.initTwoFA();
+    else this.isLoading = false
   },
   methods: {
     cancel() {

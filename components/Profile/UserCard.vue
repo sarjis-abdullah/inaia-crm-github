@@ -92,7 +92,7 @@
                 <span v-if="hasTwoFaEnabled">{{$t('two_fa_enabled_message')}}</span>
                 <span v-else>{{$t('two_fa_disabled_message')}}</span>
               </div>
-              <button v-if="!hasTwoFaEnabled" type="button" class="btn btn-sm btn-primary" @click="showTwoFaConfirmation = !showTwoFaConfirmation">
+              <button type="button" class="btn btn-sm btn-primary" @click="showTwoFaConfirmation = !showTwoFaConfirmation">
                 {{ hasTwoFaEnabled ? $t('disable_2fa') : $t('enable_2fa') }}
               </button>
             </div>
