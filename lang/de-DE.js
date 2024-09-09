@@ -813,5 +813,6 @@ export default {
     select_interval_start_date__end_placeholder: 'Vertragsbeginn (bis)',
     add_to_blacklist: 'Zur Blacklist hinzufügen',
     reset_2fa: 'Reset 2fa',
+    two_factor_authentication: 'Zwei-Faktor-Authentifizierung.',
     two_fa_confirmation: 'Nachdem Sie den QR-Code gescannt haben, geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein, um die Einrichtung zu bestätigen.',
 }

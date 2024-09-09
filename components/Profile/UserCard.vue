@@ -86,7 +86,7 @@
           <div class="text-center">
             <div class="d-flex justify-content-center gap-4">
               <dt class="font-medium">
-                Two Factor Authentication
+                {{$t('two_factor_authentication')}}
               </dt>
               <div>
                 <span v-if="hasTwoFaEnabled">{{$t('two_fa_enabled_message')}}</span>
