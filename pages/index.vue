@@ -134,36 +134,6 @@
                   </div>
                 </template>
               </div>
-              <!-- <validation-observer ref="observer" v-slot="{ invalid, handleSubmit }">
-                <div v-if="failed" class="text-center text-danger mb-2">{{ failed }}</div>
-                <form class="needs-validation" @submit.prevent="handleSubmit(loginRequest)">
-                  <base-input
-                    alternative
-                    class="mb-3"
-                    name="Username"
-                    id="Username"
-                    rules="required"
-                    prepend-icon="fas fa-user"
-                    placeholder="Username"
-                    v-model="username"
-                  />
-
-                  <base-input alternative
-                    class="mb-3"
-                    name="password"
-                    :rules="{required: true, min: 6}"
-                    prepend-icon="ni ni-lock-circle-open"
-                    type="password"
-                    placeholder="Password"
-                    v-model="password"
-                  />
-
-                  <base-checkbox v-model="rememberMe">Remember me</base-checkbox>
-                  <div class="text-center">
-                    <base-button :disabled="isRequesting" type="primary" native-type="submit" class="my-4">Sign in</base-button>
-                  </div>
-                </form>
-              </validation-observer> -->
             </div>
           </div>
           <div class="row mt-3" v-if="!forgetPassword">
@@ -250,6 +220,7 @@
         handler(newValue, oldValue) {
           if (this.$route && this.$route.query && this.$route.query['forgot-password']) {
             this.forgetPassword = true
+            this.showCodeInput = false
             this.$nextTick(()=> {
               if (this.$refs && this.$refs.forgetPasswordObserver) {
                 this.$refs.forgetPasswordObserver.reset();
