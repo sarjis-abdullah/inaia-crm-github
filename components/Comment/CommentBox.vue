@@ -1,5 +1,30 @@
 <template>
   <div>
+    <modal
+      :show.sync="showConfirmModal"
+      headerClasses=""
+      bodyClasses="pt-0"
+      footerClasses="border-top bg-secondary"
+      @close="closeModal"
+      :allowOutSideClose="false"
+    >
+      <template slot="header">
+          <h5 class="modal-title">{{ $t("delete_entry_confirmation") }}</h5>
+          <span></span>
+      </template>
+      <template slot="footer">
+          <base-button type="link" class="ml-auto" @click="closeModal()">
+              {{ $t("cancel") }}
+          </base-button>
+          <base-button
+              type="danger"
+              @click="() => confirmDeleteMessage()"
+              :disabled="isSubmitting"
+          >
+              {{ $t("delete") }}
+          </base-button>
+      </template>
+    </modal>
     <div slot="header" class="pb-0">
       <h5 class="modal-title" v-if="account">{{ clientName }}</h5>
       <span></span>
@@ -144,6 +169,8 @@ export default {
       lastPage: 1,
       isLoading: false,
       initialLoading: true,
+      showConfirmModal: false,
+      isSubmitting: false,
     };
   },
   mounted() {
