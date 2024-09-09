@@ -65,8 +65,7 @@
           </picture>
         </template>
         <p class="text-sm mb-3">
-          Once you have scanned the QR code, enter the 6-digit code from your
-          authenticator app to confirm setup.
+          {{ $t('two_fa_confirmation') }}
         </p>
         <CodeInputs v-if="confirmed" @complete="submit" :length="6" />
 
