@@ -117,7 +117,7 @@
                 </div>
                 <template v-if="!isRequesting && !showOnlyLoading">
                   <CodeInputs @complete="verifyMfa" :length="codeInputLength" />
-                  <div v-if="alternativeMethods?.length && !isRequesting" class="mt-8">
+                  <div v-if="alternativeMethods?.length && !isRequesting" class="confirm-method">
                     <p>{{ $t('choose_other_confirming_method') }}</p>
                     <ul>
                       <li v-for="(method, index) in alternativeMethods" :key="index" 
@@ -320,7 +320,6 @@
             }
             this.isRequesting = false
           }).catch( err => {
-            console.log(err);
             if (err.response) {
                 let e   = err.response.data
                 this.failed = e.message || e.errors.message
@@ -388,11 +387,10 @@
       },
       selectAlternativeMethod(method) {
         this.loginMethod = method
-        initialLogin()
+        this.initialLogin()
       },
       async verifyMfa(code){
         try{
-          console.log(code);
           const token = this.primaryResponse.tempBearerToken
           if (token) {
             this.isRequesting   = true
@@ -403,14 +401,12 @@
             const response = await this.$store.dispatch('auth/verifyMfa', object);
             this.showOnlyLoading = true
             this.primaryResponse = null
-            console.log(response.data, 'response.data');
             if(response.data.success.account && response.data.success.account.account && response.data.success.account.account.type.value === "customer") {
               this.$store.commit("auth/purgeAuth")
               this.failed = "You are not authorized to be here!"
             } else {
               this.selectedLocale = this.locale
               this.$axios.setToken(`Bearer ${ response.data.success.accessToken }`)
-              console.log(response.data.success, 'response.data.success.accessToken', process.env.dashboardPath);
               this.$router.push(process.env.dashboardPath)
               // location.href = process.env.entryPoints.crm + '?token=' + response.data.success.accessToken
               // this.redirectPost(process.env.entryPoints.crm, { token: response.data.success.accessToken })
@@ -418,7 +414,6 @@
           }
         }
         catch(err){
-          console.log(err);
           if (err.response) {
                 let e   = err.response.data
                 this.failed = e.message || e.errors.message
@@ -453,6 +448,9 @@
 }
 .mb-8 {
   margin-bottom: 2rem !important;
+}
+.confirm-method {
+  margin-top: 2rem !important;
 }
 .font-normal {
   font-weight: normal;
