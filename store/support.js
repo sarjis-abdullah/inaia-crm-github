@@ -34,6 +34,15 @@ export const mutations = {
     },
     setTicketDetails(state, data) {
         state.ticketDetails   = data;
+        state.list = state.list.map(item => {
+            if (item.id == data.id) {
+                return {
+                    ...item,
+                    ...data
+                }
+            }
+            return item
+        })
     },
     adNewTicketMessage(state, data) {
         state.ticketDetails.messages.push(data)
