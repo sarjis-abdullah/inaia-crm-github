@@ -1,7 +1,20 @@
 export function useUserDetails(user) {
+  function getChanneluser(type) {
+    const channel =
+      user.channels &&
+      user.channels.length &&
+      user.channels.find((c) => c.type.value == type);
+    if (channel) {
+      return channel.value;
+    }
+    return null;
+  }
+
   return {
     get getName() {
-      return user.name + (user.person_data ? " " + user.person_data.surname : "");
+      return (
+        user.name + (user.person_data ? " " + user.person_data.surname : "")
+      );
     },
     get avatar() {
       if (user && user.avatar) return user.avatar;
@@ -54,6 +67,24 @@ export function useUserDetails(user) {
         age--;
       }
       return age;
-    }
+    },
+    get getCountryName() {
+      if (user && user.address && user.address.country) {
+        return user.address.country.name_translation_key;
+      } else {
+        return "";
+      }
+    },
+    get nationality() {
+      return user.person_data && user.person_data.nationality_details
+        ? user.person_data.nationality_details.nationality_translation_key
+        : "";
+    },
+    get email(){
+      return getChanneluser('email')
+    },
+    get mobile(){
+      return getChanneluser('mobile')
+    },
   };
 }

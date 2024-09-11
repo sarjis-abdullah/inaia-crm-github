@@ -93,7 +93,8 @@
                                             <i class="fas fa-ellipsis-v mt-2"></i>
                                         </span>
                                         <el-dropdown-menu class="dropdown-menu dropdown-menu-arrow show" slot="dropdown">
-                                            <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a>
+                                            <!-- <a class="dropdown-item" @click.prevent="() => popupDetails(row)" href="#">{{ $t('details') }}</a> -->
+                                            <a class="dropdown-item" @click.prevent="() => $router.push('/users/details/'+row.id)" href="#">{{ $t('details') }}</a>
                                             <a class="dropdown-item" @click.prevent="() => $router.push('/users/edit/'+row.id)" href="#">{{ $t('edit') }}</a>
                                             <a class="dropdown-item" @click.prevent="() => $router.push('/users/assign-roles/'+row.id)" href="#">{{ $t('assign_roles') }}</a>
                                             <a class="dropdown-item" @click.prevent="() => removeConfirm(row)" href="#">{{ $t('delete') }}</a>

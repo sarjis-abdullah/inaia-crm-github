@@ -45,6 +45,7 @@ export const getters = {
         }
         return null;
     },
+    singleAccountData: state => state.singleClientData,
     // leadData:state=>state.leadData,
     // singleLeadData:state=>state.singleLeadData,
     countryList:state=>state.countryList,
