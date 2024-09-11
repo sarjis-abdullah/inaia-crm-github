@@ -290,10 +290,9 @@ export default {
           apiErrorHandler(err, this.$notify);
         });
     },
-    async confirmResetTwoFA(row) {
+    async confirmResetTwoFA() {
       try {
         const account = this.resource.account;
-        this.isLoading = true;
         if (account) {
           const accountID = account.id;
           const obj = {
@@ -313,8 +312,6 @@ export default {
           message: this.$t("entry_updated_failed"),
         });
       } finally {
-        this.isLoading = false;
-        this.showReset2FaModal = false;
       }
     }
   },
