@@ -178,6 +178,7 @@ import { mapGetters } from "vuex";
 import { MessageBox } from "element-ui";
 import { formatDateByMoment } from "@/helpers/date";
 import { canEditCustomers } from "@/permissions";
+import { apiErrorHandler } from '@/helpers/apiErrorHandler';
 import { useUserDetails } from "@/helpers/useUserDetails";
 
 export default {
@@ -239,6 +240,42 @@ export default {
         this.confirmResetPassword();
       });
     },
+    resetTwoFA() {
+      this.$confirm(
+        this.$t("send_reset_password_link_confirmation"),
+        "Warning",
+        {
+          confirmButtonText: this.$t("ok"),
+          cancelButtonText: this.$t("cancel"),
+          type: "warning",
+        }
+      ).then(() => {
+        this.confirmResetPassword();
+      });
+    },
+    confirmResetPin(){
+        this.$store.dispatch('clients/resetAccountPin',this.info.account.id).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('pin_account_reset_successfully'),
+          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+        })
+      },
+      confirmResetPassword(){
+        const email = this.userData.email
+        this.$store.dispatch('users/handleForgetPassword', {email}).then(()=>{
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t('password_reset_link_sent_successfully'),
+          });
+        }).catch((err)=>{
+          apiErrorHandler(err,this.$notify);
+        })
+      },
   },
 };
 </script>

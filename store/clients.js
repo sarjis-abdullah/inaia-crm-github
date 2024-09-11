@@ -271,6 +271,15 @@ export const actions = {
                 return response
             })
     },
+    accountDetailsData(context, payload) {
+        return this.$axios
+            .get(`/contacts/${payload}?include=account,person_data,address,country,channels,nationality_details`)
+            .then(response => {
+                const singleClientData = response.data.data
+                context.commit('singleClientData', singleClientData);
+                return response
+            })
+    },
     getClientLatestTransactions(context,payload) {
         return this.$axios
             .get(`${process.env.golddinarApiUrl}/orders/account-activities?include=order_transactions,orders_payment_transactions&${payload}`)

@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     initClientData() {
-      this.$store.dispatch("clients/clientDetailsData", this.accountUserId);
+      this.$store.dispatch("clients/accountDetailsData", this.accountUserId);
     },
   },
 };
