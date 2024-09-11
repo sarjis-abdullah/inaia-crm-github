@@ -51,13 +51,12 @@
         <div
           class="position-absolute"
           style="right: 1.5rem; top: 1.5rem"
-          v-if="info"
+          v-if="info && hasEditAccess"
         >
           <base-dropdown
             title-classes="btn btn-sm btn-link mr-0"
             menu-on-right
             :has-toggle="false"
-            v-if="hasEditAccess"
           >
             <template slot="title">
               <i class="fas fa-ellipsis-v"></i>
@@ -67,6 +66,9 @@
             }}</a>
             <a class="dropdown-item" @click.prevent="resetPassword">{{
               $t("reset_password")
+            }}</a>
+            <a class="dropdown-item" @click.prevent="resetTwoFA">{{
+              $t("reset_2fa")
             }}</a>
           </base-dropdown>
         </div>
@@ -118,9 +120,7 @@
               </div>
               <div>
                 {{ $t("nationality") }}:
-                {{
-                  userData.nationality
-                }}
+                {{ userData.nationality }}
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ import { mapGetters } from "vuex";
 import { MessageBox } from "element-ui";
 import { formatDateByMoment } from "@/helpers/date";
 import { canEditCustomers } from "@/permissions";
-import { apiErrorHandler } from '@/helpers/apiErrorHandler';
+import { apiErrorHandler } from "@/helpers/apiErrorHandler";
 import { useUserDetails } from "@/helpers/useUserDetails";
 
 export default {
@@ -187,12 +187,14 @@ export default {
       type: Object,
     },
   },
-  components: {
-  },
+  components: {},
   mounted() {
     this.$confirm = MessageBox.confirm;
   },
   computed: {
+    ...mapGetters({
+      authUser: "auth/user",
+    }),
     info() {
       return this.resource;
     },
@@ -202,8 +204,14 @@ export default {
       }
       return this.useUserDetails(this.resource);
     },
-    hasEditAccess() {
-      return canEditCustomers();
+    hasEditAccess(){
+      const c1 = this.info && this.info.account && this.info.account.id
+      const c2 = this.authUser && this.authUser.account && this.authUser.account.id
+
+      if (c1 == c2) {
+          return false
+      }
+      return true
     },
   },
   data() {
@@ -242,7 +250,7 @@ export default {
     },
     resetTwoFA() {
       this.$confirm(
-        this.$t("send_reset_password_link_confirmation"),
+        this.$t("confirmReset2FAByAdmin"),
         "Warning",
         {
           confirmButtonText: this.$t("ok"),
@@ -250,32 +258,65 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        this.confirmResetPassword();
+        this.confirmResetTwoFA();
       });
     },
-    confirmResetPin(){
-        this.$store.dispatch('clients/resetAccountPin',this.info.account.id).then(()=>{
+    confirmResetPin() {
+      this.$store
+        .dispatch("clients/resetAccountPin", this.info.account.id)
+        .then(() => {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t('pin_account_reset_successfully'),
+            message: this.$t("pin_account_reset_successfully"),
           });
-        }).catch((err)=>{
-          apiErrorHandler(err,this.$notify);
         })
-      },
-      confirmResetPassword(){
-        const email = this.userData.email
-        this.$store.dispatch('users/handleForgetPassword', {email}).then(()=>{
+        .catch((err) => {
+          apiErrorHandler(err, this.$notify);
+        });
+    },
+    confirmResetPassword() {
+      const email = this.userData.email;
+      this.$store
+        .dispatch("users/handleForgetPassword", { email })
+        .then(() => {
           this.$notify({
             type: "success",
             timeout: 5000,
-            message: this.$t('password_reset_link_sent_successfully'),
+            message: this.$t("password_reset_link_sent_successfully"),
           });
-        }).catch((err)=>{
-          apiErrorHandler(err,this.$notify);
         })
-      },
+        .catch((err) => {
+          apiErrorHandler(err, this.$notify);
+        });
+    },
+    async confirmResetTwoFA(row) {
+      try {
+        const account = this.resource.account;
+        this.isLoading = true;
+        if (account) {
+          const accountID = account.id;
+          const obj = {
+            accountID,
+          };
+          const res = await this.$axios.post(`mfa/customer/reset`, obj);
+          this.$notify({
+            type: "success",
+            timeout: 5000,
+            message: this.$t("reset_2fa_success"),
+          });
+        }
+      } catch (error) {
+        this.$notify({
+          type: "danger",
+          timeout: 5000,
+          message: this.$t("entry_updated_failed"),
+        });
+      } finally {
+        this.isLoading = false;
+        this.showReset2FaModal = false;
+      }
+    }
   },
 };
 </script>

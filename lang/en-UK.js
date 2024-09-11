@@ -829,4 +829,5 @@ export default {
     reset_2fa: 'Reset 2fa',
     two_factor_authentication: 'Two Factor Authentication',
     two_fa_confirmation: 'Once you have scanned the QR code, enter the 6-digit code from your authenticator app to confirm setup.',
+    confirmReset2FAByAdmin: 'Are you sure you want to reset two-factor authentication (2FA) for this user?'
 }
