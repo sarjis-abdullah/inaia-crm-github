@@ -826,7 +826,8 @@ export default {
     delete_entry_confirmation: "Are you sure you want to delete this entry?",
     select_interval_start_date__end_placeholder: 'Start date (until)',
     add_to_blacklist: 'Add to blacklist',
-    reset_2fa: 'Reset 2fa',
+    reset_2fa: 'Reset 2FA',
+    reset_2fa_success: '2FA reset successfully!',
     two_factor_authentication: 'Two Factor Authentication',
     two_fa_confirmation: 'Once you have scanned the QR code, enter the 6-digit code from your authenticator app to confirm setup.',
     confirmReset2FAByAdmin: 'Are you sure you want to reset two-factor authentication (2FA) for this user?'
