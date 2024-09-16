@@ -364,6 +364,7 @@
       async verifyMfa(code){
         try{
           const token = this.primaryResponse.tempBearerToken
+          this.failed = ''
           if (token) {
             this.isRequesting   = true
             const object = {
