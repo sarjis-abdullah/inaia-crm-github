@@ -133,6 +133,7 @@
                     <Loader />
                   </div>
                 </template>
+                <div v-if="failed" class="text-center text-danger mt-3">{{ failed }}</div>
               </div>
             </div>
           </div>
