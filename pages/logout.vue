@@ -15,8 +15,8 @@ export default {
                 console.log("Error logging out")
             }).finally(() => {
                 this.$nextTick(() => {
-                    // window.location.href    = process.env.universalLogin + '/logout'
-                    this.$router.push("/")
+                    window.location.href    = "/"
+                    // this.$router.push("/")
                 })
             })
     }

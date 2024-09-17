@@ -83,6 +83,20 @@
             <div><i class="ni education_hat mr-2"></i>University of Computer Science</div>
             -->
           </div>
+          <div class="text-center">
+            <div class="d-flex justify-content-center gap-4">
+              <dt class="font-medium">
+                {{$t('two_factor_authentication')}}
+              </dt>
+              <div>
+                <span v-if="hasTwoFaEnabled">{{$t('two_fa_enabled_message')}}</span>
+                <span v-else>{{$t('two_fa_disabled_message')}}</span>
+              </div>
+              <button type="button" class="btn btn-sm btn-primary" @click="showTwoFaConfirmation = !showTwoFaConfirmation">
+                {{ hasTwoFaEnabled ? $t('disable_2fa') : $t('enable_2fa') }}
+              </button>
+            </div>
+          </div>
 
           
           <div class="mt-5 py-5 border-top text-center">
@@ -145,12 +159,22 @@
       -->
 
     </div>
+   
+    <TwoFaConfirmation 
+      v-if="showTwoFaConfirmation"
+      :hasTwoFaEnabled="hasTwoFaEnabled" 
+      :showModal="showTwoFaConfirmation" 
+      @disable="disableTwoFA"
+      @cancel="toggleTwoFaConfirmationModal" 
+      @enable="enableTwoFA" />
+      
   </div>
 </template>
 <script>
 import RefreshAvatarMixin from '~/mixins/RefreshAvatarMixin'
 import { mapGetters } from "vuex"
 import ProfilePhoto from '@/components/common/ProfilePhoto'
+import TwoFaConfirmation from '@/components/Profile/TwoFaConfirmation'
 import Modal from '@/components/argon-core/Modal'
 import { hasMaxAccess, avatar, anonymousUserAvatar, notifyError } from '@/helpers/auth'
 import Loading from 'vue-loading-overlay'
@@ -158,13 +182,15 @@ import 'vue-loading-overlay/dist/vue-loading.css'
 import { redirectPost } from "~/helpers/auth"
 import { Upload } from "element-ui";
 import { toBase64 } from '../../helpers/helpers'
+import { MFA_SECRET_TRANSLATION_KEY } from '@/helpers/constants'
 
 export default {
     components: {
         ProfilePhoto,
         Modal,
         Loading,
-        Upload
+        Upload,
+        TwoFaConfirmation
     },
     mixins: [
         RefreshAvatarMixin
@@ -176,7 +202,9 @@ export default {
             photo: null,
             selectedLocale: null,
             fullPage: true,
-            isSubmitting:false
+            isSubmitting:false,
+            twoFaEnabled:false,
+            showTwoFaConfirmation: false
         }
     },
     computed: {
@@ -261,6 +289,16 @@ export default {
                 age--
             }
             return age
+        },
+        hasTwoFaEnabled () {
+          if (this.twoFaEnabled) {
+            return true
+          }
+          const settings = this.info && this.info.account ? this.info.account.settings : null
+          if (settings && settings.length) {
+            return settings.some(s => s.name_translation_key == MFA_SECRET_TRANSLATION_KEY)
+          }
+          return false
         }
     },
     watch: {
@@ -341,8 +379,18 @@ export default {
             }
         },
         submitUpload() {
-      this.$refs.upload.submit();
-    },
+          this.$refs.upload.submit();
+        },
+        toggleTwoFaConfirmationModal() {
+          this.showTwoFaConfirmation = false;
+        },
+        enableTwoFA() {
+          this.showTwoFaConfirmation = false;
+        },
+        disableTwoFA() {
+          this.showTwoFaConfirmation = false;
+          this.twoFaEnabled = false
+        }
     }
 
 }
@@ -393,5 +441,8 @@ export default {
 .custom-avatar {
   height: 140px; 
   width: 140px;
+}
+.gap-4 {
+  gap: 1rem;
 }
 </style>
