@@ -1,5 +1,30 @@
 <template>
   <div>
+    <modal
+      :show.sync="showConfirmModal"
+      headerClasses=""
+      bodyClasses="pt-0"
+      footerClasses="border-top bg-secondary"
+      @close="closeModal"
+      :allowOutSideClose="false"
+    >
+      <template slot="header">
+          <h5 class="modal-title">{{ $t("delete_entry_confirmation") }}</h5>
+          <span></span>
+      </template>
+      <template slot="footer">
+          <base-button type="link" class="ml-auto" @click="closeModal()">
+              {{ $t("cancel") }}
+          </base-button>
+          <base-button
+              type="danger"
+              @click="() => confirmDeleteMessage()"
+              :disabled="isSubmitting"
+          >
+              {{ $t("delete") }}
+          </base-button>
+      </template>
+    </modal>
     <div slot="header" class="pb-0">
       <h5 class="modal-title" v-if="account">{{ clientName }}</h5>
       <span></span>
@@ -7,18 +32,34 @@
     <div class="px-3 pb-3">
       <div class="message-area" id="note-area">
         <div
-          v-for="(comment, index) in comments"
+          v-for="(comment, index) in commentList"
           :key="comment.id"
           class="d-flex flex-column notebox p-2"
           :class="index != 0 && 'mt-3'"
           :id="'message-' + comment.id"
         >
-          <h4>
-            {{ getCommentCreator(comment.created_by) }}
-            <span class="text-muted"
-              ><small>{{ $d(new Date(comment.created_at)) }}</small></span
-            >
-          </h4>
+          <header class="d-flex justify-content-between">
+            <h4>
+              {{ getCommentCreator(comment.created_by) }}
+              <span class="text-muted">
+                <small>{{ $d(new Date(comment.created_at)) }}</small>
+              </span>
+            </h4>
+            <span v-if="comment.hasAbilityToDelete">
+              <base-dropdown 
+              title-classes="btn btn-sm mr-0"
+              menu-on-right
+              :has-toggle="false">
+                  <template slot="title">
+                      <i class="fas fa-ellipsis-v"></i>
+                  </template>
+                  <a href="#!" class="px-3" @click.prevent="openModal(comment)">
+                      <span>{{ $t('delete') }}</span>
+                  </a>
+              </base-dropdown>
+            </span>
+          </header>
+          
           <div>{{ comment.comment }}</div>
         </div>
         <div class="mt-1">
@@ -79,6 +120,7 @@ export default {
   computed: {
     ...mapGetters({
       comments: "comment/comments",
+      authUser: "auth/user",
     }),
     clientName() {
       return (
@@ -88,7 +130,35 @@ export default {
     },
     hasEditAccess(){
         return canEditDepot();
+      },
+      authUserId(){
+      if (this.authUser && this.authUser.account && this.authUser.account.id) {
+          return this.authUser.account.id
       }
+      return null
+    },
+    commentList(){
+      let hasAdminRole = false
+      if (this.authUser && this.authUser.account && this.authUser.account.roles && this.authUser.account.roles.length) {
+        const found = this.authUser.account.roles.find(item => {
+          const {name_translation_key} = item
+          if (name_translation_key == 'superadmin_role' || name_translation_key == 'admin_role') {
+            return item
+          }
+        })
+        if (found) {
+          hasAdminRole = true
+        }
+      }
+      
+      return this.comments.map(item => {
+        return {
+          ...item,
+          hasAbilityToDelete: this.checkAbilityToDelete(item)
+          // hasAbilityToDelete: hasAdminRole ? true : this.checkAbilityToDelete(item) //todo, waiting for back-end update
+        }
+      })
+    }
   },
   data() {
     return {
@@ -99,6 +169,8 @@ export default {
       lastPage: 1,
       isLoading: false,
       initialLoading: true,
+      showConfirmModal: false,
+      isSubmitting: false,
     };
   },
   mounted() {
@@ -173,6 +245,37 @@ export default {
     loadMore(){
         this.page+=1;
         this.fetchComments();
+    },
+    checkAbilityToDelete(comment){
+      const {created_by_id} = comment
+      if (!created_by_id) {
+          return false
+      }
+
+      return this.authUserId && this.authUserId == created_by_id
+    },
+    openModal(comment){
+      this.showConfirmModal = true
+      this.selectedComment = comment
+    },
+    closeModal(){
+      this.showConfirmModal = false
+      this.selectedComment = null
+    },
+    confirmDeleteMessage(){
+      this.showConfirmModal = false
+      this.isSubmitting = true
+      this.$store.dispatch('comment/deleteComment', this.selectedComment.id)
+      .then((result) => {
+          this.$notify({type:'success',message:this.$t('entry_deleted_successfully'),duration:5000});
+          this.selectedComment = null
+      })
+      .catch((err) => {
+          this.$notify({type:'danger',message:this.$t('entry_deleted_failed'),duration:5000});
+      })
+      .finally(()=> {
+        this.isSubmitting = false
+      })
     }
   },
 };
