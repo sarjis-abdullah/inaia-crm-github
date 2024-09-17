@@ -41,6 +41,9 @@
             <a class="dropdown-item" @click.prevent="editSalesAdvisor">{{ $t("edit_salesadvisor") }}</a>
             <a class="dropdown-item" @click.prevent="resetPin">{{ $t("reset_pin") }}</a>
             <a class="dropdown-item" @click.prevent="resetPassword">{{ $t("reset_password") }}</a>
+            <a class="dropdown-item" @click.prevent="resetTwoFA">{{
+              $t("reset_2fa")
+            }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" @click.prevent="displaySettings">{{ $t("account_settings") }}</a>
 
@@ -441,8 +444,44 @@ export default {
           }).catch((err) => {
             apiErrorHandler(err,this.$notify);
           });
+      },
+      resetTwoFA() {
+        this.$confirm(
+          this.$t("confirmReset2FAByAdmin"),
+          "Warning",
+          {
+            confirmButtonText: this.$t("ok"),
+            cancelButtonText: this.$t("cancel"),
+            type: "warning",
+          }
+        ).then(() => {
+          this.confirmResetTwoFA();
+        });
+      },
+      async confirmResetTwoFA() {
+        try {
+          const account = this.info.account;
+          if (account) {
+            const accountID = account.id;
+            const obj = {
+              accountID,
+            };
+            const res = await this.$axios.post(`mfa/customer/reset`, obj);
+            this.$notify({
+              type: "success",
+              timeout: 5000,
+              message: this.$t("reset_2fa_success"),
+            });
+          }
+        } catch (error) {
+          this.$notify({
+            type: "danger",
+            timeout: 5000,
+            message: this.$t("entry_updated_failed"),
+          });
+        } finally {
+        }
       }
-
     }
 
 }

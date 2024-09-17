@@ -133,6 +133,7 @@
                     <Loader />
                   </div>
                 </template>
+                <div v-if="failed" class="text-center text-danger mt-3">{{ failed }}</div>
               </div>
             </div>
           </div>
@@ -363,6 +364,7 @@
       async verifyMfa(code){
         try{
           const token = this.primaryResponse.tempBearerToken
+          this.failed = ''
           if (token) {
             this.isRequesting   = true
             const object = {

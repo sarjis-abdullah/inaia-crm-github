@@ -45,6 +45,7 @@ export const getters = {
         }
         return null;
     },
+    singleAccountData: state => state.singleClientData,
     // leadData:state=>state.leadData,
     // singleLeadData:state=>state.singleLeadData,
     countryList:state=>state.countryList,
@@ -267,6 +268,15 @@ export const actions = {
                 const singleClientData = response.data.data
                 context.commit('singleClientData', singleClientData);
                 context.commit('loadedClients', singleClientData)
+                return response
+            })
+    },
+    accountDetailsData(context, payload) {
+        return this.$axios
+            .get(`/contacts/${payload}?include=account,person_data,address,country,channels,nationality_details`)
+            .then(response => {
+                const singleClientData = response.data.data
+                context.commit('singleClientData', singleClientData);
                 return response
             })
     },
