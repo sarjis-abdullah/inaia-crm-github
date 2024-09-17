@@ -40,6 +40,21 @@
         >
         </Option>
       </Select>
+      <Select
+        :placeholder="$t('country')"
+        v-model="selectedCountry"
+        filterable
+        class="w-100 mt-3"
+        @remove-tag="applyFilter"
+      >
+        <Option
+          v-for="option in countryList"
+          :value="option.id"
+          :label="$t(option.name_translation_key)"
+          :key="option.id"
+        >
+        </Option>
+      </Select>
 
       <div
         class="
@@ -66,6 +81,17 @@
         >{{ formatClientTag()
         }}<a class="pointer badgeIcon" @click.prevent="removeCustomer()"
           ><i class="fas fa-window-close"></i></a
+      ></Badge>
+      <Badge
+        type="secondary"
+        size="md"
+        style="margin-right: 10px"
+        v-if="selectedCountry"
+        >
+        {{ countryName }}
+        <a class="pointer badgeIcon" @click.prevent="removeCountryFilter()">
+          <i class="fas fa-window-close"></i>
+        </a
       ></Badge>
       <Badge
         type="secondary"
@@ -134,7 +160,19 @@ export default {
       timer: null,
       lastRequest: null,
       customerQuery: "",
+      selectedCountry: null,
     };
+  },
+  watch: {
+    showFilter: {
+      immediate: true,
+      deep: true,
+      handler(newValue, oldValue) {
+        if (this.showFilter) {
+          this.initCountryList()
+        }
+      }
+    }
   },
   mounted() {
     if (this.status.length == 0) this.$store.dispatch("support/fetchStatuses");
@@ -147,8 +185,22 @@ export default {
     ...mapGetters("clients", {
       customers: "orderFilterList",
     }),
+    ...mapGetters('clients', {
+      countryList: "countryList",
+    }),
+    countryName(){
+      if (this.selectedCountry) {
+        return this.countryList.find(i=> i.id == this.selectedCountry).name_translation_key
+      }
+      return ''
+    }
   },
   methods: {
+    initCountryList() {
+      if (this.countryList && this.countryList.length == 0) {
+        this.$store.dispatch("clients/initCountryList", '&allow=1');
+      }
+    },
     clearCustomer: function () {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
@@ -234,6 +286,9 @@ export default {
       if (this.startDate != null) {
         query += "&create_date_start=" + formatDateToApiFormat(this.startDate);
       }
+      if (this.selectedCountry) {
+        query += "&country_id=" + this.selectedCountry;
+      }
       if (query == "") {
         this.filterIsActive = false;
       } else this.filterIsActive = true;
@@ -267,6 +322,11 @@ export default {
       const query = this.quiryBuilder();
       this.$emit("filter", query);
     },
+    removeCountryFilter: function () {
+      this.selectedCountry = null;
+      const query = this.quiryBuilder();
+      this.$emit("filter", query);
+    },
     clearFilter() {
       this.selectedStatus = [];
       this.startDate = null;
@@ -274,6 +334,7 @@ export default {
       this.selectedCustomer = null;
       this.selectedCustomerInfo = null;
       this.filterIsActive = false;
+      this.selectedCountry = null;
       this.$emit("filter", "");
     },
   },
