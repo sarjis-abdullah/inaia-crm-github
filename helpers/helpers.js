@@ -173,5 +173,19 @@ export const toBase64 = file => new Promise((resolve, reject) => {
 export function getUniqueListBy(arr, key) {
 	return [...new Map(arr.map(item => [item[key], item])).values()]
 }
+export function getYearDifference(date1, date2) {
+    const start = new Date(date1);
+    const end = new Date(date2);
 
+    let yearsDiff = end.getFullYear() - start.getFullYear();
+
+    if (
+        end.getMonth() < start.getMonth() || 
+        (end.getMonth() === start.getMonth() && end.getDate() < start.getDate())
+    ) {
+        yearsDiff--;
+    }
+
+    return yearsDiff;
+}
 

@@ -141,7 +141,9 @@
                       </div>
                     </div>
                     <div class="mt-3 mb-0 text-sm">
-                      <div>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
+                      <div v-if="depot.interval_startdate && depot.interval_enddate">
+                        {{$t('running_time')}}: {{getFormattedYearDifference(depot.interval_startdate, depot.interval_enddate)}} ({{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }})</div>
+                      <div v-else>{{$t('running_time')}}: {{ $d(new Date(depot.interval_startdate),'short') }} - {{ $d(new Date(depot.interval_enddate),'short') }}</div>
                       <div>{{$t('agio')}}: {{ $n(depot.agio / 100) }} {{ currency }}</div>
                       <div v-if="depot.agio_payment_option=='onetime'">{{$t(depot.agio_payment_option)}}</div>
                       <div v-else>{{$t('billing')}} <span v-if="depot.agio_percentage == 75">75/25</span>
@@ -422,7 +424,7 @@ import {MessageBox} from 'element-ui';
 import {
   DatePicker
 } from "element-ui";
-import { formatDateToApiFormat } from '../../../helpers/helpers';
+import { formatDateToApiFormat, getYearDifference } from '@/helpers/helpers';
 import UpdateSavingPlan  from "@/components/Depots/UpdateSavingPlan";
 import AddDeposit from '@/components/Depots/AddDeposit';
 import { canEditDepot, canModifySavingPlanStatus} from '@/permissions';
@@ -551,6 +553,14 @@ export default {
         },
     },
     methods: {
+      getFormattedYearDifference(date1, date2){
+        const value = getYearDifference(date1, date2)
+        let text = value + ' year'
+        if (value > 1) {
+          text += 's'
+        }
+        return text
+      },
       showDeposit(){
         this.showAddDeposit = true;
       },
