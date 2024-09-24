@@ -277,13 +277,19 @@ export default {
                         pageQuery+='&depot_ids='+this.depotSetId;
                     }
                 }
+               
                 this.$store
                     .dispatch("orders/fetchList", pageQuery)
                     .then(response => {
-                        this.data = response.data.data
-                        this.totalTableData = response.data.meta.total
-                        this.meta = response.data.meta
+                        if(response && response.data){
+                            this.data = response.data.data
+                            this.totalTableData = response.data.meta.total
+                            this.meta = response.data.meta
+                            
+                            this.$forceUpdate()
+                        }
                         this.isLoading = false
+                        
                     }).finally(() => {
                         this.initiated  = false
                     })

@@ -301,10 +301,13 @@ export default {
                 this.$store
                     .dispatch("depots/fetchList", pageQuery)
                     .then(response => {
+                    if(response && response.data){
                         this.data = response.data.data;
                         this.totalTableData = response.data.meta.total
                         this.meta = response.data.meta;
-                        this.loading = false;
+                        
+                    }
+                    this.loading = false;
                     }).finally(() => {
                         this.initiated  = false
                     })

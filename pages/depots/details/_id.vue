@@ -192,9 +192,9 @@
                 </div>
               </div>
             </div>
-            <div class="d-none d-md-block">
+            <div class="d-none d-block">
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-12">
                 <order-list :isDepotSet="true" :depotSetId="depot.id"/>
               </div>
             </div>
@@ -209,9 +209,7 @@
             </div>
           </div>
         </div>
-        <div class="d-md-none">
-          <order-list :isDepotSet="true" :depotSetId="depot.id"/>
-        </div>
+       
         <GoldGift :showModal="showGoldGift" @onClose="onGoldGiftClose" :depot="depot"/>
         <modal :show.sync="showPauseConfirm" class="orderModal" headerClasses="" bodyClasses="pt-0" footerClasses="border-top bg-secondary" :allowOutSideClose="false">
                     <template slot="header" class="pb-0">
@@ -540,7 +538,10 @@ export default {
         }
     },
      mounted () {
-       this.$confirm = MessageBox.confirm
+       this.$confirm = MessageBox.confirm;
+       setTimeout(() => {
+        this.showDe
+       }, 3000);
     },
     watch: {
         depotId: {
